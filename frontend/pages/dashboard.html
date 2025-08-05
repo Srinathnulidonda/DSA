@@ -1,849 +1,256 @@
-<!-- Dashboard Page Content -->
-<div class="dashboard-page-content">
-    <!-- Welcome Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="welcome-section glass-card p-4 rounded-4">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <div class="welcome-content">
-                            <h1 class="display-5 fw-bold mb-2 text-gradient">
-                                Welcome Back, Coder! 👋
-                            </h1>
-                            <p class="lead mb-3" id="daily-motivation">
-                                Ready to conquer some algorithms today?
-                            </p>
-                            <div class="welcome-stats d-flex gap-3 mb-3">
-                                <div class="stat-mini">
-                                    <span class="stat-number" id="welcome-streak">0</span>
-                                    <span class="stat-label">Day Streak</span>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DSA Learning</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+    <!-- Dashboard Content -->
+    <div class="dashboard-page">
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stats-overview">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card-enhanced bg-gradient-primary text-white">
+                                <div class="stat-icon-wrapper bg-white bg-opacity-20 text-white mb-3">
+                                    <i class="fas fa-calendar-check fa-2x"></i>
                                 </div>
-                                <div class="stat-mini">
-                                    <span class="stat-number" id="welcome-completed">0</span>
-                                    <span class="stat-label">Tasks Done</span>
+                                <h3 class="stat-number-enhanced" id="dashboardCompletedDays">0</h3>
+                                <p class="stat-label-enhanced">Days Completed</p>
+                                <div class="progress mt-3" style="height: 4px;">
+                                    <div class="progress-bar bg-white" style="width: 0%" id="daysProgressBar"></div>
                                 </div>
-                                <div class="stat-mini">
-                                    <span class="stat-number" id="welcome-week">1</span>
-                                    <span class="stat-label">Current Week</span>
-                                </div>
-                            </div>
-                            <div class="welcome-actions d-flex gap-3">
-                                <button class="btn btn-primary btn-lg hover-lift" onclick="startStudySession()">
-                                    <i class="fas fa-play me-2"></i>Start Study Session
-                                </button>
-                                <button class="btn btn-outline-primary btn-lg hover-lift"
-                                    onclick="showPage('timetable')">
-                                    <i class="fas fa-calendar me-2"></i>View Today's Plan
-                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="progress-circle-large" data-percentage="0">
-                            <div class="progress-circle-inner">
-                                <span class="progress-percentage">0%</span>
-                                <span class="progress-label">Course Complete</span>
+
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card-enhanced bg-gradient-success text-white">
+                                <div class="stat-icon-wrapper bg-white bg-opacity-20 text-white mb-3">
+                                    <i class="fas fa-project-diagram fa-2x"></i>
+                                </div>
+                                <h3 class="stat-number-enhanced" id="dashboardCompletedProjects">0</h3>
+                                <p class="stat-label-enhanced">Projects Built</p>
+                                <div class="progress mt-3" style="height: 4px;">
+                                    <div class="progress-bar bg-white" style="width: 0%" id="projectsProgressBar"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Quick Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="stat-card glass-card p-3 rounded-3 h-100 hover-lift">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-primary bg-gradient rounded-circle me-3">
-                        <i class="fas fa-calendar-check text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="stat-number mb-0 animate-number" data-target="0">0</h3>
-                        <p class="stat-label mb-0">Days Studied</p>
-                    </div>
-                </div>
-                <div class="stat-trend mt-2">
-                    <small class="text-success">
-                        <i class="fas fa-arrow-up me-1"></i>
-                        <span id="days-trend">+2 this week</span>
-                    </small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="stat-card glass-card p-3 rounded-3 h-100 hover-lift">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-success bg-gradient rounded-circle me-3">
-                        <i class="fas fa-trophy text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="stat-number mb-0 animate-number" data-target="0">0</h3>
-                        <p class="stat-label mb-0">Topics Mastered</p>
-                    </div>
-                </div>
-                <div class="stat-trend mt-2">
-                    <small class="text-success">
-                        <i class="fas fa-arrow-up me-1"></i>
-                        <span id="topics-trend">+3 this week</span>
-                    </small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="stat-card glass-card p-3 rounded-3 h-100 hover-lift">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-warning bg-gradient rounded-circle me-3">
-                        <i class="fas fa-code text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="stat-number mb-0 animate-number" data-target="0">0</h3>
-                        <p class="stat-label mb-0">Problems Solved</p>
-                    </div>
-                </div>
-                <div class="stat-trend mt-2">
-                    <small class="text-success">
-                        <i class="fas fa-arrow-up me-1"></i>
-                        <span id="problems-trend">+5 this week</span>
-                    </small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-3">
-            <div class="stat-card glass-card p-3 rounded-3 h-100 hover-lift">
-                <div class="d-flex align-items-center">
-                    <div class="stat-icon bg-info bg-gradient rounded-circle me-3">
-                        <i class="fas fa-project-diagram text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="stat-number mb-0 animate-number" data-target="0">0</h3>
-                        <p class="stat-label mb-0">Projects Built</p>
-                    </div>
-                </div>
-                <div class="stat-trend mt-2">
-                    <small class="text-success">
-                        <i class="fas fa-arrow-up me-1"></i>
-                        <span id="projects-trend">+1 this week</span>
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Content Row -->
-    <div class="row mb-4">
-        <!-- Today's Tasks -->
-        <div class="col-lg-8 mb-3">
-            <div class="glass-card p-4 rounded-4 h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="card-title mb-0">
-                        <i class="fas fa-tasks me-2 text-primary"></i>Today's Learning Plan
-                    </h4>
-                    <div class="plan-controls">
-                        <span class="badge bg-primary" id="current-day-badge">Monday</span>
-                        <span class="badge bg-secondary ms-1" id="current-week-badge">Week 1</span>
-                    </div>
-                </div>
-
-                <div class="today-plan-summary mb-3">
-                    <div class="plan-meta">
-                        <span class="plan-topic" id="today-topic">Programming Fundamentals</span>
-                        <span class="plan-time" id="today-time">
-                            <i class="fas fa-clock me-1"></i>2 hours
-                        </span>
-                    </div>
-                </div>
-
-                <div id="today-tasks" class="tasks-container">
-                    <!-- Today's tasks will be loaded here -->
-                </div>
-
-                <div class="plan-actions mt-3">
-                    <button class="btn btn-outline-primary btn-sm" onclick="showPage('timetable')">
-                        <i class="fas fa-calendar-alt me-1"></i>View Full Timetable
-                    </button>
-                    <button class="btn btn-outline-success btn-sm ms-2" onclick="markAllTasksComplete()">
-                        <i class="fas fa-check-double me-1"></i>Mark All Complete
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Progress and Stats -->
-        <div class="col-lg-4 mb-3">
-            <div class="row h-100">
-                <!-- Week Progress -->
-                <div class="col-12 mb-3">
-                    <div class="glass-card p-3 rounded-3 h-100">
-                        <h6 class="card-title mb-3">
-                            <i class="fas fa-chart-pie me-2 text-success"></i>Week Progress
-                        </h6>
-                        <div class="week-progress-container">
-                            <div class="progress-bar-container mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="small">Current Week</span>
-                                    <span class="small" id="week-percentage">0%</span>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card-enhanced bg-gradient-warning text-white">
+                                <div class="stat-icon-wrapper bg-white bg-opacity-20 text-white mb-3">
+                                    <i class="fas fa-code fa-2x"></i>
                                 </div>
-                                <div class="progress progress-modern">
-                                    <div class="progress-bar bg-gradient" id="week-progress-bar" style="width: 0%">
-                                    </div>
+                                <h3 class="stat-number-enhanced" id="dashboardSolvedProblems">0</h3>
+                                <p class="stat-label-enhanced">Problems Solved</p>
+                                <div class="progress mt-3" style="height: 4px;">
+                                    <div class="progress-bar bg-white" style="width: 0%" id="problemsProgressBar"></div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="week-details">
-                                <div class="week-stats">
-                                    <div class="stat-row">
-                                        <span class="stat-name">Completed Tasks:</span>
-                                        <span class="stat-value" id="week-completed-tasks">0/15</span>
-                                    </div>
-                                    <div class="stat-row">
-                                        <span class="stat-name">Days Active:</span>
-                                        <span class="stat-value" id="week-active-days">0/7</span>
-                                    </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="stat-card-enhanced bg-gradient-info text-white">
+                                <div class="stat-icon-wrapper bg-white bg-opacity-20 text-white mb-3">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                                <h3 class="stat-number-enhanced" id="dashboardStudyHours">0</h3>
+                                <p class="stat-label-enhanced">Study Hours</p>
+                                <div class="progress mt-3" style="height: 4px;">
+                                    <div class="progress-bar bg-white" style="width: 0%" id="hoursProgressBar"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Recent Achievements -->
-                <div class="col-12">
-                    <div class="glass-card p-3 rounded-3 h-100">
-                        <h6 class="card-title mb-3">
-                            <i class="fas fa-trophy me-2 text-warning"></i>Recent Achievements
-                        </h6>
-                        <div class="achievement-badges" id="recent-badges">
-                            <!-- Achievement badges will be loaded here -->
+        <!-- Current Focus & Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="card-enhanced h-100">
+                    <div class="card-header-enhanced">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bullseye text-primary me-2"></i>
+                            Current Focus
+                        </h5>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div id="currentFocusContent">
+                            <!-- Dynamic content loaded here -->
                         </div>
-                        <div class="achievements-footer mt-3">
-                            <button class="btn btn-outline-primary btn-sm w-100" onclick="showPage('progress')">
-                                <i class="fas fa-medal me-1"></i>View All Achievements
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card-enhanced h-100">
+                    <div class="card-header-enhanced">
+                        <h5 class="mb-0">
+                            <i class="fas fa-lightning-bolt text-warning me-2"></i>
+                            Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-enhanced" onclick="startStudySession()">
+                                <i class="fas fa-play me-2"></i>Start Study Session
+                            </button>
+                            <button class="btn btn-success btn-enhanced" onclick="addQuickNote()">
+                                <i class="fas fa-plus me-2"></i>Quick Note
+                            </button>
+                            <button class="btn btn-info btn-enhanced" onclick="viewResources()">
+                                <i class="fas fa-book me-2"></i>View Resources
+                            </button>
+                            <button class="btn btn-warning btn-enhanced" onclick="practiceProblems()">
+                                <i class="fas fa-dumbbell me-2"></i>Practice Problems
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Tools and Actions Row -->
-    <div class="row">
-        <!-- Study Timer -->
-        <div class="col-lg-6 mb-3">
-            <div class="glass-card p-4 rounded-4">
-                <h4 class="card-title mb-3">
-                    <i class="fas fa-clock me-2 text-warning"></i>Pomodoro Timer
-                </h4>
-                <div class="timer-container text-center">
-                    <div class="timer-display mb-3">
-                        <span id="timer-minutes">25</span>:<span id="timer-seconds">00</span>
+        <!-- Learning Progress Chart -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card-enhanced">
+                    <div class="card-header-enhanced">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line text-success me-2"></i>
+                                Learning Progress
+                            </h5>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary active"
+                                    onclick="changeChartView('weekly')">Weekly</button>
+                                <button type="button" class="btn btn-outline-primary"
+                                    onclick="changeChartView('daily')">Daily</button>
+                                <button type="button" class="btn btn-outline-primary"
+                                    onclick="changeChartView('cumulative')">Cumulative</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="timer-controls mb-3">
-                        <button class="btn btn-success me-2" onclick="startTimer()" id="timer-start">
-                            <i class="fas fa-play"></i> Start
-                        </button>
-                        <button class="btn btn-warning me-2" onclick="pauseTimer()" id="timer-pause"
-                            style="display: none;">
-                            <i class="fas fa-pause"></i> Pause
-                        </button>
-                        <button class="btn btn-danger" onclick="resetTimer()" id="timer-reset">
-                            <i class="fas fa-stop"></i> Reset
-                        </button>
-                    </div>
-                    <div class="timer-settings">
-                        <select class="form-select" id="timer-duration" onchange="setTimerDuration()">
-                            <option value="25">25 minutes (Focus)</option>
-                            <option value="5">5 minutes (Short Break)</option>
-                            <option value="15">15 minutes (Long Break)</option>
-                            <option value="45">45 minutes (Deep Work)</option>
-                        </select>
-                    </div>
-                    <div class="timer-stats mt-3">
-                        <small class="text-muted">
-                            <i class="fas fa-history me-1"></i>
-                            Today: <span id="today-study-time">0h 0m</span>
-                        </small>
+                    <div class="card-body-enhanced">
+                        <canvas id="dashboardProgressChart" height="100"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="col-lg-6 mb-3">
-            <div class="glass-card p-4 rounded-4">
-                <h4 class="card-title mb-3">
-                    <i class="fas fa-rocket me-2 text-info"></i>Quick Actions
-                </h4>
-                <div class="quick-actions">
-                    <button class="btn btn-outline-primary w-100 mb-2 hover-lift" onclick="openRandomProblem()">
-                        <i class="fas fa-random me-2"></i>Random Practice Problem
-                        <small class="d-block text-muted">Get a surprise coding challenge</small>
-                    </button>
-                    <button class="btn btn-outline-success w-100 mb-2 hover-lift" onclick="showAddNoteModal()">
-                        <i class="fas fa-plus me-2"></i>Add Quick Note
-                        <small class="d-block text-muted">Jot down important insights</small>
-                    </button>
-                    <button class="btn btn-outline-warning w-100 mb-2 hover-lift" onclick="showPage('resources')">
-                        <i class="fas fa-book-open me-2"></i>Browse Resources
-                        <small class="d-block text-muted">Explore learning materials</small>
-                    </button>
-                    <button class="btn btn-outline-info w-100 hover-lift" onclick="showGlossaryModal()">
-                        <i class="fas fa-search me-2"></i>DSA Glossary
-                        <small class="d-block text-muted">Look up algorithms & concepts</small>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Learning Recommendations -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="glass-card p-4 rounded-4">
-                <h4 class="card-title mb-3">
-                    <i class="fas fa-lightbulb me-2 text-primary"></i>Personalized Recommendations
-                </h4>
-                <div id="recommendations-container" class="recommendations-grid">
-                    <!-- Recommendations will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    /* Dashboard specific styles */
-    .welcome-section {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
-        border: 1px solid rgba(99, 102, 241, 0.2);
-    }
-
-    .progress-circle-large {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        background: conic-gradient(var(--primary-color) 0deg, transparent 0deg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        margin: 0 auto;
-    }
-
-    .progress-circle-large::before {
-        content: '';
-        position: absolute;
-        width: 120px;
-        height: 120px;
-        background: var(--glass-bg);
-        border-radius: 50%;
-    }
-
-    .progress-circle-inner {
-        position: relative;
-        z-index: 1;
-        text-align: center;
-    }
-
-    .stat-mini {
-        text-align: center;
-    }
-
-    .stat-mini .stat-number {
-        display: block;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-
-    .stat-mini .stat-label {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-    }
-
-    .plan-meta {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .plan-topic {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .plan-time {
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-    }
-
-    .stat-row {
-        display: flex;
-        justify-content: between;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    .stat-name {
-        color: var(--text-secondary);
-    }
-
-    .stat-value {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .timer-display {
-        font-size: 3.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        font-family: 'Courier New', monospace;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .recommendations-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1rem;
-    }
-
-    .recommendation-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .recommendation-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
-    }
-
-    .animate-number {
-        transition: all 0.3s ease;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 576px) {
-        .timer-display {
-            font-size: 2.5rem;
-        }
-
-        .progress-circle-large {
-            width: 120px;
-            height: 120px;
-        }
-
-        .progress-circle-large::before {
-            width: 100px;
-            height: 100px;
-        }
-
-        .welcome-actions {
-            flex-direction: column;
-        }
-
-        .welcome-actions .btn {
-            margin-bottom: 0.5rem;
-        }
-    }
-</style>
-
-<script>
-    // Dashboard specific JavaScript
-    class DashboardPageManager {
-        constructor() {
-            this.motivationalQuotes = [
-                "Ready to conquer some algorithms today?",
-                "Every expert was once a beginner. Keep coding!",
-                "The only way to do great work is to love what you do.",
-                "Code is poetry written in logic.",
-                "Today's algorithm is tomorrow's solution.",
-                "Debug your code, debug your thinking.",
-                "Practice makes perfect, perfect makes progress.",
-                "Think twice, code once.",
-                "The best time to plant a tree was 20 years ago. The second best time is now.",
-                "Consistency beats intensity in learning."
-            ];
-
-            this.init();
-        }
-
-        init() {
-            this.loadDashboardData();
-            this.updateDailyMotivation();
-            this.loadTodaysPlan();
-            this.loadRecommendations();
-            this.startLiveUpdates();
-        }
-
-        loadDashboardData() {
-            if (!window.dashboard) return;
-
-            const userData = window.dashboard.userData;
-            const stats = window.dashboard.calculateStats();
-
-            // Update welcome stats
-            document.getElementById('welcome-streak').textContent = userData.streak || 0;
-            document.getElementById('welcome-completed').textContent = Object.keys(userData.completedTasks).length;
-            document.getElementById('welcome-week').textContent = userData.currentWeek || 1;
-
-            // Update main stats with animation
-            this.animateStatNumber('days-studied', stats.daysStudied);
-            this.animateStatNumber('topics-completed', stats.topicsCompleted);
-            this.animateStatNumber('problems-solved', stats.problemsSolved);
-            this.animateStatNumber('projects-built', stats.projectsBuilt);
-
-            // Update progress circle
-            this.updateProgressCircle();
-
-            // Update current badges
-            this.updateCurrentBadges();
-
-            // Update study time
-            this.updateStudyTime();
-        }
-
-        animateStatNumber(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-
-            const current = parseInt(element.textContent) || 0;
-            const increment = targetValue > current ? 1 : -1;
-            const duration = Math.abs(targetValue - current) * 50; // 50ms per number
-
-            let currentValue = current;
-            const timer = setInterval(() => {
-                currentValue += increment;
-                element.textContent = currentValue;
-
-                if (currentValue === targetValue) {
-                    clearInterval(timer);
-                    // Add completion animation
-                    element.classList.add('animate-pulse');
-                    setTimeout(() => {
-                        element.classList.remove('animate-pulse');
-                    }, 1000);
-                }
-            }, 50);
-        }
-
-        updateProgressCircle() {
-            if (!window.dashboard) return;
-
-            const totalWeeks = 14;
-            const completedWeeks = Object.values(window.dashboard.userData.weekProgress).filter(p => p >= 100).length;
-            const overallPercentage = Math.round((completedWeeks / totalWeeks) * 100);
-
-            const circle = document.querySelector('.progress-circle-large');
-            const percentageElement = document.querySelector('.progress-percentage');
-
-            if (circle && percentageElement) {
-                // Update CSS conic-gradient
-                const angle = (overallPercentage / 100) * 360;
-                circle.style.background = `conic-gradient(var(--primary-color) ${angle}deg, rgba(255, 255, 255, 0.1) ${angle}deg)`;
-
-                // Animate percentage text
-                this.animatePercentage(percentageElement, overallPercentage);
-            }
-        }
-
-        animatePercentage(element, targetPercentage) {
-            const currentPercentage = parseInt(element.textContent) || 0;
-            const increment = targetPercentage > currentPercentage ? 1 : -1;
-
-            let current = currentPercentage;
-            const timer = setInterval(() => {
-                current += increment;
-                element.textContent = `${current}%`;
-
-                if (current === targetPercentage) {
-                    clearInterval(timer);
-                }
-            }, 30);
-        }
-
-        updateCurrentBadges() {
-            const today = new Date();
-            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const currentDay = dayNames[today.getDay()];
-
-            document.getElementById('current-day-badge').textContent = currentDay;
-
-            if (window.dashboard) {
-                const currentWeek = window.dashboard.userData.currentWeek || 1;
-                document.getElementById('current-week-badge').textContent = `Week ${currentWeek}`;
-            }
-        }
-
-        updateDailyMotivation() {
-            const today = new Date().getDate();
-            const quote = this.motivationalQuotes[today % this.motivationalQuotes.length];
-            document.getElementById('daily-motivation').textContent = quote;
-        }
-
-        loadTodaysPlan() {
-            if (!window.dashboard || !window.timetable) return;
-
-            const currentWeek = window.dashboard.userData.currentWeek || 1;
-            const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-
-            // Load week data and find today's plan
-            window.timetable.loadWeekData(currentWeek).then(weekData => {
-                if (weekData) {
-                    const todayData = weekData.days.find(day =>
-                        day.day.toLowerCase() === today.toLowerCase()
-                    );
-
-                    if (todayData) {
-                        document.getElementById('today-topic').textContent = todayData.topic;
-                        document.getElementById('today-time').innerHTML =
-                            `<i class="fas fa-clock me-1"></i>${todayData.time}`;
-
-                        // Load today's tasks
-                        this.renderTodaysTasks(todayData, currentWeek);
-                    } else {
-                        this.renderNoTasksMessage();
-                    }
-                }
-            });
-        }
-
-        renderTodaysTasks(dayData, week) {
-            const container = document.getElementById('today-tasks');
-            const dayKey = `week-${week}-${dayData.day.toLowerCase()}`;
-
-            const tasks = [
-                {
-                    id: `${dayKey}-topic`,
-                    title: `Study: ${dayData.topic}`,
-                    description: 'Learn the core concepts and theory',
-                    type: 'topic',
-                    icon: 'fas fa-book'
-                },
-                {
-                    id: `${dayKey}-activities`,
-                    title: 'Practice Activities',
-                    description: dayData.activities,
-                    type: 'activities',
-                    icon: 'fas fa-code'
-                }
-            ];
-
-            if (dayData.project) {
-                tasks.push({
-                    id: `${dayKey}-project`,
-                    title: 'Project Work',
-                    description: dayData.project,
-                    type: 'project',
-                    icon: 'fas fa-project-diagram'
-                });
-            }
-
-            container.innerHTML = tasks.map(task => {
-                const isCompleted = window.dashboard.userData.completedTasks[task.id] || false;
-                return `
-                <div class="task-item-dashboard ${isCompleted ? 'completed' : ''}" data-task-id="${task.id}">
-                    <div class="d-flex align-items-center">
-                        <div class="task-checkbox-container me-3">
-                            <input type="checkbox" class="form-check-input task-checkbox" 
-                                   ${isCompleted ? 'checked' : ''} 
-                                   onchange="dashboard.toggleTask('${task.id}')">
-                        </div>
-                        <div class="task-icon me-3">
-                            <i class="${task.icon}"></i>
-                        </div>
-                        <div class="task-content flex-grow-1">
-                            <h6 class="task-title mb-1">${task.title}</h6>
-                            <p class="task-description mb-0">${task.description}</p>
-                        </div>
-                        <div class="task-actions">
-                            <button class="btn btn-sm btn-outline-primary" onclick="startTaskTimer('${task.id}')">
-                                <i class="fas fa-play"></i>
-                            </button>
+        <!-- Upcoming Schedule & Recent Activity -->
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <div class="card-enhanced h-100">
+                    <div class="card-header-enhanced">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-alt text-info me-2"></i>
+                            Upcoming Schedule
+                        </h5>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div id="upcomingSchedule">
+                            <!-- Dynamic schedule content -->
                         </div>
                     </div>
                 </div>
-            `;
-            }).join('');
-        }
-
-        renderNoTasksMessage() {
-            const container = document.getElementById('today-tasks');
-            container.innerHTML = `
-            <div class="no-tasks-message text-center py-4">
-                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
-                <h5>All caught up!</h5>
-                <p class="text-muted">No specific tasks for today. Great time to review or explore advanced topics.</p>
-                <button class="btn btn-outline-primary" onclick="showPage('resources')">
-                    Browse Resources
-                </button>
             </div>
-        `;
-        }
 
-        updateStudyTime() {
-            if (!window.dashboard) return;
-
-            const totalMinutes = window.dashboard.userData.studyTime || 0;
-            const hours = Math.floor(totalMinutes / 60);
-            const minutes = totalMinutes % 60;
-
-            document.getElementById('today-study-time').textContent = `${hours}h ${minutes}m`;
-        }
-
-        loadRecommendations() {
-            const container = document.getElementById('recommendations-container');
-            const recommendations = this.generateRecommendations();
-
-            container.innerHTML = recommendations.map(rec => `
-            <div class="recommendation-card">
-                <div class="d-flex align-items-center mb-2">
-                    <i class="${rec.icon} me-2 text-${rec.color}"></i>
-                    <h6 class="mb-0">${rec.title}</h6>
+            <div class="col-lg-6">
+                <div class="card-enhanced h-100">
+                    <div class="card-header-enhanced">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history text-secondary me-2"></i>
+                            Recent Activity
+                        </h5>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div id="recentActivityList">
+                            <!-- Dynamic activity content -->
+                        </div>
+                    </div>
                 </div>
-                <p class="text-muted mb-2">${rec.description}</p>
-                <button class="btn btn-sm btn-outline-${rec.color}" onclick="${rec.action}">
-                    ${rec.buttonText}
-                </button>
             </div>
-        `).join('');
-        }
+        </div>
 
-        generateRecommendations() {
-            const recommendations = [];
+        <!-- Study Streak & Goals -->
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card-enhanced text-center">
+                    <div class="card-body-enhanced">
+                        <div class="streak-display">
+                            <div class="streak-icon text-warning mb-3">
+                                <i class="fas fa-fire fa-4x animate-pulse"></i>
+                            </div>
+                            <h2 class="streak-number text-primary" id="streakDisplay">0</h2>
+                            <p class="text-muted">Day Streak</p>
+                            <div class="streak-message mt-3">
+                                <span class="badge bg-gradient-warning text-dark" id="streakMessage">Keep it up!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            if (!window.dashboard) {
-                return [{
-                    title: 'Get Started',
-                    description: 'Begin your DSA journey with Week 1 fundamentals.',
-                    icon: 'fas fa-play',
-                    color: 'primary',
-                    action: 'showPage("timetable")',
-                    buttonText: 'Start Learning'
-                }];
-            }
+            <div class="col-lg-8">
+                <div class="card-enhanced">
+                    <div class="card-header-enhanced">
+                        <h5 class="mb-0">
+                            <i class="fas fa-target text-danger me-2"></i>
+                            Daily Goals
+                        </h5>
+                    </div>
+                    <div class="card-body-enhanced">
+                        <div class="goals-container">
+                            <div class="goal-item mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="goal-label">Study Time</span>
+                                    <span class="goal-progress" id="studyTimeGoal">0h / 2h</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" style="width: 0%" id="studyTimeGoalBar"></div>
+                                </div>
+                            </div>
 
-            const userData = window.dashboard.userData;
-            const currentWeek = userData.currentWeek || 1;
-            const completedTasks = Object.keys(userData.completedTasks).length;
-            const streak = userData.streak || 0;
+                            <div class="goal-item mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="goal-label">Problems Solved</span>
+                                    <span class="goal-progress" id="problemsGoal">0 / 3</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: 0%" id="problemsGoalBar"></div>
+                                </div>
+                            </div>
 
-            // Recommendation based on streak
-            if (streak === 0) {
-                recommendations.push({
-                    title: 'Start Your Streak',
-                    description: 'Complete your first task today to begin building a learning streak.',
-                    icon: 'fas fa-fire',
-                    color: 'warning',
-                    action: 'startStudySession()',
-                    buttonText: 'Start Now'
-                });
-            } else if (streak < 7) {
-                recommendations.push({
-                    title: 'Build Consistency',
-                    description: `You're on a ${streak}-day streak! Keep it going to build a strong learning habit.`,
-                    icon: 'fas fa-calendar-check',
-                    color: 'success',
-                    action: 'startStudySession()',
-                    buttonText: 'Continue Streak'
-                });
-            }
+                            <div class="goal-item">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="goal-label">Notes Written</span>
+                                    <span class="goal-progress" id="notesGoal">0 / 1</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" style="width: 0%" id="notesGoalBar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // Recommendation based on progress
-            if (completedTasks < 5) {
-                recommendations.push({
-                    title: 'Focus on Fundamentals',
-                    description: 'Master the basics with our interactive tutorials and practice problems.',
-                    icon: 'fas fa-book-open',
-                    color: 'info',
-                    action: 'showPage("resources")',
-                    buttonText: 'Browse Resources'
-                });
-            }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
 
-            // Project recommendation
-            const completedProjects = userData.projects.filter(p => p.status === 'completed').length;
-            if (completedProjects === 0 && currentWeek >= 1) {
-                recommendations.push({
-                    title: 'Build Your First Project',
-                    description: 'Apply your knowledge by building a practical project.',
-                    icon: 'fas fa-hammer',
-                    color: 'primary',
-                    action: 'showPage("projects")',
-                    buttonText: 'View Projects'
-                });
-            }
-
-            // Note-taking recommendation
-            if (userData.notes.length < 3) {
-                recommendations.push({
-                    title: 'Take Learning Notes',
-                    description: 'Document your learning journey with our smart note-taking system.',
-                    icon: 'fas fa-sticky-note',
-                    color: 'warning',
-                    action: 'showAddNoteModal()',
-                    buttonText: 'Add Note'
-                });
-            }
-
-            return recommendations.slice(0, 3); // Show max 3 recommendations
-        }
-
-        startLiveUpdates() {
-            // Update dashboard every 30 seconds
-            setInterval(() => {
-                this.loadDashboardData();
-            }, 30000);
-
-            // Update time-based elements every minute
-            setInterval(() => {
-                this.updateCurrentBadges();
-            }, 60000);
-        }
-    }
-
-    // Global functions for dashboard actions
-    function markAllTasksComplete() {
-        const checkboxes = document.querySelectorAll('#today-tasks .task-checkbox:not(:checked)');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = true;
-            checkbox.dispatchEvent(new Event('change'));
-        });
-
-        if (window.dashboard) {
-            window.dashboard.showNotification(
-                'All Tasks Completed!',
-                'Great job finishing all your tasks for today!',
-                'success'
-            );
-        }
-    }
-
-    function startTaskTimer(taskId) {
-        if (window.dashboard) {
-            window.dashboard.startTimer();
-            window.dashboard.showNotification(
-                'Timer Started!',
-                'Focus time begins now. Good luck!',
-                'info'
-            );
-        }
-    }
-
-    // Initialize dashboard page manager
-    document.addEventListener('DOMContentLoaded', () => {
-        if (document.querySelector('.dashboard-page-content')) {
-            window.dashboardPageManager = new DashboardPageManager();
-        }
-    });
-</script>
+</html>

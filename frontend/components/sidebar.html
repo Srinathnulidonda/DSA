@@ -1,568 +1,713 @@
-<!-- Sidebar Component for Mobile and Desktop -->
+<!-- Sidebar Component -->
 <div class="sidebar-component">
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">
-                <i class="fas fa-code me-2 text-primary"></i>
-                DSA Mastery
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <!-- Navigation Links -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Navigation</h6>
-                <ul class="sidebar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#dashboard" onclick="showPage('dashboard')"
-                            data-page="dashboard">
-                            <i class="fas fa-home me-2"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#timetable" onclick="showPage('timetable')" data-page="timetable">
-                            <i class="fas fa-calendar me-2"></i>Timetable
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#progress" onclick="showPage('progress')" data-page="progress">
-                            <i class="fas fa-chart-line me-2"></i>Progress
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#projects" onclick="showPage('projects')" data-page="projects">
-                            <i class="fas fa-project-diagram me-2"></i>Projects
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#notes" onclick="showPage('notes')" data-page="notes">
-                            <i class="fas fa-sticky-note me-2"></i>Notes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#resources" onclick="showPage('resources')" data-page="resources">
-                            <i class="fas fa-book me-2"></i>Resources
-                        </a>
-                    </li>
-                </ul>
+    <nav class="sidebar bg-dark text-white position-fixed h-100" id="sidebar">
+        <div class="sidebar-header p-3">
+            <div class="d-flex align-items-center">
+                <img src="../assets/logo.png" alt="DSA Learning" class="sidebar-logo me-2" width="32" height="32">
+                <h4 class="mb-0">DSA Mastery</h4>
             </div>
+            <button class="btn btn-sm btn-outline-light mt-2" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- Progress Summary -->
+            <div class="progress-summary p-3 border-bottom border-secondary">
+                <h6 class="text-light mb-2">Overall Progress</h6>
+                <div class="progress mb-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: 0%" id="sidebarProgress"></div>
+                </div>
+                <div class="d-flex justify-content-between small text-muted">
+                    <span id="sidebarProgressText">0%</span>
+                    <span id="sidebarCurrentWeek">Week 1</span>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <ul class="sidebar-nav list-unstyled p-0">
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#timetable" class="nav-link" data-section="timetable">
+                        <i class="fas fa-calendar me-2"></i>
+                        <span class="nav-text">Roadmap</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#progress" class="nav-link" data-section="progress">
+                        <i class="fas fa-chart-line me-2"></i>
+                        <span class="nav-text">Progress</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#projects" class="nav-link" data-section="projects">
+                        <i class="fas fa-folder-open me-2"></i>
+                        <span class="nav-text">Projects</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#notes" class="nav-link" data-section="notes">
+                        <i class="fas fa-sticky-note me-2"></i>
+                        <span class="nav-text">Notes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#resources" class="nav-link" data-section="resources">
+                        <i class="fas fa-book me-2"></i>
+                        <span class="nav-text">Resources</span>
+                    </a>
+                </li>
+            </ul>
 
             <!-- Quick Stats -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Quick Stats</h6>
-                <div class="quick-stats">
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-fire text-warning"></i>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-value" id="sidebar-streak">0</span>
-                            <span class="stat-label">Day Streak</span>
-                        </div>
+            <div class="quick-stats p-3 border-top border-secondary">
+                <h6 class="text-light mb-3">Quick Stats</h6>
+                <div class="stat-item d-flex justify-content-between mb-2">
+                    <span class="text-muted">Days:</span>
+                    <span class="text-white" id="sidebarDays">0</span>
+                </div>
+                <div class="stat-item d-flex justify-content-between mb-2">
+                    <span class="text-muted">Projects:</span>
+                    <span class="text-white" id="sidebarProjects">0</span>
+                </div>
+                <div class="stat-item d-flex justify-content-between mb-2">
+                    <span class="text-muted">Problems:</span>
+                    <span class="text-white" id="sidebarProblems">0</span>
+                </div>
+                <div class="stat-item d-flex justify-content-between">
+                    <span class="text-muted">Streak:</span>
+                    <span class="text-warning" id="sidebarStreak">
+                        <i class="fas fa-fire me-1"></i>0
+                    </span>
+                </div>
+            </div>
+
+            <!-- Current Topic -->
+            <div class="current-topic p-3" id="sidebarCurrentTopic">
+                <h6 class="text-light mb-2">Current Topic</h6>
+                <div class="topic-card bg-primary bg-opacity-25 p-2 rounded">
+                    <div class="topic-title small fw-bold" id="currentTopicTitle">Arrays & Strings</div>
+                    <div class="topic-week small text-muted" id="currentTopicWeek">Week 2, Day 3</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer p-3 border-top border-secondary mt-auto">
+            <div class="d-flex align-items-center">
+                <div class="avatar bg-primary rounded-circle d-flex align-items-center justify-content-center me-2"
+                    style="width: 32px; height: 32px;">
+                    <i class="fas fa-user text-white"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="user-name small fw-bold" id="sidebarUserName">Guest User</div>
+                    <div class="user-status small text-muted">Learning DSA</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<style>
+    .sidebar {
+        width: 280px;
+        z-index: 1040;
+        transition: transform 0.3s ease;
+        top: 0;
+        left: 0;
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    .sidebar-logo {
+        border-radius: 6px;
+    }
+
+    .sidebar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.7);
+        padding: 0.75rem 1rem;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar-nav .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-nav .nav-link.active {
+        color: white;
+        background: rgba(59, 130, 246, 0.3);
+        border-right: 3px solid #3b82f6;
+    }
+
+    .sidebar-nav .nav-link i {
+        width: 20px;
+        text-align: center;
+    }
+
+    .topic-card {
+        border-left: 3px solid #3b82f6;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            transform: translateX(-100%);
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<script>
+    class SidebarComponent {
+        constructor() {
+            this.sidebar = document.getElementById('sidebar');
+            this.toggleBtn = document.getElementById('sidebarToggle');
+            this.isCollapsed = window.innerWidth < 768;
+
+            this.init();
+        }
+
+        init() {
+            this.setupEventListeners();
+            this.updateContent();
+
+            if (this.isCollapsed) {
+                this.sidebar.classList.add('collapsed');
+            }
+        }
+
+        setupEventListeners() {
+            if (this.toggleBtn) {
+                this.toggleBtn.addEventListener('click', () => this.toggle());
+            }
+
+            // Close sidebar on mobile when clicking nav links
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) {
+                        this.hide();
+                    }
+                });
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    this.sidebar.classList.remove('collapsed');
+                    this.isCollapsed = false;
+                } else {
+                    this.sidebar.classList.add('collapsed');
+                    this.isCollapsed = true;
+                }
+            });
+        }
+
+        toggle() {
+            if (this.isCollapsed) {
+                this.show();
+            } else {
+                this.hide();
+            }
+        }
+
+        show() {
+            this.sidebar.classList.remove('collapsed');
+            this.sidebar.classList.add('show');
+            this.isCollapsed = false;
+        }
+
+        hide() {
+            this.sidebar.classList.add('collapsed');
+            this.sidebar.classList.remove('show');
+            this.isCollapsed = true;
+        }
+
+        updateContent() {
+            // Update progress
+            if (window.progressManager) {
+                const progress = window.progressManager.progressData;
+                const overallProgress = (progress.completedDays / 98) * 100;
+
+                const progressBar = document.getElementById('sidebarProgress');
+                const progressText = document.getElementById('sidebarProgressText');
+                const currentWeek = document.getElementById('sidebarCurrentWeek');
+
+                if (progressBar) progressBar.style.width = `${overallProgress}%`;
+                if (progressText) progressText.textContent = `${Math.round(overallProgress)}%`;
+                if (currentWeek) currentWeek.textContent = `Week ${progress.currentWeek}`;
+
+                // Update stats
+                const elements = {
+                    sidebarDays: progress.completedDays,
+                    sidebarProjects: progress.completedProjects,
+                    sidebarProblems: progress.solvedProblems,
+                    sidebarStreak: progress.streak
+                };
+
+                Object.entries(elements).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        if (id === 'sidebarStreak') {
+                            element.innerHTML = `<i class="fas fa-fire me-1"></i>${value}`;
+                        } else {
+                            element.textContent = value;
+                        }
+                    }
+                });
+            }
+
+            // Update current topic
+            this.updateCurrentTopic();
+
+            // Update user info
+            this.updateUserInfo();
+        }
+
+        updateCurrentTopic() {
+            if (window.dsaRoadmap && window.progressManager) {
+                const progress = window.progressManager.progressData;
+                const currentWeekData = window.dsaRoadmap[progress.currentWeek - 1];
+
+                if (currentWeekData && currentWeekData.days[progress.currentDay - 1]) {
+                    const currentDay = currentWeekData.days[progress.currentDay - 1];
+
+                    const titleEl = document.getElementById('currentTopicTitle');
+                    const weekEl = document.getElementById('currentTopicWeek');
+
+                    if (titleEl) titleEl.textContent = currentDay.topic;
+                    if (weekEl) weekEl.textContent = `Week ${progress.currentWeek}, Day ${progress.currentDay}`;
+                }
+            }
+        }
+
+        updateUserInfo() {
+            const userNameEl = document.getElementById('sidebarUserName');
+            if (userNameEl && window.currentUser) {
+                userNameEl.textContent = window.currentUser.username || window.currentUser.email || 'Guest User';
+            }
+        }
+
+        setActiveNavItem(section) {
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const activeLink = document.querySelector(`[data-section="${section}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize sidebar component
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('sidebar')) {
+            window.sidebarComponent = new SidebarComponent();
+
+            // Update sidebar when progress changes
+            document.addEventListener('progressUpdated', function () {
+                window.sidebarComponent.updateContent();
+            });
+
+            // Update active nav item when section changes
+            document.addEventListener('sectionChanged', function (e) {
+                window.sidebarComponent.setActiveNavItem(e.detail.section);
+            });
+        }
+    });
+</script>
+```
+
+### Resource Card Component (components/resource-card.html)
+
+```html
+<!-- Resource Card Component -->
+<div class="resource-card-template d-none">
+    <div class="card resource-card h-100 hover-lift">
+        <div class="card-body">
+            <div class="d-flex align-items-start mb-3">
+                <div class="resource-icon me-3" data-color="#3b82f6">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="card-title mb-1" data-field="name">Resource Name</h5>
+                    <div class="resource-meta">
+                        <span class="badge me-1" data-field="category">Category</span>
+                        <span class="badge badge-outline" data-field="difficulty">Difficulty</span>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-trophy text-success"></i>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-value" id="sidebar-completed">0</span>
-                            <span class="stat-label">Tasks Done</span>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-project-diagram text-primary"></i>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-value" id="sidebar-projects">0</span>
-                            <span class="stat-label">Projects</span>
-                        </div>
+                </div>
+                <div class="resource-rating">
+                    <div class="stars" data-field="rating">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-muted"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Current Week Progress -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Current Week</h6>
-                <div class="week-progress-sidebar">
-                    <div class="week-info">
-                        <span class="week-label" id="sidebar-week-label">Week 1</span>
-                        <span class="week-percentage" id="sidebar-week-progress">0%</span>
-                    </div>
-                    <div class="progress progress-sm">
-                        <div class="progress-bar" id="sidebar-week-bar" style="width: 0%"></div>
-                    </div>
-                    <div class="week-topic">
-                        <small class="text-muted" id="sidebar-week-topic">Programming Fundamentals</small>
-                    </div>
+            <p class="card-text text-muted mb-3" data-field="description">
+                Resource description goes here
+            </p>
+
+            <div class="resource-features mb-3" data-field="features">
+                <div class="d-flex flex-wrap gap-1">
+                    <span class="badge bg-light text-dark">Feature 1</span>
+                    <span class="badge bg-light text-dark">Feature 2</span>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Quick Actions</h6>
-                <div class="quick-actions-sidebar">
-                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="startStudySession()">
-                        <i class="fas fa-play me-1"></i>Start Study
+            <div class="resource-topics mb-3" data-field="topics">
+                <small class="text-muted">Topics: </small>
+                <div class="d-flex flex-wrap gap-1 mt-1">
+                    <span class="badge badge-topic">Arrays</span>
+                    <span class="badge badge-topic">Strings</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer bg-transparent">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="resource-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="bookmarkResource(this)" title="Bookmark">
+                        <i class="far fa-bookmark"></i>
                     </button>
-                    <button class="btn btn-outline-success btn-sm w-100 mb-2" onclick="showAddNoteModal()">
-                        <i class="fas fa-plus me-1"></i>Add Note
-                    </button>
-                    <button class="btn btn-outline-warning btn-sm w-100 mb-2" onclick="openRandomProblem()">
-                        <i class="fas fa-random me-1"></i>Random Problem
-                    </button>
-                    <button class="btn btn-outline-info btn-sm w-100" onclick="showGlossaryModal()">
-                        <i class="fas fa-search me-1"></i>Glossary
+                    <button class="btn btn-sm btn-outline-secondary" onclick="shareResource(this)" title="Share">
+                        <i class="fas fa-share"></i>
                     </button>
                 </div>
-            </div>
-
-            <!-- Recent Achievements -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Recent Achievements</h6>
-                <div class="recent-achievements" id="sidebar-achievements">
-                    <div class="achievement-item">
-                        <i class="fas fa-star text-warning me-2"></i>
-                        <span class="achievement-text">No achievements yet</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Study Timer -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Study Timer</h6>
-                <div class="timer-sidebar">
-                    <div class="timer-display-small">
-                        <span id="sidebar-timer-minutes">25</span>:<span id="sidebar-timer-seconds">00</span>
-                    </div>
-                    <div class="timer-controls-small">
-                        <button class="btn btn-success btn-sm" onclick="startTimer()" id="sidebar-timer-start">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <button class="btn btn-warning btn-sm" onclick="pauseTimer()" id="sidebar-timer-pause">
-                            <i class="fas fa-pause"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm" onclick="resetTimer()" id="sidebar-timer-reset">
-                            <i class="fas fa-stop"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings -->
-            <div class="sidebar-section">
-                <h6 class="sidebar-section-title">Settings</h6>
-                <div class="sidebar-settings">
-                    <div class="setting-item">
-                        <label class="form-check-label" for="sidebar-notifications">
-                            <i class="fas fa-bell me-2"></i>Notifications
-                        </label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="sidebar-notifications" checked>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <label class="form-check-label" for="sidebar-sound">
-                            <i class="fas fa-volume-up me-2"></i>Sound Effects
-                        </label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="sidebar-sound" checked>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <button class="btn btn-outline-secondary btn-sm w-100" onclick="toggleTheme()">
-                            <i class="fas fa-moon me-1" id="sidebar-theme-icon"></i>
-                            <span id="sidebar-theme-text">Dark Mode</span>
-                        </button>
-                    </div>
-                </div>
+                <a href="#" class="btn btn-primary btn-sm" data-field="url" target="_blank">
+                    <i class="fas fa-external-link-alt me-1"></i>Visit
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* Sidebar Component Styles */
-    .sidebar-component .offcanvas {
-        width: 320px;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
-        backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(255, 255, 255, 0.2);
+    .resource-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--border-color);
     }
 
-    [data-theme="dark"] .sidebar-component .offcanvas {
-        background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.9));
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    .resource-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
     }
 
-    .sidebar-section {
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .sidebar-section:last-child {
-        border-bottom: none;
-    }
-
-    .sidebar-section-title {
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
-    }
-
-    .sidebar-nav {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .sidebar-nav .nav-item {
-        margin-bottom: 0.5rem;
-    }
-
-    .sidebar-nav .nav-link {
+    .resource-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        color: var(--text-primary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-
-    .sidebar-nav .nav-link:hover {
-        background: rgba(99, 102, 241, 0.1);
-        color: var(--primary-color);
-    }
-
-    .sidebar-nav .nav-link.active {
-        background: var(--primary-color);
+        justify-content: center;
+        font-size: 1.25rem;
         color: white;
     }
 
-    .quick-stats {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
+    .resource-icon[data-color="#3b82f6"] {
+        background: #3b82f6;
     }
 
-    .stat-item {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+    .resource-icon[data-color="#10b981"] {
+        background: #10b981;
     }
 
-    .stat-icon {
-        margin-right: 0.75rem;
-        font-size: 1.2rem;
+    .resource-icon[data-color="#f59e0b"] {
+        background: #f59e0b;
     }
 
-    .stat-details {
-        display: flex;
-        flex-direction: column;
+    .resource-icon[data-color="#ef4444"] {
+        background: #ef4444;
     }
 
-    .stat-value {
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--text-primary);
+    .resource-icon[data-color="#8b5cf6"] {
+        background: #8b5cf6;
     }
 
-    .stat-label {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
+    .stars i {
+        font-size: 0.875rem;
     }
 
-    .week-progress-sidebar {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        padding: 1rem;
+    .badge-topic {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
     }
 
-    .week-info {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        margin-bottom: 0.5rem;
+    .badge-outline {
+        background: transparent;
+        border: 1px solid currentColor;
     }
 
-    .week-label {
-        font-weight: 600;
-        color: var(--text-primary);
+    .resource-actions .btn {
+        margin-right: 0.25rem;
     }
 
-    .week-percentage {
-        font-weight: 500;
-        color: var(--primary-color);
+    .resource-card.bookmarked .fa-bookmark {
+        color: #f59e0b;
     }
 
-    .week-topic {
-        margin-top: 0.5rem;
-    }
-
-    .quick-actions-sidebar .btn {
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-    }
-
-    .recent-achievements {
-        max-height: 150px;
-        overflow-y: auto;
-    }
-
-    .achievement-item {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem;
-        margin-bottom: 0.5rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 6px;
-        font-size: 0.85rem;
-    }
-
-    .achievement-text {
-        color: var(--text-primary);
-    }
-
-    .timer-sidebar {
-        text-align: center;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        padding: 1rem;
-    }
-
-    .timer-display-small {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        font-family: 'Courier New', monospace;
-        margin-bottom: 0.75rem;
-    }
-
-    .timer-controls-small {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .timer-controls-small .btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.8rem;
-    }
-
-    .sidebar-settings {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .setting-item {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 6px;
-    }
-
-    .setting-item label {
-        margin: 0;
-        font-size: 0.85rem;
-        color: var(--text-primary);
-    }
-
-    .form-check-input:checked {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
+    .resource-card.bookmarked .fa-bookmark:before {
+        content: "\f02e";
+        /* solid bookmark */
     }
 
     /* Responsive adjustments */
-    @media (max-width: 576px) {
-        .sidebar-component .offcanvas {
-            width: 280px;
+    @media (max-width: 768px) {
+        .resource-card .card-body {
+            padding: 1rem;
         }
 
-        .sidebar-section {
-            margin-bottom: 1.5rem;
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
         }
 
-        .timer-display-small {
-            font-size: 1.2rem;
+        .card-title {
+            font-size: 1rem;
         }
     }
 </style>
 
 <script>
-    // Sidebar Component JavaScript
-    class SidebarComponent {
+    class ResourceCardComponent {
         constructor() {
-            this.sidebar = document.getElementById('sidebarOffcanvas');
-            this.init();
+            this.bookmarkedResources = this.loadBookmarks();
         }
 
-        init() {
-            this.updateStats();
-            this.updateWeekProgress();
-            this.updateAchievements();
-            this.bindEvents();
+        createResourceCard(resource) {
+            const template = document.querySelector('.resource-card-template');
+            const card = template.cloneNode(true);
+            card.classList.remove('resource-card-template', 'd-none');
 
-            // Update every 30 seconds
-            setInterval(() => {
-                this.updateStats();
-                this.updateWeekProgress();
-            }, 30000);
+            // Set resource data
+            this.setCardData(card, resource);
+
+            return card;
         }
 
-        updateStats() {
-            if (!window.dashboard) return;
+        setCardData(card, resource) {
+            // Set basic fields
+            this.setFieldValue(card, 'name', resource.name);
+            this.setFieldValue(card, 'description', resource.description);
+            this.setFieldValue(card, 'url', resource.url);
 
-            const userData = window.dashboard.userData;
-            const stats = window.dashboard.calculateStats();
-
-            document.getElementById('sidebar-streak').textContent = userData.streak || 0;
-            document.getElementById('sidebar-completed').textContent = Object.keys(userData.completedTasks).length;
-            document.getElementById('sidebar-projects').textContent = userData.projects.length;
-        }
-
-        updateWeekProgress() {
-            if (!window.dashboard) return;
-
-            const userData = window.dashboard.userData;
-            const currentWeek = userData.currentWeek || 1;
-            const weekProgress = userData.weekProgress[currentWeek] || 0;
-
-            document.getElementById('sidebar-week-label').textContent = `Week ${currentWeek}`;
-            document.getElementById('sidebar-week-progress').textContent = `${weekProgress}%`;
-            document.getElementById('sidebar-week-bar').style.width = `${weekProgress}%`;
-
-            // Update topic
-            this.updateWeekTopic(currentWeek);
-        }
-
-        async updateWeekTopic(week) {
-            const topics = [
-                'Programming Fundamentals', 'Arrays & Strings', 'Linked Lists', 'Stacks & Queues',
-                'Hash Tables', 'Trees (Part 1)', 'Trees (Part 2) & Heaps', 'Graphs (Part 1)',
-                'Graphs (Part 2)', 'Sorting & Searching', 'Dynamic Programming', 'Advanced Algorithms',
-                'System Design', 'Competitive Programming'
-            ];
-
-            const topic = topics[week - 1] || 'Advanced Topics';
-            document.getElementById('sidebar-week-topic').textContent = topic;
-        }
-
-        updateAchievements() {
-            if (!window.dashboard) return;
-
-            const achievements = window.dashboard.userData.achievements.slice(-3);
-            const container = document.getElementById('sidebar-achievements');
-
-            if (achievements.length === 0) {
-                container.innerHTML = `
-                <div class="achievement-item">
-                    <i class="fas fa-star text-warning me-2"></i>
-                    <span class="achievement-text">No achievements yet</span>
-                </div>
-            `;
-                return;
+            // Set category badge
+            const categoryBadge = card.querySelector('[data-field="category"]');
+            if (categoryBadge) {
+                categoryBadge.textContent = this.getCategoryName(resource.category);
+                categoryBadge.className = `badge ${this.getCategoryClass(resource.category)}`;
             }
 
-            container.innerHTML = achievements.map(achievement => `
-            <div class="achievement-item">
-                <i class="fas fa-trophy text-success me-2"></i>
-                <span class="achievement-text">${achievement.name}</span>
-            </div>
-        `).join('');
-        }
-
-        bindEvents() {
-            // Navigation links
-            const navLinks = this.sidebar.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    this.setActiveNavLink(link);
-                    // Close sidebar on mobile
-                    if (window.innerWidth < 992) {
-                        bootstrap.Offcanvas.getInstance(this.sidebar)?.hide();
-                    }
-                });
-            });
-
-            // Settings switches
-            const notificationSwitch = document.getElementById('sidebar-notifications');
-            const soundSwitch = document.getElementById('sidebar-sound');
-
-            notificationSwitch?.addEventListener('change', (e) => {
-                this.updateSetting('notifications', e.target.checked);
-            });
-
-            soundSwitch?.addEventListener('change', (e) => {
-                this.updateSetting('sound', e.target.checked);
-            });
-
-            // Theme toggle
-            this.updateThemeButton();
-        }
-
-        setActiveNavLink(activeLink) {
-            const navLinks = this.sidebar.querySelectorAll('.nav-link');
-            navLinks.forEach(link => link.classList.remove('active'));
-            activeLink.classList.add('active');
-        }
-
-        updateSetting(setting, value) {
-            if (window.dashboard && window.dashboard.userData.preferences) {
-                window.dashboard.userData.preferences[setting] = value;
-                window.dashboard.saveUserData();
+            // Set difficulty badge
+            const difficultyBadge = card.querySelector('[data-field="difficulty"]');
+            if (difficultyBadge) {
+                difficultyBadge.textContent = resource.difficulty;
+                difficultyBadge.className = `badge badge-outline ${this.getDifficultyClass(resource.difficulty)}`;
             }
+
+            // Set icon and color
+            const icon = card.querySelector('.resource-icon i');
+            const iconContainer = card.querySelector('.resource-icon');
+            if (icon && iconContainer) {
+                icon.className = `fas ${resource.icon || 'fa-book'}`;
+                iconContainer.setAttribute('data-color', resource.color || '#3b82f6');
+                iconContainer.style.background = resource.color || '#3b82f6';
+            }
+
+            // Set rating
+            this.setRating(card, resource.rating || 4);
+
+            // Set features
+            this.setFeatures(card, resource.features || []);
+
+            // Set topics
+            this.setTopics(card, resource.topics || []);
+
+            // Set bookmark state
+            if (this.isBookmarked(resource.id)) {
+                card.classList.add('bookmarked');
+            }
+
+            // Set resource ID for actions
+            card.setAttribute('data-resource-id', resource.id);
         }
 
-        updateThemeButton() {
-            const themeIcon = document.getElementById('sidebar-theme-icon');
-            const themeText = document.getElementById('sidebar-theme-text');
-
-            if (themeIcon && themeText) {
-                const currentTheme = localStorage.getItem('theme') || 'light';
-                if (currentTheme === 'dark') {
-                    themeIcon.className = 'fas fa-sun me-1';
-                    themeText.textContent = 'Light Mode';
+        setFieldValue(card, field, value) {
+            const element = card.querySelector(`[data-field="${field}"]`);
+            if (element) {
+                if (field === 'url') {
+                    element.href = value;
                 } else {
-                    themeIcon.className = 'fas fa-moon me-1';
-                    themeText.textContent = 'Dark Mode';
+                    element.textContent = value;
                 }
             }
         }
 
-        show() {
-            const offcanvas = new bootstrap.Offcanvas(this.sidebar);
-            offcanvas.show();
+        setRating(card, rating) {
+            const starsContainer = card.querySelector('[data-field="rating"]');
+            if (starsContainer) {
+                const stars = starsContainer.querySelectorAll('i');
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.className = 'fas fa-star text-warning';
+                    } else {
+                        star.className = 'fas fa-star text-muted';
+                    }
+                });
+            }
         }
 
-        hide() {
-            const offcanvas = bootstrap.Offcanvas.getInstance(this.sidebar);
-            offcanvas?.hide();
+        setFeatures(card, features) {
+            const featuresContainer = card.querySelector('[data-field="features"] .d-flex');
+            if (featuresContainer && features.length > 0) {
+                featuresContainer.innerHTML = features.map(feature =>
+                    `<span class="badge bg-light text-dark">${feature}</span>`
+                ).join('');
+            } else if (featuresContainer) {
+                featuresContainer.parentElement.style.display = 'none';
+            }
+        }
+
+        setTopics(card, topics) {
+            const topicsContainer = card.querySelector('[data-field="topics"] .d-flex');
+            if (topicsContainer && topics.length > 0) {
+                topicsContainer.innerHTML = topics.slice(0, 3).map(topic =>
+                    `<span class="badge badge-topic">${this.formatTopic(topic)}</span>`
+                ).join('');
+
+                if (topics.length > 3) {
+                    topicsContainer.innerHTML += `<span class="badge badge-topic">+${topics.length - 3}</span>`;
+                }
+            } else if (topicsContainer) {
+                topicsContainer.parentElement.style.display = 'none';
+            }
+        }
+
+        getCategoryName(category) {
+            const categories = {
+                'videos': 'Video Tutorial',
+                'visualizers': 'Visualizer',
+                'practice': 'Practice',
+                'articles': 'Article',
+                'books': 'Book'
+            };
+            return categories[category] || category;
+        }
+
+        getCategoryClass(category) {
+            const classes = {
+                'videos': 'bg-danger text-white',
+                'visualizers': 'bg-info text-white',
+                'practice': 'bg-success text-white',
+                'articles': 'bg-primary text-white',
+                'books': 'bg-warning text-dark'
+            };
+            return classes[category] || 'bg-secondary text-white';
+        }
+
+        getDifficultyClass(difficulty) {
+            const classes = {
+                'beginner': 'text-success',
+                'intermediate': 'text-warning',
+                'advanced': 'text-danger',
+                'all': 'text-info'
+            };
+            return classes[difficulty] || 'text-secondary';
+        }
+
+        formatTopic(topic) {
+            return topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        // Bookmark functionality
+        loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedResources');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        saveBookmarks() {
+            localStorage.setItem('bookmarkedResources', JSON.stringify(this.bookmarkedResources));
+        }
+
+        isBookmarked(resourceId) {
+            return this.bookmarkedResources.includes(resourceId);
+        }
+
+        toggleBookmark(resourceId) {
+            const index = this.bookmarkedResources.indexOf(resourceId);
+            if (index > -1) {
+                this.bookmarkedResources.splice(index, 1);
+            } else {
+                this.bookmarkedResources.push(resourceId);
+            }
+            this.saveBookmarks();
         }
     }
 
-    // Initialize sidebar when DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        window.sidebarComponent = new SidebarComponent();
+    // Global functions for card actions
+    function bookmarkResource(button) {
+        const card = button.closest('.resource-card');
+        const resourceId = card.getAttribute('data-resource-id');
+
+        if (window.resourceCardComponent) {
+            window.resourceCardComponent.toggleBookmark(resourceId);
+            card.classList.toggle('bookmarked');
+
+            const icon = button.querySelector('i');
+            if (card.classList.contains('bookmarked')) {
+                icon.className = 'fas fa-bookmark';
+                showNotification('Resource bookmarked!', 'success');
+            } else {
+                icon.className = 'far fa-bookmark';
+                showNotification('Bookmark removed', 'info');
+            }
+        }
+    }
+
+    function shareResource(button) {
+        const card = button.closest('.resource-card');
+        const resourceName = card.querySelector('[data-field="name"]').textContent;
+        const resourceUrl = card.querySelector('[data-field="url"]').href;
+
+        if (navigator.share) {
+            navigator.share({
+                title: resourceName,
+                text: `Check out this DSA learning resource: ${resourceName}`,
+                url: resourceUrl
+            }).catch(console.error);
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(resourceUrl).then(() => {
+                showNotification('Resource link copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Unable to copy link', 'error');
+            });
+        }
+    }
+
+    // Initialize component
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.querySelector('.resource-card-template')) {
+            window.resourceCardComponent = new ResourceCardComponent();
+        }
     });
-
-    // Global function to show sidebar
-    function showSidebar() {
-        if (window.sidebarComponent) {
-            window.sidebarComponent.show();
-        }
-    }
 </script>

@@ -1,117 +1,157 @@
-<!-- Reusable Navigation Component -->
-<nav class="navbar navbar-expand-lg fixed-top glass-nav" id="main-navbar">
+<!-- Navigation Component -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="#" onclick="showPage('dashboard')">
-            <i class="fas fa-code me-2 brand-icon"></i>
-            <span class="brand-text">DSA Mastery</span>
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold navbar-brand-custom" href="#dashboard">
+            <i class="fas fa-code text-primary me-2"></i>DSA Mastery
         </a>
 
+        <!-- Mobile Toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- Navigation Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#dashboard" onclick="showPage('dashboard')" data-page="dashboard">
-                        <i class="fas fa-home me-1"></i>Dashboard
+                    <a class="nav-link nav-link-custom active" href="#dashboard" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#timetable" onclick="showPage('timetable')" data-page="timetable">
-                        <i class="fas fa-calendar me-1"></i>Timetable
+                    <a class="nav-link nav-link-custom" href="#timetable" data-section="timetable">
+                        <i class="fas fa-calendar me-1"></i>Roadmap
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#progress" onclick="showPage('progress')" data-page="progress">
+                    <a class="nav-link nav-link-custom" href="#progress" data-section="progress">
                         <i class="fas fa-chart-line me-1"></i>Progress
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#projects" onclick="showPage('projects')" data-page="projects">
-                        <i class="fas fa-project-diagram me-1"></i>Projects
+                    <a class="nav-link nav-link-custom" href="#projects" data-section="projects">
+                        <i class="fas fa-folder-open me-1"></i>Projects
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#notes" onclick="showPage('notes')" data-page="notes">
+                    <a class="nav-link nav-link-custom" href="#notes" data-section="notes">
                         <i class="fas fa-sticky-note me-1"></i>Notes
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#resources" onclick="showPage('resources')" data-page="resources">
+                    <a class="nav-link nav-link-custom" href="#resources" data-section="resources">
                         <i class="fas fa-book me-1"></i>Resources
                     </a>
                 </li>
             </ul>
 
-            <div class="d-flex align-items-center">
-                <!-- Notifications -->
-                <div class="dropdown me-2">
-                    <button class="btn btn-outline-primary position-relative" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                            id="notification-count" style="display: none;">
-                            0
-                        </span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" id="notifications-dropdown">
-                        <li>
-                            <h6 class="dropdown-header">Notifications</h6>
-                        </li>
-                        <li id="no-notifications"><span class="dropdown-item-text text-muted">No new
-                                notifications</span></li>
-                    </ul>
+            <!-- Right Side Controls -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Search -->
+                <div class="search-container d-none d-md-block">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="Search..." id="globalSearch">
+                        <button class="btn btn-outline-light" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Theme Toggle -->
-                <button class="btn btn-outline-primary me-2" onclick="toggleTheme()" title="Toggle Theme">
-                    <i class="fas fa-moon" id="theme-icon"></i>
-                </button>
-
-                <!-- Streak Display -->
-                <div class="streak-display me-3" title="Current Learning Streak">
-                    <i class="fas fa-fire text-warning"></i>
-                    <span id="streak-count">0</span>
-                </div>
-
-                <!-- User Profile -->
                 <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-1"></i>
-                        <span id="user-name">Profile</span>
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" id="themeDropdown">
+                        <i class="fas fa-palette me-1"></i>Theme
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="DSAUtils.setTheme('light')">
+                                <i class="fas fa-sun me-2"></i>Light</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="DSAUtils.setTheme('dark')">
+                                <i class="fas fa-moon me-2"></i>Dark</a></li>
                         <li>
-                            <h6 class="dropdown-header">Account</h6>
+                            <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="#" onclick="showLoginModal()">
+                        <li><a class="dropdown-item" href="#" onclick="DSAUtils.setTheme('ocean')">
+                                <i class="fas fa-water me-2"></i>Ocean</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="DSAUtils.setTheme('forest')">
+                                <i class="fas fa-tree me-2"></i>Forest</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="DSAUtils.setTheme('sunset')">
+                                <i class="fas fa-sun me-2"></i>Sunset</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="DSAUtils.setTheme('purple')">
+                                <i class="fas fa-star me-2"></i>Purple</a></li>
+                    </ul>
+                </div>
+
+                <!-- Notifications -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                            id="notificationBadge">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        <div id="notificationsList" class="max-height-200 overflow-auto">
+                            <div class="dropdown-item-text text-muted text-center py-3">
+                                No new notifications
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-center small" href="#" onclick="clearAllNotifications()">
+                            Clear All
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Streak Counter -->
+                <div class="streak-badge bg-gradient badge-gradient px-3 py-2 rounded-pill animate-pulse">
+                    <i class="fas fa-fire text-warning"></i>
+                    <span id="streakCount" class="fw-bold">0</span> Days
+                </div>
+
+                <!-- User Menu -->
+                <div class="dropdown" id="authStatus">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" id="userMenuButton">
+                        <i class="fas fa-user me-1"></i>Guest
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li id="loginOption">
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
                                 <i class="fas fa-sign-in-alt me-2"></i>Login
-                            </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout()" id="logout-item"
-                                style="display: none;">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
-                        <li>
-                            <hr class="dropdown-divider">
+                            </a>
                         </li>
-                        <li>
-                            <h6 class="dropdown-header">Data</h6>
+                        <li id="profileOption" class="d-none">
+                            <a class="dropdown-item" href="#" onclick="showProfile()">
+                                <i class="fas fa-user-circle me-2"></i>Profile
+                            </a>
                         </li>
-                        <li><a class="dropdown-item" href="#" onclick="exportData()">
-                                <i class="fas fa-download me-2"></i>Export Data
-                            </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="importData()">
-                                <i class="fas fa-upload me-2"></i>Import Data
-                            </a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#" onclick="showSettingsModal()">
+                        <li id="settingsOption" class="d-none">
+                            <a class="dropdown-item" href="#" onclick="showSettings()">
                                 <i class="fas fa-cog me-2"></i>Settings
-                            </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showAboutModal()">
-                                <i class="fas fa-info-circle me-2"></i>About
-                            </a></li>
+                            </a>
+                        </li>
+                        <li id="syncOption" class="d-none">
+                            <a class="dropdown-item" href="#" onclick="syncProgress()">
+                                <i class="fas fa-sync me-2"></i>Sync Progress
+                            </a>
+                        </li>
+                        <li id="exportOption" class="d-none">
+                            <a class="dropdown-item" href="#" onclick="exportProgress()">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </a>
+                        </li>
+                        <li id="logoutOption" class="d-none">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li id="logoutAction" class="d-none">
+                            <a class="dropdown-item text-danger" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

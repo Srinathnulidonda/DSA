@@ -1,5 +1,65 @@
 Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
 Flask-CORS==4.0.0
-PyJWT==2.8.0
+Flask-Bcrypt==1.0.1
+Flask-JWT-Extended==4.5.3
+
+# Database
+SQLAlchemy==2.0.21
+sqlite3
+
+# Date and time handling
+python-dateutil==2.8.2
+
+# JSON handling
+jsonschema==4.19.1
+
+# Environment variables
 python-dotenv==1.0.0
+
+# HTTP requests (for external API calls)
+requests==2.31.0
+
+# Data validation
+marshmallow==3.20.1
+
+# Development and testing
+pytest==7.4.2
+pytest-flask==1.2.0
+pytest-cov==4.1.0
+
+# Production server
+gunicorn==21.2.0
+
+# Security
+cryptography==41.0.4
+
+# Email functionality (optional)
+Flask-Mail==0.9.1
+
+# Rate limiting (optional)
+Flask-Limiter==3.5.0
+
+# Logging
+structlog==23.1.0
+
+# Configuration management
+click==8.1.7
+
+# Time zone handling
+pytz==2023.3
+
+# File upload handling (if needed)
+Pillow==10.0.1
+
+# Background tasks (optional)
+celery==5.3.2
+redis==5.0.0
+
+# Monitoring (optional)
+prometheus-flask-exporter==0.23.0
+
+# API documentation (optional)
+flask-restx==1.2.0
+flasgger==0.9.7.1
 gunicorn==21.2.0

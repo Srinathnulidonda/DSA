@@ -1,577 +1,824 @@
-// Progress tracking and analytics
+// Progress Management for DSA Learning Dashboard
+
 class ProgressManager {
-    constructor(dashboard) {
-        this.dashboard = dashboard;
-        this.achievements = this.initializeAchievements();
+    constructor() {
+        this.progressData = this.loadProgressData();
+        this.charts = {};
+        this.setupEventListeners();
     }
 
-    loadProgress() {
-        this.renderOverallProgress();
-        this.renderTopicMastery();
-        this.renderAchievementGallery();
-        this.calculateEstimations();
+    loadProgressData() {
+        const saved = localStorage.getItem('progressData');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        return this.getDefaultProgressData();
     }
 
-    renderOverallProgress() {
-        const container = document.getElementById('weeks-progress-grid');
-        if (!container) return;
+    getDefaultProgressData() {
+        return {
+            completedDays: 0,
+            completedProjects: 0,
+            solvedProblems: 0,
+            studyHours: 0,
+            currentWeek: 1,
+            currentDay: 1,
+            streak: 0,
+            lastStudyDate: null,
+            weekProgress: Array(14).fill(0),
+            topicMastery: {
+                arrays: 0,
+                linkedLists: 0,
+                stacks: 0,
+                queues: 0,
+                trees: 0,
+                graphs: 0,
+                sorting: 0,
+                searching: 0,
+                dynamicProgramming: 0,
+                greedy: 0,
+                backtracking: 0,
+                strings: 0
+            },
+            achievements: [],
+            dailyGoals: {
+                studyHours: 2,
+                problemsSolved: 3,
+                notesWritten: 1
+            },
+            weeklyGoals: {
+                daysStudied: 5,
+                projectsCompleted: 1,
+                topicsLearned: 2
+            },
+            skillLevels: {
+                beginner: 0,
+                intermediate: 0,
+                advanced: 0,
+                expert: 0
+            },
+            studySessions: [],
+            badges: [],
+            learningPath: 'standard'
+        };
+    }
 
-        container.innerHTML = '';
+    setupEventListeners() {
+        document.addEventListener('DOMContentLoaded', () => {
+            this.initializeCharts();
+        });
+    }
 
-        for (let week = 1; week <= 14; week++) {
-            const weekProgress = this.dashboard.userData.weekProgress[week] || 0;
-            const isCompleted = weekProgress >= 100;
-            const isInProgress = weekProgress > 0 && weekProgress < 100;
-            const isCurrent = week === this.dashboard.userData.currentWeek;
-
-            const weekSquare = document.createElement('div');
-            weekSquare.className = `week-square ${isCompleted ? 'completed' : ''} ${isInProgress ? 'in-progress' : ''} ${isCurrent ? 'current' : ''}`;
-            weekSquare.onclick = () => this.showWeekDetails(week);
-
-            weekSquare.innerHTML = `
-                <div class="week-number">W${week}</div>
-                <div class="week-percentage">${weekProgress}%</div>
-                ${isCurrent ? '<div class="current-indicator"><i class="fas fa-arrow-right"></i></div>' : ''}
-            `;
-
-            container.appendChild(weekSquare);
+    // Progress Tracking
+    updateProgress(type, value) {
+        switch (type) {
+            case 'dayCompleted':
+                this.progressData.completedDays += value;
+                this.updateWeekProgress();
+                this.updateStreak();
+                break;
+            case 'projectCompleted':
+                this.progressData.completedProjects += value;
+                break;
+            case 'problemSolved':
+                this.progressData.solvedProblems += value;
+                break;
+            case 'studyTime':
+                this.progressData.studyHours += value;
+                this.recordStudySession(value);
+                break;
+            case 'topicMastery':
+                this.updateTopicMastery(value.topic, value.progress);
+                break;
         }
 
-        this.updateOverallStats();
+        this.checkAchievements();
+        this.checkBadges();
+        this.saveProgress();
+        this.updateUI();
     }
 
-    updateOverallStats() {
-        const completedWeeks = Object.values(this.dashboard.userData.weekProgress).filter(p => p >= 100).length;
-        const totalProgress = Object.values(this.dashboard.userData.weekProgress).reduce((sum, p) => sum + p, 0) / 14;
-
-        document.getElementById('overall-percentage').textContent = `${Math.round(totalProgress)}%`;
-        document.getElementById('weeks-completed').textContent = `${completedWeeks}/14`;
-
-        // Calculate estimated completion
-        const averageWeeklyProgress = this.calculateAverageWeeklyProgress();
-        const remainingWeeks = 14 - completedWeeks;
-        const estimatedDays = averageWeeklyProgress > 0 ? Math.ceil((remainingWeeks * 7) / averageWeeklyProgress) : '--';
-
-        document.getElementById('estimated-completion').textContent = estimatedDays === '--' ? '--' : `${estimatedDays} days`;
-    }
-
-    calculateAverageWeeklyProgress() {
-        const completedWeeks = Object.values(this.dashboard.userData.weekProgress).filter(p => p >= 100).length;
-        const studyDays = Object.keys(this.dashboard.userData.completedTasks).length;
-
-        return studyDays > 0 ? completedWeeks / (studyDays / 7) : 0;
-    }
-
-    renderTopicMastery() {
-        const container = document.getElementById('topic-mastery-chart');
-        if (!container) return;
-
-        const topics = [
-            { name: 'Programming Fundamentals', week: 1 },
-            { name: 'Arrays & Strings', week: 2 },
-            { name: 'Linked Lists', week: 3 },
-            { name: 'Stacks & Queues', week: 4 },
-            { name: 'Hash Tables', week: 5 },
-            { name: 'Trees (Part 1)', week: 6 },
-            { name: 'Trees (Part 2) & Heaps', week: 7 },
-            { name: 'Graphs (Part 1)', week: 8 },
-            { name: 'Graphs (Part 2)', week: 9 },
-            { name: 'Sorting & Searching', week: 10 },
-            { name: 'Dynamic Programming', week: 11 },
-            { name: 'Advanced Algorithms', week: 12 },
-            { name: 'System Design', week: 13 },
-            { name: 'Competitive Programming', week: 14 }
-        ];
-
-        container.innerHTML = topics.map(topic => {
-            const weekProgress = this.dashboard.userData.weekProgress[topic.week] || 0;
-            const mastery = this.calculateTopicMastery(topic.week);
-
-            return `
-                <div class="topic-bar" data-week="${topic.week}">
-                    <div class="topic-info">
-                        <span class="topic-name">${topic.name}</span>
-                        <span class="topic-percentage">${mastery}%</span>
-                    </div>
-                    <div class="topic-progress">
-                        <div class="topic-progress-bar" style="width: ${mastery}%"></div>
-                    </div>
-                    <div class="topic-details mt-2">
-                        <small class="text-muted">
-                            Week ${topic.week} • 
-                            ${this.getTopicStatus(mastery)}
-                        </small>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Animate progress bars
-        setTimeout(() => {
-            container.querySelectorAll('.topic-progress-bar').forEach((bar, index) => {
-                setTimeout(() => {
-                    bar.style.transition = 'width 0.8s ease-out';
-                    bar.style.width = bar.style.width;
-                }, index * 100);
-            });
-        }, 100);
-    }
-
-    calculateTopicMastery(week) {
-        const weekProgress = this.dashboard.userData.weekProgress[week] || 0;
-        const practiceBonus = this.getPracticeBonus(week);
-        const projectBonus = this.getProjectBonus(week);
-
-        return Math.min(100, weekProgress + practiceBonus + projectBonus);
-    }
-
-    getPracticeBonus(week) {
-        // Bonus points for completing practice problems related to the week's topic
-        const weekProblems = this.getWeekPracticeProblems(week);
-        const solvedProblems = weekProblems.filter(problem =>
-            this.dashboard.userData.solvedProblems?.includes(problem.id)
-        ).length;
-
-        return Math.min(10, (solvedProblems / weekProblems.length) * 10);
-    }
-
-    getProjectBonus(week) {
-        // Bonus points for completing the week's project
-        const weekProject = this.dashboard.userData.projects.find(p => p.week === week);
-        if (weekProject && weekProject.status === 'completed') {
-            return 15;
+    updateWeekProgress() {
+        const currentWeekIndex = this.progressData.currentWeek - 1;
+        if (currentWeekIndex >= 0 && currentWeekIndex < 14) {
+            const daysInWeek = Math.min(this.progressData.completedDays - (currentWeekIndex * 7), 7);
+            this.progressData.weekProgress[currentWeekIndex] = (daysInWeek / 7) * 100;
         }
-        return 0;
     }
 
-    getWeekPracticeProblems(week) {
-        // This would normally come from a database or API
-        const problemSets = {
-            1: [{ id: 'hello-world', name: 'Hello World' }],
-            2: [{ id: 'two-sum', name: 'Two Sum' }, { id: 'reverse-string', name: 'Reverse String' }],
-            3: [{ id: 'reverse-linked-list', name: 'Reverse Linked List' }],
-            // ... more problems for each week
+    updateStreak() {
+        const today = new Date().toDateString();
+        const lastStudy = this.progressData.lastStudyDate;
+
+        if (lastStudy === today) {
+            return; // Already studied today
+        }
+
+        if (lastStudy) {
+            const lastStudyDate = new Date(lastStudy);
+            const todayDate = new Date(today);
+            const diffTime = todayDate - lastStudyDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 1) {
+                this.progressData.streak++;
+            } else if (diffDays > 1) {
+                this.progressData.streak = 1;
+            }
+        } else {
+            this.progressData.streak = 1;
+        }
+
+        this.progressData.lastStudyDate = today;
+    }
+
+    updateTopicMastery(topic, progress) {
+        if (this.progressData.topicMastery.hasOwnProperty(topic)) {
+            this.progressData.topicMastery[topic] = Math.min(100, progress);
+        }
+    }
+
+    recordStudySession(duration) {
+        const session = {
+            date: new Date().toISOString(),
+            duration: duration,
+            week: this.progressData.currentWeek,
+            day: this.progressData.currentDay
         };
 
-        return problemSets[week] || [];
+        this.progressData.studySessions.push(session);
+
+        // Keep only last 100 sessions
+        if (this.progressData.studySessions.length > 100) {
+            this.progressData.studySessions = this.progressData.studySessions.slice(-100);
+        }
     }
 
-    getTopicStatus(mastery) {
-        if (mastery >= 90) return 'Mastered';
-        if (mastery >= 70) return 'Proficient';
-        if (mastery >= 50) return 'Learning';
-        if (mastery > 0) return 'Started';
-        return 'Not Started';
-    }
-
-    renderAchievementGallery() {
-        const container = document.getElementById('achievements-gallery');
-        if (!container) return;
-
-        container.innerHTML = this.achievements.map(achievement => {
-            const isEarned = this.dashboard.userData.achievements.some(a => a.id === achievement.id);
-            const progress = this.getAchievementProgress(achievement);
-
-            return `
-                <div class="achievement-card ${isEarned ? 'earned' : ''}" 
-                     data-achievement-id="${achievement.id}"
-                     onclick="progress.showAchievementDetails('${achievement.id}')">
-                    <div class="achievement-icon">
-                        <i class="${achievement.icon}"></i>
-                    </div>
-                    <h6 class="achievement-title">${achievement.name}</h6>
-                    <p class="achievement-description">${achievement.description}</p>
-                    ${!isEarned ? `
-                        <div class="achievement-progress mt-2">
-                            <div class="progress progress-sm">
-                                <div class="progress-bar" style="width: ${progress}%"></div>
-                            </div>
-                            <small class="text-muted">${progress}% complete</small>
-                        </div>
-                    ` : `
-                        <div class="achievement-earned">
-                            <i class="fas fa-check-circle text-success"></i>
-                            <small class="text-success">Earned!</small>
-                        </div>
-                    `}
-                </div>
-            `;
-        }).join('');
-    }
-
-    initializeAchievements() {
-        return [
+    // Achievement System
+    checkAchievements() {
+        const achievements = [
             {
-                id: 'first-steps',
-                name: 'First Steps',
-                description: 'Complete your first learning task',
-                icon: 'fas fa-baby',
-                condition: () => Object.keys(this.dashboard.userData.completedTasks).length >= 1,
-                category: 'getting-started'
+                id: 'first_day',
+                title: 'First Steps',
+                description: 'Complete your first day of learning',
+                icon: 'fa-baby',
+                condition: () => this.progressData.completedDays >= 1,
+                points: 10
             },
             {
-                id: 'week-warrior',
-                name: 'Week Warrior',
-                description: 'Complete an entire week of learning',
-                icon: 'fas fa-shield-alt',
-                condition: () => Object.values(this.dashboard.userData.weekProgress).some(p => p >= 100),
-                category: 'progress'
+                id: 'week_warrior',
+                title: 'Week Warrior',
+                description: 'Complete your first week',
+                icon: 'fa-calendar-week',
+                condition: () => this.progressData.completedDays >= 7,
+                points: 50
             },
             {
-                id: 'streak-starter',
-                name: 'Streak Starter',
-                description: 'Maintain a 7-day learning streak',
-                icon: 'fas fa-fire',
-                condition: () => this.dashboard.userData.streak >= 7,
-                category: 'consistency'
+                id: 'consistency_king',
+                title: 'Consistency King',
+                description: 'Maintain a 7-day streak',
+                icon: 'fa-fire',
+                condition: () => this.progressData.streak >= 7,
+                points: 75
             },
             {
-                id: 'streak-master',
-                name: 'Streak Master',
-                description: 'Maintain a 30-day learning streak',
-                icon: 'fas fa-flame',
-                condition: () => this.dashboard.userData.streak >= 30,
-                category: 'consistency'
-            },
-            {
-                id: 'project-starter',
-                name: 'Project Starter',
-                description: 'Start your first project',
-                icon: 'fas fa-rocket',
-                condition: () => this.dashboard.userData.projects.length >= 1,
-                category: 'projects'
-            },
-            {
-                id: 'project-finisher',
-                name: 'Project Finisher',
+                id: 'project_pioneer',
+                title: 'Project Pioneer',
                 description: 'Complete your first project',
-                icon: 'fas fa-trophy',
-                condition: () => this.dashboard.userData.projects.some(p => p.status === 'completed'),
-                category: 'projects'
+                icon: 'fa-rocket',
+                condition: () => this.progressData.completedProjects >= 1,
+                points: 25
             },
             {
-                id: 'note-taker',
-                name: 'Note Taker',
-                description: 'Add 10 learning notes',
-                icon: 'fas fa-sticky-note',
-                condition: () => this.dashboard.userData.notes.length >= 10,
-                category: 'learning'
+                id: 'project_master',
+                title: 'Project Master',
+                description: 'Complete 5 projects',
+                icon: 'fa-hammer',
+                condition: () => this.progressData.completedProjects >= 5,
+                points: 100
             },
             {
-                id: 'problem-solver',
-                name: 'Problem Solver',
-                description: 'Solve 50 practice problems',
-                icon: 'fas fa-puzzle-piece',
-                condition: () => this.dashboard.userData.problemsSolved >= 50,
-                category: 'practice'
+                id: 'problem_solver',
+                title: 'Problem Solver',
+                description: 'Solve 25 problems',
+                icon: 'fa-puzzle-piece',
+                condition: () => this.progressData.solvedProblems >= 25,
+                points: 75
             },
             {
-                id: 'algorithm-master',
-                name: 'Algorithm Master',
-                description: 'Solve 200 practice problems',
-                icon: 'fas fa-brain',
-                condition: () => this.dashboard.userData.problemsSolved >= 200,
-                category: 'practice'
+                id: 'coding_ninja',
+                title: 'Coding Ninja',
+                description: 'Solve 100 problems',
+                icon: 'fa-ninja',
+                condition: () => this.progressData.solvedProblems >= 100,
+                points: 200
             },
             {
-                id: 'time-master',
-                name: 'Time Master',
-                description: 'Study for 100 hours total',
-                icon: 'fas fa-clock',
-                condition: () => this.dashboard.userData.studyTime >= 6000, // 100 hours in minutes
-                category: 'dedication'
+                id: 'time_keeper',
+                title: 'Time Keeper',
+                description: 'Study for 50 hours total',
+                icon: 'fa-clock',
+                condition: () => this.progressData.studyHours >= 50,
+                points: 150
             },
             {
-                id: 'course-completer',
-                name: 'Course Completer',
-                description: 'Complete all 14 weeks',
-                icon: 'fas fa-graduation-cap',
-                condition: () => Object.values(this.dashboard.userData.weekProgress).filter(p => p >= 100).length >= 14,
-                category: 'completion'
+                id: 'dedication',
+                title: 'Dedication',
+                description: 'Maintain a 30-day streak',
+                icon: 'fa-medal',
+                condition: () => this.progressData.streak >= 30,
+                points: 300
+            },
+            {
+                id: 'dsa_master',
+                title: 'DSA Master',
+                description: 'Complete the entire roadmap',
+                icon: 'fa-crown',
+                condition: () => this.progressData.completedDays >= 98,
+                points: 500
+            }
+        ];
+
+        achievements.forEach(achievement => {
+            if (achievement.condition() && !this.progressData.achievements.includes(achievement.id)) {
+                this.progressData.achievements.push(achievement.id);
+                this.showAchievementNotification(achievement);
+            }
+        });
+    }
+
+    checkBadges() {
+        const badges = [
+            {
+                id: 'early_bird',
+                title: 'Early Bird',
+                description: 'Study before 8 AM',
+                icon: 'fa-sun',
+                condition: () => this.isEarlyBirdSession()
+            },
+            {
+                id: 'night_owl',
+                title: 'Night Owl',
+                description: 'Study after 10 PM',
+                icon: 'fa-moon',
+                condition: () => this.isNightOwlSession()
+            },
+            {
+                id: 'weekend_warrior',
+                title: 'Weekend Warrior',
+                description: 'Study on weekends',
+                icon: 'fa-calendar-weekend',
+                condition: () => this.isWeekendSession()
             },
             {
                 id: 'perfectionist',
-                name: 'Perfectionist',
-                description: 'Complete a week with 100% score',
-                icon: 'fas fa-star',
-                condition: () => Object.values(this.dashboard.userData.weekProgress).some(p => p >= 100),
-                category: 'excellence'
+                title: 'Perfectionist',
+                description: 'Complete a week with 100% accuracy',
+                icon: 'fa-star',
+                condition: () => this.isPerfectWeek()
             }
         ];
+
+        badges.forEach(badge => {
+            if (badge.condition() && !this.progressData.badges.includes(badge.id)) {
+                this.progressData.badges.push(badge.id);
+            }
+        });
     }
 
-    getAchievementProgress(achievement) {
-        switch (achievement.id) {
-            case 'first-steps':
-                return Math.min(100, (Object.keys(this.dashboard.userData.completedTasks).length / 1) * 100);
-            case 'week-warrior':
-                const maxWeekProgress = Math.max(...Object.values(this.dashboard.userData.weekProgress), 0);
-                return Math.min(100, maxWeekProgress);
-            case 'streak-starter':
-                return Math.min(100, (this.dashboard.userData.streak / 7) * 100);
-            case 'streak-master':
-                return Math.min(100, (this.dashboard.userData.streak / 30) * 100);
-            case 'project-starter':
-                return Math.min(100, (this.dashboard.userData.projects.length / 1) * 100);
-            case 'project-finisher':
-                const completedProjects = this.dashboard.userData.projects.filter(p => p.status === 'completed').length;
-                return Math.min(100, (completedProjects / 1) * 100);
-            case 'note-taker':
-                return Math.min(100, (this.dashboard.userData.notes.length / 10) * 100);
-            case 'problem-solver':
-                return Math.min(100, (this.dashboard.userData.problemsSolved / 50) * 100);
-            case 'algorithm-master':
-                return Math.min(100, (this.dashboard.userData.problemsSolved / 200) * 100);
-            case 'time-master':
-                return Math.min(100, (this.dashboard.userData.studyTime / 6000) * 100);
-            case 'course-completer':
-                const completedWeeks = Object.values(this.dashboard.userData.weekProgress).filter(p => p >= 100).length;
-                return Math.min(100, (completedWeeks / 14) * 100);
-            case 'perfectionist':
-                const maxProgress = Math.max(...Object.values(this.dashboard.userData.weekProgress), 0);
-                return Math.min(100, maxProgress);
-            default:
-                return 0;
-        }
+    isEarlyBirdSession() {
+        const now = new Date();
+        return now.getHours() < 8;
     }
 
-    showWeekDetails(week) {
-        const weekProgress = this.dashboard.userData.weekProgress[week] || 0;
-        const weekData = this.getWeekSummary(week);
+    isNightOwlSession() {
+        const now = new Date();
+        return now.getHours() >= 22;
+    }
 
-        const modal = document.createElement('div');
-        modal.className = 'modal fade';
-        modal.innerHTML = `
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-chart-line me-2"></i>Week ${week} Progress
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    isWeekendSession() {
+        const now = new Date();
+        return now.getDay() === 0 || now.getDay() === 6;
+    }
+
+    isPerfectWeek() {
+        const currentWeekIndex = this.progressData.currentWeek - 1;
+        return this.progressData.weekProgress[currentWeekIndex] === 100;
+    }
+
+    showAchievementNotification(achievement) {
+        // Create achievement popup
+        const popup = document.createElement('div');
+        popup.className = 'achievement-notification position-fixed top-50 start-50 translate-middle';
+        popup.innerHTML = `
+            <div class="card border-warning shadow-lg" style="min-width: 300px;">
+                <div class="card-body text-center">
+                    <div class="achievement-icon text-warning mb-3">
+                        <i class="fas ${achievement.icon} fa-3x"></i>
                     </div>
-                    <div class="modal-body">
-                        <div class="week-progress-details">
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="progress-circle-large" data-percentage="${weekProgress}">
-                                        <div class="text-center">
-                                            <h3 class="text-primary">${weekProgress}%</h3>
-                                            <p class="text-muted">Complete</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Week Summary</h6>
-                                    <ul class="list-unstyled">
-                                        <li><i class="fas fa-check-circle text-success me-2"></i>Tasks: ${weekData.completedTasks}/${weekData.totalTasks}</li>
-                                        <li><i class="fas fa-project-diagram text-warning me-2"></i>Project: ${weekData.projectStatus}</li>
-                                        <li><i class="fas fa-clock text-info me-2"></i>Study Time: ${weekData.studyTime}h</li>
-                                        <li><i class="fas fa-trophy text-primary me-2"></i>Achievements: ${weekData.achievements}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <div class="week-breakdown">
-                                <h6>Daily Breakdown</h6>
-                                <div class="daily-progress">
-                                    ${this.renderDailyBreakdown(week)}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="dashboard.showPage('timetable'); bootstrap.Modal.getInstance(this.closest('.modal')).hide();">
-                            View Week Details
+                    <h5 class="card-title text-warning">🎉 Achievement Unlocked!</h5>
+                    <h6 class="card-subtitle mb-2">${achievement.title}</h6>
+                    <p class="card-text small text-muted">${achievement.description}</p>
+                    <div class="badge bg-primary">+${achievement.points} XP</div>
+                    <div class="mt-3">
+                        <button class="btn btn-warning btn-sm" onclick="this.closest('.achievement-notification').remove()">
+                            Awesome!
                         </button>
                     </div>
                 </div>
             </div>
         `;
 
-        document.body.appendChild(modal);
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
+        document.body.appendChild(popup);
+        popup.style.zIndex = '9999';
 
-        modal.addEventListener('hidden.bs.modal', () => {
-            modal.remove();
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (popup.parentNode) {
+                popup.remove();
+            }
+        }, 5000);
+
+        // Add celebration effect
+        this.triggerCelebration();
+    }
+
+    triggerCelebration() {
+        // Create confetti effect
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                this.createConfetti();
+            }, i * 50);
+        }
+    }
+
+    createConfetti() {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: ${['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'][Math.floor(Math.random() * 5)]};
+            left: ${Math.random() * 100}vw;
+            top: -10px;
+            z-index: 10000;
+            pointer-events: none;
+            border-radius: 50%;
+        `;
+
+        document.body.appendChild(confetti);
+
+        const fallDuration = Math.random() * 3000 + 2000;
+        confetti.animate([
+            { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+            { transform: `translateY(100vh) rotate(360deg)`, opacity: 0 }
+        ], {
+            duration: fallDuration,
+            easing: 'linear'
+        }).onfinish = () => confetti.remove();
+    }
+
+    // Chart Initialization
+    initializeCharts() {
+        this.createOverallProgressChart();
+        this.createTopicMasteryChart();
+        this.createWeeklyProgressChart();
+        this.createStudyTimeChart();
+    }
+
+    createOverallProgressChart() {
+        const ctx = document.getElementById('overallProgressChart');
+        if (!ctx) return;
+
+        const totalDays = 98; // 14 weeks * 7 days
+        const completionPercentage = (this.progressData.completedDays / totalDays) * 100;
+
+        this.charts.overallProgress = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'Remaining'],
+                datasets: [{
+                    data: [completionPercentage, 100 - completionPercentage],
+                    backgroundColor: ['#10b981', '#e5e7eb'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.label}: ${context.parsed.toFixed(1)}%`;
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
         });
     }
 
-    getWeekSummary(week) {
-        const weekKey = `week-${week}`;
-        const allTasks = Object.keys(this.dashboard.userData.completedTasks);
-        const weekTasks = allTasks.filter(task => task.includes(weekKey));
-        const completedWeekTasks = weekTasks.filter(task => this.dashboard.userData.completedTasks[task]);
+    createTopicMasteryChart() {
+        const ctx = document.getElementById('topicMasteryChart');
+        if (!ctx) return;
 
-        const weekProject = this.dashboard.userData.projects.find(p => p.week === week);
-        const projectStatus = weekProject ? weekProject.status : 'not-started';
+        const topics = Object.keys(this.progressData.topicMastery);
+        const mastery = Object.values(this.progressData.topicMastery);
+
+        this.charts.topicMastery = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: topics.map(topic => topic.charAt(0).toUpperCase() + topic.slice(1)),
+                datasets: [{
+                    label: 'Mastery Level',
+                    data: mastery,
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgb(59, 130, 246)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgb(59, 130, 246)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(59, 130, 246)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 25
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    createWeeklyProgressChart() {
+        const ctx = document.getElementById('weeklyProgressChart');
+        if (!ctx) return;
+
+        const weeks = Array.from({ length: 14 }, (_, i) => `Week ${i + 1}`);
+
+        this.charts.weeklyProgress = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: weeks,
+                datasets: [{
+                    label: 'Progress %',
+                    data: this.progressData.weekProgress,
+                    backgroundColor: weeks.map((_, index) =>
+                        index < this.progressData.currentWeek - 1 ? '#10b981' :
+                            index === this.progressData.currentWeek - 1 ? '#3b82f6' : '#e5e7eb'
+                    ),
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function (value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `Progress: ${context.parsed.y}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createStudyTimeChart() {
+        const ctx = document.getElementById('studyTimeChart');
+        if (!ctx) return;
+
+        // Get last 7 days of study sessions
+        const last7Days = this.getLast7DaysStudyTime();
+
+        this.charts.studyTime = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: last7Days.labels,
+                datasets: [{
+                    label: 'Study Hours',
+                    data: last7Days.data,
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return value + 'h';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    getLast7DaysStudyTime() {
+        const last7Days = [];
+        const today = new Date();
+
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+
+            const dateString = date.toISOString().split('T')[0];
+            const dayStudy = this.progressData.studySessions
+                .filter(session => session.date.startsWith(dateString))
+                .reduce((total, session) => total + session.duration, 0);
+
+            last7Days.push({
+                label: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                data: dayStudy
+            });
+        }
 
         return {
-            completedTasks: completedWeekTasks.length,
-            totalTasks: Math.max(weekTasks.length, 15), // Assume 15 tasks per week if no data
-            projectStatus: projectStatus.replace('-', ' '),
-            studyTime: Math.round((this.dashboard.userData.studyTime || 0) / 60), // Convert minutes to hours
-            achievements: this.dashboard.userData.achievements.filter(a => a.weekEarned === week).length
+            labels: last7Days.map(day => day.label),
+            data: last7Days.map(day => day.data)
         };
     }
 
-    renderDailyBreakdown(week) {
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-        return days.map(day => {
-            const dayKey = `week-${week}-${day.toLowerCase()}`;
-            const dayTasks = [
-                `${dayKey}-topic`,
-                `${dayKey}-activities`,
-                `${dayKey}-project`
-            ];
-
-            const completedDayTasks = dayTasks.filter(task =>
-                this.dashboard.userData.completedTasks[task]
-            ).length;
-
-            const dayProgress = Math.round((completedDayTasks / dayTasks.length) * 100);
-
-            return `
-                <div class="daily-item mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="day-name">${day}</span>
-                        <span class="day-progress">${dayProgress}%</span>
-                    </div>
-                    <div class="progress progress-sm">
-                        <div class="progress-bar" style="width: ${dayProgress}%"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+    // Goal Management
+    setDailyGoal(type, value) {
+        this.progressData.dailyGoals[type] = value;
+        this.saveProgress();
     }
 
-    showAchievementDetails(achievementId) {
-        const achievement = this.achievements.find(a => a.id === achievementId);
-        if (!achievement) return;
+    setWeeklyGoal(type, value) {
+        this.progressData.weeklyGoals[type] = value;
+        this.saveProgress();
+    }
 
-        const isEarned = this.dashboard.userData.achievements.some(a => a.id === achievementId);
-        const progress = this.getAchievementProgress(achievement);
+    checkDailyGoals() {
+        const today = new Date().toDateString();
+        const todayStudy = this.progressData.studySessions
+            .filter(session => new Date(session.date).toDateString() === today)
+            .reduce((total, session) => total + session.duration, 0);
 
-        const modal = document.createElement('div');
-        modal.className = 'modal fade';
-        modal.innerHTML = `
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="${achievement.icon} me-2"></i>${achievement.name}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <div class="achievement-icon-large mb-3">
-                            <i class="${achievement.icon}" style="font-size: 4rem; color: ${isEarned ? 'var(--success-color)' : 'var(--text-secondary)'};"></i>
-                        </div>
-                        <h4>${achievement.name}</h4>
-                        <p class="text-muted">${achievement.description}</p>
-                        
-                        ${!isEarned ? `
-                            <div class="achievement-progress-details">
-                                <div class="progress mb-2">
-                                    <div class="progress-bar" style="width: ${progress}%"></div>
-                                </div>
-                                <p><strong>${progress}%</strong> complete</p>
-                                <small class="text-muted">${this.getProgressHint(achievement)}</small>
-                            </div>
-                        ` : `
-                            <div class="achievement-earned-details">
-                                <div class="badge bg-success fs-6 mb-2">
-                                    <i class="fas fa-check-circle me-1"></i>Achieved!
-                                </div>
-                                <p class="text-success">Congratulations on earning this achievement!</p>
-                            </div>
-                        `}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        `;
+        return {
+            studyHours: todayStudy >= this.progressData.dailyGoals.studyHours,
+            problemsSolved: this.getTodayProblemsCount() >= this.progressData.dailyGoals.problemsSolved,
+            notesWritten: this.getTodayNotesCount() >= this.progressData.dailyGoals.notesWritten
+        };
+    }
 
-        document.body.appendChild(modal);
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
+    getTodayProblemsCount() {
+        // This would need to be implemented based on your problem tracking
+        return 0;
+    }
 
-        modal.addEventListener('hidden.bs.modal', () => {
-            modal.remove();
+    getTodayNotesCount() {
+        // This would need to be implemented based on your notes tracking
+        return 0;
+    }
+
+    // Analytics
+    getAnalytics() {
+        const totalDays = 98;
+        const avgDailyStudy = this.progressData.studyHours / Math.max(this.progressData.completedDays, 1);
+        const projectedCompletion = this.getProjectedCompletion();
+
+        return {
+            totalProgress: (this.progressData.completedDays / totalDays) * 100,
+            currentStreak: this.progressData.streak,
+            avgDailyStudy: avgDailyStudy,
+            totalStudyHours: this.progressData.studyHours,
+            problemsPerHour: this.progressData.solvedProblems / Math.max(this.progressData.studyHours, 1),
+            projectedCompletion: projectedCompletion,
+            topicMasteryAvg: Object.values(this.progressData.topicMastery).reduce((a, b) => a + b, 0) / Object.keys(this.progressData.topicMastery).length
+        };
+    }
+
+    getProjectedCompletion() {
+        if (this.progressData.completedDays === 0) return null;
+
+        const daysElapsed = this.progressData.completedDays;
+        const totalDays = 98;
+        const avgDaysPerWeek = daysElapsed / Math.max(this.progressData.currentWeek - 1, 1);
+        const remainingDays = totalDays - daysElapsed;
+        const projectedWeeks = remainingDays / avgDaysPerWeek;
+
+        const completionDate = new Date();
+        completionDate.setDate(completionDate.getDate() + (projectedWeeks * 7));
+
+        return completionDate;
+    }
+
+    // UI Updates
+    updateUI() {
+        this.updateDashboardStats();
+        this.updateProgressCharts();
+        this.updateProgressSection();
+    }
+
+    updateDashboardStats() {
+        const elements = {
+            completedDays: document.getElementById('completedDays'),
+            completedProjects: document.getElementById('completedProjects'),
+            solvedProblems: document.getElementById('solvedProblems'),
+            studyHours: document.getElementById('studyHours'),
+            streakCount: document.getElementById('streakCount')
+        };
+
+        Object.keys(elements).forEach(key => {
+            if (elements[key]) {
+                const value = key === 'streakCount' ? this.progressData.streak : this.progressData[key];
+                elements[key].textContent = value;
+            }
         });
     }
 
-    getProgressHint(achievement) {
-        switch (achievement.id) {
-            case 'first-steps':
-                return 'Complete any learning task to earn this achievement.';
-            case 'week-warrior':
-                return 'Complete all tasks in any week to earn this achievement.';
-            case 'streak-starter':
-                return `Keep studying daily! Current streak: ${this.dashboard.userData.streak} days.`;
-            case 'streak-master':
-                return `Maintain your streak for ${30 - this.dashboard.userData.streak} more days.`;
-            case 'project-starter':
-                return 'Add your first project to earn this achievement.';
-            case 'project-finisher':
-                return 'Complete any project to earn this achievement.';
-            case 'note-taker':
-                return `Add ${10 - this.dashboard.userData.notes.length} more notes.`;
-            case 'problem-solver':
-                return `Solve ${50 - this.dashboard.userData.problemsSolved} more problems.`;
-            case 'algorithm-master':
-                return `Solve ${200 - this.dashboard.userData.problemsSolved} more problems.`;
-            case 'time-master':
-                const hoursLeft = Math.ceil((6000 - this.dashboard.userData.studyTime) / 60);
-                return `Study for ${hoursLeft} more hours.`;
-            case 'course-completer':
-                const weeksLeft = 14 - Object.values(this.dashboard.userData.weekProgress).filter(p => p >= 100).length;
-                return `Complete ${weeksLeft} more weeks.`;
-            default:
-                return 'Keep learning to unlock this achievement!';
+    updateProgressCharts() {
+        Object.values(this.charts).forEach(chart => {
+            if (chart) {
+                chart.update();
+            }
+        });
+    }
+
+    updateProgressSection() {
+        this.loadProgressCharts();
+        this.displayAchievements();
+        this.displayProgressTimeline();
+    }
+
+    loadProgressCharts() {
+        // Reinitialize charts if they exist
+        if (document.getElementById('overallProgressChart')) {
+            this.createOverallProgressChart();
+        }
+        if (document.getElementById('topicMasteryChart')) {
+            this.createTopicMasteryChart();
         }
     }
 
-    calculateEstimations() {
-        const completedTasks = Object.keys(this.dashboard.userData.completedTasks).length;
-        const totalTasks = 14 * 15; // Approximate 15 tasks per week
-        const completionRate = completedTasks / Math.max(1, this.dashboard.userData.streak || 1);
+    displayAchievements() {
+        const container = document.getElementById('achievementsBadges');
+        if (!container) return;
 
-        const estimatedDaysToCompletion = Math.ceil((totalTasks - completedTasks) / completionRate);
+        const achievements = this.getAllAchievements();
+        const earned = achievements.filter(a => this.progressData.achievements.includes(a.id));
 
-        // Update the estimation display
-        const estimationElement = document.getElementById('estimated-completion');
-        if (estimationElement) {
-            estimationElement.textContent = isFinite(estimatedDaysToCompletion) ?
-                `${estimatedDaysToCompletion} days` : '--';
+        container.innerHTML = earned.map(achievement => `
+            <div class="achievement-badge earned">
+                <div class="achievement-icon">
+                    <i class="fas ${achievement.icon}"></i>
+                </div>
+                <div class="achievement-info">
+                    <h6>${achievement.title}</h6>
+                    <small>${achievement.description}</small>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    getAllAchievements() {
+        return [
+            { id: 'first_day', title: 'First Steps', description: 'Complete your first day', icon: 'fa-baby' },
+            { id: 'week_warrior', title: 'Week Warrior', description: 'Complete your first week', icon: 'fa-calendar-week' },
+            { id: 'consistency_king', title: 'Consistency King', description: 'Maintain a 7-day streak', icon: 'fa-fire' },
+            { id: 'project_pioneer', title: 'Project Pioneer', description: 'Complete your first project', icon: 'fa-rocket' },
+            { id: 'project_master', title: 'Project Master', description: 'Complete 5 projects', icon: 'fa-hammer' },
+            { id: 'problem_solver', title: 'Problem Solver', description: 'Solve 25 problems', icon: 'fa-puzzle-piece' },
+            { id: 'coding_ninja', title: 'Coding Ninja', description: 'Solve 100 problems', icon: 'fa-ninja' },
+            { id: 'time_keeper', title: 'Time Keeper', description: 'Study for 50 hours', icon: 'fa-clock' },
+            { id: 'dedication', title: 'Dedication', description: 'Maintain a 30-day streak', icon: 'fa-medal' },
+            { id: 'dsa_master', title: 'DSA Master', description: 'Complete the roadmap', icon: 'fa-crown' }
+        ];
+    }
+
+    displayProgressTimeline() {
+        const container = document.getElementById('progressTimeline');
+        if (!container) return;
+
+        const recentActivities = this.progressData.studySessions.slice(-10).reverse();
+
+        container.innerHTML = `
+            <div class="timeline-enhanced">
+                ${recentActivities.map(session => `
+                    <div class="timeline-item-enhanced">
+                        <div class="timeline-content-enhanced">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Study Session</h6>
+                                    <small class="text-muted">Week ${session.week}, Day ${session.day}</small>
+                                </div>
+                                <div class="text-primary">
+                                    <strong>${session.duration}h</strong>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                ${new Date(session.date).toLocaleDateString()}
+                            </small>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // Data Management
+    saveProgress() {
+        localStorage.setItem('progressData', JSON.stringify(this.progressData));
+
+        // Also save to cloud if available
+        if (window.dsaAPI && window.currentUser) {
+            window.dsaAPI.saveProgress(this.progressData).catch(console.error);
+        }
+    }
+
+    exportProgress() {
+        const dataStr = JSON.stringify(this.progressData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    importProgress(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                this.progressData = { ...this.getDefaultProgressData(), ...importedData };
+                this.saveProgress();
+                this.updateUI();
+                showNotification('Progress imported successfully!', 'success');
+            } catch (error) {
+                showNotification('Failed to import progress data', 'danger');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    resetProgress() {
+        if (confirm('Are you sure you want to reset all progress? This action cannot be undone.')) {
+            this.progressData = this.getDefaultProgressData();
+            this.saveProgress();
+            this.updateUI();
+            showNotification('Progress reset successfully', 'info');
         }
     }
 }
 
-// Global functions
-function showWeekDetails(week) {
-    window.progress.showWeekDetails(week);
+// Create global progress manager instance
+const progressManager = new ProgressManager();
+
+// Make available globally
+window.progressManager = progressManager;
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ProgressManager;
 }
-
-function showAchievementDetails(achievementId) {
-    window.progress.showAchievementDetails(achievementId);
-}
-
-// Initialize when dashboard is ready
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (window.dashboard) {
-            window.progress = new ProgressManager(window.dashboard);
-
-            // Override dashboard's loadProgress method
-            window.dashboard.loadProgress = () => {
-                window.progress.loadProgress();
-            };
-        }
-    }, 100);
-});

@@ -1,443 +1,552 @@
-// Timetable management
-class TimetableManager {
-    constructor(dashboard) {
-        this.dashboard = dashboard;
-        this.currentWeek = 1;
-        this.weekData = {};
-        this.calendarView = false;
-    }
-
-    async loadTimetable() {
-        await this.populateWeekSelector();
-        await this.loadWeekData(this.dashboard.userData.currentWeek);
-        this.renderWeekOverview();
-        this.renderDailySchedule();
-    }
-
-    async populateWeekSelector() {
-        const selector = document.getElementById('week-selector');
-        if (!selector) return;
-
-        selector.innerHTML = '';
-        for (let i = 1; i <= 14; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = `Week ${i}`;
-            if (i === this.dashboard.userData.currentWeek) {
-                option.selected = true;
+// DSA Roadmap Data
+const dsaRoadmap = [
+    {
+        week: 1,
+        title: "Programming Fundamentals",
+        description: "Set up your development environment and master the basics",
+        days: [
+            {
+                day: 1,
+                topic: "Environment Setup",
+                activities: "Install Python/C++, Git setup, GitHub account",
+                resources: [
+                    { name: "Python.org", url: "https://python.org", type: "documentation" },
+                    { name: "GitHub Guides", url: "https://guides.github.com", type: "tutorial" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            },
+            {
+                day: 2,
+                topic: "Basic Syntax",
+                activities: "Variables, data types, operators, I/O",
+                resources: [
+                    { name: "CS Dojo Python Tutorial", url: "https://youtube.com/c/CSDojo", type: "video" },
+                    { name: "Programiz Python", url: "https://programiz.com/python-programming", type: "tutorial" }
+                ],
+                time: "2 hrs",
+                practiceLinks: [
+                    { name: "HackerRank Python Domain", url: "https://hackerrank.com/domains/python" }
+                ]
+            },
+            {
+                day: 3,
+                topic: "Control Flow",
+                activities: "If-else, loops, break/continue",
+                resources: [
+                    { name: "W3Schools Python", url: "https://w3schools.com/python", type: "tutorial" },
+                    { name: "Python Tutor", url: "http://pythontutor.com", type: "visualizer" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            },
+            {
+                day: 4,
+                topic: "Functions",
+                activities: "Parameters, return values, scope",
+                resources: [
+                    { name: "CS Dojo Functions", url: "https://youtube.com/watch?v=9Os0o3wzS_I", type: "video" },
+                    { name: "Real Python", url: "https://realpython.com", type: "article" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
             }
-            selector.appendChild(option);
+        ],
+        project: {
+            title: "Calculator App",
+            description: "Build a scientific calculator with memory functions",
+            features: [
+                "Basic operations",
+                "Memory store/recall",
+                "Advanced functions (power, sqrt, trigonometry)"
+            ],
+            time: "6 hrs"
+        }
+    },
+    {
+        week: 2,
+        title: "Arrays & Strings",
+        description: "Master the fundamentals of arrays and string manipulation",
+        days: [
+            {
+                day: 1,
+                topic: "Arrays Basics",
+                activities: "Create, access, update, iterate",
+                resources: [
+                    { name: "VisuAlgo Arrays", url: "https://visualgo.net/en/array", type: "visualizer" },
+                    { name: "CS Dojo Arrays", url: "https://youtube.com/c/CSDojo", type: "video" }
+                ],
+                time: "2 hrs",
+                practiceLinks: [
+                    { name: "LeetCode Array Explore", url: "https://leetcode.com/explore/learn/card/array-and-string/" }
+                ]
+            },
+            {
+                day: 2,
+                topic: "Array Operations",
+                activities: "Searching, sorting basics, reversing",
+                resources: [
+                    { name: "USFCA Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/Algorithms.html", type: "visualizer" },
+                    { name: "GeeksforGeeks Arrays", url: "https://geeksforgeeks.org/array-data-structure/", type: "article" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            },
+            {
+                day: 3,
+                topic: "String Manipulation",
+                activities: "Methods, slicing, pattern matching",
+                resources: [
+                    { name: "Python String Methods", url: "https://docs.python.org/3/library/stdtypes.html#string-methods", type: "documentation" },
+                    { name: "GeeksforGeeks Strings", url: "https://geeksforgeeks.org/string-data-structure/", type: "article" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            },
+            {
+                day: 4,
+                topic: "2D Arrays",
+                activities: "Matrix operations, traversal patterns",
+                resources: [
+                    { name: "VisuAlgo 2D Arrays", url: "https://visualgo.net/en/array", type: "visualizer" },
+                    { name: "Programiz 2D Arrays", url: "https://programiz.com/c-programming/c-arrays", type: "tutorial" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            }
+        ],
+        project: {
+            title: "Text Analytics Tool",
+            description: "Build tool to analyze text files",
+            features: [
+                "Word frequency counter",
+                "Find longest/shortest words",
+                "Pattern search & replace",
+                "Generate statistics report"
+            ],
+            time: "6 hrs"
+        }
+    },
+    // Continue with remaining weeks...
+    {
+        week: 3,
+        title: "Linked Lists",
+        description: "Learn dynamic data structures and pointer manipulation",
+        days: [
+            {
+                day: 1,
+                topic: "Singly Linked Lists",
+                activities: "Node structure, traversal",
+                resources: [
+                    { name: "VisuAlgo Linked List", url: "https://visualgo.net/en/list", type: "visualizer" },
+                    { name: "CS Dojo Linked Lists", url: "https://youtube.com/c/CSDojo", type: "video" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            },
+            {
+                day: 2,
+                topic: "List Operations",
+                activities: "Insert, delete, search",
+                resources: [
+                    { name: "USFCA Linked List Viz", url: "https://www.cs.usfca.edu/~galles/visualization/Algorithms.html", type: "visualizer" },
+                    { name: "mycodeschool YouTube", url: "https://youtube.com/user/mycodeschool", type: "video" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            },
+            {
+                day: 3,
+                topic: "Advanced Operations",
+                activities: "Reverse, detect cycle, merge",
+                resources: [
+                    { name: "LeetCode #206", url: "https://leetcode.com/problems/reverse-linked-list/", type: "practice" },
+                    { name: "Back To Back SWE", url: "https://youtube.com/c/BackToBackSWE", type: "video" }
+                ],
+                time: "2 hrs",
+                practiceLinks: [
+                    { name: "LeetCode #141", url: "https://leetcode.com/problems/linked-list-cycle/" }
+                ]
+            },
+            {
+                day: 4,
+                topic: "Doubly & Circular Lists",
+                activities: "Bidirectional traversal, applications",
+                resources: [
+                    { name: "GeeksforGeeks", url: "https://geeksforgeeks.org/doubly-linked-list/", type: "article" },
+                    { name: "VisuAlgo Doubly LL", url: "https://visualgo.net/en/list", type: "visualizer" }
+                ],
+                time: "2 hrs",
+                practiceLinks: []
+            }
+        ],
+        project: {
+            title: "Music Playlist Manager",
+            description: "Build a music playlist system",
+            features: [
+                "Add/remove songs",
+                "Play next/previous",
+                "Shuffle feature",
+                "Loop playlist option"
+            ],
+            time: "6 hrs"
         }
     }
+    // Add remaining 11 weeks following the same pattern...
+];
 
-    async loadWeekData(weekNumber) {
-        try {
-            const response = await fetch(`timetable/week-${weekNumber.toString().padStart(2, '0')}.json`);
-            if (response.ok) {
-                this.weekData = await response.json();
-                this.currentWeek = weekNumber;
-                return this.weekData;
-            } else {
-                throw new Error(`Failed to load week ${weekNumber} data`);
-            }
-        } catch (error) {
-            console.error('Error loading week data:', error);
-            this.weekData = this.getFallbackWeekData(weekNumber);
-            return this.weekData;
-        }
-    }
+// Generate Week Tabs
+function generateWeekTabs() {
+    const weekTabs = document.getElementById('weekTabs');
+    if (!weekTabs) return;
 
-    getFallbackWeekData(weekNumber) {
-        // Fallback data structure
-        const topics = [
-            'Programming Fundamentals', 'Arrays & Strings', 'Linked Lists', 'Stacks & Queues',
-            'Hash Tables', 'Trees (Part 1)', 'Trees (Part 2) & Heaps', 'Graphs (Part 1)',
-            'Graphs (Part 2)', 'Sorting & Searching', 'Dynamic Programming', 'Advanced Algorithms',
-            'System Design', 'Competitive Programming'
-        ];
+    weekTabs.innerHTML = dsaRoadmap.map((week, index) => `
+        <button class="week-tab ${index === 0 ? 'active' : ''}" 
+                onclick="showWeek(${week.week})" 
+                data-week="${week.week}">
+            Week ${week.week}
+            <div class="small">
+                ${getWeekProgress(week.week)}% Complete
+            </div>
+        </button>
+    `).join('');
+}
 
-        return {
-            week: weekNumber,
-            title: `Week ${weekNumber}: ${topics[weekNumber - 1] || 'Advanced Topics'}`,
-            description: `Master ${topics[weekNumber - 1] || 'advanced concepts'} through hands-on practice and projects.`,
-            project: `Project ${weekNumber}: Build a practical application`,
-            days: this.generateWeekDays(weekNumber, topics[weekNumber - 1] || 'Advanced Topics')
-        };
-    }
+// Show Week Content
+function showWeek(weekNumber) {
+    const weekData = dsaRoadmap.find(w => w.week === weekNumber);
+    if (!weekData) return;
 
-    generateWeekDays(weekNumber, mainTopic) {
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        const dayActivities = [
-            'Learn fundamentals and setup environment',
-            'Practice basic operations and methods',
-            'Implement advanced techniques',
-            'Work on practical applications',
-            'Start project implementation',
-            'Continue project development',
-            'Complete project and review'
-        ];
+    // Update active tab
+    document.querySelectorAll('.week-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelector(`[data-week="${weekNumber}"]`).classList.add('active');
 
-        return days.map((day, index) => ({
-            day,
-            topic: index < 5 ? `${mainTopic} - Day ${index + 1}` : 'Project Work',
-            activities: dayActivities[index],
-            time: '2 hrs',
-            resources: this.getDefaultResources(),
-            project: index >= 4 ? `Work on Week ${weekNumber} project` : null
-        }));
-    }
-
-    getDefaultResources() {
-        return [
-            { name: 'VisuAlgo', url: 'https://visualgo.net/', type: 'visualizer' },
-            { name: 'LeetCode', url: 'https://leetcode.com/', type: 'practice' },
-            { name: 'GeeksforGeeks', url: 'https://www.geeksforgeeks.org/', type: 'tutorial' }
-        ];
-    }
-
-    renderWeekOverview() {
-        const container = document.getElementById('week-overview');
-        if (!container || !this.weekData) return;
-
-        const completedTasks = this.getWeekCompletedTasks();
-        const totalTasks = this.weekData.days.length * 3; // 3 tasks per day average
-        const progressPercentage = Math.round((completedTasks / totalTasks) * 100);
-
-        container.innerHTML = `
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h3 class="week-title mb-2">${this.weekData.title}</h3>
-                    <p class="week-description text-muted mb-3">${this.weekData.description}</p>
-                    <div class="week-project">
-                        <h6 class="text-primary mb-2">
-                            <i class="fas fa-project-diagram me-2"></i>Week Project
-                        </h6>
-                        <p class="mb-0">${this.weekData.project}</p>
-                    </div>
-                </div>
-                <div class="col-md-4 text-center">
-                    <div class="week-progress">
-                        <div class="progress-circle mb-3" data-percentage="${progressPercentage}">
-                            <div class="progress-circle-inner">
-                                <span class="progress-percentage">${progressPercentage}%</span>
-                                <span class="progress-label">Complete</span>
-                            </div>
-                        </div>
-                        <div class="week-stats">
-                            <div class="stat-item">
-                                <strong>${completedTasks}/${totalTasks}</strong>
-                                <small class="text-muted d-block">Tasks Completed</small>
-                            </div>
-                        </div>
-                    </div>
+    // Generate week content
+    const weekContent = document.getElementById('weekContent');
+    weekContent.innerHTML = `
+        <div class="week-container">
+            <div class="week-header bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg mb-4">
+                <h3 class="mb-2">Week ${weekData.week}: ${weekData.title}</h3>
+                <p class="mb-3">${weekData.description}</p>
+                <div class="progress bg-white bg-opacity-20" style="height: 8px;">
+                    <div class="progress-bar bg-white" 
+                         style="width: ${getWeekProgress(weekNumber)}%"></div>
                 </div>
             </div>
-        `;
-    }
+            
+            <div class="row mb-4">
+                ${weekData.days.map(day => generateDayCard(weekData.week, day)).join('')}
+            </div>
+            
+            ${weekData.project ? generateProjectCard(weekData.week, weekData.project) : ''}
+        </div>
+    `;
+}
 
-    getWeekCompletedTasks() {
-        if (!this.weekData) return 0;
+// Generate Day Card
+function generateDayCard(week, day) {
+    const isCompleted = isDayCompleted(week, day.day);
+    const isCurrent = (week === progressData.currentWeek && day.day === progressData.currentDay);
 
-        return this.weekData.days.reduce((count, day) => {
-            const dayKey = `week-${this.currentWeek}-${day.day.toLowerCase()}`;
-            const tasks = [
-                `${dayKey}-topic`,
-                `${dayKey}-activities`,
-                `${dayKey}-project`
-            ];
-
-            return count + tasks.filter(taskId =>
-                this.dashboard.userData.completedTasks[taskId]
-            ).length;
-        }, 0);
-    }
-
-    renderDailySchedule() {
-        const container = document.getElementById('daily-schedule');
-        if (!container || !this.weekData) return;
-
-        container.innerHTML = this.weekData.days.map((day, index) => {
-            const dayKey = `week-${this.currentWeek}-${day.day.toLowerCase()}`;
-            const isToday = this.isToday(day.day);
-
-            return `
-                <div class="col-12 mb-4">
-                    <div class="day-card ${isToday ? 'border-primary' : ''} card-entrance" style="animation-delay: ${index * 0.1}s">
-                        <div class="day-header">
-                            <div class="d-flex align-items-center">
-                                <h5 class="day-title mb-0">
-                                    ${day.day}
-                                    ${isToday ? '<span class="badge bg-primary ms-2">Today</span>' : ''}
-                                </h5>
-                                <div class="ms-auto">
-                                    <span class="time-badge">
-                                        <i class="fas fa-clock me-1"></i>${day.time}
-                                    </span>
-                                </div>
+    return `
+        <div class="col-lg-6 col-xl-4 mb-3">
+            <div class="day-card card h-100 ${isCompleted ? 'completed' : ''} ${isCurrent ? 'border-primary' : ''}">
+                <div class="day-header ${isCompleted ? 'bg-success text-white' : isCurrent ? 'bg-primary text-white' : ''}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Day ${day.day}</h6>
+                        <div class="day-status">
+                            ${isCompleted ? '<i class="fas fa-check-circle"></i>' :
+            isCurrent ? '<i class="fas fa-play-circle"></i>' :
+                '<i class="far fa-circle"></i>'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="day-content">
+                    <h6 class="text-primary mb-2">${day.topic}</h6>
+                    <p class="text-muted small mb-3">${day.activities}</p>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-clock text-warning me-2"></i>
+                        <span class="small">${day.time}</span>
+                    </div>
+                    
+                    ${day.resources.length > 0 ? `
+                        <div class="resources-section mb-3">
+                            <h6 class="small text-uppercase text-muted mb-2">Resources</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                ${day.resources.map(resource => `
+                                    <a href="${resource.url}" target="_blank" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-${getResourceIcon(resource.type)}"></i>
+                                        ${resource.name}
+                                    </a>
+                                `).join('')}
                             </div>
                         </div>
+                    ` : ''}
+                    
+                    ${day.practiceLinks.length > 0 ? `
+                        <div class="practice-section mb-3">
+                            <h6 class="small text-uppercase text-muted mb-2">Practice</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                ${day.practiceLinks.map(link => `
+                                    <a href="${link.url}" target="_blank" 
+                                       class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-code"></i>
+                                        ${link.name}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="day-actions mt-auto">
+                        ${!isCompleted ? `
+                            <button class="btn btn-success btn-sm w-100" 
+                                    onclick="markDayComplete(${week}, ${day.day})"
+                                    ${!isCurrent ? 'disabled' : ''}>
+                                <i class="fas fa-check"></i>
+                                ${isCurrent ? 'Mark Complete' : 'Complete Previous Days First'}
+                            </button>
+                        ` : `
+                            <button class="btn btn-outline-success btn-sm w-100" disabled>
+                                <i class="fas fa-check"></i> Completed
+                            </button>
+                        `}
                         
-                        <div class="day-content">
-                            <div class="topic-section mb-3">
-                                <h6 class="section-title">
-                                    <i class="fas fa-book me-2 text-primary"></i>Topic
-                                </h6>
-                                <div class="d-flex align-items-center">
-                                    <input type="checkbox" class="form-check-input me-3" 
-                                           ${this.dashboard.userData.completedTasks[`${dayKey}-topic`] ? 'checked' : ''}
-                                           onchange="dashboard.toggleTask('${dayKey}-topic')">
-                                    <span class="topic-text">${day.topic}</span>
+                        <button class="btn btn-outline-primary btn-sm w-100 mt-2" 
+                                onclick="showDayNotes(${week}, ${day.day})">
+                            <i class="fas fa-sticky-note"></i> Notes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Generate Project Card
+function generateProjectCard(week, project) {
+    const isCompleted = isProjectCompleted(week);
+
+    return `
+        <div class="project-section">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-project-diagram"></i>
+                        Week ${week} Project: ${project.title}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">${project.description}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="text-muted mb-2">Project Features:</h6>
+                            <ul class="list-unstyled">
+                                ${project.features.map(feature => `
+                                    <li class="mb-1">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        ${feature}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="project-stats">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-clock text-warning me-2"></i>
+                                    <span>${project.time}</span>
                                 </div>
-                            </div>
-                            
-                            <div class="activities-section mb-3">
-                                <h6 class="section-title">
-                                    <i class="fas fa-tasks me-2 text-success"></i>Activities
-                                </h6>
-                                <div class="d-flex align-items-center">
-                                    <input type="checkbox" class="form-check-input me-3" 
-                                           ${this.dashboard.userData.completedTasks[`${dayKey}-activities`] ? 'checked' : ''}
-                                           onchange="dashboard.toggleTask('${dayKey}-activities')">
-                                    <span class="activities-text">${day.activities}</span>
-                                </div>
-                            </div>
-                            
-                            ${day.project ? `
-                                <div class="project-section mb-3">
-                                    <h6 class="section-title">
-                                        <i class="fas fa-project-diagram me-2 text-warning"></i>Project
-                                    </h6>
-                                    <div class="d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-input me-3" 
-                                               ${this.dashboard.userData.completedTasks[`${dayKey}-project`] ? 'checked' : ''}
-                                               onchange="dashboard.toggleTask('${dayKey}-project')">
-                                        <span class="project-text">${day.project}</span>
-                                    </div>
-                                </div>
-                            ` : ''}
-                            
-                            <div class="resources-section">
-                                <h6 class="section-title">
-                                    <i class="fas fa-link me-2 text-info"></i>Resources
-                                </h6>
-                                <div class="resources-list">
-                                    ${this.renderResourceLinks(day.resources)}
+                                
+                                <div class="project-actions">
+                                    ${!isCompleted ? `
+                                        <button class="btn btn-primary btn-sm w-100 mb-2" 
+                                                onclick="startProject(${week})">
+                                            <i class="fas fa-play"></i> Start Project
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-success btn-sm w-100 mb-2" disabled>
+                                            <i class="fas fa-check"></i> Completed
+                                        </button>
+                                    `}
+                                    
+                                    <button class="btn btn-outline-primary btn-sm w-100" 
+                                            onclick="showProjectDetails(${week})">
+                                        <i class="fas fa-info-circle"></i> View Details
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
-        }).join('');
-    }
-
-    renderResourceLinks(resources) {
-        if (!resources || !Array.isArray(resources)) return '';
-
-        return resources.map(resource => `
-            <a href="${resource.url}" target="_blank" class="resource-link" 
-               data-bs-toggle="tooltip" title="${resource.type}">
-                <i class="fas fa-external-link-alt me-1"></i>
-                ${resource.name}
-            </a>
-        `).join('');
-    }
-
-    isToday(dayName) {
-        const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-        return today.toLowerCase() === dayName.toLowerCase();
-    }
-
-    async changeWeek() {
-        const selector = document.getElementById('week-selector');
-        if (selector) {
-            const newWeek = parseInt(selector.value);
-            await this.loadWeekData(newWeek);
-            this.renderWeekOverview();
-            this.renderDailySchedule();
-        }
-    }
-
-    toggleCalendarView() {
-        this.calendarView = !this.calendarView;
-
-        if (this.calendarView) {
-            this.showCalendarModal();
-        }
-    }
-
-    showCalendarModal() {
-        const modal = new bootstrap.Modal(document.getElementById('calendarModal'));
-        this.renderCalendar();
-        modal.show();
-    }
-
-    renderCalendar() {
-        const container = document.getElementById('calendar-container');
-        if (!container) return;
-
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-        let calendarHTML = `
-            <div class="calendar-header mb-3">
-                <h4>${currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h4>
             </div>
-            <div class="calendar-grid">
-                <div class="calendar-day-header">Sun</div>
-                <div class="calendar-day-header">Mon</div>
-                <div class="calendar-day-header">Tue</div>
-                <div class="calendar-day-header">Wed</div>
-                <div class="calendar-day-header">Thu</div>
-                <div class="calendar-day-header">Fri</div>
-                <div class="calendar-day-header">Sat</div>
-        `;
+        </div>
+    `;
+}
 
-        // Empty cells for days before the first day of the month
-        for (let i = 0; i < firstDay; i++) {
-            calendarHTML += '<div class="calendar-day empty"></div>';
-        }
+// Utility Functions
+function getWeekProgress(weekNumber) {
+    return progressData.weekProgress[weekNumber - 1] || 0;
+}
 
-        // Days of the month
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(currentYear, currentMonth, day);
-            const hasTask = this.hasTasksOnDate(date);
-            const isCompleted = this.isDateCompleted(date);
+function isDayCompleted(week, day) {
+    // Check if this day has been completed
+    const dayIndex = (week - 1) * 7 + (day - 1);
+    return dayIndex < progressData.completedDays;
+}
 
-            calendarHTML += `
-                <div class="calendar-day ${hasTask ? 'has-tasks' : ''} ${isCompleted ? 'completed' : ''}"
-                     onclick="timetable.showDayDetails('${date.toISOString()}')">
-                    <span class="calendar-day-number">${day}</span>
-                    ${hasTask ? '<div class="calendar-day-indicator"></div>' : ''}
+function isProjectCompleted(week) {
+    return progressData.projects.some(p => p.week === week);
+}
+
+function getResourceIcon(type) {
+    const icons = {
+        'video': 'play',
+        'tutorial': 'book',
+        'documentation': 'file-alt',
+        'visualizer': 'eye',
+        'article': 'newspaper',
+        'practice': 'code'
+    };
+    return icons[type] || 'link';
+}
+
+// Project Functions
+function startProject(week) {
+    const projectData = dsaRoadmap.find(w => w.week === week)?.project;
+    if (!projectData) return;
+
+    showNotification(`Starting ${projectData.title}! Good luck! 🚀`, 'info');
+
+    // Add to recent activity
+    addActivity('project', `Started Week ${week} Project: ${projectData.title}`);
+    saveProgress();
+}
+
+function showProjectDetails(week) {
+    const projectData = dsaRoadmap.find(w => w.week === week)?.project;
+    if (!projectData) return;
+
+    // Create modal for project details
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">${projectData.title}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            `;
-        }
-
-        calendarHTML += '</div>';
-        container.innerHTML = calendarHTML;
-    }
-
-    hasTasksOnDate(date) {
-        // Check if there are scheduled tasks for this date
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-        const week = this.getWeekForDate(date);
-
-        return week >= 1 && week <= 14;
-    }
-
-    isDateCompleted(date) {
-        // Check if all tasks for this date are completed
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-        const week = this.getWeekForDate(date);
-
-        if (week < 1 || week > 14) return false;
-
-        const dayKey = `week-${week}-${dayName}`;
-        const tasks = [
-            `${dayKey}-topic`,
-            `${dayKey}-activities`,
-            `${dayKey}-project`
-        ];
-
-        return tasks.every(taskId => this.dashboard.userData.completedTasks[taskId]);
-    }
-
-    getWeekForDate(date) {
-        // Calculate which week this date falls into
-        // This is a simplified calculation - you might want to adjust based on your course start date
-        const startDate = new Date('2025-01-01'); // Adjust this to your course start date
-        const diffTime = Math.abs(date - startDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return Math.ceil(diffDays / 7);
-    }
-
-    showDayDetails(dateString) {
-        const date = new Date(dateString);
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-        const week = this.getWeekForDate(date);
-
-        if (week >= 1 && week <= 14) {
-            // Load the week and show day details
-            this.loadWeekData(week).then(() => {
-                const dayData = this.weekData.days.find(d =>
-                    d.day.toLowerCase() === dayName.toLowerCase()
-                );
-
-                if (dayData) {
-                    this.showDayModal(dayData, date);
-                }
-            });
-        }
-    }
-
-    showDayModal(dayData, date) {
-        const modal = document.createElement('div');
-        modal.className = 'modal fade';
-        modal.innerHTML = `
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            ${dayData.day} - ${date.toLocaleDateString()}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-body">
+                    <p>${projectData.description}</p>
+                    
+                    <h6>Project Requirements:</h6>
+                    <ul>
+                        ${projectData.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                    
+                    <div class="alert alert-info">
+                        <strong>Estimated Time:</strong> ${projectData.time}
                     </div>
-                    <div class="modal-body">
-                        <div class="day-details">
-                            <h6><i class="fas fa-book me-2"></i>Topic</h6>
-                            <p>${dayData.topic}</p>
-                            
-                            <h6><i class="fas fa-tasks me-2"></i>Activities</h6>
-                            <p>${dayData.activities}</p>
-                            
-                            ${dayData.project ? `
-                                <h6><i class="fas fa-project-diagram me-2"></i>Project</h6>
-                                <p>${dayData.project}</p>
-                            ` : ''}
-                            
-                            <h6><i class="fas fa-link me-2"></i>Resources</h6>
-                            <div class="resources-list">
-                                ${this.renderResourceLinks(dayData.resources)}
-                            </div>
-                        </div>
+                    
+                    <h6>Helpful Resources:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="https://github.com" target="_blank" class="btn btn-outline-dark btn-sm">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                        <a href="https://codepen.io" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-codepen"></i> CodePen
+                        </a>
+                        <a href="https://repl.it" target="_blank" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-code"></i> Repl.it
+                        </a>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="startProject(${week})">
+                        Start Project
+                    </button>
+                </div>
             </div>
-        `;
+        </div>
+    `;
 
-        document.body.appendChild(modal);
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
+    document.body.appendChild(modal);
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
 
-        modal.addEventListener('hidden.bs.modal', () => {
-            modal.remove();
-        });
+    // Clean up modal after hiding
+    modal.addEventListener('hidden.bs.modal', () => {
+        modal.remove();
+    });
+}
+
+function showDayNotes(week, day) {
+    const noteKey = `week_${week}_day_${day}`;
+    const existingNote = progressData.notes[noteKey] || '';
+
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Notes - Week ${week}, Day ${day}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="dayNoteContent" class="form-control" rows="10" 
+                              placeholder="Add your notes for this day...">${existingNote}</textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveDayNote('${noteKey}')">
+                        Save Notes
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+
+    // Clean up modal after hiding
+    modal.addEventListener('hidden.bs.modal', () => {
+        modal.remove();
+    });
+
+    window.currentDayNoteModal = bootstrapModal;
+}
+
+function saveDayNote(noteKey) {
+    const content = document.getElementById('dayNoteContent').value;
+    progressData.notes[noteKey] = content;
+    saveProgress();
+
+    if (window.currentDayNoteModal) {
+        window.currentDayNoteModal.hide();
     }
+
+    showNotification('Notes saved successfully!', 'success');
 }
 
-// Global functions
-function loadWeekData() {
-    window.timetable.changeWeek();
+// Load Timetable
+function loadTimetable() {
+    generateWeekTabs();
+    showWeek(progressData.currentWeek || 1);
 }
 
-function toggleCalendarView() {
-    window.timetable.toggleCalendarView();
-}
-
-// Initialize when dashboard is ready
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (window.dashboard) {
-            window.timetable = new TimetableManager(window.dashboard);
-
-            // Override dashboard's loadTimetable method
-            window.dashboard.loadTimetable = () => {
-                window.timetable.loadTimetable();
-            };
-        }
-    }, 100);
-});
+// Make functions globally available
+window.showWeek = showWeek;
+window.startProject = startProject;
+window.showProjectDetails = showProjectDetails;
+window.showDayNotes = showDayNotes;
+window.saveDayNote = saveDayNote;

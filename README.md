@@ -81,12 +81,10 @@ dsa-learning-dashboard/
 ├── frontend/
 │   ├── index.html
 │   ├── README.md
-│
 │   ├── assets/
 │   │   ├── images/
 │   │   ├── icons/
 │   │   └── logo.png
-│
 │   ├── css/
 │   │   ├── main.css
 │   │   ├── components.css
@@ -96,7 +94,6 @@ dsa-learning-dashboard/
 │   │       ├── light-theme.css
 │   │       ├── dark-theme.css
 │   │       └── custom-themes.css
-│
 │   ├── js/
 │   │   ├── main.js
 │   │   ├── api.js
@@ -104,7 +101,6 @@ dsa-learning-dashboard/
 │   │   ├── timetable.js
 │   │   ├── notes.js
 │   │   └── utils.js
-│
 │   ├── components/
 │   │   ├── navbar.html
 │   │   ├── sidebar.html
@@ -112,7 +108,6 @@ dsa-learning-dashboard/
 │   │   ├── timetable-card.html
 │   │   ├── notes-modal.html
 │   │   └── resource-card.html
-│
 │   ├── pages/
 │   │   ├── dashboard.html
 │   │   ├── timetable.html
@@ -120,24 +115,10 @@ dsa-learning-dashboard/
 │   │   ├── projects.html
 │   │   ├── notes.html
 │   │   └── resources.html
-│
 │   ├── timetable/
-│   │   ├── roadmap.json
-│   │   ├── week-01.json
-│   │   ├── week-02.json
-│   │   ├── week-03.json
-│   │   ├── week-04.json
-│   │   ├── week-05.json
-│   │   ├── week-06.json
-│   │   ├── week-07.json
-│   │   ├── week-08.json
-│   │   ├── week-09.json
-│   │   ├── week-10.json
-│   │   ├── week-11.json
-│   │   ├── week-12.json
-│   │   ├── week-13.json
-│   │   └── week-14.json
-│
+│   │   ├── roadmap.html
+│   │   ├── weakly timetable.html
+│   │   └── daily timetable.html
 │   └── resources/
 │       ├── dsa_resources.json
 │       ├── practice_links.json
