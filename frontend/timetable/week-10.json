@@ -1,0 +1,161 @@
+{
+    "week": 10,
+    "title": "Week 10: Sorting & Searching",
+    "description": "Master efficient sorting algorithms and advanced searching techniques.",
+    "project": "Project 10: Student Grade Manager - Build a comprehensive grade management system",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Basic Sorting Algorithms",
+            "activities": "Bubble sort, selection sort, insertion sort analysis",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Sorting",
+                    "url": "https://visualgo.net/en/sorting",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "CS Dojo Sorting",
+                    "url": "https://www.youtube.com/watch?v=6Gv8vg0kcHc",
+                    "type": "video"
+                },
+                {
+                    "name": "Sorting Algorithms Overview",
+                    "url": "https://www.geeksforgeeks.org/sorting-algorithms/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Merge Sort",
+            "activities": "Divide and conquer approach, implementation, analysis",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "USFCA Merge Sort",
+                    "url": "https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "mycodeschool Merge Sort",
+                    "url": "https://www.youtube.com/watch?v=TzeBrDU-JaY",
+                    "type": "video"
+                },
+                {
+                    "name": "Merge Sort Tutorial",
+                    "url": "https://www.geeksforgeeks.org/merge-sort/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Quick Sort",
+            "activities": "Partitioning algorithm, pivot selection strategies",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Quick Sort",
+                    "url": "https://visualgo.net/en/sorting",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "Quick Sort Explained",
+                    "url": "https://www.geeksforgeeks.org/quick-sort/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Pivot Selection Strategies",
+                    "url": "https://www.khanacademy.org/computing/computer-science/algorithms/quick-sort/a/overview-of-quicksort",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Binary Search & Variations",
+            "activities": "Binary search implementation, search in rotated arrays",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "CS Dojo Binary Search",
+                    "url": "https://www.youtube.com/watch?v=P3YID7liBug",
+                    "type": "video"
+                },
+                {
+                    "name": "LeetCode #704 Binary Search",
+                    "url": "https://leetcode.com/problems/binary-search/",
+                    "type": "practice"
+                },
+                {
+                    "name": "LeetCode #34 Find First and Last",
+                    "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+                    "type": "practice"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design grade manager: students, courses, sorting, statistics",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Database Design for Schools",
+                    "url": "https://www.geeksforgeeks.org/design-a-student-database/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Grade Management Systems",
+                    "url": "https://en.wikipedia.org/wiki/Student_information_system",
+                    "type": "reference"
+                }
+            ],
+            "project": "Design grade management system"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Add students and grades, implement sorting algorithms",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Python Sorting Functions",
+                    "url": "https://docs.python.org/3/howto/sorting.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "CSV File Handling",
+                    "url": "https://docs.python.org/3/library/csv.html",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Build core grade management features"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add search functionality, statistics, rank generation",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Statistics with Python",
+                    "url": "https://docs.python.org/3/library/statistics.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Data Visualization",
+                    "url": "https://matplotlib.org/stable/tutorials/index.html",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Complete student grade manager"
+        }
+    ]
+}

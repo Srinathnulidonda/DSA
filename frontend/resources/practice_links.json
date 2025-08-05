@@ -1,0 +1,326 @@
+{
+    "beginner": [
+        {
+            "name": "Two Sum",
+            "url": "https://leetcode.com/problems/two-sum/",
+            "difficulty": "Easy",
+            "topics": [
+                "Array",
+                "Hash Table"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Valid Parentheses",
+            "url": "https://leetcode.com/problems/valid-parentheses/",
+            "difficulty": "Easy",
+            "topics": [
+                "String",
+                "Stack"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Merge Two Sorted Lists",
+            "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+            "difficulty": "Easy",
+            "topics": [
+                "Linked List",
+                "Recursion"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Maximum Subarray",
+            "url": "https://leetcode.com/problems/maximum-subarray/",
+            "difficulty": "Easy",
+            "topics": [
+                "Array",
+                "Dynamic Programming"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Binary Tree Inorder Traversal",
+            "url": "https://leetcode.com/problems/binary-tree-inorder-traversal/",
+            "difficulty": "Easy",
+            "topics": [
+                "Tree",
+                "DFS",
+                "Binary Tree"
+            ],
+            "platform": "LeetCode"
+        }
+    ],
+    "intermediate": [
+        {
+            "name": "Add Two Numbers",
+            "url": "https://leetcode.com/problems/add-two-numbers/",
+            "difficulty": "Medium",
+            "topics": [
+                "Linked List",
+                "Math",
+                "Recursion"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Longest Substring Without Repeating Characters",
+            "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+            "difficulty": "Medium",
+            "topics": [
+                "Hash Table",
+                "String",
+                "Sliding Window"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Container With Most Water",
+            "url": "https://leetcode.com/problems/container-with-most-water/",
+            "difficulty": "Medium",
+            "topics": [
+                "Array",
+                "Two Pointers",
+                "Greedy"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "3Sum",
+            "url": "https://leetcode.com/problems/3sum/",
+            "difficulty": "Medium",
+            "topics": [
+                "Array",
+                "Two Pointers",
+                "Sorting"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Group Anagrams",
+            "url": "https://leetcode.com/problems/group-anagrams/",
+            "difficulty": "Medium",
+            "topics": [
+                "Array",
+                "Hash Table",
+                "String",
+                "Sorting"
+            ],
+            "platform": "LeetCode"
+        }
+    ],
+    "advanced": [
+        {
+            "name": "Median of Two Sorted Arrays",
+            "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
+            "difficulty": "Hard",
+            "topics": [
+                "Array",
+                "Binary Search",
+                "Divide and Conquer"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Merge k Sorted Lists",
+            "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+            "difficulty": "Hard",
+            "topics": [
+                "Linked List",
+                "Divide and Conquer",
+                "Heap",
+                "Merge Sort"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Trapping Rain Water",
+            "url": "https://leetcode.com/problems/trapping-rain-water/",
+            "difficulty": "Hard",
+            "topics": [
+                "Array",
+                "Two Pointers",
+                "Dynamic Programming",
+                "Stack"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Sliding Window Maximum",
+            "url": "https://leetcode.com/problems/sliding-window-maximum/",
+            "difficulty": "Hard",
+            "topics": [
+                "Array",
+                "Queue",
+                "Sliding Window",
+                "Heap",
+                "Monotonic Queue"
+            ],
+            "platform": "LeetCode"
+        },
+        {
+            "name": "Word Ladder",
+            "url": "https://leetcode.com/problems/word-ladder/",
+            "difficulty": "Hard",
+            "topics": [
+                "Hash Table",
+                "String",
+                "BFS"
+            ],
+            "platform": "LeetCode"
+        }
+    ],
+    "competitive": [
+        {
+            "name": "A+B Problem",
+            "url": "https://codeforces.com/problemset/problem/1/A",
+            "difficulty": "Easy",
+            "topics": [
+                "Implementation"
+            ],
+            "platform": "Codeforces"
+        },
+        {
+            "name": "Watermelon",
+            "url": "https://codeforces.com/problemset/problem/4/A",
+            "difficulty": "Easy",
+            "topics": [
+                "Math",
+                "Implementation"
+            ],
+            "platform": "Codeforces"
+        },
+        {
+            "name": "Way Too Long Words",
+            "url": "https://codeforces.com/problemset/problem/71/A",
+            "difficulty": "Easy",
+            "topics": [
+                "Strings",
+                "Implementation"
+            ],
+            "platform": "Codeforces"
+        },
+        {
+            "name": "Next Round",
+            "url": "https://codeforces.com/problemset/problem/158/A",
+            "difficulty": "Easy",
+            "topics": [
+                "Implementation"
+            ],
+            "platform": "Codeforces"
+        },
+        {
+            "name": "String Task",
+            "url": "https://codeforces.com/problemset/problem/118/A",
+            "difficulty": "Easy",
+            "topics": [
+                "Strings",
+                "Implementation"
+            ],
+            "platform": "Codeforces"
+        }
+    ],
+    "by_topic": {
+        "arrays": [
+            {
+                "name": "Two Sum",
+                "url": "https://leetcode.com/problems/two-sum/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Best Time to Buy and Sell Stock",
+                "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Contains Duplicate",
+                "url": "https://leetcode.com/problems/contains-duplicate/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            }
+        ],
+        "linked_lists": [
+            {
+                "name": "Reverse Linked List",
+                "url": "https://leetcode.com/problems/reverse-linked-list/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Linked List Cycle",
+                "url": "https://leetcode.com/problems/linked-list-cycle/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Merge Two Sorted Lists",
+                "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            }
+        ],
+        "trees": [
+            {
+                "name": "Maximum Depth of Binary Tree",
+                "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Same Tree",
+                "url": "https://leetcode.com/problems/same-tree/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Invert Binary Tree",
+                "url": "https://leetcode.com/problems/invert-binary-tree/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            }
+        ],
+        "graphs": [
+            {
+                "name": "Number of Islands",
+                "url": "https://leetcode.com/problems/number-of-islands/",
+                "difficulty": "Medium",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Clone Graph",
+                "url": "https://leetcode.com/problems/clone-graph/",
+                "difficulty": "Medium",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Course Schedule",
+                "url": "https://leetcode.com/problems/course-schedule/",
+                "difficulty": "Medium",
+                "platform": "LeetCode"
+            }
+        ],
+        "dynamic_programming": [
+            {
+                "name": "Climbing Stairs",
+                "url": "https://leetcode.com/problems/climbing-stairs/",
+                "difficulty": "Easy",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "House Robber",
+                "url": "https://leetcode.com/problems/house-robber/",
+                "difficulty": "Medium",
+                "platform": "LeetCode"
+            },
+            {
+                "name": "Coin Change",
+                "url": "https://leetcode.com/problems/coin-change/",
+                "difficulty": "Medium",
+                "platform": "LeetCode"
+            }
+        ]
+    }
+}

@@ -1,0 +1,161 @@
+{
+    "week": 5,
+    "title": "Week 5: Hash Tables",
+    "description": "Master hash functions, collision handling, and build efficient lookup systems.",
+    "project": "Project 5: Spell Checker - Build intelligent spell checking with suggestions",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Hash Functions",
+            "activities": "Hash function design, collision handling strategies",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Hash Table",
+                    "url": "https://visualgo.net/en/hashtable",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "CS Dojo Hash Tables",
+                    "url": "https://www.youtube.com/watch?v=shs0KM3wKv8",
+                    "type": "video"
+                },
+                {
+                    "name": "Hash Function Tutorial",
+                    "url": "https://www.geeksforgeeks.org/hashing-data-structure/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Hash Table Implementation",
+            "activities": "Chaining vs open addressing, load factor, rehashing",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "USFCA Hash Table Visualization",
+                    "url": "https://www.cs.usfca.edu/~galles/visualization/OpenHash.html",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "MIT OCW Hashing",
+                    "url": "https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/",
+                    "type": "course"
+                },
+                {
+                    "name": "Collision Resolution Techniques",
+                    "url": "https://www.geeksforgeeks.org/hashing-set-2-separate-chaining/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Hash Map Operations",
+            "activities": "Insert, search, delete operations, dynamic resizing",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Python Dict Internals",
+                    "url": "https://docs.python.org/3/tutorial/datastructures.html#dictionaries",
+                    "type": "documentation"
+                },
+                {
+                    "name": "C++ unordered_map",
+                    "url": "https://en.cppreference.com/w/cpp/container/unordered_map",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Hash Table Performance",
+                    "url": "https://stackoverflow.com/questions/tagged/hash-table+performance",
+                    "type": "discussion"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Applications",
+            "activities": "Two Sum problem, frequency counting, caching systems",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "LeetCode #1 Two Sum",
+                    "url": "https://leetcode.com/problems/two-sum/",
+                    "type": "practice"
+                },
+                {
+                    "name": "LeetCode #49 Group Anagrams",
+                    "url": "https://leetcode.com/problems/group-anagrams/",
+                    "type": "practice"
+                },
+                {
+                    "name": "Real Python Dictionaries",
+                    "url": "https://realpython.com/python-dicts/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design spell checker: dictionary hash table, suggestion algorithms",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Spell Checker Algorithms",
+                    "url": "https://norvig.com/spell-correct.html",
+                    "type": "article"
+                },
+                {
+                    "name": "Edit Distance",
+                    "url": "https://www.geeksforgeeks.org/edit-distance-dp-5/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Design spell checker architecture"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Load dictionary, implement spell checking, word lookup",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "NLTK Word Lists",
+                    "url": "https://www.nltk.org/book/ch02.html",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "String Similarity Algorithms",
+                    "url": "https://github.com/seatgeek/fuzzywuzzy",
+                    "type": "library"
+                }
+            ],
+            "project": "Implement core spell checking functionality"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add suggestion generation, custom word addition, performance optimization",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Levenshtein Distance",
+                    "url": "https://www.geeksforgeeks.org/python-levenshtein-distance/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Performance Optimization",
+                    "url": "https://wiki.python.org/moin/PythonSpeed/PerformanceTips",
+                    "type": "guide"
+                }
+            ],
+            "project": "Complete spell checker with suggestions"
+        }
+    ]
+}

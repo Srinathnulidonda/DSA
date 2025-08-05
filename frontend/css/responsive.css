@@ -1,0 +1,420 @@
+/* Responsive Design */
+
+/* Mobile First Approach */
+@media (max-width: 576px) {
+    .main-content {
+        margin-top: 70px;
+        padding: 0 10px;
+    }
+
+    .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .welcome-card {
+        text-align: center;
+    }
+
+    .welcome-card .display-5 {
+        font-size: 2rem;
+    }
+
+    .welcome-card .lead {
+        font-size: 1rem;
+    }
+
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+        margin-top: 1rem;
+    }
+
+    .progress-percentage {
+        font-size: 1.2rem;
+    }
+
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .timer-display {
+        font-size: 2rem;
+    }
+
+    .week-card {
+        padding: 1rem;
+    }
+
+    .week-title {
+        font-size: 1.2rem;
+    }
+
+    .day-card {
+        padding: 0.75rem;
+    }
+
+    .project-card,
+    .note-card,
+    .resource-card {
+        padding: 1rem;
+    }
+
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .weeks-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .quick-actions .btn {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .modal-dialog {
+        margin: 1rem;
+    }
+
+    .calendar-grid {
+        font-size: 0.8rem;
+    }
+
+    .filter-btn,
+    .category-btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 577px) and (max-width: 768px) {
+    .main-content {
+        margin-top: 75px;
+    }
+
+    .welcome-card .display-5 {
+        font-size: 2.5rem;
+    }
+
+    .timer-display {
+        font-size: 2.5rem;
+    }
+
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+
+    .weeks-grid {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    }
+
+    .project-card,
+    .note-card,
+    .resource-card {
+        padding: 1.25rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .weeks-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1201px) {
+    .container-fluid {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .weeks-grid {
+        grid-template-columns: repeat(14, 1fr);
+    }
+}
+
+/* Height-based responsive adjustments */
+@media (max-height: 600px) {
+    .main-content {
+        margin-top: 60px;
+    }
+
+    .welcome-card {
+        padding: 2rem 1rem;
+    }
+
+    .tasks-container {
+        max-height: 200px;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    .main-content {
+        margin-top: 60px;
+    }
+
+    .welcome-card {
+        padding: 1.5rem;
+    }
+
+    .welcome-card .row {
+        align-items: center;
+    }
+
+    .timer-display {
+        font-size: 2rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    .navbar,
+    .footer,
+    .modal,
+    .btn,
+    .quick-actions {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-top: 0;
+    }
+
+    .glass-card {
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+
+    .page-content {
+        display: block !important;
+    }
+
+    .page-title {
+        color: black;
+    }
+
+    .text-gradient {
+        color: black !important;
+        -webkit-text-fill-color: unset;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        border: 2px solid var(--glass-border);
+    }
+
+    .btn-outline-primary {
+        border-width: 2px;
+    }
+
+    .form-control,
+    .form-select {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .hover-lift:hover {
+        transform: none;
+    }
+
+    .glass-card:hover {
+        transform: none;
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .modal-content {
+        background: rgba(31, 41, 55, 0.95);
+        color: white;
+    }
+}
+
+/* Focus improvements for accessibility */
+@media (any-hover: none) {
+
+    .btn:focus,
+    .form-control:focus,
+    .form-select:focus,
+    .nav-link:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .nav-link {
+        padding: 12px 16px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 44px;
+    }
+
+    .calendar-day {
+        min-height: 44px;
+    }
+
+    .task-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .resource-link {
+        padding: 8px 16px;
+    }
+}
+
+/* Specific breakpoint adjustments */
+@media (max-width: 380px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .streak-display {
+        display: none;
+    }
+
+    .timer-controls .btn {
+        padding: 6px 12px;
+        margin: 0 2px;
+    }
+
+    .achievement-card {
+        padding: 1rem;
+    }
+
+    .achievement-icon {
+        font-size: 2rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    .welcome-card .display-5 {
+        font-size: 3.5rem;
+    }
+
+    .timer-display {
+        font-size: 4rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+    }
+}
+
+/* Flexible grid adjustments */
+.responsive-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+@media (max-width: 576px) {
+    .responsive-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Navigation responsiveness */
+@media (max-width: 992px) {
+    .navbar-nav {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .nav-link {
+        margin: 4px 0;
+        border-radius: 8px;
+    }
+}
+
+/* Form responsiveness */
+@media (max-width: 576px) {
+    .modal-dialog {
+        width: 95%;
+        max-width: none;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}

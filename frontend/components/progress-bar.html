@@ -1,0 +1,111 @@
+<!-- Reusable Progress Bar Component -->
+<div class="progress-bar-component" data-percentage="0">
+    <div class="progress-header d-flex justify-content-between align-items-center mb-2">
+        <span class="progress-label"></span>
+        <span class="progress-percentage">0%</span>
+    </div>
+    <div class="progress progress-modern">
+        <div class="progress-bar bg-gradient" style="width: 0%"></div>
+    </div>
+    <div class="progress-details mt-1">
+        <small class="text-muted progress-description"></small>
+    </div>
+</div>
+
+<script>
+    // Progress Bar Component JavaScript
+    class ProgressBarComponent {
+        constructor(element, options = {}) {
+            this.element = element;
+            this.options = {
+                percentage: 0,
+                label: '',
+                description: '',
+                animated: true,
+                color: 'primary',
+                ...options
+            };
+
+            this.init();
+        }
+
+        init() {
+            this.render();
+            if (this.options.animated) {
+                this.animateProgress();
+            }
+        }
+
+        render() {
+            const labelElement = this.element.querySelector('.progress-label');
+            const percentageElement = this.element.querySelector('.progress-percentage');
+            const progressBar = this.element.querySelector('.progress-bar');
+            const descriptionElement = this.element.querySelector('.progress-description');
+
+            if (labelElement) labelElement.textContent = this.options.label;
+            if (percentageElement) percentageElement.textContent = `${this.options.percentage
+                }%`;
+            if (descriptionElement) descriptionElement.textContent = this.options.description;
+
+            if (progressBar) {
+                progressBar.style.width = `${this.options.percentage
+                    }%`;
+                progressBar.className = `progress-bar bg-gradient bg-${this.options.color
+                    }`;
+            }
+
+            this.element.setAttribute('data-percentage', this.options.percentage);
+        }
+
+        animateProgress() {
+            const progressBar = this.element.querySelector('.progress-bar');
+            const percentageElement = this.element.querySelector('.progress-percentage');
+
+            if (!progressBar || !percentageElement) return;
+
+            let currentPercentage = 0;
+            const targetPercentage = this.options.percentage;
+            const increment = targetPercentage / 50; // 50 steps for smooth animation
+
+            const animate = () => {
+                if (currentPercentage <= targetPercentage) {
+                    progressBar.style.width = `${currentPercentage
+                        }%`;
+                    percentageElement.textContent = `${Math.round(currentPercentage)
+                        }%`;
+                    currentPercentage += increment;
+                    requestAnimationFrame(animate);
+                }
+            };
+
+            animate();
+        }
+
+        updateProgress(percentage, options = {}) {
+            this.options = {
+                ...this.options, percentage, ...options
+            };
+            this.render();
+            if (this.options.animated) {
+                this.animateProgress();
+            }
+        }
+    }
+    // Auto-initialize progress bars
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.progress-bar-component').forEach(element => {
+            const percentage = parseInt(element.getAttribute('data-percentage')) || 0;
+            const label = element.getAttribute('data-label') || '';
+            const description = element.getAttribute('data-description') || '';
+            const color = element.getAttribute('data-color') || 'primary';
+
+            new ProgressBarComponent(element,
+                {
+                    percentage,
+                    label,
+                    description,
+                    color
+                });
+        });
+    });
+</script>

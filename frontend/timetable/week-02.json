@@ -1,0 +1,161 @@
+{
+    "week": 2,
+    "title": "Week 2: Arrays & Strings",
+    "description": "Master array and string operations, the foundation of many algorithms and data structures.",
+    "project": "Project 2: Text Analytics Tool - Analyze text files with advanced features",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Arrays Basics",
+            "activities": "Array creation, indexing, slicing, basic operations",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Arrays",
+                    "url": "https://visualgo.net/en/array",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "CS Dojo Arrays Video",
+                    "url": "https://www.youtube.com/watch?v=QJw1jkDLHUo",
+                    "type": "video"
+                },
+                {
+                    "name": "GeeksforGeeks Arrays",
+                    "url": "https://www.geeksforgeeks.org/array-data-structure/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Array Operations",
+            "activities": "Searching, sorting basics, reversing, rotating arrays",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "USFCA Array Visualization",
+                    "url": "https://www.cs.usfca.edu/~galles/visualization/Algorithms.html",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "LeetCode Array Explore",
+                    "url": "https://leetcode.com/explore/learn/card/fun-with-arrays/",
+                    "type": "practice"
+                },
+                {
+                    "name": "Array Algorithms Visualizer",
+                    "url": "https://algorithm-visualizer.org/",
+                    "type": "visualizer"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "String Manipulation",
+            "activities": "String methods, slicing, pattern matching, regular expressions",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Python String Methods",
+                    "url": "https://docs.python.org/3/library/stdtypes.html#string-methods",
+                    "type": "documentation"
+                },
+                {
+                    "name": "GeeksforGeeks Strings",
+                    "url": "https://www.geeksforgeeks.org/string-data-structure/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "RegexOne Tutorial",
+                    "url": "https://regexone.com/",
+                    "type": "interactive"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "2D Arrays",
+            "activities": "Matrix operations, traversal patterns, spiral traversal",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo 2D Arrays",
+                    "url": "https://visualgo.net/en/array",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "Programiz 2D Arrays",
+                    "url": "https://www.programiz.com/python-programming/matrix",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Matrix Traversal Patterns",
+                    "url": "https://www.geeksforgeeks.org/print-matrix-spiral-form/",
+                    "type": "example"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design text analytics tool: word frequency, statistics, patterns",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Text Processing in Python",
+                    "url": "https://www.nltk.org/book/",
+                    "type": "book"
+                },
+                {
+                    "name": "File I/O in Python",
+                    "url": "https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Plan text analytics features and data structures"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Build word frequency counter, find longest/shortest words",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Collections Counter",
+                    "url": "https://docs.python.org/3/library/collections.html#collections.Counter",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Text Analysis Tutorial",
+                    "url": "https://realpython.com/working-with-files-in-python/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Implement core text analysis features"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add pattern search, replace functionality, generate reports",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Regular Expressions in Python",
+                    "url": "https://docs.python.org/3/library/re.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Report Generation",
+                    "url": "https://realpython.com/creating-and-modifying-pdf-files/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Complete text analytics tool with reporting"
+        }
+    ]
+}

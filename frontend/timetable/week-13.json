@@ -1,0 +1,161 @@
+{
+    "week": 13,
+    "title": "Week 13: System Design & Integration",
+    "description": "Learn to design scalable systems and integrate various data structures effectively.",
+    "project": "Project 13: Task Management System - Build a comprehensive project management tool",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Design Patterns",
+            "activities": "Singleton, Factory, Observer patterns in DSA context",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Refactoring Guru Patterns",
+                    "url": "https://refactoring.guru/design-patterns",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Design Patterns in Python",
+                    "url": "https://www.geeksforgeeks.org/python-design-patterns/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Observer Pattern",
+                    "url": "https://sourcemaking.com/design_patterns/observer",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Data Structure Selection",
+            "activities": "Choosing optimal data structures for specific problems",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "System Design Primer",
+                    "url": "https://github.com/donnemartin/system-design-primer",
+                    "type": "guide"
+                },
+                {
+                    "name": "High Scalability",
+                    "url": "http://highscalability.com/",
+                    "type": "blog"
+                },
+                {
+                    "name": "Data Structure Selection Guide",
+                    "url": "https://www.geeksforgeeks.org/when-to-use-which-data-structure/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Performance Optimization",
+            "activities": "Time/space complexity analysis, bottleneck identification",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Big-O Cheat Sheet",
+                    "url": "https://www.bigocheatsheet.com/",
+                    "type": "reference"
+                },
+                {
+                    "name": "Algorithm Complexity Analysis",
+                    "url": "https://www.geeksforgeeks.org/analysis-of-algorithms-set-1-asymptotic-analysis/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Performance Optimization Techniques",
+                    "url": "https://wiki.python.org/moin/PythonSpeed/PerformanceTips",
+                    "type": "guide"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Testing & Debugging",
+            "activities": "Unit testing, edge case handling, debugging strategies",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Python unittest",
+                    "url": "https://docs.python.org/3/library/unittest.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Google Test (C++)",
+                    "url": "https://google.github.io/googletest/",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Testing Best Practices",
+                    "url": "https://realpython.com/python-testing/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design task manager: hierarchical tasks, priorities, search",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Task Management Systems",
+                    "url": "https://en.wikipedia.org/wiki/Task_management",
+                    "type": "reference"
+                },
+                {
+                    "name": "Project Management Software Design",
+                    "url": "https://www.geeksforgeeks.org/design-a-task-scheduler/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Design comprehensive task management system"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Build project hierarchy, implement priority queue for deadlines",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Tree Data Structure for Hierarchy",
+                    "url": "https://www.geeksforgeeks.org/generic-treesn-array-trees/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Priority Queue Implementation",
+                    "url": "https://docs.python.org/3/library/heapq.html",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Build core task management features"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add tags, search (trie), progress tracking, data persistence",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Trie for Search Functionality",
+                    "url": "https://www.geeksforgeeks.org/trie-insert-and-search/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Data Persistence Options",
+                    "url": "https://docs.python.org/3/library/pickle.html",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Complete task management system"
+        }
+    ]
+}

@@ -1,0 +1,111 @@
+/* Light Theme */
+:root[data-theme="light"] {
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #06b6d4;
+    --dark-color: #1f2937;
+    --light-color: #f8fafc;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --border-color: #e5e7eb;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+body[data-theme="light"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .glass-nav {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+[data-theme="light"] .navbar-brand,
+[data-theme="light"] .nav-link {
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .glass-card {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .welcome-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+}
+
+[data-theme="light"] .form-control,
+[data-theme="light"] .form-select {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] .form-control::placeholder {
+    color: rgba(31, 41, 55, 0.6);
+}
+
+[data-theme="light"] .btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+[data-theme="light"] .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .footer {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .task-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .week-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+}
+
+[data-theme="light"] .day-card {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .project-card,
+[data-theme="light"] .note-card,
+[data-theme="light"] .resource-card {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .achievement-card {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .calendar-day {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .weeks-grid .week-square {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] .topic-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .notification {
+    background: rgba(255, 255, 255, 0.95);
+}

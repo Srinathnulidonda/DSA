@@ -1,0 +1,161 @@
+{
+    "week": 8,
+    "title": "Week 8: Graphs (Part 1)",
+    "description": "Introduction to graph theory and fundamental graph algorithms for network analysis.",
+    "project": "Project 8: Social Network Analyzer - Build a friend network analysis system",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Graph Representation",
+            "activities": "Adjacency list vs matrix, directed vs undirected graphs",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Graph DS",
+                    "url": "https://visualgo.net/en/graphds",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "CS Dojo Graphs",
+                    "url": "https://www.youtube.com/watch?v=gXgEDyodOJU",
+                    "type": "video"
+                },
+                {
+                    "name": "Graph Data Structure",
+                    "url": "https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Breadth-First Search (BFS)",
+            "activities": "Level-order traversal, shortest path in unweighted graphs",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "USFCA BFS Visualization",
+                    "url": "https://www.cs.usfca.edu/~galles/visualization/BFS.html",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "William Fiset BFS",
+                    "url": "https://www.youtube.com/watch?v=oDqjPvD54Ss",
+                    "type": "video"
+                },
+                {
+                    "name": "BFS Algorithm Tutorial",
+                    "url": "https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Depth-First Search (DFS)",
+            "activities": "Recursive and iterative DFS, applications",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo DFS",
+                    "url": "https://visualgo.net/en/dfsbfs",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "Back To Back SWE DFS",
+                    "url": "https://www.youtube.com/watch?v=7fujbpJ0LB4",
+                    "type": "video"
+                },
+                {
+                    "name": "DFS Algorithm Guide",
+                    "url": "https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Connected Components",
+            "activities": "Finding islands, graph coloring, union-find",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "LeetCode #200 Number of Islands",
+                    "url": "https://leetcode.com/problems/number-of-islands/",
+                    "type": "practice"
+                },
+                {
+                    "name": "LeetCode #547 Friend Circles",
+                    "url": "https://leetcode.com/problems/number-of-provinces/",
+                    "type": "practice"
+                },
+                {
+                    "name": "Connected Components",
+                    "url": "https://www.geeksforgeeks.org/connected-components-in-an-undirected-graph/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design social network: users, friendships, analysis",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Social Network Analysis",
+                    "url": "https://www.geeksforgeeks.org/social-network-analysis/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Graph Theory in Social Networks",
+                    "url": "https://en.wikipedia.org/wiki/Social_network_analysis",
+                    "type": "reference"
+                }
+            ],
+            "project": "Design friend network data structure"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Add users/friendships, find mutual friends",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Graph Implementation Python",
+                    "url": "https://www.geeksforgeeks.org/generate-graph-using-dictionary-python/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "NetworkX Library",
+                    "url": "https://networkx.org/documentation/stable/tutorial.html",
+                    "type": "library"
+                }
+            ],
+            "project": "Build core social network features"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Friend suggestions, connection paths between users",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Shortest Path Algorithms",
+                    "url": "https://www.geeksforgeeks.org/shortest-path-unweighted-graph/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Friend Recommendation Systems",
+                    "url": "https://towardsdatascience.com/friend-recommendation-with-graph-neural-networks-c662639ad7b8",
+                    "type": "article"
+                }
+            ],
+            "project": "Complete social network analyzer"
+        }
+    ]
+}

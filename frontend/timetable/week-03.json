@@ -1,0 +1,161 @@
+{
+    "week": 3,
+    "title": "Week 3: Linked Lists",
+    "description": "Master linked list operations and understand dynamic memory allocation through hands-on implementation.",
+    "project": "Project 3: Music Playlist Manager - Build a comprehensive music management system",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Singly Linked Lists",
+            "activities": "Node structure, traversal, understanding pointers and references",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Linked List",
+                    "url": "https://visualgo.net/en/list",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "CS Dojo Linked Lists",
+                    "url": "https://www.youtube.com/watch?v=WwfhLC16bis",
+                    "type": "video"
+                },
+                {
+                    "name": "GeeksforGeeks Linked List",
+                    "url": "https://www.geeksforgeeks.org/data-structures/linked-list/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "List Operations",
+            "activities": "Insert at beginning/end/middle, delete operations, search",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "USFCA Linked List Visualization",
+                    "url": "https://www.cs.usfca.edu/~galles/visualization/LinkedList.html",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "mycodeschool Linked Lists",
+                    "url": "https://www.youtube.com/watch?v=NobHlGUjV3g",
+                    "type": "video"
+                },
+                {
+                    "name": "LeetCode Linked List Explore",
+                    "url": "https://leetcode.com/explore/learn/card/linked-list/",
+                    "type": "practice"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Advanced Operations",
+            "activities": "Reverse linked list, detect cycles, merge sorted lists",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "LeetCode #206 Reverse Linked List",
+                    "url": "https://leetcode.com/problems/reverse-linked-list/",
+                    "type": "practice"
+                },
+                {
+                    "name": "LeetCode #141 Linked List Cycle",
+                    "url": "https://leetcode.com/problems/linked-list-cycle/",
+                    "type": "practice"
+                },
+                {
+                    "name": "Back To Back SWE Linked Lists",
+                    "url": "https://www.youtube.com/watch?v=njTh_OwMljA",
+                    "type": "video"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Doubly & Circular Lists",
+            "activities": "Bidirectional traversal, circular linked lists, applications",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "GeeksforGeeks Doubly Linked List",
+                    "url": "https://www.geeksforgeeks.org/doubly-linked-list/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "VisuAlgo Doubly LL",
+                    "url": "https://visualgo.net/en/list",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "Circular Linked List Tutorial",
+                    "url": "https://www.programiz.com/dsa/circular-linked-list",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design music playlist: add/remove songs, navigation, shuffle",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Music Player Architecture",
+                    "url": "https://www.geeksforgeeks.org/design-a-music-player/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Playlist Data Structures",
+                    "url": "https://stackoverflow.com/questions/tagged/playlist+data-structures",
+                    "type": "discussion"
+                }
+            ],
+            "project": "Design playlist data structure and user interface"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Implement song management, play next/previous functionality",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Python Music Libraries",
+                    "url": "https://pygame.readthedocs.io/en/latest/",
+                    "type": "documentation"
+                },
+                {
+                    "name": "File Handling in Python",
+                    "url": "https://docs.python.org/3/tutorial/inputoutput.html",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Build core playlist functionality"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add shuffle, loop features, save/load playlists",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Random Module Python",
+                    "url": "https://docs.python.org/3/library/random.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "JSON Handling",
+                    "url": "https://docs.python.org/3/library/json.html",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Complete music playlist manager with all features"
+        }
+    ]
+}

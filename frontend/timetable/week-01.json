@@ -1,0 +1,161 @@
+{
+    "week": 1,
+    "title": "Week 1: Programming Fundamentals",
+    "description": "Master the basics of programming and set up your development environment for the DSA journey ahead.",
+    "project": "Project 1: Build a Scientific Calculator with Memory Functions",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Environment Setup",
+            "activities": "Install Python/C++, Git setup, GitHub account creation",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Python.org",
+                    "url": "https://www.python.org/downloads/",
+                    "type": "official"
+                },
+                {
+                    "name": "Git Tutorial",
+                    "url": "https://git-scm.com/docs/gittutorial",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "GitHub Guides",
+                    "url": "https://guides.github.com/",
+                    "type": "guide"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Basic Syntax",
+            "activities": "Variables, data types, operators, input/output operations",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "CS Dojo Python Tutorial",
+                    "url": "https://www.youtube.com/watch?v=Z1Yd7upQsXY",
+                    "type": "video"
+                },
+                {
+                    "name": "Programiz Python Basics",
+                    "url": "https://www.programiz.com/python-programming",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Python Tutor (Visualizer)",
+                    "url": "http://pythontutor.com/",
+                    "type": "visualizer"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Control Flow",
+            "activities": "If-else statements, loops (for, while), break and continue",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "W3Schools Python Conditions",
+                    "url": "https://www.w3schools.com/python/python_conditions.asp",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Real Python Control Flow",
+                    "url": "https://realpython.com/python-conditional-statements/",
+                    "type": "article"
+                },
+                {
+                    "name": "Python Tutor Loops",
+                    "url": "http://pythontutor.com/",
+                    "type": "visualizer"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Functions",
+            "activities": "Function definition, parameters, return values, scope",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "CS Dojo Functions Video",
+                    "url": "https://www.youtube.com/watch?v=9Os0o3wzS_I",
+                    "type": "video"
+                },
+                {
+                    "name": "Real Python Functions",
+                    "url": "https://realpython.com/defining-your-own-python-function/",
+                    "type": "article"
+                },
+                {
+                    "name": "Python Function Visualizer",
+                    "url": "http://pythontutor.com/",
+                    "type": "visualizer"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Plan calculator features: basic operations, memory functions",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "Project Planning Guide",
+                    "url": "https://www.geeksforgeeks.org/python-simple-calculator/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Calculator Design Patterns",
+                    "url": "https://refactoring.guru/design-patterns/strategy",
+                    "type": "guide"
+                }
+            ],
+            "project": "Start planning calculator features and user interface"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Implement basic calculator operations (add, subtract, multiply, divide)",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Python Tkinter Tutorial",
+                    "url": "https://www.geeksforgeeks.org/python-gui-tkinter/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Calculator Implementation Guide",
+                    "url": "https://www.programiz.com/python-programming/examples/calculator",
+                    "type": "example"
+                }
+            ],
+            "project": "Build basic calculator with GUI"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add advanced functions (power, sqrt, trigonometry), memory features",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Python Math Module",
+                    "url": "https://docs.python.org/3/library/math.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "Advanced Calculator Features",
+                    "url": "https://www.geeksforgeeks.org/python-program-make-simple-calculator/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Complete scientific calculator with memory functions"
+        }
+    ]
+}

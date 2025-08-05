@@ -1,0 +1,161 @@
+{
+    "week": 6,
+    "title": "Week 6: Trees (Part 1)",
+    "description": "Master binary trees, traversals, and binary search trees through comprehensive study and practice.",
+    "project": "Project 6: File System Explorer - Build a hierarchical file management system",
+    "days": [
+        {
+            "day": "Monday",
+            "topic": "Binary Trees Fundamentals",
+            "activities": "Node structure, tree terminology, basic properties",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo Binary Tree",
+                    "url": "https://visualgo.net/en/bst",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "CS Dojo Trees",
+                    "url": "https://www.youtube.com/watch?v=oSWTXtMglKE",
+                    "type": "video"
+                },
+                {
+                    "name": "GeeksforGeeks Binary Tree",
+                    "url": "https://www.geeksforgeeks.org/binary-tree-data-structure/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Tuesday",
+            "topic": "Tree Traversals",
+            "activities": "Inorder, preorder, postorder, level-order traversals",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "USFCA Tree Traversals",
+                    "url": "https://www.cs.usfca.edu/~galles/visualization/BinTree.html",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "mycodeschool Tree Traversal",
+                    "url": "https://www.youtube.com/watch?v=9RHO6jU--GU",
+                    "type": "video"
+                },
+                {
+                    "name": "LeetCode Tree Explore",
+                    "url": "https://leetcode.com/explore/learn/card/data-structure-tree/",
+                    "type": "practice"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Wednesday",
+            "topic": "Binary Search Trees",
+            "activities": "Insert, search, delete operations, BST properties",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "VisuAlgo BST",
+                    "url": "https://visualgo.net/en/bst",
+                    "type": "visualizer"
+                },
+                {
+                    "name": "Back To Back SWE BST",
+                    "url": "https://www.youtube.com/watch?v=JfSdGQdAzq8",
+                    "type": "video"
+                },
+                {
+                    "name": "BST Implementation Guide",
+                    "url": "https://www.geeksforgeeks.org/binary-search-tree-data-structure/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Thursday",
+            "topic": "Tree Problems",
+            "activities": "Height, diameter, path sum, lowest common ancestor",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "LeetCode Tree Problems",
+                    "url": "https://leetcode.com/tag/tree/",
+                    "type": "practice"
+                },
+                {
+                    "name": "Tree Algorithms Tutorial",
+                    "url": "https://www.geeksforgeeks.org/binary-tree-data-structure/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Tree Problem Patterns",
+                    "url": "https://leetcode.com/discuss/study-guide/937307/Iterative-or-Recursive-or-DFS-or-BFS-Tree-Traversal-or-In-Pre-Post-and-LevelOrder-or-Views",
+                    "type": "guide"
+                }
+            ],
+            "project": null
+        },
+        {
+            "day": "Friday",
+            "topic": "Project Planning",
+            "activities": "Design file system: directories, files, navigation",
+            "time": "2 hrs",
+            "resources": [
+                {
+                    "name": "File System Design",
+                    "url": "https://www.geeksforgeeks.org/design-a-file-system/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Tree Data Structure Applications",
+                    "url": "https://www.tutorialspoint.com/data_structures_algorithms/tree_data_structure.htm",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Design hierarchical file system structure"
+        },
+        {
+            "day": "Saturday",
+            "topic": "Project Implementation",
+            "activities": "Create folders/files, implement navigation",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "Python os module",
+                    "url": "https://docs.python.org/3/library/os.html",
+                    "type": "documentation"
+                },
+                {
+                    "name": "GUI File Explorer Tutorial",
+                    "url": "https://www.geeksforgeeks.org/create-a-gui-to-extract-lyrics-from-song-using-python/",
+                    "type": "tutorial"
+                }
+            ],
+            "project": "Build core file system navigation"
+        },
+        {
+            "day": "Sunday",
+            "topic": "Project Completion",
+            "activities": "Add search functionality, calculate folder sizes",
+            "time": "3 hrs",
+            "resources": [
+                {
+                    "name": "File Search Algorithms",
+                    "url": "https://www.geeksforgeeks.org/searching-algorithms/",
+                    "type": "tutorial"
+                },
+                {
+                    "name": "Directory Size Calculation",
+                    "url": "https://docs.python.org/3/library/os.path.html",
+                    "type": "documentation"
+                }
+            ],
+            "project": "Complete file system explorer with search"
+        }
+    ]
+}

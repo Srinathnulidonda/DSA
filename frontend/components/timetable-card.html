@@ -1,0 +1,669 @@
+<!-- Reusable Timetable Card Component -->
+<div class="timetable-card-component">
+    <div class="day-card" data-day="">
+        <div class="day-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="day-info">
+                    <h5 class="day-title mb-1"></h5>
+                    <div class="day-meta">
+                        <span class="time-badge">
+                            <i class="fas fa-clock me-1"></i>
+                            <span class="day-time"></span>
+                        </span>
+                        <span class="difficulty-badge ms-2">
+                            <i class="fas fa-signal me-1"></i>
+                            <span class="day-difficulty"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="day-progress">
+                    <div class="progress-circle-small" data-percentage="0">
+                        <span class="progress-number">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-content">
+            <!-- Topic Section -->
+            <div class="section topic-section mb-3">
+                <div class="section-header">
+                    <h6 class="section-title">
+                        <i class="fas fa-book text-primary me-2"></i>Topic
+                    </h6>
+                    <button class="btn btn-sm btn-outline-primary toggle-section" onclick="toggleSection(this)">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div class="task-item d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-3 task-checkbox" data-task-type="topic"
+                            onchange="updateTaskProgress(this)">
+                        <div class="task-details flex-grow-1">
+                            <span class="task-title"></span>
+                            <div class="task-description text-muted small"></div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-sm btn-outline-info" onclick="showTaskDetails(this)"
+                                title="View Details">
+                                <i class="fas fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activities Section -->
+            <div class="section activities-section mb-3">
+                <div class="section-header">
+                    <h6 class="section-title">
+                        <i class="fas fa-tasks text-success me-2"></i>Activities
+                    </h6>
+                    <button class="btn btn-sm btn-outline-primary toggle-section" onclick="toggleSection(this)">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div class="task-item d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-3 task-checkbox" data-task-type="activities"
+                            onchange="updateTaskProgress(this)">
+                        <div class="task-details flex-grow-1">
+                            <span class="task-title"></span>
+                            <div class="task-description text-muted small"></div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-sm btn-outline-info" onclick="showTaskDetails(this)"
+                                title="View Details">
+                                <i class="fas fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Section -->
+            <div class="section project-section mb-3" style="display: none;">
+                <div class="section-header">
+                    <h6 class="section-title">
+                        <i class="fas fa-project-diagram text-warning me-2"></i>Project
+                    </h6>
+                    <button class="btn btn-sm btn-outline-primary toggle-section" onclick="toggleSection(this)">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div class="task-item d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-3 task-checkbox" data-task-type="project"
+                            onchange="updateTaskProgress(this)">
+                        <div class="task-details flex-grow-1">
+                            <span class="task-title"></span>
+                            <div class="task-description text-muted small"></div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-sm btn-outline-info" onclick="showTaskDetails(this)"
+                                title="View Details">
+                                <i class="fas fa-info"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Section -->
+            <div class="section resources-section">
+                <div class="section-header">
+                    <h6 class="section-title">
+                        <i class="fas fa-link text-info me-2"></i>Resources
+                    </h6>
+                    <button class="btn btn-sm btn-outline-primary toggle-section" onclick="toggleSection(this)">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div class="resources-list">
+                        <!-- Resources will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day Footer -->
+        <div class="day-footer mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="completion-stats">
+                    <small class="text-muted">
+                        <span class="completed-tasks">0</span>/<span class="total-tasks">0</span> tasks completed
+                    </small>
+                </div>
+                <div class="day-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="startDayStudy(this)"
+                        title="Start Study Session">
+                        <i class="fas fa-play me-1"></i>Start
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="markDayComplete(this)"
+                        title="Mark Day Complete">
+                        <i class="fas fa-check me-1"></i>Complete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Timetable Card Component JavaScript
+    class TimetableCardComponent {
+        constructor(element, dayData) {
+            this.element = element;
+            this.dayData = dayData;
+            this.card = element.querySelector('.day-card');
+
+            this.init();
+        }
+
+        init() {
+            this.render();
+            this.bindEvents();
+            this.updateProgress();
+        }
+
+        render() {
+            // Set day information
+            this.card.setAttribute('data-day', this.dayData.day);
+            this.card.querySelector('.day-title').textContent = this.dayData.day;
+            this.card.querySelector('.day-time').textContent = this.dayData.time;
+            this.card.querySelector('.day-difficulty').textContent = this.getDifficultyText();
+
+            // Render topic
+            this.renderTask('topic', this.dayData.topic, this.dayData.activities);
+
+            // Render activities
+            this.renderTask('activities', 'Practice Activities', this.dayData.activities);
+
+            // Render project if exists
+            if (this.dayData.project) {
+                const projectSection = this.card.querySelector('.project-section');
+                projectSection.style.display = 'block';
+                this.renderTask('project', 'Project Work', this.dayData.project);
+            }
+            // Render resources
+            this.renderResources();
+
+            // Check if tasks are completed
+            this.loadTaskStates();
+        }
+
+        renderTask(type, title, description) {
+            const section = this.card.querySelector(`.${type
+                }-section`);
+            const taskItem = section.querySelector('.task-item');
+            const checkbox = taskItem.querySelector('.task-checkbox');
+            const taskTitle = taskItem.querySelector('.task-title');
+            const taskDescription = taskItem.querySelector('.task-description');
+
+            checkbox.id = `${this.dayData.day
+                }-${type
+                }`;
+            checkbox.setAttribute('data-day', this.dayData.day);
+            checkbox.setAttribute('data-type', type);
+
+            taskTitle.textContent = title;
+            taskDescription.textContent = description;
+        }
+
+        renderResources() {
+            const resourcesList = this.card.querySelector('.resources-list');
+
+            if (!this.dayData.resources || this.dayData.resources.length === 0) {
+                resourcesList.innerHTML = '<p class="text-muted small">No specific resources for today</p>';
+                return;
+            }
+
+            resourcesList.innerHTML = this.dayData.resources.map(resource => `
+            <a href="${resource.url}" target="_blank" class="resource-link" 
+               data-bs-toggle="tooltip" title="${resource.type}">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ${resource.name
+                }
+            </a>
+        `).join('');
+
+            // Initialize tooltips
+            const tooltips = resourcesList.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(tooltip => {
+                new bootstrap.Tooltip(tooltip);
+            });
+        }
+
+        getDifficultyText() {
+            // Determine difficulty based on week and day
+            const week = parseInt(this.dayData.week) || 1;
+            if (week <= 4) return 'Beginner';
+            if (week <= 10) return 'Intermediate';
+            return 'Advanced';
+        }
+
+        loadTaskStates() {
+            const checkboxes = this.card.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(checkbox => {
+                const taskId = `week-${this.dayData.week
+                    }-${checkbox.getAttribute('data-day')
+                    }-${checkbox.getAttribute('data-type')
+                    }`;
+                const isCompleted = this.getTaskState(taskId);
+                checkbox.checked = isCompleted;
+
+                if (isCompleted) {
+                    checkbox.closest('.task-item').classList.add('completed');
+                }
+            });
+
+            this.updateProgress();
+        }
+
+        getTaskState(taskId) {
+            // Get from dashboard userData or localStorage
+            if (window.dashboard && window.dashboard.userData.completedTasks) {
+                return window.dashboard.userData.completedTasks[taskId
+                ] || false;
+            }
+
+            const savedTasks = JSON.parse(localStorage.getItem('dsaDashboardTasks') || '{}');
+            return savedTasks[taskId
+            ] || false;
+        }
+
+        updateProgress() {
+            const checkboxes = this.card.querySelectorAll('.task-checkbox');
+            const completedCheckboxes = this.card.querySelectorAll('.task-checkbox:checked');
+
+            const totalTasks = checkboxes.length;
+            const completedTasks = completedCheckboxes.length;
+            const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            // Update progress circle
+            const progressCircle = this.card.querySelector('.progress-circle-small');
+            const progressNumber = progressCircle.querySelector('.progress-number');
+
+            progressCircle.setAttribute('data-percentage', percentage);
+            progressNumber.textContent = `${percentage
+                }%`;
+
+            // Update completion stats
+            this.card.querySelector('.completed-tasks').textContent = completedTasks;
+            this.card.querySelector('.total-tasks').textContent = totalTasks;
+
+            // Update card appearance
+            if (percentage === 100) {
+                this.card.classList.add('day-completed');
+            } else {
+                this.card.classList.remove('day-completed');
+            }
+        }
+
+        bindEvents() {
+            // Task checkbox changes
+            const checkboxes = this.card.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    this.handleTaskChange(e.target);
+                });
+            });
+        }
+
+        handleTaskChange(checkbox) {
+            const taskItem = checkbox.closest('.task-item');
+            const taskId = `week-${this.dayData.week
+                }-${checkbox.getAttribute('data-day')
+                }-${checkbox.getAttribute('data-type')
+                }`;
+
+            // Update visual state
+            if (checkbox.checked) {
+                taskItem.classList.add('completed');
+                this.showTaskCompletionAnimation(taskItem);
+            } else {
+                taskItem.classList.remove('completed');
+            }
+            // Save state
+            this.saveTaskState(taskId, checkbox.checked);
+
+            // Update progress
+            this.updateProgress();
+
+            // Trigger global update if dashboard is available
+            if (window.dashboard && typeof window.dashboard.updateWeekProgress === 'function') {
+                window.dashboard.updateWeekProgress();
+            }
+        }
+
+        saveTaskState(taskId, completed) {
+            // Save to dashboard if available
+            if (window.dashboard && window.dashboard.userData) {
+                window.dashboard.userData.completedTasks[taskId
+                ] = completed;
+                window.dashboard.saveUserData();
+            } else {
+                // Fallback to localStorage
+                const savedTasks = JSON.parse(localStorage.getItem('dsaDashboardTasks') || '{}');
+                savedTasks[taskId
+                ] = completed;
+                localStorage.setItem('dsaDashboardTasks', JSON.stringify(savedTasks));
+            }
+        }
+
+        showTaskCompletionAnimation(taskItem) {
+            taskItem.classList.add('animate-scaleIn');
+            setTimeout(() => {
+                taskItem.classList.remove('animate-scaleIn');
+            },
+                600);
+        }
+    }
+    // Global functions for card interactions
+    function toggleSection(button) {
+        const section = button.closest('.section');
+        const content = section.querySelector('.section-content');
+        const icon = button.querySelector('i');
+
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            content.style.display = 'none';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+        }
+    }
+
+    function updateTaskProgress(checkbox) {
+        // This will be handled by the TimetableCardComponent
+    }
+
+    function showTaskDetails(button) {
+        const taskItem = button.closest('.task-item');
+        const taskTitle = taskItem.querySelector('.task-title').textContent;
+        const taskDescription = taskItem.querySelector('.task-description').textContent;
+
+        // Show task details modal
+        const modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>Task Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>${taskTitle
+            }</h6>
+                    <p class="text-muted">${taskDescription
+            }</p>
+                    
+                    <div class="task-tips mt-3">
+                        <h6>Tips for Success:</h6>
+                        <ul class="small">
+                            <li>Take notes while learning</li>
+                            <li>Practice coding examples</li>
+                            <li>Review related resources</li>
+                            <li>Ask questions if stuck</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="startTaskTimer(this)" data-bs-dismiss="modal">
+                        <i class="fas fa-play me-1"></i>Start Timer
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+        document.body.appendChild(modal);
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+
+        modal.addEventListener('hidden.bs.modal', () => {
+            modal.remove();
+        });
+    }
+
+    function startDayStudy(button) {
+        const dayCard = button.closest('.day-card');
+        const dayName = dayCard.getAttribute('data-day');
+
+        if (window.dashboard && typeof window.dashboard.startStudySession === 'function') {
+            window.dashboard.startStudySession();
+            window.dashboard.showNotification(
+                'Study Session Started!',
+                `Beginning ${dayName
+                } learning session. Good luck!`,
+                'success'
+            );
+        }
+    }
+
+    function markDayComplete(button) {
+        const dayCard = button.closest('.day-card');
+        const checkboxes = dayCard.querySelectorAll('.task-checkbox');
+
+        // Check all unchecked tasks
+        checkboxes.forEach(checkbox => {
+            if (!checkbox.checked) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        });
+
+        if (window.dashboard && typeof window.dashboard.showNotification === 'function') {
+            window.dashboard.showNotification(
+                'Day Completed!',
+                'Congratulations on completing all tasks for today!',
+                'success'
+            );
+        }
+    }
+
+    function startTaskTimer(button) {
+        if (window.dashboard && typeof window.dashboard.startTimer === 'function') {
+            window.dashboard.startTimer();
+        }
+    }
+</script>
+
+<style>
+    /* Additional styles for timetable card component */
+    .timetable-card-component .day-card {
+        background: rgba(255,
+                255,
+                255,
+                0.1);
+        border: 1px solid rgba(255,
+                255,
+                255,
+                0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .timetable-card-component .day-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0,
+                0,
+                0,
+                0.15);
+    }
+
+    .timetable-card-component .day-card.day-completed {
+        border-color: var(--success-color);
+        background: linear-gradient(135deg, rgba(16,
+                    185,
+                    129,
+                    0.1), rgba(5,
+                    150,
+                    105,
+                    0.05));
+    }
+
+    .timetable-card-component .section {
+        margin-bottom: 1rem;
+    }
+
+    .timetable-card-component .section-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .timetable-card-component .section-title {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .timetable-card-component .toggle-section {
+        border: none;
+        background: none;
+        color: var(--primary-color);
+        padding: 2px 6px;
+    }
+
+    .timetable-card-component .task-item {
+        background: rgba(255,
+                255,
+                255,
+                0.05);
+        border: 1px solid rgba(255,
+                255,
+                255,
+                0.1);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .timetable-card-component .task-item:hover {
+        background: rgba(255,
+                255,
+                255,
+                0.1);
+    }
+
+    .timetable-card-component .task-item.completed {
+        opacity: 0.7;
+        background: rgba(16,
+                185,
+                129,
+                0.1);
+    }
+
+    .timetable-card-component .task-item.completed .task-title {
+        text-decoration: line-through;
+    }
+
+    .timetable-card-component .progress-circle-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 3px solid rgba(99,
+                102,
+                241,
+                0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .timetable-card-component .progress-circle-small[data-percentage="100"
+
+    ] {
+        border-color: var(--success-color);
+        background: rgba(16,
+                185,
+                129,
+                0.1);
+    }
+
+    .timetable-card-component .progress-number {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .timetable-card-component .resource-link {
+        display: inline-block;
+        background: rgba(255,
+                255,
+                255,
+                0.1);
+        color: inherit;
+        padding: 4px 8px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        margin: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .timetable-card-component .resource-link:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .timetable-card-component .time-badge,
+    .timetable-card-component .difficulty-badge {
+        background: rgba(255,
+                255,
+                255,
+                0.1);
+        color: inherit;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .timetable-card-component .day-footer {
+        border-top: 1px solid rgba(255,
+                255,
+                255,
+                0.1);
+        padding-top: 1rem;
+    }
+
+    .timetable-card-component .day-actions .btn {
+        font-size: 0.8rem;
+        padding: 4px 12px;
+        margin-left: 4px;
+    }
+
+    /* Animation for task completion */
+    @keyframes taskComplete {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .timetable-card-component .task-item.animate-scaleIn {
+        animation: taskComplete 0.6s ease-out;
+    }
+</style>

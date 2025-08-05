@@ -1,0 +1,183 @@
+{
+    "terms": [
+        {
+            "term": "Algorithm",
+            "definition": "A step-by-step procedure for solving a problem or performing a computation.",
+            "category": "fundamentals",
+            "examples": [
+                "Bubble Sort",
+                "Binary Search",
+                "Dijkstra's Algorithm"
+            ]
+        },
+        {
+            "term": "Array",
+            "definition": "A collection of elements stored in contiguous memory locations, accessible by index.",
+            "category": "data-structures",
+            "examples": [
+                "[1, 2, 3, 4, 5]",
+                "Dynamic Array",
+                "Static Array"
+            ]
+        },
+        {
+            "term": "Big O Notation",
+            "definition": "Mathematical notation describing the limiting behavior of a function when the argument tends towards infinity. Used to classify algorithms by how they respond to changes in input size.",
+            "category": "complexity",
+            "examples": [
+                "O(1)",
+                "O(n)",
+                "O(log n)",
+                "O(n²)"
+            ]
+        },
+        {
+            "term": "Binary Search",
+            "definition": "A search algorithm that finds the position of a target value within a sorted array by repeatedly dividing the search interval in half.",
+            "category": "algorithms",
+            "examples": [
+                "Finding element in sorted array",
+                "Search in rotated array"
+            ]
+        },
+        {
+            "term": "Binary Tree",
+            "definition": "A tree data structure in which each node has at most two children, referred to as left and right child.",
+            "category": "data-structures",
+            "examples": [
+                "Binary Search Tree",
+                "Complete Binary Tree",
+                "Balanced Binary Tree"
+            ]
+        },
+        {
+            "term": "Breadth-First Search (BFS)",
+            "definition": "A graph traversal algorithm that explores vertices in order of their distance from the source vertex.",
+            "category": "algorithms",
+            "examples": [
+                "Level-order traversal",
+                "Shortest path in unweighted graph"
+            ]
+        },
+        {
+            "term": "Depth-First Search (DFS)",
+            "definition": "A graph traversal algorithm that explores as far as possible along each branch before backtracking.",
+            "category": "algorithms",
+            "examples": [
+                "Tree traversal",
+                "Topological sorting",
+                "Cycle detection"
+            ]
+        },
+        {
+            "term": "Dynamic Programming",
+            "definition": "An algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems and storing the results of subproblems to avoid computing the same results again.",
+            "category": "algorithms",
+            "examples": [
+                "Fibonacci sequence",
+                "Longest Common Subsequence",
+                "Knapsack problem"
+            ]
+        },
+        {
+            "term": "Graph",
+            "definition": "A collection of vertices (nodes) connected by edges, used to represent relationships between objects.",
+            "category": "data-structures",
+            "examples": [
+                "Social networks",
+                "Road networks",
+                "Computer networks"
+            ]
+        },
+        {
+            "term": "Hash Table",
+            "definition": "A data structure that implements an associative array abstract data type using a hash function to compute an index into an array of buckets.",
+            "category": "data-structures",
+            "examples": [
+                "Dictionary",
+                "Set",
+                "Cache"
+            ]
+        },
+        {
+            "term": "Heap",
+            "definition": "A specialized tree-based data structure that satisfies the heap property: parent nodes are ordered with respect to their children.",
+            "category": "data-structures",
+            "examples": [
+                "Priority Queue",
+                "Heap Sort",
+                "Min Heap",
+                "Max Heap"
+            ]
+        },
+        {
+            "term": "Linked List",
+            "definition": "A linear collection of data elements whose order is not given by their physical placement in memory. Each element points to the next.",
+            "category": "data-structures",
+            "examples": [
+                "Singly Linked List",
+                "Doubly Linked List",
+                "Circular Linked List"
+            ]
+        },
+        {
+            "term": "Queue",
+            "definition": "A linear data structure that follows the First In, First Out (FIFO) principle.",
+            "category": "data-structures",
+            "examples": [
+                "Breadth-First Search",
+                "Job scheduling",
+                "Buffer"
+            ]
+        },
+        {
+            "term": "Recursion",
+            "definition": "A method of solving problems where the solution depends on solutions to smaller instances of the same problem.",
+            "category": "techniques",
+            "examples": [
+                "Factorial",
+                "Tree traversal",
+                "Divide and conquer"
+            ]
+        },
+        {
+            "term": "Stack",
+            "definition": "A linear data structure that follows the Last In, First Out (LIFO) principle.",
+            "category": "data-structures",
+            "examples": [
+                "Function call stack",
+                "Expression evaluation",
+                "Undo operations"
+            ]
+        },
+        {
+            "term": "Time Complexity",
+            "definition": "The computational complexity that describes the amount of time taken by an algorithm to run as a function of the length of the input.",
+            "category": "complexity",
+            "examples": [
+                "Constant time O(1)",
+                "Linear time O(n)",
+                "Quadratic time O(n²)"
+            ]
+        },
+        {
+            "term": "Space Complexity",
+            "definition": "The amount of memory space an algorithm uses as a function of its input size.",
+            "category": "complexity",
+            "examples": [
+                "In-place algorithms O(1)",
+                "Recursive algorithms O(n)"
+            ]
+        },
+        {
+            "term": "Trie",
+            "definition": "A tree-like data structure used to store a dynamic set of strings, where each node represents a common prefix.",
+            "category": "data-structures",
+            "examples": [
+                "Autocomplete",
+                "Spell checker",
+                "IP routing"
+            ]
+        }
+    ]
+}

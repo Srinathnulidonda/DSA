@@ -1,0 +1,926 @@
+<!-- Notes Modal Component -->
+<div class="modal fade" id="notesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-sticky-note me-2"></i>
+                    <span id="notes-modal-title">Add New Note</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="notes-form">
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label for="note-title-input" class="form-label">
+                            <i class="fas fa-heading me-1"></i>Title *
+                        </label>
+                        <input type="text" class="form-control" id="note-title-input" placeholder="Enter note title..."
+                            required>
+                        <div class="invalid-feedback">
+                            Please provide a title for your note.
+                        </div>
+                    </div>
+
+                    <!-- Topic and Week Row -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="note-topic-input" class="form-label">
+                                <i class="fas fa-tag me-1"></i>Topic
+                            </label>
+                            <input type="text" class="form-control" id="note-topic-input"
+                                placeholder="e.g., Arrays, Binary Trees..." list="topics-datalist">
+                            <datalist id="topics-datalist">
+                                <option value="Arrays">
+                                <option value="Strings">
+                                <option value="Linked Lists">
+                                <option value="Stacks">
+                                <option value="Queues">
+                                <option value="Trees">
+                                <option value="Graphs">
+                                <option value="Sorting">
+                                <option value="Searching">
+                                <option value="Dynamic Programming">
+                                <option value="Greedy Algorithms">
+                                <option value="Backtracking">
+                            </datalist>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="note-week-input" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Week
+                            </label>
+                            <select class="form-select" id="note-week-input">
+                                <option value="">Select Week (Optional)</option>
+                                <!-- Weeks will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="mb-3">
+                        <label for="note-content-input" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>Content *
+                        </label>
+                        <div class="content-toolbar mb-2">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="formatText('bold')" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="formatText('italic')" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="formatText('code')" title="Code">
+                                    <i class="fas fa-code"></i>
+                                </button>
+                            </div>
+                            <div class="btn-group ms-2" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="insertTemplate('algorithm')" title="Algorithm Template">
+                                    <i class="fas fa-sitemap"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="insertTemplate('complexity')" title="Complexity Template">
+                                    <i class="fas fa-chart-line"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="insertTemplate('example')" title="Example Template">
+                                    <i class="fas fa-lightbulb"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea class="form-control" id="note-content-input" rows="8"
+                            placeholder="Write your notes here..." required></textarea>
+                        <div class="invalid-feedback">
+                            Please add some content to your note.
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            You can use Markdown syntax for formatting. Use templates for quick structure.
+                        </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="mb-3">
+                        <label for="note-tags-input" class="form-label">
+                            <i class="fas fa-tags me-1"></i>Tags
+                        </label>
+                        <input type="text" class="form-control" id="note-tags-input"
+                            placeholder="e.g., important, review, example (separate with commas)">
+                        <div class="form-text">
+                            Add tags to help organize and find your notes later.
+                        </div>
+                        <div id="suggested-tags" class="mt-2">
+                            <!-- Suggested tags will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Priority -->
+                    <div class="mb-3">
+                        <label for="note-priority-input" class="form-label">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Priority
+                        </label>
+                        <select class="form-select" id="note-priority-input">
+                            <option value="normal">Normal</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+
+                    <!-- Attachments (Future Enhancement) -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-paperclip me-1"></i>Attachments
+                        </label>
+                        <div class="attachment-area">
+                            <div class="drag-drop-area" onclick="document.getElementById('file-input').click()">
+                                <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">Click to upload files or drag and drop</p>
+                                <small class="text-muted">Images, PDFs, Code files (Max 10MB)</small>
+                            </div>
+                            <input type="file" id="file-input" multiple
+                                accept=".png,.jpg,.jpeg,.pdf,.txt,.py,.js,.html,.css" style="display: none;">
+                            <div id="attachment-list" class="mt-2">
+                                <!-- Attachments will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-between w-100">
+                    <div class="note-info">
+                        <small class="text-muted" id="note-save-status">
+                            <i class="fas fa-save me-1"></i>Auto-save enabled
+                        </small>
+                    </div>
+                    <div class="note-actions">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="previewNote()">
+                            <i class="fas fa-eye me-1"></i>Preview
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="saveNote()">
+                            <i class="fas fa-save me-1"></i>
+                            <span id="save-button-text">Save Note</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Note Preview Modal -->
+<div class="modal fade" id="notePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Note Preview
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="note-preview-content">
+                    <!-- Preview content will be rendered here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="closePreviewAndSave()">
+                    <i class="fas fa-save me-1"></i>Save Note
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Notes Modal Styles */
+    .notes-modal .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    [data-theme="dark"] .notes-modal .modal-content {
+        background: rgba(17, 24, 39, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .content-toolbar {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 0.5rem;
+    }
+
+    .content-toolbar .btn {
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .drag-drop-area {
+        border: 2px dashed rgba(99, 102, 241, 0.3);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .drag-drop-area:hover {
+        border-color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .drag-drop-area.dragover {
+        border-color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .suggested-tags .badge {
+        margin: 0.25rem 0.25rem 0 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .suggested-tags .badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+
+    .attachment-item {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+    }
+
+    .attachment-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .attachment-icon {
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .attachment-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .attachment-name {
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .attachment-size {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .note-preview-content {
+        min-height: 300px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Form validation styles */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: var(--danger-color);
+    }
+
+    .form-control.is-valid,
+    .form-select.is-valid {
+        border-color: var(--success-color);
+    }
+
+    .invalid-feedback {
+        color: var(--danger-color);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .valid-feedback {
+        color: var(--success-color);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Auto-save indicator */
+    .note-save-status.saving {
+        color: var(--warning-color);
+    }
+
+    .note-save-status.saved {
+        color: var(--success-color);
+    }
+
+    .note-save-status.error {
+        color: var(--danger-color);
+    }
+</style>
+
+<script>
+    // Notes Modal Component JavaScript
+    class NotesModalComponent {
+        constructor() {
+            this.modal = document.getElementById('notesModal');
+            this.previewModal = document.getElementById('notePreviewModal');
+            this.form = document.getElementById('notes-form');
+            this.editingNote = null;
+            this.autoSaveTimer = null;
+            this.attachments = [];
+
+            this.init();
+        }
+
+        init() {
+            this.populateWeekOptions();
+            this.setupEventListeners();
+            this.setupAutoSave();
+            this.setupDragDrop();
+            this.loadSuggestedTags();
+        }
+
+        populateWeekOptions() {
+            const weekSelect = document.getElementById('note-week-input');
+
+            for (let i = 1; i <= 14; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Week ${i}`;
+                weekSelect.appendChild(option);
+            }
+
+            // Set current week as default
+            if (window.dashboard && window.dashboard.userData.currentWeek) {
+                weekSelect.value = window.dashboard.userData.currentWeek;
+            }
+        }
+
+        setupEventListeners() {
+            // Form validation
+            this.form.addEventListener('input', (e) => {
+                this.validateField(e.target);
+                this.triggerAutoSave();
+            });
+
+            // File input
+            document.getElementById('file-input').addEventListener('change', (e) => {
+                this.handleFileSelect(e.target.files);
+            });
+
+            // Tag suggestions
+            document.getElementById('note-tags-input').addEventListener('input', (e) => {
+                this.updateTagSuggestions(e.target.value);
+            });
+
+            // Modal events
+            this.modal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('note-title-input').focus();
+            });
+
+            this.modal.addEventListener('hidden.bs.modal', () => {
+                this.resetForm();
+            });
+        }
+
+        setupAutoSave() {
+            // Auto-save every 30 seconds
+            setInterval(() => {
+                if (this.hasUnsavedChanges()) {
+                    this.autoSave();
+                }
+            }, 30000);
+        }
+
+        setupDragDrop() {
+            const dragArea = document.querySelector('.drag-drop-area');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dragArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dragArea.addEventListener(eventName, () => {
+                    dragArea.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dragArea.addEventListener(eventName, () => {
+                    dragArea.classList.remove('dragover');
+                });
+            });
+
+            dragArea.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                this.handleFileSelect(files);
+            });
+        }
+
+        loadSuggestedTags() {
+            const commonTags = [
+                'important', 'review', 'example', 'algorithm', 'implementation',
+                'theory', 'practice', 'interview', 'notes', 'summary'
+            ];
+
+            const container = document.getElementById('suggested-tags');
+            container.innerHTML = commonTags.map(tag =>
+                `<span class="badge bg-outline-primary me-1" onclick="addTag('${tag}')">${tag}</span>`
+            ).join('');
+        }
+
+        showModal(noteData = null) {
+            this.editingNote = noteData;
+
+            if (noteData) {
+                // Edit mode
+                document.getElementById('notes-modal-title').textContent = 'Edit Note';
+                document.getElementById('save-button-text').textContent = 'Update Note';
+                this.populateForm(noteData);
+            } else {
+                // Add mode
+                document.getElementById('notes-modal-title').textContent = 'Add New Note';
+                document.getElementById('save-button-text').textContent = 'Save Note';
+                this.resetForm();
+            }
+
+            const modal = new bootstrap.Modal(this.modal);
+            modal.show();
+        }
+
+        populateForm(noteData) {
+            document.getElementById('note-title-input').value = noteData.title || '';
+            document.getElementById('note-topic-input').value = noteData.topic || '';
+            document.getElementById('note-week-input').value = noteData.week || '';
+            document.getElementById('note-content-input').value = noteData.content || '';
+            document.getElementById('note-tags-input').value = noteData.tags ? noteData.tags.join(', ') : '';
+            document.getElementById('note-priority-input').value = noteData.priority || 'normal';
+        }
+
+        resetForm() {
+            this.form.reset();
+            this.editingNote = null;
+            this.attachments = [];
+            this.clearValidation();
+            this.updateAttachmentList();
+
+            // Reset week to current week
+            if (window.dashboard && window.dashboard.userData.currentWeek) {
+                document.getElementById('note-week-input').value = window.dashboard.userData.currentWeek;
+            }
+        }
+
+        validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+
+            if (field.required && !value) {
+                isValid = false;
+            }
+
+            // Custom validation rules
+            switch (field.id) {
+                case 'note-title-input':
+                    isValid = value.length >= 3;
+                    break;
+                case 'note-content-input':
+                    isValid = value.length >= 10;
+                    break;
+            }
+
+            // Update field appearance
+            field.classList.remove('is-valid', 'is-invalid');
+            if (value) {
+                field.classList.add(isValid ? 'is-valid' : 'is-invalid');
+            }
+
+            return isValid;
+        }
+
+        validateForm() {
+            const requiredFields = this.form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!this.validateField(field)) {
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        clearValidation() {
+            this.form.querySelectorAll('.form-control, .form-select').forEach(field => {
+                field.classList.remove('is-valid', 'is-invalid');
+            });
+        }
+
+        triggerAutoSave() {
+            clearTimeout(this.autoSaveTimer);
+            this.autoSaveTimer = setTimeout(() => {
+                this.autoSave();
+            }, 2000);
+        }
+
+        autoSave() {
+            if (!this.hasUnsavedChanges()) return;
+
+            const statusElement = document.getElementById('note-save-status');
+            statusElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Auto-saving...';
+            statusElement.className = 'text-muted saving';
+
+            // Simulate auto-save (in real implementation, save to localStorage or server)
+            setTimeout(() => {
+                statusElement.innerHTML = '<i class="fas fa-check me-1"></i>Auto-saved';
+                statusElement.className = 'text-muted saved';
+
+                setTimeout(() => {
+                    statusElement.innerHTML = '<i class="fas fa-save me-1"></i>Auto-save enabled';
+                    statusElement.className = 'text-muted';
+                }, 2000);
+            }, 1000);
+        }
+
+        hasUnsavedChanges() {
+            const title = document.getElementById('note-title-input').value.trim();
+            const content = document.getElementById('note-content-input').value.trim();
+
+            return title || content;
+        }
+
+        handleFileSelect(files) {
+            Array.from(files).forEach(file => {
+                if (this.validateFile(file)) {
+                    this.attachments.push({
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        file: file
+                    });
+                }
+            });
+
+            this.updateAttachmentList();
+        }
+
+        validateFile(file) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const allowedTypes = [
+                'image/png', 'image/jpeg', 'image/jpg',
+                'application/pdf', 'text/plain',
+                'text/x-python', 'application/javascript',
+                'text/html', 'text/css'
+            ];
+
+            if (file.size > maxSize) {
+                alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+                return false;
+            }
+
+            if (!allowedTypes.includes(file.type) && !file.name.match(/\.(py|js|html|css|txt)$/)) {
+                alert(`File type "${file.type}" is not allowed.`);
+                return false;
+            }
+
+            return true;
+        }
+
+        updateAttachmentList() {
+            const container = document.getElementById('attachment-list');
+
+            if (this.attachments.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = this.attachments.map(attachment => `
+            <div class="attachment-item" data-attachment-id="${attachment.id}">
+                <div class="attachment-info">
+                    <div class="attachment-icon">
+                        <i class="${this.getFileIcon(attachment.type)}"></i>
+                    </div>
+                    <div class="attachment-details">
+                        <div class="attachment-name">${attachment.name}</div>
+                        <div class="attachment-size">${this.formatFileSize(attachment.size)}</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger" 
+                        onclick="removeAttachment('${attachment.id}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `).join('');
+        }
+
+        getFileIcon(type) {
+            if (type.startsWith('image/')) return 'fas fa-image text-info';
+            if (type === 'application/pdf') return 'fas fa-file-pdf text-danger';
+            if (type.includes('text') || type.includes('javascript')) return 'fas fa-file-code text-success';
+            return 'fas fa-file text-muted';
+        }
+
+        formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        saveNote() {
+            if (!this.validateForm()) {
+                alert('Please fill in all required fields correctly.');
+                return;
+            }
+
+            const noteData = this.collectFormData();
+
+            if (window.notes) {
+                if (this.editingNote) {
+                    window.notes.updateNote(this.editingNote.id, noteData);
+                } else {
+                    window.notes.addNote(noteData);
+                }
+            }
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(this.modal);
+            modal.hide();
+
+            // Show success message
+            if (window.dashboard) {
+                window.dashboard.showNotification(
+                    this.editingNote ? 'Note Updated!' : 'Note Saved!',
+                    'Your note has been saved successfully.',
+                    'success'
+                );
+            }
+        }
+
+        collectFormData() {
+            const tagsInput = document.getElementById('note-tags-input').value.trim();
+            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+            return {
+                title: document.getElementById('note-title-input').value.trim(),
+                topic: document.getElementById('note-topic-input').value.trim(),
+                week: document.getElementById('note-week-input').value || null,
+                content: document.getElementById('note-content-input').value.trim(),
+                tags: tags,
+                priority: document.getElementById('note-priority-input').value,
+                attachments: this.attachments.map(att => ({
+                    id: att.id,
+                    name: att.name,
+                    size: att.size,
+                    type: att.type
+                }))
+            };
+        }
+
+        previewNote() {
+            const noteData = this.collectFormData();
+            const previewContent = this.renderNotePreview(noteData);
+
+            document.getElementById('note-preview-content').innerHTML = previewContent;
+
+            const previewModal = new bootstrap.Modal(this.previewModal);
+            previewModal.show();
+        }
+
+        renderNotePreview(noteData) {
+            return `
+            <div class="note-preview">
+                <div class="note-header mb-3">
+                    <h3>${noteData.title}</h3>
+                    <div class="note-meta">
+                        ${noteData.topic ? `<span class="badge bg-primary me-2">${noteData.topic}</span>` : ''}
+                        ${noteData.week ? `<span class="badge bg-secondary me-2">Week ${noteData.week}</span>` : ''}
+                        <span class="badge bg-${this.getPriorityColor(noteData.priority)}">${noteData.priority}</span>
+                    </div>
+                </div>
+                
+                <div class="note-content mb-3">
+                    ${this.formatContent(noteData.content)}
+                </div>
+                
+                ${noteData.tags.length > 0 ? `
+                    <div class="note-tags mb-3">
+                        <strong>Tags:</strong>
+                        ${noteData.tags.map(tag => `<span class="badge bg-light text-dark me-1">${tag}</span>`).join('')}
+                    </div>
+                ` : ''}
+                
+                ${this.attachments.length > 0 ? `
+                    <div class="note-attachments">
+                        <strong>Attachments:</strong>
+                        <ul class="list-unstyled mt-2">
+                            ${this.attachments.map(att => `
+                                <li><i class="${this.getFileIcon(att.type)} me-2"></i>${att.name}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        }
+
+        formatContent(content) {
+            // Simple markdown-like formatting
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        getPriorityColor(priority) {
+            switch (priority) {
+                case 'high': return 'warning';
+                case 'urgent': return 'danger';
+                default: return 'info';
+            }
+        }
+    }
+
+    // Global functions
+    function formatText(format) {
+        const textarea = document.getElementById('note-content-input');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+
+        let formattedText;
+        switch (format) {
+            case 'bold':
+                formattedText = `**${selectedText}**`;
+                break;
+            case 'italic':
+                formattedText = `*${selectedText}*`;
+                break;
+            case 'code':
+                formattedText = `\`${selectedText}\``;
+                break;
+            default:
+                return;
+        }
+
+        textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+        textarea.selectionStart = start + formattedText.length;
+        textarea.selectionEnd = start + formattedText.length;
+        textarea.focus();
+    }
+
+    function insertTemplate(type) {
+        const textarea = document.getElementById('note-content-input');
+        const cursorPos = textarea.selectionStart;
+
+        let template;
+        switch (type) {
+            case 'algorithm':
+                template = `
+## Algorithm: [Name]
+
+**Description:** 
+[Brief description of what the algorithm does]
+
+**Time Complexity:** O()
+**Space Complexity:** O()
+
+**Steps:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+**Implementation:**
+\`\`\`
+[Code here]
+\`\`\`
+
+**Example:**
+Input: [example input]
+Output: [example output]
+            `.trim();
+                break;
+            case 'complexity':
+                template = `
+## Complexity Analysis
+
+**Time Complexity:** 
+- Best Case: O()
+- Average Case: O()
+- Worst Case: O()
+
+**Space Complexity:** O()
+
+**Explanation:**
+[Explain the reasoning behind the complexity]
+            `.trim();
+                break;
+            case 'example':
+                template = `
+## Example: [Title]
+
+**Problem:** 
+[Describe the problem]
+
+**Solution:**
+[Explain the approach]
+
+**Code:**
+\`\`\`
+[Implementation]
+\`\`\`
+
+**Explanation:**
+[Walk through the solution]
+            `.trim();
+                break;
+            default:
+                return;
+        }
+
+        const newValue = textarea.value.substring(0, cursorPos) + template + textarea.value.substring(cursorPos);
+        textarea.value = newValue;
+        textarea.selectionStart = cursorPos + template.length;
+        textarea.selectionEnd = cursorPos + template.length;
+        textarea.focus();
+    }
+
+    function addTag(tag) {
+        const tagsInput = document.getElementById('note-tags-input');
+        const currentTags = tagsInput.value.trim();
+
+        if (currentTags) {
+            tagsInput.value = currentTags + ', ' + tag;
+        } else {
+            tagsInput.value = tag;
+        }
+
+        tagsInput.focus();
+    }
+
+    function removeAttachment(attachmentId) {
+        if (window.notesModalComponent) {
+            window.notesModalComponent.attachments = window.notesModalComponent.attachments.filter(
+                att => att.id !== attachmentId
+            );
+            window.notesModalComponent.updateAttachmentList();
+        }
+    }
+
+    function previewNote() {
+        if (window.notesModalComponent) {
+            window.notesModalComponent.previewNote();
+        }
+    }
+
+    function closePreviewAndSave() {
+        const previewModal = bootstrap.Modal.getInstance(document.getElementById('notePreviewModal'));
+        previewModal.hide();
+
+        setTimeout(() => {
+            if (window.notesModalComponent) {
+                window.notesModalComponent.saveNote();
+            }
+        }, 300);
+    }
+
+    function saveNote() {
+        if (window.notesModalComponent) {
+            window.notesModalComponent.saveNote();
+        }
+    }
+
+    // Initialize component
+    document.addEventListener('DOMContentLoaded', () => {
+        window.notesModalComponent = new NotesModalComponent();
+    });
+
+    // Global function to show notes modal
+    function showNotesModal(noteData = null) {
+        if (window.notesModalComponent) {
+            window.notesModalComponent.showModal(noteData);
+        }
+    }
+</script>

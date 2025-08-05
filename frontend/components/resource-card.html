@@ -1,0 +1,909 @@
+<!-- Resource Card Component -->
+<div class="resource-card-component">
+    <div class="resource-card" data-resource-type="" data-category="">
+        <div class="resource-header">
+            <div class="resource-icon-container">
+                <i class="resource-icon"></i>
+            </div>
+            <div class="resource-actions">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="favoriteResource(this)">
+                                <i class="fas fa-star me-2"></i>Add to Favorites
+                            </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="shareResource(this)">
+                                <i class="fas fa-share me-2"></i>Share
+                            </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="reportResource(this)">
+                                <i class="fas fa-flag me-2"></i>Report
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-content">
+            <h6 class="resource-title"></h6>
+            <p class="resource-description"></p>
+
+            <div class="resource-meta">
+                <div class="resource-topics">
+                    <!-- Topics will be populated here -->
+                </div>
+                <div class="resource-rating">
+                    <!-- Rating stars will be populated here -->
+                </div>
+            </div>
+
+            <div class="resource-stats">
+                <div class="stat-item">
+                    <i class="fas fa-eye text-muted"></i>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">views</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-heart text-muted"></i>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">likes</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="resource-footer">
+            <div class="resource-type-badge">
+                <span class="badge"></span>
+            </div>
+            <div class="resource-links">
+                <button class="btn btn-sm btn-primary resource-visit-btn" onclick="visitResource(this)">
+                    <i class="fas fa-external-link-alt me-1"></i>
+                    Visit
+                </button>
+                <button class="btn btn-sm btn-outline-primary" onclick="quickPreview(this)">
+                    <i class="fas fa-eye me-1"></i>
+                    Preview
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Preview Panel (Initially Hidden) -->
+        <div class="resource-preview" style="display: none;">
+            <div class="preview-header">
+                <h6>Quick Preview</h6>
+                <button class="btn btn-sm btn-outline-secondary" onclick="closePreview(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="preview-content">
+                <div class="preview-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading preview...
+                </div>
+                <iframe class="preview-frame" style="display: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resource Details Modal -->
+<div class="modal fade" id="resourceDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <span id="modal-resource-title">Resource Details</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="resource-details-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="modal-visit-btn">
+                    <i class="fas fa-external-link-alt me-1"></i>Visit Resource
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Resource Card Component Styles */
+    .resource-card-component {
+        margin-bottom: 1.5rem;
+    }
+
+    .resource-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-color);
+    }
+
+    .resource-card.favorited {
+        border-color: var(--warning-color);
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
+    }
+
+    .resource-header {
+        display: flex;
+        justify-content: between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .resource-icon-container {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .resource-icon {
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .resource-actions {
+        margin-left: auto;
+    }
+
+    .resource-content {
+        margin-bottom: 1rem;
+    }
+
+    .resource-title {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+
+    .resource-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .resource-meta {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .resource-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .topic-chip {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-color);
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .resource-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .star {
+        color: var(--warning-color);
+        font-size: 0.9rem;
+    }
+
+    .star.empty {
+        color: var(--text-secondary);
+        opacity: 0.3;
+    }
+
+    .resource-stats {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .stat-value {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .resource-footer {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+    }
+
+    .resource-type-badge .badge {
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .resource-links {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .resource-links .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+    }
+
+    .resource-preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1rem;
+        z-index: 10;
+    }
+
+    [data-theme="dark"] .resource-preview {
+        background: rgba(17, 24, 39, 0.98);
+    }
+
+    .preview-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .preview-content {
+        height: calc(100% - 60px);
+        position: relative;
+    }
+
+    .preview-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: var(--text-secondary);
+    }
+
+    .preview-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 8px;
+    }
+
+    /* Resource type specific styling */
+    .resource-card[data-category="video"] .resource-icon-container {
+        background: linear-gradient(135deg, #ff0000, #cc0000);
+    }
+
+    .resource-card[data-category="practice"] .resource-icon-container {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .resource-card[data-category="book"] .resource-icon-container {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+
+    .resource-card[data-category="tool"] .resource-icon-container {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .resource-card[data-category="visualizer"] .resource-icon-container {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    /* Badge colors for different resource types */
+    .resource-type-badge .badge.video {
+        background-color: #ff0000;
+    }
+
+    .resource-type-badge .badge.practice {
+        background-color: #10b981;
+    }
+
+    .resource-type-badge .badge.book {
+        background-color: #8b5cf6;
+    }
+
+    .resource-type-badge .badge.tool {
+        background-color: #f59e0b;
+    }
+
+    .resource-type-badge .badge.visualizer {
+        background-color: #06b6d4;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .resource-card {
+            padding: 1rem;
+        }
+
+        .resource-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .resource-icon-container {
+            width: 50px;
+            height: 50px;
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+
+        .resource-actions {
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+
+        .resource-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .resource-footer {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .resource-links {
+            width: 100%;
+            justify-content: stretch;
+        }
+
+        .resource-links .btn {
+            flex: 1;
+        }
+    }
+
+    /* Animation for card interactions */
+    .resource-card.loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .resource-card.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(99, 102, 241, 0.3);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    /* Favorite animation */
+    .resource-card.favoriting .resource-actions i {
+        animation: pulse 0.6s ease-in-out;
+        color: var(--warning-color);
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.2);
+        }
+    }
+</style>
+
+<script>
+    // Resource Card Component JavaScript
+    class ResourceCardComponent {
+        constructor(element, resourceData) {
+            this.element = element;
+            this.card = element.querySelector('.resource-card');
+            this.resourceData = resourceData;
+            this.isFavorited = false;
+            this.views = 0;
+            this.likes = 0;
+
+            this.init();
+        }
+
+        init() {
+            this.render();
+            this.bindEvents();
+            this.loadStats();
+        }
+
+        render() {
+            // Set basic data attributes
+            this.card.setAttribute('data-resource-type', this.resourceData.category);
+            this.card.setAttribute('data-category', this.resourceData.category);
+
+            // Render icon
+            const iconElement = this.card.querySelector('.resource-icon');
+            iconElement.className = `resource-icon ${this.getResourceIcon(this.resourceData.category)}`;
+
+            // Render content
+            this.card.querySelector('.resource-title').textContent = this.resourceData.name;
+            this.card.querySelector('.resource-description').textContent = this.resourceData.description;
+
+            // Render topics
+            this.renderTopics();
+
+            // Render rating
+            this.renderRating();
+
+            // Render type badge
+            const badge = this.card.querySelector('.resource-type-badge .badge');
+            badge.textContent = this.formatCategory(this.resourceData.category);
+            badge.className = `badge ${this.resourceData.category}`;
+
+            // Set visit button URL
+            const visitBtn = this.card.querySelector('.resource-visit-btn');
+            visitBtn.setAttribute('data-url', this.resourceData.url);
+        }
+
+        renderTopics() {
+            const topicsContainer = this.card.querySelector('.resource-topics');
+
+            if (!this.resourceData.topics || this.resourceData.topics.length === 0) {
+                topicsContainer.style.display = 'none';
+                return;
+            }
+
+            // Show only first 3 topics to avoid clutter
+            const topicsToShow = this.resourceData.topics.slice(0, 3);
+            const remainingCount = this.resourceData.topics.length - 3;
+
+            topicsContainer.innerHTML = topicsToShow.map(topic =>
+                `<span class="topic-chip">${topic}</span>`
+            ).join('') + (remainingCount > 0 ?
+                `<span class="topic-chip">+${remainingCount} more</span>` : ''
+                );
+        }
+
+        renderRating() {
+            const ratingContainer = this.card.querySelector('.resource-rating');
+            const rating = this.resourceData.rating || 0;
+            const maxStars = 5;
+
+            let starsHTML = '';
+            for (let i = 1; i <= maxStars; i++) {
+                const starClass = i <= rating ? 'star fas fa-star' : 'star empty far fa-star';
+                starsHTML += `<i class="${starClass}"></i>`;
+            }
+
+            ratingContainer.innerHTML = starsHTML;
+        }
+
+        bindEvents() {
+            // Card click for details
+            this.card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on buttons
+                if (e.target.closest('button') || e.target.closest('.dropdown')) {
+                    return;
+                }
+                this.showDetails();
+            });
+
+            // Visit button
+            const visitBtn = this.card.querySelector('.resource-visit-btn');
+            visitBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.visitResource();
+            });
+
+            // Preview button
+            const previewBtn = this.card.querySelector('[onclick*="quickPreview"]');
+            previewBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.showQuickPreview();
+            });
+        }
+
+        loadStats() {
+            // Load stats from localStorage or API
+            const savedStats = this.getSavedStats();
+            this.views = savedStats.views || 0;
+            this.likes = savedStats.likes || 0;
+            this.isFavorited = savedStats.favorited || false;
+
+            this.updateStatsDisplay();
+
+            if (this.isFavorited) {
+                this.card.classList.add('favorited');
+            }
+        }
+
+        getSavedStats() {
+            const allStats = JSON.parse(localStorage.getItem('resourceStats') || '{}');
+            return allStats[this.resourceData.url] || {};
+        }
+
+        saveStats() {
+            const allStats = JSON.parse(localStorage.getItem('resourceStats') || '{}');
+            allStats[this.resourceData.url] = {
+                views: this.views,
+                likes: this.likes,
+                favorited: this.isFavorited
+            };
+            localStorage.setItem('resourceStats', JSON.stringify(allStats));
+        }
+
+        updateStatsDisplay() {
+            const statItems = this.card.querySelectorAll('.stat-item');
+            statItems[0].querySelector('.stat-value').textContent = this.views;
+            statItems[1].querySelector('.stat-value').textContent = this.likes;
+        }
+
+        visitResource() {
+            // Increment view count
+            this.views++;
+            this.updateStatsDisplay();
+            this.saveStats();
+
+            // Track visit
+            this.trackResourceVisit();
+
+            // Open resource
+            window.open(this.resourceData.url, '_blank');
+
+            // Show visit animation
+            this.showVisitAnimation();
+        }
+
+        showQuickPreview() {
+            const preview = this.card.querySelector('.resource-preview');
+            const iframe = preview.querySelector('.preview-frame');
+            const loading = preview.querySelector('.preview-loading');
+
+            preview.style.display = 'block';
+            loading.style.display = 'flex';
+            iframe.style.display = 'none';
+
+            // Try to load preview
+            iframe.onload = () => {
+                loading.style.display = 'none';
+                iframe.style.display = 'block';
+            };
+
+            iframe.onerror = () => {
+                loading.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                    <p>Preview not available</p>
+                    <button class="btn btn-primary btn-sm" onclick="visitResource(this)">
+                        Visit Resource
+                    </button>
+                </div>
+            `;
+            };
+
+            // Set iframe source (might not work for all sites due to CORS)
+            iframe.src = this.resourceData.url;
+
+            // Auto-close preview after 30 seconds
+            setTimeout(() => {
+                this.closePreview();
+            }, 30000);
+        }
+
+        closePreview() {
+            const preview = this.card.querySelector('.resource-preview');
+            preview.style.display = 'none';
+
+            // Clear iframe
+            const iframe = preview.querySelector('.preview-frame');
+            iframe.src = 'about:blank';
+        }
+
+        showDetails() {
+            const modal = document.getElementById('resourceDetailsModal');
+            const modalTitle = document.getElementById('modal-resource-title');
+            const modalContent = document.getElementById('resource-details-content');
+            const modalVisitBtn = document.getElementById('modal-visit-btn');
+
+            modalTitle.textContent = this.resourceData.name;
+            modalContent.innerHTML = this.renderDetailedView();
+            modalVisitBtn.onclick = () => this.visitResource();
+
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        }
+
+        renderDetailedView() {
+            return `
+            <div class="resource-details">
+                <div class="resource-header-detailed mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="resource-icon-large me-3">
+                            <i class="${this.getResourceIcon(this.resourceData.category)}" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <h4>${this.resourceData.name}</h4>
+                            <span class="badge ${this.resourceData.category}">${this.formatCategory(this.resourceData.category)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-rating-detailed">
+                        ${this.renderRatingDetailed()}
+                        <span class="rating-text ms-2">${this.resourceData.rating || 0}/5</span>
+                    </div>
+                </div>
+                
+                <div class="resource-description-detailed mb-4">
+                    <h6>About this resource:</h6>
+                    <p>${this.resourceData.description}</p>
+                </div>
+                
+                ${this.resourceData.topics && this.resourceData.topics.length > 0 ? `
+                    <div class="resource-topics-detailed mb-4">
+                        <h6>Covers these topics:</h6>
+                        <div class="topics-list">
+                            ${this.resourceData.topics.map(topic => `
+                                <span class="topic-chip">${topic}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <div class="resource-stats-detailed mb-4">
+                    <h6>Statistics:</h6>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-eye text-primary"></i>
+                            <div class="stat-info">
+                                <span class="stat-number">${this.views}</span>
+                                <span class="stat-label">Views</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-heart text-danger"></i>
+                            <div class="stat-info">
+                                <span class="stat-number">${this.likes}</span>
+                                <span class="stat-label">Likes</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-star text-warning"></i>
+                            <div class="stat-info">
+                                <span class="stat-number">${this.resourceData.rating || 0}</span>
+                                <span class="stat-label">Rating</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resource-actions-detailed">
+                    <button class="btn btn-primary me-2" onclick="window.resourceCard.visitResource()">
+                        <i class="fas fa-external-link-alt me-1"></i>Visit Resource
+                    </button>
+                    <button class="btn btn-outline-warning me-2" onclick="window.resourceCard.toggleFavorite()">
+                        <i class="fas fa-star me-1"></i>
+                        ${this.isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}
+                    </button>
+                    <button class="btn btn-outline-success" onclick="window.resourceCard.toggleLike()">
+                        <i class="fas fa-heart me-1"></i>
+                        ${this.likes > 0 ? 'Unlike' : 'Like'}
+                    </button>
+                </div>
+            </div>
+        `;
+        }
+
+        renderRatingDetailed() {
+            const rating = this.resourceData.rating || 0;
+            const maxStars = 5;
+
+            let starsHTML = '';
+            for (let i = 1; i <= maxStars; i++) {
+                const starClass = i <= rating ? 'fas fa-star text-warning' : 'far fa-star text-muted';
+                starsHTML += `<i class="${starClass}"></i>`;
+            }
+
+            return starsHTML;
+        }
+
+        toggleFavorite() {
+            this.isFavorited = !this.isFavorited;
+
+            if (this.isFavorited) {
+                this.card.classList.add('favorited', 'favoriting');
+                setTimeout(() => this.card.classList.remove('favoriting'), 600);
+            } else {
+                this.card.classList.remove('favorited');
+            }
+
+            this.saveStats();
+
+            // Update dropdown text
+            const favoriteBtn = this.card.querySelector('[onclick*="favoriteResource"]');
+            if (favoriteBtn) {
+                favoriteBtn.innerHTML = this.isFavorited ?
+                    '<i class="fas fa-star me-2"></i>Remove from Favorites' :
+                    '<i class="far fa-star me-2"></i>Add to Favorites';
+            }
+        }
+
+        toggleLike() {
+            if (this.likes > 0) {
+                this.likes = 0;
+            } else {
+                this.likes = 1;
+            }
+
+            this.updateStatsDisplay();
+            this.saveStats();
+        }
+
+        showVisitAnimation() {
+            this.card.classList.add('loading');
+            setTimeout(() => {
+                this.card.classList.remove('loading');
+            }, 1000);
+        }
+
+        trackResourceVisit() {
+            // Track resource visit for analytics
+            if (window.api && typeof window.api.trackResourceClick === 'function') {
+                window.api.trackResourceClick(this.resourceData.name, this.resourceData.category);
+            }
+        }
+
+        getResourceIcon(category) {
+            const iconMap = {
+                'visualizer': 'fas fa-eye',
+                'video': 'fab fa-youtube',
+                'practice': 'fas fa-code',
+                'book': 'fas fa-book',
+                'tool': 'fas fa-tools',
+                'tutorial': 'fas fa-graduation-cap',
+                'course': 'fas fa-university',
+                'documentation': 'fas fa-file-alt'
+            };
+            return iconMap[category] || 'fas fa-link';
+        }
+
+        formatCategory(category) {
+            const categoryMap = {
+                'visualizer': 'Visualizer',
+                'video': 'Video',
+                'practice': 'Practice',
+                'book': 'Book',
+                'tool': 'Tool',
+                'tutorial': 'Tutorial',
+                'course': 'Course',
+                'documentation': 'Documentation'
+            };
+            return categoryMap[category] || category.charAt(0).toUpperCase() + category.slice(1);
+        }
+    }
+
+    // Global functions
+    function visitResource(element) {
+        const card = element.closest('.resource-card');
+        const url = element.getAttribute('data-url') || element.closest('[data-url]')?.getAttribute('data-url');
+
+        if (url) {
+            window.open(url, '_blank');
+        }
+    }
+
+    function quickPreview(element) {
+        const cardComponent = element.closest('.resource-card-component');
+        if (cardComponent && cardComponent.resourceCardInstance) {
+            cardComponent.resourceCardInstance.showQuickPreview();
+        }
+    }
+
+    function closePreview(element) {
+        const cardComponent = element.closest('.resource-card-component');
+        if (cardComponent && cardComponent.resourceCardInstance) {
+            cardComponent.resourceCardInstance.closePreview();
+        }
+    }
+
+    function favoriteResource(element) {
+        const cardComponent = element.closest('.resource-card-component');
+        if (cardComponent && cardComponent.resourceCardInstance) {
+            cardComponent.resourceCardInstance.toggleFavorite();
+        }
+    }
+
+    function shareResource(element) {
+        const card = element.closest('.resource-card');
+        const title = card.querySelector('.resource-title').textContent;
+        const url = card.querySelector('.resource-visit-btn').getAttribute('data-url');
+
+        if (navigator.share) {
+            navigator.share({
+                title: title,
+                text: `Check out this resource: ${title}`,
+                url: url
+            });
+        } else {
+            // Fallback to copy to clipboard
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Resource URL copied to clipboard!');
+            });
+        }
+    }
+
+    function reportResource(element) {
+        const card = element.closest('.resource-card');
+        const title = card.querySelector('.resource-title').textContent;
+
+        const reason = prompt(`Why are you reporting "${title}"?\n\nReasons: inappropriate content, broken link, spam, other`);
+
+        if (reason) {
+            // In a real app, this would send to a backend
+            alert('Thank you for your report. We will review this resource.');
+            console.log('Resource reported:', { title, reason });
+        }
+    }
+
+    // Auto-initialize resource cards
+    document.addEventListener('DOMContentLoaded', () => {
+        // This would typically be called when resource cards are dynamically created
+    });
+
+    // Export for use in other modules
+    window.ResourceCardComponent = ResourceCardComponent;
+</script>

@@ -1,0 +1,172 @@
+{
+    "visualizers": [
+        {
+            "name": "VisuAlgo",
+            "description": "Visualizing data structures and algorithms through animation",
+            "url": "https://visualgo.net/",
+            "category": "visualizer",
+            "topics": [
+                "arrays",
+                "linked-lists",
+                "trees",
+                "graphs",
+                "sorting",
+                "hashing"
+            ],
+            "rating": 5
+        },
+        {
+            "name": "USFCA Algorithms",
+            "description": "Interactive animations for algorithms and data structures",
+            "url": "https://www.cs.usfca.edu/~galles/visualization/Algorithms.html",
+            "category": "visualizer",
+            "topics": [
+                "trees",
+                "graphs",
+                "sorting",
+                "hashing"
+            ],
+            "rating": 4
+        },
+        {
+            "name": "Algorithm Visualizer",
+            "description": "Interactive online platform for visualizing algorithms",
+            "url": "https://algorithm-visualizer.org/",
+            "category": "visualizer",
+            "topics": [
+                "sorting",
+                "searching",
+                "graphs",
+                "trees"
+            ],
+            "rating": 4
+        }
+    ],
+    "videos": [
+        {
+            "name": "CS Dojo",
+            "description": "Comprehensive programming and algorithms tutorials",
+            "url": "https://www.youtube.com/c/CSDojo",
+            "category": "video",
+            "topics": [
+                "fundamentals",
+                "algorithms",
+                "data-structures"
+            ],
+            "rating": 5
+        },
+        {
+            "name": "Back To Back SWE",
+            "description": "Software engineering interview preparation",
+            "url": "https://www.youtube.com/c/BackToBackSWE",
+            "category": "video",
+            "topics": [
+                "algorithms",
+                "interview-prep",
+                "system-design"
+            ],
+            "rating": 5
+        },
+        {
+            "name": "mycodeschool",
+            "description": "Data structures and algorithms tutorials",
+            "url": "https://www.youtube.com/user/mycodeschool",
+            "category": "video",
+            "topics": [
+                "data-structures",
+                "algorithms",
+                "programming"
+            ],
+            "rating": 4
+        }
+    ],
+    "practice": [
+        {
+            "name": "LeetCode",
+            "description": "The world's leading online programming learning platform",
+            "url": "https://leetcode.com/",
+            "category": "practice",
+            "topics": [
+                "algorithms",
+                "data-structures",
+                "interview-prep"
+            ],
+            "rating": 5
+        },
+        {
+            "name": "GeeksforGeeks Practice",
+            "description": "Practice programming problems and learn concepts",
+            "url": "https://practice.geeksforgeeks.org/",
+            "category": "practice",
+            "topics": [
+                "algorithms",
+                "data-structures",
+                "programming"
+            ],
+            "rating": 4
+        },
+        {
+            "name": "Codeforces",
+            "description": "Competitive programming contests and practice",
+            "url": "https://codeforces.com/",
+            "category": "practice",
+            "topics": [
+                "competitive-programming",
+                "algorithms"
+            ],
+            "rating": 4
+        }
+    ],
+    "books": [
+        {
+            "name": "Cracking the Coding Interview",
+            "description": "189 Programming Questions and Solutions",
+            "url": "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850",
+            "category": "book",
+            "topics": [
+                "interview-prep",
+                "algorithms",
+                "data-structures"
+            ],
+            "rating": 5
+        },
+        {
+            "name": "Introduction to Algorithms (CLRS)",
+            "description": "Comprehensive algorithms textbook",
+            "url": "https://mitpress.mit.edu/books/introduction-algorithms-third-edition",
+            "category": "book",
+            "topics": [
+                "algorithms",
+                "theory",
+                "advanced"
+            ],
+            "rating": 5
+        }
+    ],
+    "tools": [
+        {
+            "name": "Python Tutor",
+            "description": "Visualize code execution step by step",
+            "url": "http://pythontutor.com/",
+            "category": "tool",
+            "topics": [
+                "debugging",
+                "visualization",
+                "learning"
+            ],
+            "rating": 5
+        },
+        {
+            "name": "Repl.it",
+            "description": "Online IDE for multiple programming languages",
+            "url": "https://replit.com/",
+            "category": "tool",
+            "topics": [
+                "coding",
+                "collaboration",
+                "ide"
+            ],
+            "rating": 4
+        }
+    ]
+}
