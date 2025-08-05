@@ -1,5 +1,6 @@
 Build a modern, responsive, and interactive DSA (Data Structures & Algorithms) Learning Dashboard with the full 14-week timetable, daily schedules, and all resources. web app using HTML5, CSS3, Bootstrap, Tailwind CSS, and JavaScript.
 Features:
+want to store notes in the cloud for free, the best and easiest option is to use Firebase Realtime Database or Firebase Firestore. Both have a generous free tier, are easy to use with JavaScript, and require no backend server.
 
 Personalized Timetable: Daily and weekly schedule based on the 14-week DSA roadmap (see below), with checkboxes, progress bars, and streak tracking.
 Progress Tracking: Visual progress indicators for each topic, week, and project. Show completion percentage, badges, and streaks.
@@ -73,7 +74,78 @@ Allow users to add custom notes and mark topics as “review needed”.
 
 
 
+project structure
 
+dsa-learning-dashboard/
+│
+├── frontend/
+│   ├── index.html
+│   ├── README.md
+│
+│   ├── assets/
+│   │   ├── images/
+│   │   ├── icons/
+│   │   └── logo.png
+│
+│   ├── css/
+│   │   ├── main.css
+│   │   ├── components.css
+│   │   ├── responsive.css
+│   │   ├── animations.css
+│   │   └── themes/
+│   │       ├── light-theme.css
+│   │       ├── dark-theme.css
+│   │       └── custom-themes.css
+│
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── api.js
+│   │   ├── progress.js
+│   │   ├── timetable.js
+│   │   ├── notes.js
+│   │   └── utils.js
+│
+│   ├── components/
+│   │   ├── navbar.html
+│   │   ├── sidebar.html
+│   │   ├── progress-bar.html
+│   │   ├── timetable-card.html
+│   │   ├── notes-modal.html
+│   │   └── resource-card.html
+│
+│   ├── pages/
+│   │   ├── dashboard.html
+│   │   ├── timetable.html
+│   │   ├── progress.html
+│   │   ├── projects.html
+│   │   ├── notes.html
+│   │   └── resources.html
+│
+│   ├── timetable/
+│   │   ├── roadmap.json
+│   │   ├── week-01.json
+│   │   ├── week-02.json
+│   │   ├── week-03.json
+│   │   ├── week-04.json
+│   │   ├── week-05.json
+│   │   ├── week-06.json
+│   │   ├── week-07.json
+│   │   ├── week-08.json
+│   │   ├── week-09.json
+│   │   ├── week-10.json
+│   │   ├── week-11.json
+│   │   ├── week-12.json
+│   │   ├── week-13.json
+│   │   └── week-14.json
+│
+│   └── resources/
+│       ├── dsa_resources.json
+│       ├── practice_links.json
+│       └── glossary.json
+│
+└── backend/
+    ├── app.py
+    └── requirements.txt
 
 
 Here's an improved DSA learning roadmap with practical projects after each major topic:
