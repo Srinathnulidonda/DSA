@@ -1,0 +1,1032 @@
+{
+    "metadata": {
+        "title": "DSA Practice Problems Collection",
+        "description": "Curated collection of practice problems organized by topic and difficulty",
+        "lastUpdated": "2024-01-15",
+        "totalProblems": 500
+    },
+    "platforms": {
+        "leetcode": {
+            "name": "LeetCode",
+            "url": "https://leetcode.com",
+            "icon": "🔥",
+            "description": "Premier coding interview platform",
+            "free_problems": 1800,
+            "total_problems": 2500,
+            "premium": true
+        },
+        "hackerrank": {
+            "name": "HackerRank",
+            "url": "https://hackerrank.com",
+            "icon": "💚",
+            "description": "Skill-based programming challenges",
+            "free_problems": 1000,
+            "total_problems": 1000,
+            "premium": false
+        },
+        "codeforces": {
+            "name": "Codeforces",
+            "url": "https://codeforces.com",
+            "icon": "🏆",
+            "description": "Competitive programming platform",
+            "free_problems": 8000,
+            "total_problems": 8000,
+            "premium": false
+        },
+        "geeksforgeeks": {
+            "name": "GeeksforGeeks",
+            "url": "https://geeksforgeeks.org",
+            "icon": "🎯",
+            "description": "Comprehensive practice platform",
+            "free_problems": 500,
+            "total_problems": 500,
+            "premium": false
+        }
+    },
+    "topics": {
+        "arrays": {
+            "title": "Arrays & Strings",
+            "description": "Fundamental array operations and string manipulation",
+            "total_problems": 85,
+            "beginner": [
+                {
+                    "title": "Two Sum",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/two-sum/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "arrays",
+                        "hash-table"
+                    ],
+                    "companies": [
+                        "google",
+                        "amazon",
+                        "apple"
+                    ],
+                    "acceptance_rate": "49.5%",
+                    "description": "Find two numbers that add up to target"
+                },
+                {
+                    "title": "Best Time to Buy and Sell Stock",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "arrays",
+                        "dynamic-programming"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "54.2%",
+                    "description": "Find maximum profit from stock trading"
+                },
+                {
+                    "title": "Contains Duplicate",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/contains-duplicate/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "arrays",
+                        "hash-table"
+                    ],
+                    "companies": [
+                        "google",
+                        "apple"
+                    ],
+                    "acceptance_rate": "59.1%",
+                    "description": "Check if array contains duplicates"
+                },
+                {
+                    "title": "Maximum Subarray",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/maximum-subarray/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "arrays",
+                        "dynamic-programming"
+                    ],
+                    "companies": [
+                        "linkedin",
+                        "bloomberg"
+                    ],
+                    "acceptance_rate": "48.8%",
+                    "description": "Find contiguous subarray with largest sum"
+                },
+                {
+                    "title": "Array Rotation",
+                    "platform": "geeksforgeeks",
+                    "url": "https://www.geeksforgeeks.org/array-rotation/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "arrays"
+                    ],
+                    "description": "Rotate array by d positions"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "3Sum",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/3sum/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "arrays",
+                        "two-pointers"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "31.9%",
+                    "description": "Find all unique triplets that sum to zero"
+                },
+                {
+                    "title": "Container With Most Water",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/container-with-most-water/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "arrays",
+                        "two-pointers"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "bloomberg"
+                    ],
+                    "acceptance_rate": "54.1%",
+                    "description": "Find two lines that contain most water"
+                },
+                {
+                    "title": "Product of Array Except Self",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/product-of-array-except-self/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "arrays"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "63.4%",
+                    "description": "Calculate product array without division"
+                },
+                {
+                    "title": "Subarray Sum Equals K",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "arrays",
+                        "hash-table"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "google"
+                    ],
+                    "acceptance_rate": "44.0%",
+                    "description": "Count subarrays with sum equal to k"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Trapping Rain Water",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/trapping-rain-water/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "arrays",
+                        "two-pointers",
+                        "dynamic-programming"
+                    ],
+                    "companies": [
+                        "google",
+                        "amazon",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "57.1%",
+                    "description": "Calculate trapped rainwater"
+                },
+                {
+                    "title": "Sliding Window Maximum",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/sliding-window-maximum/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "arrays",
+                        "sliding-window",
+                        "deque"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "google"
+                    ],
+                    "acceptance_rate": "45.8%",
+                    "description": "Find maximum in sliding window"
+                }
+            ]
+        },
+        "linked_lists": {
+            "title": "Linked Lists",
+            "description": "Linear data structure operations and manipulations",
+            "total_problems": 45,
+            "beginner": [
+                {
+                    "title": "Reverse Linked List",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/reverse-linked-list/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "linked-list"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "69.4%",
+                    "description": "Reverse a singly linked list"
+                },
+                {
+                    "title": "Merge Two Sorted Lists",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "linked-list",
+                        "recursion"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "microsoft",
+                        "apple"
+                    ],
+                    "acceptance_rate": "61.8%",
+                    "description": "Merge two sorted linked lists"
+                },
+                {
+                    "title": "Delete Node in a Linked List",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/delete-node-in-a-linked-list/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "linked-list"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "67.9%",
+                    "description": "Delete node given only access to that node"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "Add Two Numbers",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/add-two-numbers/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "linked-list",
+                        "math"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "microsoft",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "37.8%",
+                    "description": "Add two numbers represented as linked lists"
+                },
+                {
+                    "title": "Remove Nth Node From End of List",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "linked-list",
+                        "two-pointers"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon"
+                    ],
+                    "acceptance_rate": "37.6%",
+                    "description": "Remove nth node from end in one pass"
+                },
+                {
+                    "title": "Linked List Cycle",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/linked-list-cycle/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "linked-list",
+                        "two-pointers"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "microsoft",
+                        "yahoo"
+                    ],
+                    "acceptance_rate": "46.5%",
+                    "description": "Detect if linked list has a cycle"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Merge k Sorted Lists",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "linked-list",
+                        "divide-and-conquer",
+                        "heap"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "facebook",
+                        "google"
+                    ],
+                    "acceptance_rate": "46.4%",
+                    "description": "Merge k sorted linked lists"
+                },
+                {
+                    "title": "Reverse Nodes in k-Group",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "linked-list"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "52.5%",
+                    "description": "Reverse nodes in groups of k"
+                }
+            ]
+        },
+        "stacks_queues": {
+            "title": "Stacks & Queues",
+            "description": "LIFO and FIFO data structure operations",
+            "total_problems": 35,
+            "beginner": [
+                {
+                    "title": "Valid Parentheses",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/valid-parentheses/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "stack",
+                        "string"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "facebook",
+                        "google"
+                    ],
+                    "acceptance_rate": "40.7%",
+                    "description": "Check if parentheses are properly closed"
+                },
+                {
+                    "title": "Implement Queue using Stacks",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/implement-queue-using-stacks/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "stack",
+                        "queue",
+                        "design"
+                    ],
+                    "companies": [
+                        "microsoft",
+                        "bloomberg"
+                    ],
+                    "acceptance_rate": "57.8%",
+                    "description": "Implement queue operations using stacks"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "Min Stack",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/min-stack/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "stack",
+                        "design"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "bloomberg",
+                        "google"
+                    ],
+                    "acceptance_rate": "51.7%",
+                    "description": "Design stack with min operation in O(1)"
+                },
+                {
+                    "title": "Daily Temperatures",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/daily-temperatures/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "stack",
+                        "array"
+                    ],
+                    "companies": [
+                        "google",
+                        "amazon"
+                    ],
+                    "acceptance_rate": "66.0%",
+                    "description": "Find next warmer temperature"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Largest Rectangle in Histogram",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "stack",
+                        "array"
+                    ],
+                    "companies": [
+                        "google",
+                        "amazon",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "39.1%",
+                    "description": "Find largest rectangle area in histogram"
+                }
+            ]
+        },
+        "trees": {
+            "title": "Trees & Binary Search Trees",
+            "description": "Hierarchical data structure operations",
+            "total_problems": 75,
+            "beginner": [
+                {
+                    "title": "Maximum Depth of Binary Tree",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "tree",
+                        "dfs",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "linkedin",
+                        "amazon",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "72.9%",
+                    "description": "Find maximum depth of binary tree"
+                },
+                {
+                    "title": "Same Tree",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/same-tree/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "tree",
+                        "dfs"
+                    ],
+                    "companies": [
+                        "bloomberg"
+                    ],
+                    "acceptance_rate": "56.0%",
+                    "description": "Check if two trees are identical"
+                },
+                {
+                    "title": "Invert Binary Tree",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/invert-binary-tree/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "tree",
+                        "dfs",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "google",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "72.1%",
+                    "description": "Invert/mirror a binary tree"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "Validate Binary Search Tree",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/validate-binary-search-tree/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "tree",
+                        "dfs",
+                        "bst"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "facebook",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "29.5%",
+                    "description": "Check if tree is valid BST"
+                },
+                {
+                    "title": "Binary Tree Level Order Traversal",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "tree",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "linkedin"
+                    ],
+                    "acceptance_rate": "60.3%",
+                    "description": "Level order traversal of binary tree"
+                },
+                {
+                    "title": "Lowest Common Ancestor of BST",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "tree",
+                        "bst"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "facebook",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "56.3%",
+                    "description": "Find LCA in binary search tree"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Binary Tree Maximum Path Sum",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "tree",
+                        "dfs"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "36.2%",
+                    "description": "Find maximum path sum in binary tree"
+                },
+                {
+                    "title": "Serialize and Deserialize Binary Tree",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "tree",
+                        "design"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "google"
+                    ],
+                    "acceptance_rate": "51.7%",
+                    "description": "Serialize/deserialize binary tree"
+                }
+            ]
+        },
+        "graphs": {
+            "title": "Graph Algorithms",
+            "description": "Graph traversal and shortest path algorithms",
+            "total_problems": 55,
+            "beginner": [
+                {
+                    "title": "Number of Islands",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/number-of-islands/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "graph",
+                        "dfs",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "facebook",
+                        "google"
+                    ],
+                    "acceptance_rate": "53.4%",
+                    "description": "Count number of islands in 2D grid"
+                },
+                {
+                    "title": "Clone Graph",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/clone-graph/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "graph",
+                        "dfs",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "google"
+                    ],
+                    "acceptance_rate": "48.8%",
+                    "description": "Clone an undirected graph"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "Course Schedule",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/course-schedule/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "graph",
+                        "dfs",
+                        "bfs",
+                        "topological-sort"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "zenefits"
+                    ],
+                    "acceptance_rate": "46.0%",
+                    "description": "Check if course schedule is possible"
+                },
+                {
+                    "title": "Pacific Atlantic Water Flow",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "graph",
+                        "dfs",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "google",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "47.7%",
+                    "description": "Find cells that can flow to both oceans"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Word Ladder",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/word-ladder/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "graph",
+                        "bfs"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "linkedin"
+                    ],
+                    "acceptance_rate": "34.0%",
+                    "description": "Find shortest transformation sequence"
+                },
+                {
+                    "title": "Alien Dictionary",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/alien-dictionary/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "graph",
+                        "topological-sort"
+                    ],
+                    "companies": [
+                        "google",
+                        "facebook",
+                        "airbnb"
+                    ],
+                    "acceptance_rate": "32.4%",
+                    "description": "Find order of characters in alien language",
+                    "premium": true
+                }
+            ]
+        },
+        "dynamic_programming": {
+            "title": "Dynamic Programming",
+            "description": "Optimization problems using memoization and tabulation",
+            "total_problems": 65,
+            "beginner": [
+                {
+                    "title": "Climbing Stairs",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/climbing-stairs/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "dynamic-programming"
+                    ],
+                    "companies": [
+                        "adobe",
+                        "amazon",
+                        "apple"
+                    ],
+                    "acceptance_rate": "50.1%",
+                    "description": "Count ways to climb n stairs"
+                },
+                {
+                    "title": "House Robber",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/house-robber/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "dynamic-programming"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "linkedin",
+                        "airbnb"
+                    ],
+                    "acceptance_rate": "47.1%",
+                    "description": "Rob houses without alerting police"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "Coin Change",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/coin-change/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "dynamic-programming"
+                    ],
+                    "companies": [
+                        "amazon",
+                        "facebook",
+                        "uber"
+                    ],
+                    "acceptance_rate": "39.4%",
+                    "description": "Minimum coins to make amount"
+                },
+                {
+                    "title": "Longest Increasing Subsequence",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "dynamic-programming",
+                        "binary-search"
+                    ],
+                    "companies": [
+                        "microsoft",
+                        "amazon",
+                        "facebook"
+                    ],
+                    "acceptance_rate": "45.8%",
+                    "description": "Find length of longest increasing subsequence"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Edit Distance",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/edit-distance/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "dynamic-programming",
+                        "string"
+                    ],
+                    "companies": [
+                        "google",
+                        "facebook",
+                        "amazon"
+                    ],
+                    "acceptance_rate": "48.9%",
+                    "description": "Minimum operations to convert word1 to word2"
+                },
+                {
+                    "title": "Regular Expression Matching",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/regular-expression-matching/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "dynamic-programming",
+                        "string"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "google",
+                        "twitter"
+                    ],
+                    "acceptance_rate": "27.5%",
+                    "description": "Implement regex matching with . and *"
+                }
+            ]
+        },
+        "sorting_searching": {
+            "title": "Sorting & Searching",
+            "description": "Sorting algorithms and binary search variations",
+            "total_problems": 40,
+            "beginner": [
+                {
+                    "title": "Binary Search",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/binary-search/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "binary-search"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon"
+                    ],
+                    "acceptance_rate": "56.0%",
+                    "description": "Basic binary search implementation"
+                },
+                {
+                    "title": "First Bad Version",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/first-bad-version/",
+                    "difficulty": "easy",
+                    "topics": [
+                        "binary-search"
+                    ],
+                    "companies": [
+                        "facebook"
+                    ],
+                    "acceptance_rate": "42.5%",
+                    "description": "Find first bad version using binary search"
+                }
+            ],
+            "intermediate": [
+                {
+                    "title": "Search in Rotated Sorted Array",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "binary-search",
+                        "array"
+                    ],
+                    "companies": [
+                        "facebook",
+                        "amazon",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "37.9%",
+                    "description": "Search in rotated sorted array"
+                },
+                {
+                    "title": "Find Peak Element",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/find-peak-element/",
+                    "difficulty": "medium",
+                    "topics": [
+                        "binary-search",
+                        "array"
+                    ],
+                    "companies": [
+                        "google",
+                        "facebook",
+                        "microsoft"
+                    ],
+                    "acceptance_rate": "45.2%",
+                    "description": "Find peak element in array"
+                }
+            ],
+            "advanced": [
+                {
+                    "title": "Median of Two Sorted Arrays",
+                    "platform": "leetcode",
+                    "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
+                    "difficulty": "hard",
+                    "topics": [
+                        "binary-search",
+                        "array"
+                    ],
+                    "companies": [
+                        "google",
+                        "facebook",
+                        "amazon"
+                    ],
+                    "acceptance_rate": "33.7%",
+                    "description": "Find median of two sorted arrays"
+                }
+            ]
+        }
+    },
+    "practice_schedules": {
+        "beginner_track": {
+            "title": "Beginner Practice Track",
+            "duration": "8 weeks",
+            "problems_per_week": 10,
+            "schedule": {
+                "week_1": [
+                    "two-sum",
+                    "valid-parentheses",
+                    "merge-two-sorted-lists"
+                ],
+                "week_2": [
+                    "maximum-subarray",
+                    "climbing-stairs",
+                    "binary-search"
+                ],
+                "week_3": [
+                    "reverse-linked-list",
+                    "maximum-depth-binary-tree",
+                    "same-tree"
+                ],
+                "week_4": [
+                    "best-time-buy-sell-stock",
+                    "contains-duplicate",
+                    "invert-binary-tree"
+                ]
+            }
+        },
+        "interview_prep": {
+            "title": "Interview Preparation Track",
+            "duration": "12 weeks",
+            "problems_per_week": 15,
+            "focus": "Most common interview questions",
+            "companies": [
+                "FAANG",
+                "top-tech"
+            ]
+        },
+        "competitive_programming": {
+            "title": "Competitive Programming Track",
+            "duration": "16 weeks",
+            "problems_per_week": 20,
+            "platforms": [
+                "codeforces",
+                "atcoder",
+                "codechef"
+            ],
+            "focus": "Contest-style problems"
+        }
+    },
+    "company_specific": {
+        "google": {
+            "total_problems": 150,
+            "most_frequent": [
+                "two-sum",
+                "merge-intervals",
+                "valid-parentheses",
+                "lru-cache"
+            ],
+            "difficulty_distribution": {
+                "easy": "20%",
+                "medium": "60%",
+                "hard": "20%"
+            }
+        },
+        "facebook": {
+            "total_problems": 130,
+            "most_frequent": [
+                "valid-parentheses",
+                "merge-intervals",
+                "clone-graph",
+                "binary-tree-paths"
+            ],
+            "difficulty_distribution": {
+                "easy": "25%",
+                "medium": "55%",
+                "hard": "20%"
+            }
+        },
+        "amazon": {
+            "total_problems": 200,
+            "most_frequent": [
+                "two-sum",
+                "merge-two-sorted-lists",
+                "reverse-linked-list",
+                "number-of-islands"
+            ],
+            "difficulty_distribution": {
+                "easy": "30%",
+                "medium": "50%",
+                "hard": "20%"
+            }
+        }
+    }
+}

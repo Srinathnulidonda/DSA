@@ -1,0 +1,443 @@
+/* Theme Variables and Dark Mode Styles */
+
+/* Light Theme (Default) */
+:root {
+    /* Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-tertiary: #6b7280;
+    --text-muted: #9ca3af;
+
+    --border-primary: #e5e7eb;
+    --border-secondary: #d1d5db;
+
+    /* Component Specific */
+    --card-bg: #ffffff;
+    --card-border: #e5e7eb;
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+    --input-focus-border: var(--primary-color);
+
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #4b5563;
+    --sidebar-hover-bg: #f8fafc;
+
+    --code-bg: #f3f4f6;
+    --code-text: #1f2937;
+
+    /* Status Colors */
+    --success-bg: #d1fae5;
+    --success-text: #065f46;
+    --warning-bg: #fef3c7;
+    --warning-text: #92400e;
+    --danger-bg: #fee2e2;
+    --danger-text: #991b1b;
+    --info-bg: #dbeafe;
+    --info-text: #1e40af;
+}
+
+/* Dark Theme */
+body.dark-mode {
+    /* Colors */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #e2e8f0;
+    --text-tertiary: #cbd5e1;
+    --text-muted: #94a3b8;
+
+    --border-primary: #334155;
+    --border-secondary: #475569;
+
+    /* Component Specific */
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    --input-bg: #1e293b;
+    --input-border: #475569;
+    --input-focus-border: var(--primary-color);
+
+    --sidebar-bg: #1e293b;
+    --sidebar-text: #cbd5e1;
+    --sidebar-hover-bg: #334155;
+
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+
+    /* Status Colors */
+    --success-bg: #064e3b;
+    --success-text: #6ee7b7;
+    --warning-bg: #78350f;
+    --warning-text: #fde68a;
+    --danger-bg: #7f1d1d;
+    --danger-text: #fca5a5;
+    --info-bg: #1e3a8a;
+    --info-text: #93c5fd;
+}
+
+/* Apply Theme Variables */
+body {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cards and Containers */
+.custom-card,
+.week-card,
+.project-card,
+.stat-card,
+.notes-editor,
+.pomodoro-container,
+.leaderboard-container {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--sidebar-bg);
+}
+
+.sidebar-header {
+    border-bottom-color: var(--border-primary);
+}
+
+.menu-item {
+    color: var(--sidebar-text);
+}
+
+.menu-item:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--primary-color);
+}
+
+/* Inputs and Forms */
+.form-control,
+.search-input {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+}
+
+.form-control:focus,
+.search-input:focus {
+    background-color: var(--input-bg);
+    border-color: var(--input-focus-border);
+    color: var(--text-primary);
+}
+
+/* Day Items and Notes */
+.day-item,
+.note-item {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-primary);
+}
+
+.day-item:hover,
+.note-item:hover {
+    background-color: var(--bg-primary);
+}
+
+/* Text Colors */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-primary);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Borders */
+.week-header,
+.day-header,
+.glossary-item,
+.leaderboard-item {
+    border-bottom-color: var(--border-primary);
+}
+
+/* Calendar Dark Mode */
+body.dark-mode #calendar {
+    background-color: var(--card-bg);
+}
+
+body.dark-mode .fc-theme-standard td,
+body.dark-mode .fc-theme-standard th {
+    border-color: var(--border-primary);
+}
+
+body.dark-mode .fc-theme-standard .fc-scrollgrid {
+    border-color: var(--border-primary);
+}
+
+body.dark-mode .fc-col-header-cell-cushion,
+body.dark-mode .fc-daygrid-day-number {
+    color: var(--text-primary);
+}
+
+body.dark-mode .fc-button-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+body.dark-mode .fc-button-primary:not(:disabled):active,
+body.dark-mode .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Modal Dark Mode */
+body.dark-mode .glossary-content {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+body.dark-mode .glossary-modal {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Toast Dark Mode */
+body.dark-mode .toast-notification {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+/* Code Blocks */
+code,
+pre {
+    background-color: var(--code-bg);
+    color: var(--code-text);
+}
+
+/* Status Colors */
+.alert-success,
+.project-status.completed {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+}
+
+.alert-warning,
+.project-status.in-progress {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.alert-danger {
+    background-color: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.alert-info {
+    background-color: var(--info-bg);
+    color: var(--info-text);
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    background-color: var(--card-bg);
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+}
+
+/* Charts Dark Mode */
+body.dark-mode .chart-container {
+    background-color: var(--card-bg);
+}
+
+/* Scrollbar Dark Mode */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Gradient Adjustments for Dark Mode */
+body.dark-mode .gradient-text {
+    filter: brightness(1.2);
+}
+
+body.dark-mode .streak-container,
+body.dark-mode .achievement-badge,
+body.dark-mode .quote-container {
+    filter: brightness(0.9);
+}
+
+/* Link Colors */
+a {
+    color: var(--primary-color);
+}
+
+body.dark-mode a {
+    color: #818cf8;
+}
+
+body.dark-mode a:hover {
+    color: #a78bfa;
+}
+
+/* Button Adjustments */
+body.dark-mode .btn-outline-primary {
+    border-color: #818cf8;
+    color: #818cf8;
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #818cf8;
+    border-color: #818cf8;
+}
+
+/* Data Controls Dark Mode */
+body.dark-mode .data-btn {
+    background-color: var(--card-bg);
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+}
+
+body.dark-mode .data-btn:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--primary-color);
+}
+
+/* Table Dark Mode */
+body.dark-mode .table {
+    color: var(--text-primary);
+}
+
+body.dark-mode .table th,
+body.dark-mode .table td {
+    border-top-color: var(--border-primary);
+}
+
+body.dark-mode .table thead th {
+    border-bottom-color: var(--border-primary);
+}
+
+/* Badge Dark Mode */
+body.dark-mode .badge {
+    filter: brightness(0.8);
+}
+
+/* Resource Link Dark Mode */
+body.dark-mode .resource-link {
+    color: #818cf8;
+}
+
+body.dark-mode .resource-link:hover {
+    color: #a78bfa;
+}
+
+/* Close Button Dark Mode */
+body.dark-mode .btn-close {
+    filter: invert(1);
+}
+
+/* Checkbox Dark Mode */
+body.dark-mode input[type="checkbox"] {
+    accent-color: #818cf8;
+}
+
+/* Select and Option Dark Mode */
+body.dark-mode select,
+body.dark-mode option {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--input-border);
+}
+
+/* Focus States Dark Mode */
+body.dark-mode *:focus {
+    outline-color: #818cf8;
+}
+
+/* Disabled States */
+body.dark-mode .btn:disabled,
+body.dark-mode .form-control:disabled,
+body.dark-mode input:disabled,
+body.dark-mode select:disabled {
+    background-color: var(--bg-tertiary);
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+/* Transitions for Theme Switching */
+* {
+    transition: background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* Prevent transition on page load */
+body.no-transition * {
+    transition: none !important;
+}
+
+/* High Contrast Theme (Accessibility) */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #0000ff;
+        --secondary-color: #ff00ff;
+        --success-color: #008000;
+        --danger-color: #ff0000;
+        --warning-color: #ff8000;
+        --info-color: #0080ff;
+
+        --text-primary: #000000;
+        --bg-primary: #ffffff;
+        --border-primary: #000000;
+    }
+
+    body.dark-mode {
+        --text-primary: #ffffff;
+        --bg-primary: #000000;
+        --border-primary: #ffffff;
+    }
+}
+
+/* System Preference Detection */
+@media (prefers-color-scheme: dark) {
+
+    /* Apply dark mode automatically if user prefers dark */
+    body:not(.light-mode) {
+        /* Copy dark mode styles here or use JavaScript to add dark-mode class */
+    }
+}
+
+/* Print Theme */
+@media print {
+
+    body,
+    body.dark-mode {
+        background: white !important;
+        color: black !important;
+    }
+
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}

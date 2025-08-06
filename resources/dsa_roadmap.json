@@ -1,0 +1,659 @@
+{
+    "metadata": {
+        "title": "Complete 14-Week DSA Learning Roadmap",
+        "description": "Comprehensive Data Structures & Algorithms curriculum with projects",
+        "version": "1.0",
+        "totalWeeks": 14,
+        "estimatedHours": 196,
+        "difficulty": "Beginner to Advanced"
+    },
+    "weeks": [
+        {
+            "number": 1,
+            "title": "Foundation & Environment",
+            "description": "Set up development environment and basic programming concepts",
+            "goals": [
+                "Environment setup",
+                "Basic syntax mastery",
+                "Problem-solving foundation"
+            ],
+            "days": [
+                {
+                    "day": "Monday",
+                    "focus": "Environment Setup",
+                    "topics": [
+                        {
+                            "id": "w1d1t1",
+                            "title": "Development Environment Setup",
+                            "description": "Install Python/C++, Git, IDE configuration",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_getstarted.asp",
+                                    "title": "Python Setup Guide"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=YYXdXT2l-Gg",
+                                    "title": "Complete Python Installation"
+                                },
+                                {
+                                    "type": "Documentation",
+                                    "url": "https://docs.python.org/3/tutorial/",
+                                    "title": "Python Official Tutorial"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "Local",
+                                    "problem": "Hello World program",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Tuesday",
+                    "focus": "Basic Syntax",
+                    "topics": [
+                        {
+                            "id": "w1d2t1",
+                            "title": "Variables and Data Types",
+                            "description": "Understanding variables, integers, floats, strings, booleans",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_variables.asp",
+                                    "title": "Python Variables"
+                                },
+                                {
+                                    "type": "Interactive",
+                                    "url": "https://www.programiz.com/python-programming/variables-datatypes",
+                                    "title": "Interactive Data Types"
+                                },
+                                {
+                                    "type": "Practice",
+                                    "url": "https://www.hackerrank.com/domains/python",
+                                    "title": "HackerRank Python"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "HackerRank",
+                                    "problem": "Say Hello World With Python",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "HackerRank",
+                                    "problem": "Python If-Else",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Wednesday",
+                    "focus": "Input/Output Operations",
+                    "topics": [
+                        {
+                            "id": "w1d3t1",
+                            "title": "Input/Output and File Handling",
+                            "description": "Console I/O, file operations, formatting output",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_user_input.asp",
+                                    "title": "Python Input"
+                                },
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_file_handling.asp",
+                                    "title": "File Handling"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=Uh2ebFW8OYM",
+                                    "title": "File I/O in Python"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Read N Characters Given Read4",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "Local",
+                                    "problem": "File read/write operations",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Thursday",
+                    "focus": "Functions and Scope",
+                    "topics": [
+                        {
+                            "id": "w1d4t1",
+                            "title": "Functions and Parameter Passing",
+                            "description": "Function definition, parameters, return values, scope",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_functions.asp",
+                                    "title": "Python Functions"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=9Os0o3wzS_I",
+                                    "title": "Functions Explained"
+                                },
+                                {
+                                    "type": "Practice",
+                                    "url": "https://www.codingbat.com/python",
+                                    "title": "CodingBat Practice"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "CodingBat",
+                                    "problem": "String Exercises",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "HackerRank",
+                                    "problem": "Write a function",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Friday",
+                    "focus": "Arrays and Lists Basics",
+                    "topics": [
+                        {
+                            "id": "w1d5t1",
+                            "title": "Arrays and Lists Introduction",
+                            "description": "Array creation, indexing, basic operations",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_lists.asp",
+                                    "title": "Python Lists"
+                                },
+                                {
+                                    "type": "Visualization",
+                                    "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html",
+                                    "title": "Array Visualization"
+                                },
+                                {
+                                    "type": "Interactive",
+                                    "url": "https://www.programiz.com/python-programming/list",
+                                    "title": "Interactive Lists"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Two Sum",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "HackerRank",
+                                    "problem": "Arrays - DS",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Saturday",
+                    "focus": "Project Planning",
+                    "topics": [
+                        {
+                            "id": "w1d6t1",
+                            "title": "Scientific Calculator - Planning",
+                            "description": "Plan calculator features and basic arithmetic operations",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://realpython.com/python-calculator/",
+                                    "title": "Building a Calculator"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=sNJPrW3Rqws",
+                                    "title": "Calculator Project"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "Local",
+                                    "problem": "Basic calculator design",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Sunday",
+                    "focus": "Project Implementation",
+                    "topics": [
+                        {
+                            "id": "w1d7t1",
+                            "title": "Scientific Calculator - Implementation",
+                            "description": "Implement advanced operations, error handling, GUI",
+                            "difficulty": "intermediate",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.geeksforgeeks.org/python-simple-gui-calculator-using-tkinter/",
+                                    "title": "Tkinter Calculator"
+                                },
+                                {
+                                    "type": "Documentation",
+                                    "url": "https://docs.python.org/3/library/tkinter.html",
+                                    "title": "Tkinter Documentation"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "Local",
+                                    "problem": "Complete calculator implementation",
+                                    "difficulty": "intermediate"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "project": {
+                "id": "w1_project",
+                "title": "Scientific Calculator",
+                "description": "Build a calculator with basic and advanced mathematical operations",
+                "requirements": [
+                    "Basic arithmetic operations (+, -, *, /)",
+                    "Scientific functions (sin, cos, tan, log, etc.)",
+                    "Memory functions (M+, M-, MC, MR)",
+                    "Error handling for invalid operations",
+                    "GUI interface using Tkinter",
+                    "History of calculations"
+                ],
+                "technologies": [
+                    "Python",
+                    "Tkinter",
+                    "Math module"
+                ],
+                "estimatedTime": "4-6 hours",
+                "difficulty": "beginner",
+                "deliverables": [
+                    "Working calculator application",
+                    "Source code with comments",
+                    "User manual/README"
+                ]
+            }
+        },
+        {
+            "number": 2,
+            "title": "Arrays & String Mastery",
+            "description": "Master array operations and string manipulation techniques",
+            "goals": [
+                "Array manipulation",
+                "Two pointers technique",
+                "String processing",
+                "Sliding window"
+            ],
+            "days": [
+                {
+                    "day": "Monday",
+                    "focus": "Array Operations",
+                    "topics": [
+                        {
+                            "id": "w2d1t1",
+                            "title": "Array Traversal and Basic Operations",
+                            "description": "Iteration patterns, searching, insertion, deletion",
+                            "difficulty": "beginner",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/dsa/dsa_arrays.php",
+                                    "title": "Array Operations"
+                                },
+                                {
+                                    "type": "Visualization",
+                                    "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html",
+                                    "title": "Array Visualization"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=AT14lCXuMKI",
+                                    "title": "Array Operations Explained"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Find Numbers with Even Number of Digits",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Max Consecutive Ones",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "GeeksforGeeks",
+                                    "problem": "Array Rotation",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Tuesday",
+                    "focus": "Two Pointers Technique",
+                    "topics": [
+                        {
+                            "id": "w2d2t1",
+                            "title": "Two Pointers and Multiple Pointers",
+                            "description": "Two Sum, reverse array, palindrome checking",
+                            "difficulty": "intermediate",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.geeksforgeeks.org/two-pointers-technique/",
+                                    "title": "Two Pointers Technique"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
+                                    "title": "Two Pointers Explained"
+                                },
+                                {
+                                    "type": "Practice",
+                                    "url": "https://leetcode.com/tag/two-pointers/",
+                                    "title": "Two Pointers Problems"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Two Sum II - Input array is sorted",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Remove Duplicates from Sorted Array",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "3Sum",
+                                    "difficulty": "medium"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Wednesday",
+                    "focus": "String Processing",
+                    "topics": [
+                        {
+                            "id": "w2d3t1",
+                            "title": "String Manipulation and Pattern Matching",
+                            "description": "String operations, substring search, pattern matching basics",
+                            "difficulty": "intermediate",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.w3schools.com/python/python_strings.asp",
+                                    "title": "Python Strings"
+                                },
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.geeksforgeeks.org/python-string/",
+                                    "title": "String Algorithms"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=kWyoYtvJpe4",
+                                    "title": "String Algorithms"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Valid Anagram",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Group Anagrams",
+                                    "difficulty": "medium"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Longest Common Prefix",
+                                    "difficulty": "easy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Thursday",
+                    "focus": "Sliding Window Technique",
+                    "topics": [
+                        {
+                            "id": "w2d4t1",
+                            "title": "Sliding Window Pattern",
+                            "description": "Fixed and variable size windows, maximum subarray problems",
+                            "difficulty": "intermediate",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.geeksforgeeks.org/window-sliding-technique/",
+                                    "title": "Sliding Window Technique"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=MK-NZ4hN7rs",
+                                    "title": "Sliding Window Explained"
+                                },
+                                {
+                                    "type": "Practice",
+                                    "url": "https://leetcode.com/tag/sliding-window/",
+                                    "title": "Sliding Window Problems"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Maximum Average Subarray I",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Longest Substring Without Repeating Characters",
+                                    "difficulty": "medium"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Minimum Window Substring",
+                                    "difficulty": "hard"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Friday",
+                    "focus": "Key Array Problems",
+                    "topics": [
+                        {
+                            "id": "w2d5t1",
+                            "title": "Essential Array and String Problems",
+                            "description": "Practice core problems: Two Sum, Longest Substring, Valid Palindrome",
+                            "difficulty": "mixed",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Practice",
+                                    "url": "https://leetcode.com/problemset/all/?topicSlugs=array",
+                                    "title": "LeetCode Array Problems"
+                                },
+                                {
+                                    "type": "Practice",
+                                    "url": "https://www.hackerrank.com/domains/data-structures?filters%5Bsubdomains%5D%5B%5D=arrays",
+                                    "title": "HackerRank Arrays"
+                                },
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.geeksforgeeks.org/top-50-array-coding-problems-for-interviews/",
+                                    "title": "Top Array Problems"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Two Sum",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Valid Palindrome",
+                                    "difficulty": "easy"
+                                },
+                                {
+                                    "platform": "LeetCode",
+                                    "problem": "Container With Most Water",
+                                    "difficulty": "medium"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Saturday",
+                    "focus": "Project Planning",
+                    "topics": [
+                        {
+                            "id": "w2d6t1",
+                            "title": "Text Analyzer - Planning",
+                            "description": "Plan text analysis features: word count, frequency analysis",
+                            "difficulty": "intermediate",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://realpython.com/nltk-nlp-python/",
+                                    "title": "Text Processing in Python"
+                                },
+                                {
+                                    "type": "Video",
+                                    "url": "https://www.youtube.com/watch?v=FLZvOKSCkxY",
+                                    "title": "Text Analysis Project"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "Local",
+                                    "problem": "Text analyzer design",
+                                    "difficulty": "intermediate"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "day": "Sunday",
+                    "focus": "Project Implementation",
+                    "topics": [
+                        {
+                            "id": "w2d7t1",
+                            "title": "Text Analyzer - Implementation",
+                            "description": "Implement pattern detection, statistics, and file processing",
+                            "difficulty": "intermediate",
+                            "estimatedTime": "2 hours",
+                            "resources": [
+                                {
+                                    "type": "Tutorial",
+                                    "url": "https://www.geeksforgeeks.org/python-program-to-count-words-in-a-sentence/",
+                                    "title": "Word Counting"
+                                },
+                                {
+                                    "type": "Documentation",
+                                    "url": "https://docs.python.org/3/library/re.html",
+                                    "title": "Regular Expressions"
+                                }
+                            ],
+                            "practice": [
+                                {
+                                    "platform": "Local",
+                                    "problem": "Complete text analyzer",
+                                    "difficulty": "intermediate"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "project": {
+                "id": "w2_project",
+                "title": "Text Analyzer Tool",
+                "description": "Build a comprehensive text analysis tool with multiple features",
+                "requirements": [
+                    "Word and character counting",
+                    "Frequency analysis of words and letters",
+                    "Reading level assessment",
+                    "Pattern detection (emails, URLs, phone numbers)",
+                    "Text statistics (avg word length, sentence count)",
+                    "File input/output support",
+                    "GUI interface",
+                    "Export results to different formats"
+                ],
+                "technologies": [
+                    "Python",
+                    "Tkinter",
+                    "RegEx",
+                    "Collections",
+                    "NLTK (optional)"
+                ],
+                "estimatedTime": "4-6 hours",
+                "difficulty": "intermediate",
+                "deliverables": [
+                    "Working text analyzer application",
+                    "Sample text files for testing",
+                    "Documentation of features"
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,496 @@
+/* Mobile-first responsive design */
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    .container-fluid {
+        max-width: 540px;
+    }
+
+    .col-sm {
+        flex: 1 0 0%;
+    }
+
+    .col-sm-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .container-fluid {
+        max-width: 720px;
+    }
+
+    .col-md {
+        flex: 1 0 0%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-8 {
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container-fluid {
+        max-width: 960px;
+    }
+
+    .col-lg {
+        flex: 1 0 0%;
+    }
+
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-lg-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .container-fluid {
+        max-width: 1140px;
+    }
+}
+
+/* Extra extra large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+    .container-fluid {
+        max-width: 1320px;
+    }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 767px) {
+
+    /* Typography */
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+    }
+
+    h5 {
+        font-size: 1.125rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .main-content.expanded {
+        margin-left: 0;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+        display: block !important;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1001;
+        background: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    /* Streak Container */
+    .streak-container {
+        padding: 1rem;
+    }
+
+    .streak-number {
+        font-size: 2rem;
+    }
+
+    /* Week Cards */
+    .week-card {
+        padding: 1rem;
+    }
+
+    .week-title {
+        font-size: 1.125rem;
+    }
+
+    /* Day Items */
+    .day-item {
+        padding: 0.75rem;
+    }
+
+    /* Resource Links */
+    .resource-link {
+        font-size: 0.75rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Timer Display */
+    .timer-display {
+        font-size: 3rem;
+    }
+
+    /* Timer Controls */
+    .timer-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .timer-btn {
+        width: 100%;
+    }
+
+    /* Project Cards */
+    .project-card {
+        padding: 1rem;
+    }
+
+    /* Notes Editor */
+    .notes-editor {
+        padding: 1rem;
+    }
+
+    /* Quote Container */
+    .quote-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .quote-text {
+        font-size: 1rem;
+    }
+
+    /* Toast Notifications */
+    .toast-notification {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        transform: none;
+        width: auto;
+    }
+
+    /* Glossary Modal */
+    .glossary-content {
+        margin: 1rem;
+        padding: 1.5rem;
+        max-height: 90vh;
+    }
+
+    /* Search Container */
+    .search-input {
+        font-size: 0.875rem;
+    }
+
+    /* Data Controls */
+    .data-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .data-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Dark Mode Toggle */
+    .dark-mode-toggle {
+        bottom: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Columns */
+    .col-md-4,
+    .col-md-6,
+    .col-md-8,
+    .col-lg-3,
+    .col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    /* Hide desktop-only elements */
+    .desktop-only {
+        display: none !important;
+    }
+}
+
+/* Tablet-specific styles */
+@media (min-width: 768px) and (max-width: 991px) {
+
+    /* Main Content */
+    .main-content {
+        margin-left: 70px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 70px;
+    }
+
+    .sidebar:hover {
+        width: 260px;
+    }
+
+    .sidebar .menu-item span {
+        display: none;
+    }
+
+    .sidebar:hover .menu-item span {
+        display: inline;
+    }
+
+    .sidebar .menu-item {
+        padding: 0.75rem;
+        justify-content: center;
+    }
+
+    .sidebar:hover .menu-item {
+        padding: 0.75rem 1.5rem;
+        justify-content: flex-start;
+    }
+
+    .sidebar .menu-item i {
+        margin: 0;
+    }
+
+    .sidebar:hover .menu-item i {
+        margin-right: 12px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Timer Display */
+    .timer-display {
+        font-size: 3.5rem;
+    }
+}
+
+/* Desktop-specific styles */
+@media (min-width: 992px) {
+
+    /* Hide mobile-only elements */
+    .mobile-only {
+        display: none !important;
+    }
+
+    .mobile-menu-toggle {
+        display: none !important;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Large desktop styles */
+@media (min-width: 1400px) {
+
+    /* Main Content */
+    .main-content {
+        padding: 2rem 3rem;
+    }
+
+    /* Container */
+    .container-fluid {
+        max-width: 1400px;
+    }
+}
+
+/* Print Media Queries */
+@media print {
+
+    /* Hide non-essential elements */
+    .sidebar,
+    .mobile-menu-toggle,
+    .dark-mode-toggle,
+    .toast-notification,
+    .data-controls,
+    .timer-controls,
+    .search-container {
+        display: none !important;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Reset colors */
+    * {
+        color: black !important;
+        background: white !important;
+    }
+
+    /* Page breaks */
+    .week-card {
+        page-break-inside: avoid;
+    }
+
+    h1,
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #0000ff;
+        --secondary-color: #ff00ff;
+        --success-color: #008000;
+        --danger-color: #ff0000;
+        --warning-color: #ff8000;
+    }
+
+    * {
+        border-width: 2px !important;
+    }
+
+    .btn {
+        border: 2px solid currentColor !important;
+    }
+}
+
+/* Landscape Orientation for Mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .timer-controls {
+        flex-direction: row;
+    }
+}
+
+/* Touch Device Specific */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Increase touch targets */
+    .btn,
+    .menu-item,
+    .day-checkbox,
+    .resource-link {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Remove hover effects */
+    .custom-card:hover,
+    .week-card:hover,
+    .day-item:hover,
+    .project-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+/* Foldable Device Support */
+@media (min-width: 320px) and (max-width: 853px) and (orientation: portrait) {
+
+    /* Optimize for foldable devices in folded state */
+    .main-content {
+        padding: 0.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ultra-wide Screens */
+@media (min-width: 2560px) {
+    .container-fluid {
+        max-width: 2000px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    /* Scale up typography */
+    html {
+        font-size: 18px;
+    }
+}
