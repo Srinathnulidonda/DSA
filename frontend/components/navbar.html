@@ -1,0 +1,867 @@
+<div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center" href="#" data-page="dashboard">
+        <i class="fas fa-code me-2 text-white"></i>
+        <span class="fw-bold">DSA Learning</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="d-none d-lg-flex align-items-center ms-auto">
+        <!-- Search Bar -->
+        <div class="search-container me-4">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control search-input" placeholder="Search topics, notes..."
+                data-bs-toggle="dropdown" aria-expanded="false" id="globalSearch">
+
+            <!-- Search Results Dropdown -->
+            <div class="dropdown-menu dropdown-menu-end search-results-dropdown" id="searchResultsDropdown">
+                <div class="dropdown-header">
+                    <i class="fas fa-search me-2"></i>Search Results
+                </div>
+                <div id="searchResultsContent">
+                    <div class="dropdown-item-text text-muted text-center py-3">
+                        Start typing to search...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Connection Status -->
+        <div class="connection-status me-3" id="connectionStatus">
+            <span class="status-indicator online" title="Connected">
+                <i class="fas fa-wifi"></i>
+            </span>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dropdown me-3">
+            <button class="btn btn-link position-relative p-2" data-bs-toggle="dropdown" aria-expanded="false"
+                id="notificationDropdown">
+                <i class="fas fa-bell text-white fs-5"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    id="notificationBadge" style="display: none;">
+                    0
+                </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" style="width: 320px;">
+                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                    <span>Notifications</span>
+                    <button class="btn btn-sm btn-link p-0" onclick="markAllNotificationsRead()">
+                        Mark all read
+                    </button>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <div id="notificationsList" class="notification-list" style="max-height: 300px; overflow-y: auto;">
+                    <li class="dropdown-item-text text-muted text-center py-3">
+                        No new notifications
+                    </li>
+                </div>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <a class="dropdown-item text-center" href="#" data-page="notifications">
+                        <small>View all notifications</small>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Pomodoro Timer Quick Access -->
+        <button class="btn btn-link me-3 p-2" data-bs-toggle="modal" data-bs-target="#pomodoroModal"
+            title="Pomodoro Timer">
+            <i class="fas fa-clock text-white fs-5"></i>
+            <span class="timer-badge d-none" id="pomodoroTimerBadge">25:00</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle me-3" title="Toggle Theme" onclick="toggleTheme()">
+            <i class="fas fa-sun sun-icon"></i>
+            <i class="fas fa-moon moon-icon"></i>
+        </button>
+
+        <!-- User Profile Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-link navbar-profile dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://via.placeholder.com/40/6366f1/ffffff?text=U" alt="Profile" class="profile-avatar"
+                    id="userAvatar">
+                <div class="profile-info d-none d-xl-block">
+                    <div class="profile-name" id="userDisplayName">Loading...</div>
+                    <div class="profile-level" id="userLevel">Level 1</div>
+                </div>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <div class="dropdown-item-text">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/50/6366f1/ffffff?text=U" alt="Profile"
+                                class="rounded-circle me-3" id="dropdownUserAvatar">
+                            <div>
+                                <div class="fw-bold" id="dropdownUserName">User Name</div>
+                                <small class="text-muted" id="dropdownUserEmail">user@email.com</small>
+                                <div class="progress mt-1" style="height: 4px;">
+                                    <div class="progress-bar" id="userLevelProgress" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted">Level <span id="dropdownUserLevel">1</span> • <span
+                                        id="userExperience">0</span> XP</small>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#" data-page="profile"><i class="fas fa-user me-2"></i>Profile</a>
+                </li>
+                <li><a class="dropdown-item" href="#" data-page="achievements"><i
+                            class="fas fa-trophy me-2"></i>Achievements</a></li>
+                <li><a class="dropdown-item" href="#" data-page="analytics"><i
+                            class="fas fa-chart-bar me-2"></i>Analytics</a></li>
+                <li><a class="dropdown-item" href="#" data-page="settings"><i class="fas fa-cog me-2"></i>Settings</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Export Data
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="showHelpModal()">
+                        <i class="fas fa-question-circle me-2"></i>Help & Support
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <a class="dropdown-item text-danger" href="#" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<!-- Mobile Offcanvas Menu -->
+<div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="mobileMenu">
+    <div class="offcanvas-header bg-primary text-white">
+        <h5 class="offcanvas-title">
+            <i class="fas fa-code me-2"></i>DSA Learning
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <!-- Mobile Search -->
+        <div class="p-3 border-bottom">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control search-input" placeholder="Search..." id="mobileSearch">
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Links -->
+        <nav class="mobile-nav">
+            <a href="#" class="nav-link" data-page="dashboard"><i class="fas fa-home"></i>Dashboard</a>
+            <a href="#" class="nav-link" data-page="roadmap"><i class="fas fa-road"></i>Roadmap</a>
+            <a href="#" class="nav-link" data-page="progress"><i class="fas fa-chart-line"></i>Progress</a>
+            <a href="#" class="nav-link" data-page="calendar"><i class="fas fa-calendar"></i>Calendar</a>
+            <a href="#" class="nav-link" data-page="notes"><i class="fas fa-sticky-note"></i>Notes</a>
+            <a href="#" class="nav-link" data-page="analytics"><i class="fas fa-chart-bar"></i>Analytics</a>
+            <a href="#" class="nav-link" data-page="achievements"><i class="fas fa-trophy"></i>Achievements</a>
+            <a href="#" class="nav-link" data-page="review"><i class="fas fa-redo"></i>Review</a>
+            <a href="#" class="nav-link" data-page="profile"><i class="fas fa-user"></i>Profile</a>
+            <a href="#" class="nav-link" data-page="settings"><i class="fas fa-cog"></i>Settings</a>
+        </nav>
+
+        <!-- Mobile Actions -->
+        <div class="p-3 border-top mt-auto">
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#pomodoroModal">
+                    <i class="fas fa-clock me-2"></i>Pomodoro Timer
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="toggleTheme()">
+                    <i class="fas fa-palette me-2"></i>Toggle Theme
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmLogout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .search-container {
+        position: relative;
+        max-width: 400px;
+    }
+
+    .search-input {
+        padding-left: 2.5rem;
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        backdrop-filter: blur(10px);
+    }
+
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: none;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+        z-index: 5;
+    }
+
+    .search-results-dropdown {
+        min-width: 400px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .connection-status .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+
+    .connection-status .status-indicator.online {
+        background: rgba(16, 185, 129, 0.2);
+        border: 2px solid #10b981;
+    }
+
+    .connection-status .status-indicator.offline {
+        background: rgba(239, 68, 68, 0.2);
+        border: 2px solid #ef4444;
+    }
+
+    .connection-status .status-indicator.connecting {
+        background: rgba(245, 158, 11, 0.2);
+        border: 2px solid #f59e0b;
+        animation: pulse 1.5s infinite;
+    }
+
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: scale(1.05);
+    }
+
+    .profile-info {
+        margin-left: 0.75rem;
+    }
+
+    .profile-name,
+    .profile-level {
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .profile-name {
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .profile-level {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .notification-dropdown .dropdown-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .notification-dropdown .dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .notification-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
+    .notification-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .notification-message {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+    }
+
+    .notification-time {
+        font-size: 0.625rem;
+        color: #9ca3af;
+    }
+
+    .notification-item.unread {
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .timer-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        font-size: 0.625rem;
+        padding: 0.125rem 0.375rem;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .mobile-nav {
+        padding: 0;
+    }
+
+    .mobile-nav .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: #374151;
+        text-decoration: none;
+        border-bottom: 1px solid #f3f4f6;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-nav .nav-link:hover {
+        background: #f9fafb;
+        color: #6366f1;
+        transform: translateX(8px);
+    }
+
+    .mobile-nav .nav-link i {
+        width: 20px;
+        margin-right: 0.75rem;
+    }
+
+    .mobile-nav .nav-link.active {
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        border-left: 4px solid #6366f1;
+    }
+
+    @media (max-width: 576px) {
+        .search-results-dropdown {
+            min-width: 280px;
+        }
+
+        .navbar-brand span {
+            display: none;
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>
+
+<script>
+    // Real-time navbar functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeNavbar();
+    });
+
+    function initializeNavbar() {
+        // Initialize search functionality
+        initializeSearch();
+
+        // Initialize notifications
+        initializeNotifications();
+
+        // Initialize connection status
+        initializeConnectionStatus();
+
+        // Initialize user profile
+        updateUserProfile();
+
+        // Initialize pomodoro timer badge
+        initializePomodoroTimerBadge();
+    }
+
+    function initializeSearch() {
+        const searchInput = document.getElementById('globalSearch');
+        const mobileSearch = document.getElementById('mobileSearch');
+        const resultsDropdown = document.getElementById('searchResultsDropdown');
+
+        if (searchInput) {
+            let searchTimeout;
+
+            searchInput.addEventListener('input', function (e) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(e.target.value);
+                }, 300);
+            });
+
+            searchInput.addEventListener('focus', function () {
+                if (this.value.length >= 2) {
+                    resultsDropdown.classList.add('show');
+                }
+            });
+        }
+
+        if (mobileSearch) {
+            mobileSearch.addEventListener('input', function (e) {
+                // Handle mobile search
+                performMobileSearch(e.target.value);
+            });
+        }
+    }
+
+    async function performSearch(query) {
+        if (query.length < 2) {
+            hideSearchResults();
+            return;
+        }
+
+        try {
+            const results = await window.DSAApp.api.search(query);
+            displaySearchResults(results);
+        } catch (error) {
+            console.error('Search error:', error);
+        }
+    }
+
+    function displaySearchResults(results) {
+        const content = document.getElementById('searchResultsContent');
+        const dropdown = document.getElementById('searchResultsDropdown');
+
+        if (!results || (results.notes.length === 0 && results.roadmap.length === 0 && results.resources.length === 0)) {
+            content.innerHTML = '<div class="dropdown-item-text text-muted text-center py-3">No results found</div>';
+        } else {
+            let html = '';
+
+            if (results.roadmap.length > 0) {
+                html += '<div class="dropdown-header"><i class="fas fa-road me-2"></i>Roadmap Topics</div>';
+                results.roadmap.forEach(item => {
+                    html += `
+                    <a class="dropdown-item" href="#" onclick="navigateToTopic('${item.week}', '${item.day}')">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">${item.topic}</div>
+                                <small class="text-muted">${item.week_title}</small>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                });
+            }
+
+            if (results.notes.length > 0) {
+                html += '<div class="dropdown-header"><i class="fas fa-sticky-note me-2"></i>Notes</div>';
+                results.notes.forEach(note => {
+                    html += `
+                    <a class="dropdown-item" href="#" onclick="openNote('${note._id}')">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">${note.topic || 'Untitled'}</div>
+                                <small class="text-muted">${note.content.substring(0, 60)}...</small>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                });
+            }
+
+            if (results.resources.length > 0) {
+                html += '<div class="dropdown-header"><i class="fas fa-link me-2"></i>Resources</div>';
+                results.resources.forEach(resource => {
+                    html += `
+                    <a class="dropdown-item" href="${resource.resource.url}" target="_blank">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">${resource.resource.name}</div>
+                                <small class="text-muted">${resource.topic}</small>
+                            </div>
+                            <i class="fas fa-external-link-alt text-muted"></i>
+                        </div>
+                    </a>
+                `;
+                });
+            }
+
+            content.innerHTML = html;
+        }
+
+        dropdown.classList.add('show');
+    }
+
+    function hideSearchResults() {
+        const dropdown = document.getElementById('searchResultsDropdown');
+        dropdown.classList.remove('show');
+    }
+
+    function initializeNotifications() {
+        // Load notifications from API
+        loadNotifications();
+
+        // Set up real-time notification updates
+        if (window.DSAApp && window.DSAApp.api) {
+            window.DSAApp.api.addEventListener('notification', (data) => {
+                addNotification(data);
+            });
+        }
+    }
+
+    async function loadNotifications() {
+        try {
+            // This would be an actual API call
+            const notifications = []; // await window.DSAApp.api.getNotifications();
+            displayNotifications(notifications);
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+        }
+    }
+
+    function displayNotifications(notifications) {
+        const list = document.getElementById('notificationsList');
+        const badge = document.getElementById('notificationBadge');
+
+        if (notifications.length === 0) {
+            list.innerHTML = '<li class="dropdown-item-text text-muted text-center py-3">No new notifications</li>';
+            badge.style.display = 'none';
+        } else {
+            let html = '';
+            let unreadCount = 0;
+
+            notifications.forEach(notification => {
+                if (!notification.read) unreadCount++;
+
+                html += `
+                <li class="dropdown-item notification-item ${!notification.read ? 'unread' : ''}" data-notification-id="${notification.id}">
+                    <div class="notification-icon bg-${notification.type === 'achievement' ? 'warning' : notification.type === 'progress' ? 'success' : 'primary'}">
+                        <i class="fas fa-${notification.icon || 'bell'}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${notification.title}</div>
+                        <div class="notification-message">${notification.message}</div>
+                        <div class="notification-time">${formatTimeAgo(notification.created_at)}</div>
+                    </div>
+                    ${!notification.read ? '<div class="notification-dot bg-primary rounded-circle" style="width: 8px; height: 8px;"></div>' : ''}
+                </li>
+            `;
+            });
+
+            list.innerHTML = html;
+
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    function addNotification(notification) {
+        // Add new notification to the list
+        const list = document.getElementById('notificationsList');
+
+        // Check if it's empty placeholder
+        if (list.querySelector('.text-muted')) {
+            list.innerHTML = '';
+        }
+
+        const notificationHtml = `
+        <li class="dropdown-item notification-item unread" data-notification-id="${notification.id}">
+            <div class="notification-icon bg-${notification.type === 'achievement' ? 'warning' : notification.type === 'progress' ? 'success' : 'primary'}">
+                <i class="fas fa-${notification.icon || 'bell'}"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${notification.title}</div>
+                <div class="notification-message">${notification.message}</div>
+                <div class="notification-time">Just now</div>
+            </div>
+            <div class="notification-dot bg-primary rounded-circle" style="width: 8px; height: 8px;"></div>
+        </li>
+    `;
+
+        list.insertAdjacentHTML('afterbegin', notificationHtml);
+
+        // Update badge
+        const badge = document.getElementById('notificationBadge');
+        const currentCount = parseInt(badge.textContent) || 0;
+        const newCount = currentCount + 1;
+        badge.textContent = newCount > 99 ? '99+' : newCount;
+        badge.style.display = 'block';
+
+        // Show notification toast
+        showNotificationToast(notification);
+    }
+
+    function showNotificationToast(notification) {
+        // Create and show a toast notification
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center border-0';
+        toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-${notification.icon || 'bell'} text-primary"></i>
+                    </div>
+                    <div>
+                        <div class="fw-semibold">${notification.title}</div>
+                        <div class="text-muted small">${notification.message}</div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+
+        document.querySelector('.toast-container').appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        // Remove after hiding
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    function markAllNotificationsRead() {
+        const notifications = document.querySelectorAll('.notification-item.unread');
+        notifications.forEach(item => {
+            item.classList.remove('unread');
+            const dot = item.querySelector('.notification-dot');
+            if (dot) dot.remove();
+        });
+
+        const badge = document.getElementById('notificationBadge');
+        badge.style.display = 'none';
+    }
+
+    function initializeConnectionStatus() {
+        const statusIndicator = document.querySelector('.connection-status .status-indicator');
+
+        function updateConnectionStatus() {
+            if (window.DSAApp && window.DSAApp.api) {
+                const status = window.DSAApp.api.getConnectionStatus();
+
+                statusIndicator.className = 'status-indicator';
+
+                if (!status.online) {
+                    statusIndicator.classList.add('offline');
+                    statusIndicator.title = 'Offline';
+                    statusIndicator.innerHTML = '<i class="fas fa-wifi-slash"></i>';
+                } else if (status.eventSource === 1 || status.websocket === 1) {
+                    statusIndicator.classList.add('online');
+                    statusIndicator.title = 'Connected';
+                    statusIndicator.innerHTML = '<i class="fas fa-wifi"></i>';
+                } else {
+                    statusIndicator.classList.add('connecting');
+                    statusIndicator.title = 'Connecting...';
+                    statusIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+            }
+        }
+
+        // Update every 5 seconds
+        updateConnectionStatus();
+        setInterval(updateConnectionStatus, 5000);
+
+        // Listen for network events
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+    }
+
+    function updateUserProfile() {
+        if (window.DSAApp && window.DSAApp.userStats) {
+            const stats = window.DSAApp.userStats;
+            const userInfo = stats.user_info || {};
+
+            // Update display name
+            const nameElements = document.querySelectorAll('#userDisplayName, #dropdownUserName');
+            nameElements.forEach(el => {
+                el.textContent = userInfo.display_name || 'User';
+            });
+
+            // Update email
+            const emailElement = document.getElementById('dropdownUserEmail');
+            if (emailElement) {
+                emailElement.textContent = userInfo.email || '';
+            }
+
+            // Update level
+            const levelElements = document.querySelectorAll('#userLevel, #dropdownUserLevel');
+            levelElements.forEach(el => {
+                el.textContent = stats.level || 1;
+            });
+
+            // Update experience
+            const expElement = document.getElementById('userExperience');
+            if (expElement) {
+                expElement.textContent = stats.experience || 0;
+            }
+
+            // Update level progress
+            const progressElement = document.getElementById('userLevelProgress');
+            if (progressElement && stats.experience) {
+                const currentLevelExp = ((stats.level - 1) * 1000);
+                const nextLevelExp = (stats.level * 1000);
+                const progress = ((stats.experience - currentLevelExp) / (nextLevelExp - currentLevelExp)) * 100;
+                progressElement.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+            }
+
+            // Update avatar if available
+            if (userInfo.photoURL) {
+                const avatarElements = document.querySelectorAll('#userAvatar, #dropdownUserAvatar');
+                avatarElements.forEach(el => {
+                    el.src = userInfo.photoURL;
+                });
+            }
+        }
+    }
+
+    function initializePomodoroTimerBadge() {
+        // This would integrate with the pomodoro timer
+        const badge = document.getElementById('pomodoroTimerBadge');
+
+        // Listen for timer events
+        window.addEventListener('pomodoroTimer', (event) => {
+            const { isRunning, timeLeft } = event.detail;
+
+            if (isRunning) {
+                badge.textContent = formatTime(timeLeft);
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
+        });
+    }
+
+    // Utility functions
+    function formatTimeAgo(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diff = Math.floor((now - time) / 1000);
+
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+
+        return time.toLocaleDateString();
+    }
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function navigateToTopic(week, day) {
+        hideSearchResults();
+        if (window.DSAApp) {
+            window.DSAApp.navigateTo('roadmap', { week, day });
+        }
+    }
+
+    function openNote(noteId) {
+        hideSearchResults();
+        if (window.DSAApp) {
+            window.DSAApp.navigateTo('notes', { noteId });
+        }
+    }
+
+    function toggleTheme() {
+        if (window.DSAApp) {
+            window.DSAApp.toggleTheme();
+        }
+    }
+
+    function confirmLogout() {
+        if (confirm('Are you sure you want to sign out?')) {
+            if (window.DSAApp && window.DSAApp.auth) {
+                window.DSAApp.auth.logout();
+            }
+        }
+    }
+
+    function exportData() {
+        if (window.DSAApp && window.DSAApp.api) {
+            window.DSAApp.api.exportData().then(data => {
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dsa-learning-data-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+    }
+
+    function showHelpModal() {
+        // Implementation for help modal
+        console.log('Show help modal');
+    }
+</script>

@@ -1,0 +1,904 @@
+<div class="sidebar-content h-100 d-flex flex-column">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header p-4 border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="user-avatar me-3">
+                <img src="https://via.placeholder.com/48/6366f1/ffffff?text=U" alt="User" class="rounded-circle"
+                    id="sidebarUserAvatar" width="48" height="48">
+                <div class="status-indicator online"></div>
+            </div>
+            <div class="user-info">
+                <div class="user-name fw-bold" id="sidebarUserName">Loading...</div>
+                <div class="user-level text-muted small" id="sidebarUserLevel">Level 1</div>
+                <div class="progress mt-1" style="height: 3px;">
+                    <div class="progress-bar bg-primary" id="sidebarUserProgress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats p-3 border-bottom">
+        <div class="row g-2 text-center">
+            <div class="col-4">
+                <div class="stat-item">
+                    <div class="stat-number text-primary fw-bold" id="sidebarCompletedTopics">0</div>
+                    <div class="stat-label small text-muted">Completed</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-item">
+                    <div class="stat-number text-warning fw-bold" id="sidebarCurrentStreak">0</div>
+                    <div class="stat-label small text-muted">Streak</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-item">
+                    <div class="stat-number text-success fw-bold" id="sidebarTotalHours">0</div>
+                    <div class="stat-label small text-muted">Hours</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav flex-grow-1">
+        <div class="nav-section">
+            <div class="nav-section-header px-3 py-2">
+                <small class="text-muted fw-semibold text-uppercase">Overview</small>
+            </div>
+
+            <a href="#" class="nav-link active" data-page="dashboard">
+                <div class="nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span class="nav-text">Dashboard</span>
+                <div class="nav-indicator"></div>
+            </a>
+
+            <a href="#" class="nav-link" data-page="roadmap">
+                <div class="nav-icon">
+                    <i class="fas fa-road"></i>
+                </div>
+                <span class="nav-text">Roadmap</span>
+                <div class="nav-badge" id="roadmapProgress">0%</div>
+            </a>
+
+            <a href="#" class="nav-link" data-page="progress">
+                <div class="nav-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="nav-text">Progress</span>
+                <div class="nav-indicator"></div>
+            </a>
+
+            <a href="#" class="nav-link" data-page="calendar">
+                <div class="nav-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <span class="nav-text">Calendar</span>
+                <div class="nav-badge" id="upcomingEvents">0</div>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-header px-3 py-2">
+                <small class="text-muted fw-semibold text-uppercase">Learning</small>
+            </div>
+
+            <a href="#" class="nav-link" data-page="notes">
+                <div class="nav-icon">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <span class="nav-text">Notes</span>
+                <div class="nav-badge" id="notesCount">0</div>
+            </a>
+
+            <a href="#" class="nav-link" data-page="review">
+                <div class="nav-icon">
+                    <i class="fas fa-redo"></i>
+                </div>
+                <span class="nav-text">Review</span>
+                <div class="nav-badge bg-warning" id="reviewCount">0</div>
+            </a>
+
+            <!-- Collapsible Roadmap Section -->
+            <div class="nav-collapse">
+                <a href="#" class="nav-link nav-collapse-toggle" data-bs-toggle="collapse"
+                    data-bs-target="#weeklyProgress">
+                    <div class="nav-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <span class="nav-text">Weekly Progress</span>
+                    <i class="fas fa-chevron-down nav-arrow"></i>
+                </a>
+
+                <div class="collapse" id="weeklyProgress">
+                    <div class="nav-submenu">
+                        <div id="weeklyProgressList">
+                            <!-- Weekly progress items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-header px-3 py-2">
+                <small class="text-muted fw-semibold text-uppercase">Analytics</small>
+            </div>
+
+            <a href="#" class="nav-link" data-page="analytics">
+                <div class="nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <span class="nav-text">Analytics</span>
+                <div class="nav-indicator"></div>
+            </a>
+
+            <a href="#" class="nav-link" data-page="achievements">
+                <div class="nav-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <span class="nav-text">Achievements</span>
+                <div class="nav-badge bg-warning" id="achievementsCount">0</div>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-header px-3 py-2">
+                <small class="text-muted fw-semibold text-uppercase">Tools</small>
+            </div>
+
+            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#pomodoroModal">
+                <div class="nav-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <span class="nav-text">Pomodoro Timer</span>
+                <div class="nav-badge bg-danger d-none" id="pomodoroStatus">25:00</div>
+            </a>
+
+            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#glossaryModal">
+                <div class="nav-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <span class="nav-text">DSA Glossary</span>
+                <div class="nav-indicator"></div>
+            </a>
+
+            <a href="#" class="nav-link" data-page="search">
+                <div class="nav-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <span class="nav-text">Search</span>
+                <div class="nav-indicator"></div>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Today's Focus -->
+    <div class="today-focus border-top p-3">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="fw-bold mb-0">Today's Focus</h6>
+            <small class="text-muted" id="todayDate"></small>
+        </div>
+        <div id="todayTopic" class="today-topic">
+            <div class="topic-card">
+                <div class="topic-title fw-semibold">Loading...</div>
+                <div class="topic-description text-muted small">Preparing your daily learning plan...</div>
+                <div class="topic-progress mt-2">
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="sidebar-footer border-top p-3">
+        <div class="d-grid gap-2">
+            <button class="btn btn-primary btn-sm" onclick="startDailySession()">
+                <i class="fas fa-play me-2"></i>Start Learning
+            </button>
+            <div class="row g-1">
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-sm w-100" data-page="profile">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary btn-sm w-100" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sidebar-content {
+        background: var(--card-bg);
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .sidebar-header {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    }
+
+    .user-avatar {
+        position: relative;
+    }
+
+    .status-indicator {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .status-indicator.online {
+        background: #10b981;
+    }
+
+    .status-indicator.offline {
+        background: #ef4444;
+    }
+
+    .status-indicator.away {
+        background: #f59e0b;
+    }
+
+    .quick-stats {
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .stat-item {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        background: rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .stat-number {
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+
+    .nav-section {
+        margin-bottom: 1rem;
+    }
+
+    .nav-section-header {
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        position: relative;
+        margin: 0 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .nav-link:hover {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+        transform: translateX(4px);
+    }
+
+    .nav-link.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .nav-link.active .nav-icon i {
+        color: white;
+    }
+
+    .nav-icon {
+        width: 20px;
+        margin-right: 0.75rem;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .nav-text {
+        flex-grow: 1;
+        font-weight: 500;
+    }
+
+    .nav-badge {
+        background: var(--primary);
+        color: white;
+        font-size: 0.625rem;
+        padding: 0.125rem 0.375rem;
+        border-radius: 10px;
+        font-weight: 600;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    .nav-badge.bg-warning {
+        background: var(--warning) !important;
+    }
+
+    .nav-badge.bg-danger {
+        background: var(--danger) !important;
+    }
+
+    .nav-indicator {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: transparent;
+    }
+
+    .nav-link.active .nav-indicator {
+        background: white;
+    }
+
+    .nav-collapse-toggle {
+        cursor: pointer;
+    }
+
+    .nav-arrow {
+        font-size: 0.75rem;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-collapse-toggle[aria-expanded="true"] .nav-arrow {
+        transform: rotate(180deg);
+    }
+
+    .nav-submenu {
+        padding-left: 2rem;
+        margin-top: 0.5rem;
+    }
+
+    .week-progress-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        margin: 0.25rem 0;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .week-progress-item:hover {
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .week-progress-item.completed {
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 3px solid var(--success);
+    }
+
+    .week-progress-item.current {
+        background: rgba(245, 158, 11, 0.1);
+        border-left: 3px solid var(--warning);
+    }
+
+    .week-number {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        margin-bottom: 0.125rem;
+    }
+
+    .week-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.125rem;
+    }
+
+    .week-progress {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    .today-focus {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+    }
+
+    .topic-card {
+        padding: 1rem;
+        background: var(--card-bg);
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .topic-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .topic-title {
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .topic-description {
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar-footer {
+        background: var(--bg-secondary);
+    }
+
+    /* Scrollbar Styling */
+    .sidebar-content::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 2px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb:hover {
+        background: var(--text-tertiary);
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .sidebar-content {
+        background: var(--bg-primary);
+    }
+
+    [data-theme="dark"] .topic-card {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .status-indicator {
+        border-color: var(--bg-primary);
+    }
+
+    /* Animation for badges */
+    .nav-badge {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Hover effects */
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: var(--primary);
+        border-radius: 0 2px 2px 0;
+        transition: height 0.3s ease;
+    }
+
+    .nav-link.active::before {
+        height: 60%;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 991.98px) {
+        .sidebar-content {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    // Sidebar initialization and real-time updates
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeSidebar();
+    });
+
+    function initializeSidebar() {
+        // Update user information
+        updateSidebarUserInfo();
+
+        // Update quick stats
+        updateQuickStats();
+
+        // Load weekly progress
+        loadWeeklyProgress();
+
+        // Set today's focus
+        setTodaysFocus();
+
+        // Initialize navigation handlers
+        initializeNavigation();
+
+        // Set up real-time updates
+        setupRealTimeUpdates();
+    }
+
+    function updateSidebarUserInfo() {
+        if (window.DSAApp && window.DSAApp.userStats) {
+            const stats = window.DSAApp.userStats;
+            const userInfo = stats.user_info || {};
+
+            // Update user name
+            const nameElement = document.getElementById('sidebarUserName');
+            if (nameElement) {
+                nameElement.textContent = userInfo.display_name || 'User';
+            }
+
+            // Update user level
+            const levelElement = document.getElementById('sidebarUserLevel');
+            if (levelElement) {
+                levelElement.textContent = `Level ${stats.level || 1}`;
+            }
+
+            // Update progress bar
+            const progressElement = document.getElementById('sidebarUserProgress');
+            if (progressElement && stats.experience) {
+                const currentLevelExp = ((stats.level - 1) * 1000);
+                const nextLevelExp = (stats.level * 1000);
+                const progress = ((stats.experience - currentLevelExp) / (nextLevelExp - currentLevelExp)) * 100;
+                progressElement.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+            }
+
+            // Update avatar
+            const avatarElement = document.getElementById('sidebarUserAvatar');
+            if (avatarElement && userInfo.photoURL) {
+                avatarElement.src = userInfo.photoURL;
+            }
+        }
+    }
+
+    function updateQuickStats() {
+        if (window.DSAApp && window.DSAApp.userStats) {
+            const stats = window.DSAApp.userStats;
+
+            // Update completed topics
+            const completedElement = document.getElementById('sidebarCompletedTopics');
+            if (completedElement) {
+                completedElement.textContent = stats.total_completed_topics || 0;
+            }
+
+            // Update current streak
+            const streakElement = document.getElementById('sidebarCurrentStreak');
+            if (streakElement) {
+                streakElement.textContent = stats.current_streak || 0;
+                if (stats.current_streak > 0) {
+                    streakElement.classList.add('streak-fire');
+                }
+            }
+
+            // Update total hours
+            const hoursElement = document.getElementById('sidebarTotalHours');
+            if (hoursElement) {
+                hoursElement.textContent = Math.round(stats.total_time_spent || 0);
+            }
+
+            // Update navigation badges
+            updateNavigationBadges(stats);
+        }
+    }
+
+    function updateNavigationBadges(stats) {
+        // Update roadmap progress
+        const roadmapElement = document.getElementById('roadmapProgress');
+        if (roadmapElement) {
+            roadmapElement.textContent = `${stats.completion_percentage || 0}%`;
+        }
+
+        // Update notes count
+        const notesElement = document.getElementById('notesCount');
+        if (notesElement && window.DSAApp.userNotes) {
+            notesElement.textContent = window.DSAApp.userNotes.length;
+        }
+
+        // Update review count
+        const reviewElement = document.getElementById('reviewCount');
+        if (reviewElement && window.DSAApp.userNotes) {
+            const reviewCount = window.DSAApp.userNotes.filter(note => note.review_needed).length;
+            reviewElement.textContent = reviewCount;
+            reviewElement.style.display = reviewCount > 0 ? 'block' : 'none';
+        }
+
+        // Update achievements count
+        const achievementsElement = document.getElementById('achievementsCount');
+        if (achievementsElement && window.DSAApp.achievements) {
+            achievementsElement.textContent = window.DSAApp.achievements.length;
+        }
+
+        // Update upcoming events
+        const eventsElement = document.getElementById('upcomingEvents');
+        if (eventsElement && window.DSAApp.calendarEvents) {
+            const upcomingCount = getUpcomingEventsCount();
+            eventsElement.textContent = upcomingCount;
+            eventsElement.style.display = upcomingCount > 0 ? 'block' : 'none';
+        }
+    }
+
+    function loadWeeklyProgress() {
+        const container = document.getElementById('weeklyProgressList');
+        if (!container || !window.DSAApp.roadmapData) return;
+
+        let html = '';
+
+        Object.entries(window.DSAApp.roadmapData).forEach(([weekKey, weekData], index) => {
+            const weekNumber = index + 1;
+            const progress = getWeekProgress(weekKey);
+            const status = getWeekStatus(weekKey, progress);
+
+            html += `
+            <div class="week-progress-item ${status}" onclick="navigateToWeek('${weekKey}')">
+                <div class="flex-grow-1">
+                    <div class="week-number">Week ${weekNumber}</div>
+                    <div class="week-title">${weekData.title}</div>
+                    <div class="week-progress">${progress.completed}/${progress.total} topics</div>
+                </div>
+                <div class="week-status">
+                    ${status === 'completed' ? '<i class="fas fa-check-circle text-success"></i>' :
+                    status === 'current' ? '<i class="fas fa-play-circle text-warning"></i>' :
+                        '<i class="fas fa-circle text-muted"></i>'}
+                </div>
+            </div>
+        `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function getWeekProgress(weekKey) {
+        if (!window.DSAApp.userProgress) {
+            return { completed: 0, total: 0 };
+        }
+
+        const weekProgress = window.DSAApp.userProgress.filter(p => p.week === weekKey);
+        const completed = weekProgress.filter(p => p.completed).length;
+        const total = Object.keys(window.DSAApp.roadmapData[weekKey].days).length;
+
+        return { completed, total };
+    }
+
+    function getWeekStatus(weekKey, progress) {
+        if (progress.completed === progress.total && progress.total > 0) {
+            return 'completed';
+        }
+
+        // Determine current week (simplified logic)
+        const weekNumber = parseInt(weekKey.split('_')[1]);
+        const currentWeek = getCurrentWeek();
+
+        if (weekNumber === currentWeek) {
+            return 'current';
+        }
+
+        return 'upcoming';
+    }
+
+    function getCurrentWeek() {
+        // This would be calculated based on user's start date
+        // For now, return week 1
+        return 1;
+    }
+
+    function setTodaysFocus() {
+        const container = document.getElementById('todayTopic');
+        if (!container) return;
+
+        // Update today's date
+        const dateElement = document.getElementById('todayDate');
+        if (dateElement) {
+            dateElement.textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Get today's topic
+        const todayTopic = getTodaysTopic();
+
+        if (todayTopic) {
+            container.innerHTML = `
+            <div class="topic-card" onclick="navigateToToday()">
+                <div class="topic-title">${todayTopic.topic}</div>
+                <div class="topic-description">${todayTopic.activities}</div>
+                <div class="topic-progress mt-2">
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: ${todayTopic.progress}%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <small class="text-muted">${todayTopic.progress}% complete</small>
+                        <small class="text-muted">${todayTopic.estimatedTime}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        }
+    }
+
+    function getTodaysTopic() {
+        // This would determine today's topic based on the roadmap and user's progress
+        // For now, return a sample topic
+
+        const currentWeek = 'week_1';
+        const currentDay = 'monday';
+
+        if (window.DSAApp.roadmapData && window.DSAApp.roadmapData[currentWeek]) {
+            const dayData = window.DSAApp.roadmapData[currentWeek].days[currentDay];
+            if (dayData) {
+                // Check if user has progress on this topic
+                const userProgress = window.DSAApp.userProgress.find(p =>
+                    p.week === currentWeek && p.day === currentDay
+                );
+
+                return {
+                    topic: dayData.topic,
+                    activities: dayData.activities,
+                    estimatedTime: dayData.estimated_time || '2-3 hours',
+                    progress: userProgress?.completed ? 100 : (userProgress?.time_spent || 0) * 10,
+                    week: currentWeek,
+                    day: currentDay
+                };
+            }
+        }
+
+        return null;
+    }
+
+    function initializeNavigation() {
+        // Add click handlers for navigation links
+        document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+
+                // Update active state
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // Navigate to page
+                if (window.DSAApp) {
+                    window.DSAApp.navigateTo(page);
+                }
+            });
+        });
+
+        // Handle collapse toggles
+        document.querySelectorAll('.nav-collapse-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                // Bootstrap will handle the collapse
+            });
+        });
+    }
+
+    function setupRealTimeUpdates() {
+        // Listen for real-time updates
+        if (window.DSAApp && window.DSAApp.api) {
+            // Progress updates
+            window.DSAApp.api.addEventListener('progress-update', () => {
+                updateQuickStats();
+                loadWeeklyProgress();
+                setTodaysFocus();
+            });
+
+            // Achievement updates
+            window.DSAApp.api.addEventListener('achievement-unlock', () => {
+                updateQuickStats();
+            });
+
+            // Streak updates
+            window.DSAApp.api.addEventListener('streak-update', () => {
+                updateQuickStats();
+            });
+
+            // Note updates
+            window.DSAApp.api.addEventListener('note-update', () => {
+                updateQuickStats();
+            });
+        }
+
+        // Update every 5 minutes
+        setInterval(() => {
+            updateQuickStats();
+        }, 5 * 60 * 1000);
+    }
+
+    function getUpcomingEventsCount() {
+        if (!window.DSAApp.calendarEvents) return 0;
+
+        const now = new Date();
+        const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+        return window.DSAApp.calendarEvents.filter(event => {
+            const eventDate = new Date(event.date);
+            return eventDate >= now && eventDate <= nextWeek;
+        }).length;
+    }
+
+    // Navigation functions
+    function navigateToWeek(weekKey) {
+        if (window.DSAApp) {
+            window.DSAApp.navigateTo('roadmap', { week: weekKey });
+        }
+    }
+
+    function navigateToToday() {
+        const todayTopic = getTodaysTopic();
+        if (todayTopic && window.DSAApp) {
+            window.DSAApp.navigateTo('roadmap', {
+                week: todayTopic.week,
+                day: todayTopic.day
+            });
+        }
+    }
+
+    function startDailySession() {
+        const todayTopic = getTodaysTopic();
+        if (todayTopic) {
+            // Start pomodoro timer and navigate to today's topic
+            if (window.DSAApp) {
+                window.DSAApp.navigateTo('roadmap', {
+                    week: todayTopic.week,
+                    day: todayTopic.day
+                });
+
+                // Optionally start pomodoro timer
+                setTimeout(() => {
+                    const pomodoroModal = new bootstrap.Modal(document.getElementById('pomodoroModal'));
+                    pomodoroModal.show();
+                }, 500);
+            }
+        } else {
+            // Navigate to roadmap if no specific topic
+            if (window.DSAApp) {
+                window.DSAApp.navigateTo('roadmap');
+            }
+        }
+    }
+
+    // Update navigation active state based on current page
+    function updateNavigationState(currentPage) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.page === currentPage) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Export function for use by main app
+    window.updateSidebarNavigation = updateNavigationState;
+</script>
