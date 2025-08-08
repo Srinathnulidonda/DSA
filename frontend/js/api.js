@@ -1,7 +1,7 @@
 // API Service with Real-time functionality
 class APIService {
     constructor() {
-        this.baseURL = 'https://dsa-frontend.render.app';
+        this.baseURL = 'https://dsa-nfyt.onrender.com';
         this.token = null;
         this.retryAttempts = 3;
         this.retryDelay = 1000;
