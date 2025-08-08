@@ -1,0 +1,2439 @@
+<div class="notes-container">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="page-title mb-2">
+                    <i class="fas fa-sticky-note me-3 text-primary"></i>
+                    My Learning Notes
+                </h1>
+                <p class="page-subtitle text-muted mb-0">
+                    Organize your thoughts and track your learning journey
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex justify-content-md-end gap-2">
+                    <button class="btn btn-outline-secondary" onclick="exportNotes()">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#noteModal"
+                        onclick="createNewNote()">
+                        <i class="fas fa-plus me-2"></i>New Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-time Status -->
+    <div id="syncStatus" class="alert alert-info border-0 mb-4 d-none">
+        <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm text-info me-3" role="status"></div>
+            <div>
+                <strong>Syncing notes...</strong>
+                <div class="small">Your notes are being synchronized across devices.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Statistics -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-primary text-white">
+                <div class="stats-icon">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <div class="stats-content">
+                    <div class="stats-number" id="totalNotes">0</div>
+                    <div class="stats-label">Total Notes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-warning text-white">
+                <div class="stats-icon">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <div class="stats-content">
+                    <div class="stats-number" id="reviewNotes">0</div>
+                    <div class="stats-label">Need Review</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-success text-white">
+                <div class="stats-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stats-content">
+                    <div class="stats-number" id="totalTags">0</div>
+                    <div class="stats-label">Unique Tags</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-info text-white">
+                <div class="stats-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stats-content">
+                    <div class="stats-number" id="recentNotes">0</div>
+                    <div class="stats-label">This Week</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="search-filter-section mb-4">
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control search-input"
+                        placeholder="Search notes by content, topic, or tags..." id="notesSearch">
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="filter-controls d-flex gap-2">
+                    <select class="form-select" id="weekFilter" onchange="applyFilters()">
+                        <option value="">All Weeks</option>
+                    </select>
+                    <select class="form-select" id="categoryFilter" onchange="applyFilters()">
+                        <option value="">All Categories</option>
+                        <option value="concept">Concepts</option>
+                        <option value="problem">Problems</option>
+                        <option value="insight">Insights</option>
+                        <option value="question">Questions</option>
+                        <option value="general">General</option>
+                    </select>
+                    <select class="form-select" id="priorityFilter" onchange="applyFilters()">
+                        <option value="">All Priorities</option>
+                        <option value="high">High Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="view-controls mb-4">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active" id="listView" onclick="switchView('list')">
+                <i class="fas fa-list me-2"></i>List View
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="gridView" onclick="switchView('grid')">
+                <i class="fas fa-th me-2"></i>Grid View
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="tagView" onclick="switchView('tag')">
+                <i class="fas fa-tags me-2"></i>Tag View
+            </button>
+        </div>
+
+        <div class="sort-controls">
+            <select class="form-select" id="sortBy" onchange="applySorting()">
+                <option value="updated_at">Last Updated</option>
+                <option value="created_at">Date Created</option>
+                <option value="topic">Topic A-Z</option>
+                <option value="priority">Priority</option>
+            </select>
+            <button class="btn btn-outline-secondary" id="sortOrder" onclick="toggleSortOrder()">
+                <i class="fas fa-sort-amount-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notes Content -->
+    <div id="notesContent" class="notes-content">
+        <!-- List View -->
+        <div id="listViewContent" class="list-view">
+            <div class="notes-list" id="notesList">
+                <!-- Notes will be populated here -->
+            </div>
+        </div>
+
+        <!-- Grid View -->
+        <div id="gridViewContent" class="grid-view d-none">
+            <div class="notes-grid" id="notesGrid">
+                <!-- Grid items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Tag View -->
+        <div id="tagViewContent" class="tag-view d-none">
+            <div class="tags-container" id="tagsContainer">
+                <!-- Tag groups will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state text-center py-5 d-none">
+        <i class="fas fa-sticky-note fa-4x text-muted mb-4"></i>
+        <h3>No notes yet</h3>
+        <p class="text-muted mb-4">Start taking notes to organize your learning journey</p>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#noteModal" onclick="createNewNote()">
+            <i class="fas fa-plus me-2"></i>Create Your First Note
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="notesLoading" class="text-center py-5 d-none">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted">Loading your notes...</p>
+    </div>
+</div>
+
+<!-- Note Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="noteModalTitle">New Note</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="noteForm">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="noteTopic" class="form-label">Topic</label>
+                            <input type="text" class="form-control" id="noteTopic" placeholder="Enter topic title..."
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="noteWeek" class="form-label">Week</label>
+                            <select class="form-select" id="noteWeek">
+                                <option value="">Select Week</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <label for="noteDay" class="form-label">Day</label>
+                            <select class="form-select" id="noteDay">
+                                <option value="">Select Day</option>
+                                <option value="monday">Monday</option>
+                                <option value="tuesday">Tuesday</option>
+                                <option value="wednesday">Wednesday</option>
+                                <option value="thursday">Thursday</option>
+                                <option value="friday">Friday</option>
+                                <option value="saturday">Saturday</option>
+                                <option value="sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="noteCategory" class="form-label">Category</label>
+                            <select class="form-select" id="noteCategory">
+                                <option value="general">General</option>
+                                <option value="concept">Concept</option>
+                                <option value="problem">Problem</option>
+                                <option value="insight">Insight</option>
+                                <option value="question">Question</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <label for="notePriority" class="form-label">Priority</label>
+                            <select class="form-select" id="notePriority">
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="reviewNeeded">
+                                <label class="form-check-label" for="reviewNeeded">
+                                    Mark for review
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label for="noteContent" class="form-label">Content</label>
+                        <div class="editor-toolbar mb-2">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="formatText('bold')" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="formatText('italic')" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="formatText('underline')" title="Underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                            </div>
+                            <div class="btn-group ms-2" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertCode()"
+                                    title="Code Block">
+                                    <i class="fas fa-code"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertList()"
+                                    title="Bullet List">
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertLink()"
+                                    title="Link">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea class="form-control" id="noteContent" rows="10"
+                            placeholder="Write your note content here..."></textarea>
+                        <div class="character-count mt-1">
+                            <small class="text-muted">Characters: <span id="characterCount">0</span></small>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label for="noteTags" class="form-label">Tags</label>
+                        <div class="tags-input-container">
+                            <input type="text" class="form-control" id="noteTags"
+                                placeholder="Add tags (press Enter or comma to add)">
+                            <div class="tags-display mt-2" id="tagsDisplay"></div>
+                            <div class="suggested-tags mt-2" id="suggestedTags"></div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Real-time collaboration indicator -->
+                <div id="collaborationIndicator" class="collaboration-indicator mt-3 d-none">
+                    <div class="d-flex align-items-center">
+                        <div class="typing-indicator me-2">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                        <span class="text-muted small">Someone else is editing this note...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-primary" onclick="saveAsDraft()">Save as Draft</button>
+                <button type="button" class="btn btn-primary" onclick="saveNote()">Save Note</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Note Quick View Modal -->
+<div class="modal fade" id="noteQuickViewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickViewTitle">Note Title</h5>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="editCurrentNote()">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+            </div>
+            <div class="modal-body" id="quickViewContent">
+                <!-- Note content will be displayed here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" onclick="deleteCurrentNote()">
+                    <i class="fas fa-trash me-2"></i>Delete
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .notes-container {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .stats-card {
+        position: relative;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 2rem;
+        opacity: 0.3;
+    }
+
+    .stats-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .stats-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    .search-filter-section {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .search-container {
+        position: relative;
+    }
+
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-top: none;
+        border-radius: 0 0 0.5rem 0.5rem;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .search-result-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .search-result-item:hover {
+        background: var(--bg-secondary);
+    }
+
+    .search-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .search-result-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .search-result-content {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .search-result-meta {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    .view-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .sort-controls {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .notes-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .note-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .note-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+
+    .note-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .note-card:hover::before {
+        transform: scaleY(1);
+    }
+
+    .note-card.priority-high::before {
+        background: var(--danger);
+        transform: scaleY(1);
+    }
+
+    .note-card.priority-medium::before {
+        background: var(--warning);
+    }
+
+    .note-card.priority-low::before {
+        background: var(--success);
+    }
+
+    .note-card.review-needed {
+        border-left: 4px solid var(--warning);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.1));
+    }
+
+    .note-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .note-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .note-meta {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        flex-wrap: wrap;
+    }
+
+    .note-actions {
+        display: flex;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .note-card:hover .note-actions {
+        opacity: 1;
+    }
+
+    .note-body {
+        padding: 1.5rem;
+    }
+
+    .note-content {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        max-height: 120px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .note-content.expanded {
+        max-height: none;
+    }
+
+    .note-content::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: linear-gradient(transparent, white);
+        pointer-events: none;
+    }
+
+    .note-content.expanded::after {
+        display: none;
+    }
+
+    .note-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .note-tag {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .note-tag:hover {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .note-footer {
+        padding: 1rem 1.5rem;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .note-status {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        font-size: 0.875rem;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-badge.category-concept {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+
+    .status-badge.category-problem {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .status-badge.category-insight {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .status-badge.category-question {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+
+    .status-badge.category-general {
+        background: rgba(107, 114, 128, 0.1);
+        color: #6b7280;
+    }
+
+    .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .note-grid-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: fit-content;
+    }
+
+    .note-grid-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .note-grid-header {
+        padding: 1rem 1.5rem;
+        background: var(--primary-light);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .note-grid-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .note-grid-meta {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    .note-grid-body {
+        padding: 1.5rem;
+    }
+
+    .note-grid-content {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .tags-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .tag-group {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .tag-group-header {
+        background: var(--primary-light);
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .tag-group-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .tag-group-count {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+    }
+
+    .tag-group-notes {
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .tag-note-item {
+        padding: 1rem;
+        background: var(--bg-secondary);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .tag-note-item:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+    }
+
+    .tag-note-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .tag-note-preview {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .editor-toolbar {
+        background: var(--bg-secondary);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .tags-input-container {
+        position: relative;
+    }
+
+    .tags-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .tag-item {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .tag-remove {
+        cursor: pointer;
+        color: var(--danger);
+        font-weight: 700;
+    }
+
+    .tag-remove:hover {
+        color: var(--danger);
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.625rem;
+    }
+
+    .suggested-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .suggested-tag {
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .suggested-tag:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .character-count {
+        text-align: right;
+    }
+
+    .collaboration-indicator {
+        background: var(--info-light);
+        border: 1px solid var(--info);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .typing-indicator {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--info);
+        border-radius: 50%;
+        animation: typingBounce 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) {
+        animation-delay: -0.32s;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: -0.16s;
+    }
+
+    @keyframes typingBounce {
+
+        0%,
+        80%,
+        100% {
+            transform: scale(0);
+        }
+
+        40% {
+            transform: scale(1);
+        }
+    }
+
+    .empty-state {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    /* Real-time update animations */
+    .note-card.just-created {
+        animation: noteSlideIn 0.6s ease-out;
+    }
+
+    .note-card.just-updated {
+        animation: noteUpdateGlow 1s ease-out;
+    }
+
+    @keyframes noteSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes noteUpdateGlow {
+        0% {
+            box-shadow: var(--shadow-sm);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        100% {
+            box-shadow: var(--shadow-sm);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .view-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-controls {
+            flex-direction: column;
+        }
+
+        .notes-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .note-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .note-actions {
+            opacity: 1;
+        }
+
+        .tag-group-notes {
+            grid-template-columns: 1fr;
+        }
+
+        .sort-controls {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .stats-card {
+            padding: 1rem;
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+        }
+
+        .search-filter-section {
+            padding: 1rem;
+        }
+
+        .note-card {
+            margin-bottom: 1rem;
+        }
+
+        .note-header,
+        .note-body,
+        .note-footer {
+            padding: 1rem;
+        }
+
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .search-results {
+        background: var(--bg-primary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .note-content::after {
+        background: linear-gradient(transparent, var(--bg-primary));
+    }
+
+    [data-theme="dark"] .editor-toolbar {
+        background: var(--bg-primary);
+        border-color: var(--border-color);
+    }
+</style>
+
+<script>
+    // Notes page real-time functionality
+    let currentView = 'list';
+    let allNotes = [];
+    let filteredNotes = [];
+    let currentNoteId = null;
+    let isEditMode = false;
+    let sortBy = 'updated_at';
+    let sortOrder = 'desc';
+    let searchTimeout = null;
+    let currentTags = [];
+    let isDraft = false;
+
+    // Real-time collaboration
+    let lastEditTime = 0;
+    let collaborationTimeout = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeNotes();
+    });
+
+    async function initializeNotes() {
+        try {
+            showLoadingState();
+
+            // Load notes data
+            await loadNotesData();
+
+            // Initialize UI components
+            initializeUI();
+
+            // Set up real-time updates
+            setupRealTimeUpdates();
+
+            // Load content based on current view
+            await loadViewContent();
+
+            hideLoadingState();
+
+            console.log('✅ Notes page initialized successfully');
+
+        } catch (error) {
+            console.error('❌ Notes initialization failed:', error);
+            showErrorState();
+        }
+    }
+
+    function showLoadingState() {
+        document.getElementById('notesLoading').classList.remove('d-none');
+        document.getElementById('notesContent').classList.add('d-none');
+        document.getElementById('emptyState').classList.add('d-none');
+    }
+
+    function hideLoadingState() {
+        document.getElementById('notesLoading').classList.add('d-none');
+
+        if (allNotes.length === 0) {
+            document.getElementById('emptyState').classList.remove('d-none');
+            document.getElementById('notesContent').classList.add('d-none');
+        } else {
+            document.getElementById('notesContent').classList.remove('d-none');
+            document.getElementById('emptyState').classList.add('d-none');
+        }
+    }
+
+    async function loadNotesData() {
+        try {
+            if (window.DSAApp?.notes) {
+                allNotes = window.DSAApp.notes.getAllNotes();
+            } else if (window.DSAApp?.api) {
+                allNotes = await window.DSAApp.api.getNotes();
+            } else {
+                allNotes = JSON.parse(localStorage.getItem('dsa_learning_notes') || '[]');
+            }
+
+            // Sort notes by default order
+            sortNotes();
+
+            console.log('Notes data loaded:', allNotes.length, 'notes');
+
+        } catch (error) {
+            console.error('Error loading notes:', error);
+            allNotes = [];
+        }
+    }
+
+    function initializeUI() {
+        // Update statistics
+        updateNotesStatistics();
+
+        // Populate week filter
+        populateWeekFilter();
+
+        // Initialize search
+        initializeSearch();
+
+        // Initialize tags input
+        initializeTagsInput();
+
+        // Initialize editor
+        initializeEditor();
+
+        // Initialize real-time collaboration
+        initializeCollaboration();
+
+        // Set up auto-save
+        setupAutoSave();
+    }
+
+    function updateNotesStatistics() {
+        const stats = calculateNotesStatistics();
+
+        animateNumberUpdate('totalNotes', stats.total);
+        animateNumberUpdate('reviewNotes', stats.reviewNeeded);
+        animateNumberUpdate('totalTags', stats.uniqueTags);
+        animateNumberUpdate('recentNotes', stats.thisWeek);
+    }
+
+    function calculateNotesStatistics() {
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        const stats = {
+            total: allNotes.length,
+            reviewNeeded: allNotes.filter(note => note.review_needed).length,
+            uniqueTags: [...new Set(allNotes.flatMap(note => note.tags || []))].length,
+            thisWeek: allNotes.filter(note => new Date(note.created_at) > oneWeekAgo).length
+        };
+
+        return stats;
+    }
+
+    function animateNumberUpdate(elementId, newValue) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        const currentValue = parseInt(element.textContent) || 0;
+        const duration = 1000;
+        const steps = 30;
+        const increment = (newValue - currentValue) / steps;
+        let current = currentValue;
+        let step = 0;
+
+        const timer = setInterval(() => {
+            step++;
+            current += increment;
+
+            if (step >= steps) {
+                element.textContent = newValue;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.round(current);
+            }
+        }, duration / steps);
+    }
+
+    function populateWeekFilter() {
+        const weekFilter = document.getElementById('weekFilter');
+        if (!weekFilter) return;
+
+        // Extract unique weeks from notes
+        const weeks = [...new Set(allNotes.map(note => note.week).filter(Boolean))].sort();
+
+        weeks.forEach(week => {
+            const option = document.createElement('option');
+            option.value = week;
+            option.textContent = week.replace('_', ' ').toUpperCase();
+            weekFilter.appendChild(option);
+        });
+
+        // Also populate note modal week filter
+        const noteWeekSelect = document.getElementById('noteWeek');
+        if (noteWeekSelect && window.DSAApp?.roadmapData) {
+            Object.keys(window.DSAApp.roadmapData).forEach(week => {
+                const option = document.createElement('option');
+                option.value = week;
+                option.textContent = week.replace('_', ' ').toUpperCase();
+                noteWeekSelect.appendChild(option);
+            });
+        }
+    }
+
+    function initializeSearch() {
+        const searchInput = document.getElementById('notesSearch');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', function (e) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(e.target.value);
+            }, 300);
+        });
+
+        searchInput.addEventListener('focus', function () {
+            if (this.value.length >= 2) {
+                showSearchResults();
+            }
+        });
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.search-container')) {
+                hideSearchResults();
+            }
+        });
+    }
+
+    function performSearch(query) {
+        if (query.length < 2) {
+            hideSearchResults();
+            filteredNotes = [...allNotes];
+            loadViewContent();
+            return;
+        }
+
+        // Search in notes
+        const searchResults = searchNotes(query);
+
+        // Show real-time search results dropdown
+        displaySearchResults(searchResults.slice(0, 5));
+
+        // Filter main view
+        filteredNotes = searchResults;
+        loadViewContent();
+    }
+
+    function searchNotes(query) {
+        const searchTerm = query.toLowerCase();
+
+        return allNotes.filter(note => {
+            return (
+                note.topic?.toLowerCase().includes(searchTerm) ||
+                note.content?.toLowerCase().includes(searchTerm) ||
+                note.tags?.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                note.category?.toLowerCase().includes(searchTerm)
+            );
+        }).sort((a, b) => {
+            // Sort by relevance (topic matches first)
+            const aTopicMatch = a.topic?.toLowerCase().includes(searchTerm) ? 1 : 0;
+            const bTopicMatch = b.topic?.toLowerCase().includes(searchTerm) ? 1 : 0;
+            return bTopicMatch - aTopicMatch;
+        });
+    }
+
+    function displaySearchResults(results) {
+        const container = document.getElementById('searchResults');
+        if (!container) return;
+
+        if (results.length === 0) {
+            container.innerHTML = '<div class="search-result-item">No results found</div>';
+        } else {
+            container.innerHTML = results.map(note => `
+            <div class="search-result-item" onclick="openNote('${note.id}')">
+                <div class="search-result-title">${note.topic || 'Untitled'}</div>
+                <div class="search-result-content">${(note.content || '').substring(0, 100)}...</div>
+                <div class="search-result-meta">
+                    ${note.category} • ${formatRelativeTime(note.updated_at)}
+                    ${note.tags?.length ? ` • ${note.tags.join(', ')}` : ''}
+                </div>
+            </div>
+        `).join('');
+        }
+
+        showSearchResults();
+    }
+
+    function showSearchResults() {
+        const container = document.getElementById('searchResults');
+        if (container) {
+            container.style.display = 'block';
+        }
+    }
+
+    function hideSearchResults() {
+        const container = document.getElementById('searchResults');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+
+    function initializeTagsInput() {
+        const tagsInput = document.getElementById('noteTags');
+        if (!tagsInput) return;
+
+        tagsInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                addTag(this.value.trim());
+                this.value = '';
+            }
+        });
+
+        tagsInput.addEventListener('blur', function () {
+            if (this.value.trim()) {
+                addTag(this.value.trim());
+                this.value = '';
+            }
+        });
+
+        tagsInput.addEventListener('input', function () {
+            updateSuggestedTags(this.value);
+        });
+    }
+
+    function addTag(tagText) {
+        if (!tagText || currentTags.includes(tagText)) return;
+
+        currentTags.push(tagText);
+        updateTagsDisplay();
+    }
+
+    function removeTag(tagText) {
+        currentTags = currentTags.filter(tag => tag !== tagText);
+        updateTagsDisplay();
+    }
+
+    function updateTagsDisplay() {
+        const container = document.getElementById('tagsDisplay');
+        if (!container) return;
+
+        container.innerHTML = currentTags.map(tag => `
+        <span class="tag-item">
+            ${tag}
+            <span class="tag-remove" onclick="removeTag('${tag}')">&times;</span>
+        </span>
+    `).join('');
+    }
+
+    function updateSuggestedTags(currentInput) {
+        const container = document.getElementById('suggestedTags');
+        if (!container) return;
+
+        if (!currentInput) {
+            container.innerHTML = '';
+            return;
+        }
+
+        // Get all existing tags
+        const allTags = [...new Set(allNotes.flatMap(note => note.tags || []))];
+
+        // Filter tags that match current input and aren't already selected
+        const suggestions = allTags
+            .filter(tag =>
+                tag.toLowerCase().includes(currentInput.toLowerCase()) &&
+                !currentTags.includes(tag)
+            )
+            .slice(0, 8);
+
+        container.innerHTML = suggestions.map(tag => `
+        <span class="suggested-tag" onclick="selectSuggestedTag('${tag}')">${tag}</span>
+    `).join('');
+    }
+
+    function selectSuggestedTag(tag) {
+        addTag(tag);
+        document.getElementById('noteTags').value = '';
+        updateSuggestedTags('');
+    }
+
+    function initializeEditor() {
+        const contentTextarea = document.getElementById('noteContent');
+        if (!contentTextarea) return;
+
+        // Character count
+        contentTextarea.addEventListener('input', function () {
+            const count = this.value.length;
+            document.getElementById('characterCount').textContent = count;
+
+            // Auto-save draft
+            if (count > 0) {
+                scheduleAutoSave();
+            }
+
+            // Real-time collaboration
+            handleRealTimeEdit();
+        });
+
+        // Handle paste events
+        contentTextarea.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                this.dispatchEvent(new Event('input'));
+            }, 0);
+        });
+    }
+
+    function initializeCollaboration() {
+        // Set up real-time collaboration indicators
+        // This would integrate with WebSocket for real-time editing
+        if (window.DSAApp?.api?.websocket) {
+            setupCollaborativeEditing();
+        }
+    }
+
+    function setupCollaborativeEditing() {
+        const ws = window.DSAApp.api.websocket;
+
+        ws.addEventListener('message', function (event) {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'collaborative-note-edit') {
+                handleCollaborativeEdit(data.payload);
+            }
+        });
+    }
+
+    function handleCollaborativeEdit(data) {
+        const { noteId, operation, userId, userInfo } = data;
+
+        if (noteId === currentNoteId && userId !== getCurrentUserId()) {
+            showCollaborationIndicator(userInfo);
+        }
+    }
+
+    function showCollaborationIndicator(userInfo) {
+        const indicator = document.getElementById('collaborationIndicator');
+        if (indicator) {
+            indicator.classList.remove('d-none');
+
+            // Hide after 3 seconds of inactivity
+            clearTimeout(collaborationTimeout);
+            collaborationTimeout = setTimeout(() => {
+                indicator.classList.add('d-none');
+            }, 3000);
+        }
+    }
+
+    function handleRealTimeEdit() {
+        const now = Date.now();
+        lastEditTime = now;
+
+        // Emit edit event after short delay to avoid spam
+        setTimeout(() => {
+            if (lastEditTime === now && currentNoteId) {
+                emitEditEvent();
+            }
+        }, 500);
+    }
+
+    function emitEditEvent() {
+        if (window.DSAApp?.api?.websocket && currentNoteId) {
+            const data = {
+                type: 'collaborative-note-edit',
+                payload: {
+                    noteId: currentNoteId,
+                    operation: {
+                        type: 'text-edit',
+                        timestamp: Date.now()
+                    },
+                    userId: getCurrentUserId(),
+                    userInfo: getCurrentUserInfo()
+                }
+            };
+
+            window.DSAApp.api.websocket.send(JSON.stringify(data));
+        }
+    }
+
+    function getCurrentUserId() {
+        return window.DSAApp?.userStats?.user_info?.uid || 'anonymous';
+    }
+
+    function getCurrentUserInfo() {
+        const userInfo = window.DSAApp?.userStats?.user_info || {};
+        return {
+            displayName: userInfo.display_name || 'Anonymous',
+            photoURL: userInfo.photoURL || null
+        };
+    }
+
+    function setupAutoSave() {
+        // Auto-save every 30 seconds when editing
+        setInterval(() => {
+            if (isEditMode && hasUnsavedChanges()) {
+                saveAsDraft();
+            }
+        }, 30000);
+    }
+
+    function scheduleAutoSave() {
+        // Debounced auto-save
+        clearTimeout(window.autoSaveTimeout);
+        window.autoSaveTimeout = setTimeout(() => {
+            if (isEditMode && hasUnsavedChanges()) {
+                saveAsDraft();
+            }
+        }, 5000);
+    }
+
+    function hasUnsavedChanges() {
+        // Check if current form has unsaved changes
+        const form = document.getElementById('noteForm');
+        if (!form) return false;
+
+        // Simple check - could be more sophisticated
+        const content = document.getElementById('noteContent').value;
+        return content.trim().length > 0;
+    }
+
+    // View switching and content loading
+    function switchView(view) {
+        if (view === currentView) return;
+
+        // Update button states
+        document.querySelectorAll('[id$="View"]').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(`${view}View`).classList.add('active');
+
+        // Hide all view contents
+        document.querySelectorAll('[id$="ViewContent"]').forEach(content => {
+            content.classList.add('d-none');
+        });
+
+        // Show selected view
+        document.getElementById(`${view}ViewContent`).classList.remove('d-none');
+
+        currentView = view;
+        loadViewContent();
+    }
+
+    async function loadViewContent() {
+        const notesToRender = filteredNotes.length > 0 ? filteredNotes : allNotes;
+
+        switch (currentView) {
+            case 'list':
+                await loadListView(notesToRender);
+                break;
+            case 'grid':
+                await loadGridView(notesToRender);
+                break;
+            case 'tag':
+                await loadTagView(notesToRender);
+                break;
+        }
+    }
+
+    async function loadListView(notes) {
+        const container = document.getElementById('notesList');
+        if (!container) return;
+
+        if (notes.length === 0) {
+            container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h5>No notes found</h5>
+                <p class="text-muted">Try adjusting your search or filters</p>
+            </div>
+        `;
+            return;
+        }
+
+        container.innerHTML = notes.map(note => generateNoteCard(note)).join('');
+
+        // Add staggered animation
+        container.querySelectorAll('.note-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('fade-in');
+        });
+    }
+
+    async function loadGridView(notes) {
+        const container = document.getElementById('notesGrid');
+        if (!container) return;
+
+        if (notes.length === 0) {
+            container.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h5>No notes found</h5>
+                <p class="text-muted">Try adjusting your search or filters</p>
+            </div>
+        `;
+            return;
+        }
+
+        container.innerHTML = notes.map(note => generateGridCard(note)).join('');
+    }
+
+    async function loadTagView(notes) {
+        const container = document.getElementById('tagsContainer');
+        if (!container) return;
+
+        // Group notes by tags
+        const tagGroups = groupNotesByTags(notes);
+
+        if (Object.keys(tagGroups).length === 0) {
+            container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                <h5>No tagged notes found</h5>
+                <p class="text-muted">Add tags to your notes to see them organized here</p>
+            </div>
+        `;
+            return;
+        }
+
+        container.innerHTML = Object.entries(tagGroups)
+            .sort(([, a], [, b]) => b.length - a.length)
+            .map(([tag, tagNotes]) => generateTagGroup(tag, tagNotes))
+            .join('');
+    }
+
+    function generateNoteCard(note) {
+        const priorityClass = note.priority ? `priority-${note.priority}` : '';
+        const reviewClass = note.review_needed ? 'review-needed' : '';
+
+        return `
+        <div class="note-card ${priorityClass} ${reviewClass}" onclick="openNote('${note.id}')">
+            <div class="note-header">
+                <div>
+                    <div class="note-title">${note.topic || 'Untitled'}</div>
+                    <div class="note-meta">
+                        <span><i class="fas fa-calendar me-1"></i>${formatRelativeTime(note.updated_at)}</span>
+                        ${note.week ? `<span><i class="fas fa-road me-1"></i>${note.week.replace('_', ' ')}</span>` : ''}
+                        ${note.day ? `<span><i class="fas fa-clock me-1"></i>${note.day}</span>` : ''}
+                        <span class="status-badge category-${note.category || 'general'}">${note.category || 'general'}</span>
+                    </div>
+                </div>
+                <div class="note-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); editNote('${note.id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteNote('${note.id}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="note-body">
+                <div class="note-content" id="content-${note.id}">
+                    ${formatNoteContent(note.content)}
+                </div>
+                
+                ${note.tags && note.tags.length > 0 ? `
+                    <div class="note-tags">
+                        ${note.tags.map(tag => `<span class="note-tag" onclick="event.stopPropagation(); filterByTag('${tag}')">${tag}</span>`).join('')}
+                    </div>
+                ` : ''}
+            </div>
+            
+            <div class="note-footer">
+                <div class="note-status">
+                    ${note.review_needed ? '<span class="badge bg-warning">Review Needed</span>' : ''}
+                    ${note.priority === 'high' ? '<span class="badge bg-danger">High Priority</span>' : ''}
+                </div>
+                <div class="note-actions-footer">
+                    <button class="btn btn-sm btn-link text-muted" onclick="event.stopPropagation(); toggleNoteContent('${note.id}')">
+                        <span id="toggle-${note.id}">Read more</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    function generateGridCard(note) {
+        return `
+        <div class="note-grid-card" onclick="openNote('${note.id}')">
+            <div class="note-grid-header">
+                <div class="note-grid-title">${note.topic || 'Untitled'}</div>
+                <div class="note-grid-meta">
+                    ${formatRelativeTime(note.updated_at)} • ${note.category || 'general'}
+                </div>
+            </div>
+            <div class="note-grid-body">
+                <div class="note-grid-content">${formatNoteContent(note.content)}</div>
+                
+                ${note.tags && note.tags.length > 0 ? `
+                    <div class="note-tags">
+                        ${note.tags.slice(0, 3).map(tag => `<span class="note-tag">${tag}</span>`).join('')}
+                        ${note.tags.length > 3 ? `<span class="note-tag">+${note.tags.length - 3}</span>` : ''}
+                    </div>
+                ` : ''}
+                
+                <div class="note-grid-footer mt-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            ${note.review_needed ? '<span class="badge bg-warning">Review</span>' : ''}
+                            ${note.priority === 'high' ? '<span class="badge bg-danger">High</span>' : ''}
+                        </div>
+                        <div class="text-muted small">
+                            ${note.week ? note.week.replace('_', ' ') : 'General'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    function generateTagGroup(tag, notes) {
+        return `
+        <div class="tag-group">
+            <div class="tag-group-header">
+                <div class="tag-group-title">${tag}</div>
+                <div class="tag-group-count">${notes.length} note${notes.length !== 1 ? 's' : ''}</div>
+            </div>
+            <div class="tag-group-notes">
+                ${notes.map(note => `
+                    <div class="tag-note-item" onclick="openNote('${note.id}')">
+                        <div class="tag-note-title">${note.topic || 'Untitled'}</div>
+                        <div class="tag-note-preview">${(note.content || '').substring(0, 100)}...</div>
+                        <div class="tag-note-meta mt-2">
+                            <small class="text-muted">${formatRelativeTime(note.updated_at)}</small>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    }
+
+    function groupNotesByTags(notes) {
+        const tagGroups = {};
+
+        notes.forEach(note => {
+            if (note.tags && note.tags.length > 0) {
+                note.tags.forEach(tag => {
+                    if (!tagGroups[tag]) {
+                        tagGroups[tag] = [];
+                    }
+                    tagGroups[tag].push(note);
+                });
+            }
+        });
+
+        return tagGroups;
+    }
+
+    // Note actions
+    function createNewNote() {
+        isEditMode = false;
+        currentNoteId = null;
+        currentTags = [];
+
+        // Reset form
+        const form = document.getElementById('noteForm');
+        if (form) {
+            form.reset();
+            updateTagsDisplay();
+            document.getElementById('characterCount').textContent = '0';
+        }
+
+        // Update modal title
+        document.getElementById('noteModalTitle').textContent = 'New Note';
+
+        // Populate with URL parameters if available
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('week')) {
+            document.getElementById('noteWeek').value = params.get('week');
+        }
+        if (params.get('day')) {
+            document.getElementById('noteDay').value = params.get('day');
+        }
+    }
+
+    function editNote(noteId) {
+        const note = allNotes.find(n => n.id === noteId);
+        if (!note) return;
+
+        isEditMode = true;
+        currentNoteId = noteId;
+        currentTags = [...(note.tags || [])];
+
+        // Populate form
+        document.getElementById('noteTopic').value = note.topic || '';
+        document.getElementById('noteWeek').value = note.week || '';
+        document.getElementById('noteDay').value = note.day || '';
+        document.getElementById('noteCategory').value = note.category || 'general';
+        document.getElementById('notePriority').value = note.priority || 'medium';
+        document.getElementById('reviewNeeded').checked = note.review_needed || false;
+        document.getElementById('noteContent').value = note.content || '';
+
+        updateTagsDisplay();
+
+        // Update character count
+        document.getElementById('characterCount').textContent = (note.content || '').length;
+
+        // Update modal title
+        document.getElementById('noteModalTitle').textContent = 'Edit Note';
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('noteModal'));
+        modal.show();
+    }
+
+    function openNote(noteId) {
+        const note = allNotes.find(n => n.id === noteId);
+        if (!note) return;
+
+        currentNoteId = noteId;
+
+        // Populate quick view modal
+        document.getElementById('quickViewTitle').textContent = note.topic || 'Untitled';
+
+        const content = document.getElementById('quickViewContent');
+        content.innerHTML = `
+        <div class="note-quick-view">
+            <div class="note-metadata mb-3">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <strong>Category:</strong> <span class="badge bg-secondary">${note.category || 'general'}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Priority:</strong> <span class="badge bg-${getPriorityColor(note.priority)}">${note.priority || 'medium'}</span>
+                    </div>
+                    ${note.week ? `
+                        <div class="col-md-6">
+                            <strong>Week:</strong> ${note.week.replace('_', ' ')}
+                        </div>
+                    ` : ''}
+                    ${note.day ? `
+                        <div class="col-md-6">
+                            <strong>Day:</strong> ${note.day}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <div class="note-content-full mb-3">
+                ${formatNoteContent(note.content, true)}
+            </div>
+            
+            ${note.tags && note.tags.length > 0 ? `
+                <div class="note-tags-full mb-3">
+                    <strong>Tags:</strong>
+                    <div class="mt-2">
+                        ${note.tags.map(tag => `<span class="badge bg-primary me-1">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            ` : ''}
+            
+            <div class="note-timestamps">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            <strong>Created:</strong> ${formatDateTime(note.created_at)}
+                        </small>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            <strong>Updated:</strong> ${formatDateTime(note.updated_at)}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            ${note.review_needed ? `
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-flag me-2"></i>This note is marked for review
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('noteQuickViewModal'));
+        modal.show();
+    }
+
+    function editCurrentNote() {
+        if (currentNoteId) {
+            // Close quick view modal
+            document.querySelector('#noteQuickViewModal [data-bs-dismiss="modal"]').click();
+
+            // Open edit modal
+            setTimeout(() => {
+                editNote(currentNoteId);
+            }, 300);
+        }
+    }
+
+    async function deleteCurrentNote() {
+        if (!currentNoteId) return;
+
+        if (!confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
+            return;
+        }
+
+        await deleteNote(currentNoteId);
+
+        // Close modal
+        document.querySelector('#noteQuickViewModal [data-bs-dismiss="modal"]').click();
+    }
+
+    async function deleteNote(noteId) {
+        try {
+            // Delete via API
+            if (window.DSAApp?.notes) {
+                await window.DSAApp.notes.deleteNote(noteId);
+            } else if (window.DSAApp?.api) {
+                await window.DSAApp.api.deleteNote(noteId);
+            }
+
+            // Remove from local array
+            allNotes = allNotes.filter(note => note.id !== noteId);
+            filteredNotes = filteredNotes.filter(note => note.id !== noteId);
+
+            // Refresh UI
+            updateNotesStatistics();
+            loadViewContent();
+
+            showNotification('Note deleted successfully', 'success');
+
+        } catch (error) {
+            console.error('Error deleting note:', error);
+            showNotification('Failed to delete note', 'danger');
+        }
+    }
+
+    async function saveNote() {
+        try {
+            const noteData = collectNoteData();
+
+            if (!noteData.topic.trim()) {
+                showNotification('Please enter a topic', 'warning');
+                return;
+            }
+
+            let savedNote;
+
+            if (isEditMode && currentNoteId) {
+                // Update existing note
+                if (window.DSAApp?.notes) {
+                    savedNote = await window.DSAApp.notes.updateNote(currentNoteId, noteData);
+                } else if (window.DSAApp?.api) {
+                    savedNote = await window.DSAApp.api.updateNote(currentNoteId, noteData);
+                }
+
+                // Update local array
+                const index = allNotes.findIndex(note => note.id === currentNoteId);
+                if (index >= 0) {
+                    allNotes[index] = { ...allNotes[index], ...noteData };
+                }
+
+            } else {
+                // Create new note
+                if (window.DSAApp?.notes) {
+                    savedNote = await window.DSAApp.notes.createNote(noteData);
+                } else if (window.DSAApp?.api) {
+                    savedNote = await window.DSAApp.api.createNote(noteData);
+                }
+
+                // Add to local array
+                allNotes.unshift(savedNote || { ...noteData, id: generateNoteId() });
+            }
+
+            // Close modal
+            document.querySelector('#noteModal [data-bs-dismiss="modal"]').click();
+
+            // Refresh UI
+            updateNotesStatistics();
+            sortNotes();
+            loadViewContent();
+
+            // Show success message
+            showNotification(isEditMode ? 'Note updated successfully' : 'Note created successfully', 'success');
+
+            // Highlight the new/updated note
+            if (savedNote) {
+                highlightNote(savedNote.id, isEditMode ? 'updated' : 'created');
+            }
+
+        } catch (error) {
+            console.error('Error saving note:', error);
+            showNotification('Failed to save note', 'danger');
+        }
+    }
+
+    async function saveAsDraft() {
+        isDraft = true;
+
+        try {
+            const noteData = { ...collectNoteData(), draft: true };
+
+            // Save to local storage as draft
+            const drafts = JSON.parse(localStorage.getItem('dsa_note_drafts') || '[]');
+
+            if (isEditMode && currentNoteId) {
+                const existingDraftIndex = drafts.findIndex(d => d.originalId === currentNoteId);
+                if (existingDraftIndex >= 0) {
+                    drafts[existingDraftIndex] = { ...noteData, originalId: currentNoteId };
+                } else {
+                    drafts.push({ ...noteData, originalId: currentNoteId });
+                }
+            } else {
+                drafts.push({ ...noteData, id: generateNoteId() });
+            }
+
+            localStorage.setItem('dsa_note_drafts', JSON.stringify(drafts));
+
+            showNotification('Draft saved', 'info');
+
+        } catch (error) {
+            console.error('Error saving draft:', error);
+            showNotification('Failed to save draft', 'warning');
+        }
+    }
+
+    function collectNoteData() {
+        return {
+            topic: document.getElementById('noteTopic').value.trim(),
+            week: document.getElementById('noteWeek').value,
+            day: document.getElementById('noteDay').value,
+            category: document.getElementById('noteCategory').value,
+            priority: document.getElementById('notePriority').value,
+            review_needed: document.getElementById('reviewNeeded').checked,
+            content: document.getElementById('noteContent').value.trim(),
+            tags: [...currentTags],
+            updated_at: new Date().toISOString()
+        };
+    }
+
+    function generateNoteId() {
+        return 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Filtering and sorting
+    function applyFilters() {
+        const weekFilter = document.getElementById('weekFilter').value;
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        const priorityFilter = document.getElementById('priorityFilter').value;
+
+        filteredNotes = allNotes.filter(note => {
+            if (weekFilter && note.week !== weekFilter) return false;
+            if (categoryFilter && note.category !== categoryFilter) return false;
+            if (priorityFilter && note.priority !== priorityFilter) return false;
+            return true;
+        });
+
+        sortNotes();
+        loadViewContent();
+    }
+
+    function clearFilters() {
+        document.getElementById('weekFilter').value = '';
+        document.getElementById('categoryFilter').value = '';
+        document.getElementById('priorityFilter').value = '';
+        document.getElementById('notesSearch').value = '';
+
+        filteredNotes = [];
+        hideSearchResults();
+        loadViewContent();
+    }
+
+    function filterByTag(tag) {
+        filteredNotes = allNotes.filter(note => note.tags && note.tags.includes(tag));
+        loadViewContent();
+
+        // Update search input to show the filter
+        document.getElementById('notesSearch').value = `tag:${tag}`;
+    }
+
+    function applySorting() {
+        sortBy = document.getElementById('sortBy').value;
+        sortNotes();
+        loadViewContent();
+    }
+
+    function toggleSortOrder() {
+        sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+
+        const button = document.getElementById('sortOrder');
+        const icon = button.querySelector('i');
+
+        if (sortOrder === 'asc') {
+            icon.className = 'fas fa-sort-amount-up';
+        } else {
+            icon.className = 'fas fa-sort-amount-down';
+        }
+
+        sortNotes();
+        loadViewContent();
+    }
+
+    function sortNotes() {
+        const notesToSort = filteredNotes.length > 0 ? filteredNotes : allNotes;
+
+        notesToSort.sort((a, b) => {
+            let comparison = 0;
+
+            switch (sortBy) {
+                case 'updated_at':
+                case 'created_at':
+                    comparison = new Date(a[sortBy]) - new Date(b[sortBy]);
+                    break;
+                case 'topic':
+                    comparison = (a.topic || '').localeCompare(b.topic || '');
+                    break;
+                case 'priority':
+                    const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+                    comparison = (priorityOrder[a.priority] || 0) - (priorityOrder[b.priority] || 0);
+                    break;
+            }
+
+            return sortOrder === 'desc' ? -comparison : comparison;
+        });
+    }
+
+    // Real-time updates
+    function setupRealTimeUpdates() {
+        if (!window.DSAApp?.api) return;
+
+        // Listen for note updates
+        window.DSAApp.api.addEventListener('note-update', (data) => {
+            console.log('Real-time note update:', data);
+
+            const { action, note, noteId } = data;
+
+            switch (action) {
+                case 'create':
+                    if (!allNotes.find(n => n.id === note.id)) {
+                        allNotes.unshift(note);
+                        updateNotesStatistics();
+                        loadViewContent();
+                        highlightNote(note.id, 'created');
+                        showNotification('New note created', 'info');
+                    }
+                    break;
+
+                case 'update':
+                    const updateIndex = allNotes.findIndex(n => n.id === noteId);
+                    if (updateIndex >= 0) {
+                        allNotes[updateIndex] = { ...allNotes[updateIndex], ...note };
+                        updateNotesStatistics();
+                        loadViewContent();
+                        highlightNote(noteId, 'updated');
+                        showNotification('Note updated', 'info');
+                    }
+                    break;
+
+                case 'delete':
+                    allNotes = allNotes.filter(n => n.id !== noteId);
+                    filteredNotes = filteredNotes.filter(n => n.id !== noteId);
+                    updateNotesStatistics();
+                    loadViewContent();
+                    showNotification('Note deleted', 'info');
+                    break;
+            }
+        });
+
+        // Periodic sync
+        setInterval(() => {
+            if (navigator.onLine) {
+                syncNotes();
+            }
+        }, 2 * 60 * 1000); // Every 2 minutes
+    }
+
+    async function syncNotes() {
+        try {
+            showSyncStatus(true);
+
+            // Sync with server
+            if (window.DSAApp?.notes) {
+                await window.DSAApp.notes.syncPendingChanges();
+            }
+
+            // Reload notes
+            await loadNotesData();
+            updateNotesStatistics();
+            loadViewContent();
+
+            console.log('✅ Notes synced successfully');
+
+        } catch (error) {
+            console.error('❌ Notes sync failed:', error);
+        } finally {
+            showSyncStatus(false);
+        }
+    }
+
+    function showSyncStatus(show) {
+        const statusEl = document.getElementById('syncStatus');
+        if (statusEl) {
+            if (show) {
+                statusEl.classList.remove('d-none');
+            } else {
+                statusEl.classList.add('d-none');
+            }
+        }
+    }
+
+    function highlightNote(noteId, type) {
+        setTimeout(() => {
+            const noteElements = document.querySelectorAll(`[onclick*="${noteId}"]`);
+            noteElements.forEach(element => {
+                element.classList.add(`just-${type}`);
+                setTimeout(() => {
+                    element.classList.remove(`just-${type}`);
+                }, 2000);
+            });
+        }, 100);
+    }
+
+    // Editor functions
+    function formatText(command) {
+        const textarea = document.getElementById('noteContent');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+
+        let formattedText;
+        switch (command) {
+            case 'bold':
+                formattedText = `**${selectedText}**`;
+                break;
+            case 'italic':
+                formattedText = `*${selectedText}*`;
+                break;
+            case 'underline':
+                formattedText = `__${selectedText}__`;
+                break;
+        }
+
+        textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+        textarea.focus();
+        textarea.setSelectionRange(start + 2, start + 2 + selectedText.length);
+    }
+
+    function insertCode() {
+        const textarea = document.getElementById('noteContent');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+
+        const codeBlock = selectedText.includes('\n') ?
+            `\`\`\`\n${selectedText}\n\`\`\`` :
+            `\`${selectedText}\``;
+
+        textarea.value = textarea.value.substring(0, start) + codeBlock + textarea.value.substring(end);
+        textarea.focus();
+    }
+
+    function insertList() {
+        const textarea = document.getElementById('noteContent');
+        const start = textarea.selectionStart;
+        const listItem = '\n- ';
+
+        textarea.value = textarea.value.substring(0, start) + listItem + textarea.value.substring(start);
+        textarea.focus();
+        textarea.setSelectionRange(start + 3, start + 3);
+    }
+
+    function insertLink() {
+        const textarea = document.getElementById('noteContent');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+
+        const linkText = selectedText || 'Link Text';
+        const linkMarkdown = `[${linkText}](URL)`;
+
+        textarea.value = textarea.value.substring(0, start) + linkMarkdown + textarea.value.substring(end);
+        textarea.focus();
+
+        if (!selectedText) {
+            textarea.setSelectionRange(start + 1, start + 1 + linkText.length);
+        }
+    }
+
+    // Utility functions
+    function formatNoteContent(content, fullContent = false) {
+        if (!content) return '';
+
+        // Truncate for preview if not full content
+        let displayContent = fullContent ? content : content.substring(0, 200);
+        if (!fullContent && content.length > 200) {
+            displayContent += '...';
+        }
+
+        // Basic markdown rendering
+        return displayContent
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/__(.*?)__/g, '<u>$1</u>')
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            .replace(/\n/g, '<br>');
+    }
+
+    function toggleNoteContent(noteId) {
+        const contentEl = document.getElementById(`content-${noteId}`);
+        const toggleEl = document.getElementById(`toggle-${noteId}`);
+
+        if (contentEl && toggleEl) {
+            if (contentEl.classList.contains('expanded')) {
+                contentEl.classList.remove('expanded');
+                toggleEl.textContent = 'Read more';
+            } else {
+                contentEl.classList.add('expanded');
+                toggleEl.textContent = 'Read less';
+            }
+        }
+    }
+
+    function formatRelativeTime(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diff = Math.floor((now - time) / 1000);
+
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+
+        return time.toLocaleDateString();
+    }
+
+    function formatDateTime(timestamp) {
+        return new Date(timestamp).toLocaleString();
+    }
+
+    function getPriorityColor(priority) {
+        const colors = {
+            'high': 'danger',
+            'medium': 'warning',
+            'low': 'success'
+        };
+        return colors[priority] || 'secondary';
+    }
+
+    function showNotification(message, type = 'info') {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-info-circle me-2"></i>${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+
+        document.querySelector('.toast-container').appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    function showErrorState() {
+        const container = document.querySelector('.notes-container');
+        if (container) {
+            container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-exclamation-triangle text-warning fa-4x mb-4"></i>
+                <h3>Failed to load notes</h3>
+                <p class="text-muted mb-4">We're having trouble loading your notes. Please try refreshing the page.</p>
+                <button class="btn btn-primary" onclick="location.reload()">
+                    <i class="fas fa-refresh me-2"></i>Refresh Page
+                </button>
+            </div>
+        `;
+        }
+    }
+
+    // Export function
+    function exportNotes() {
+        try {
+            const exportData = {
+                notes: allNotes,
+                exported_at: new Date().toISOString(),
+                total_notes: allNotes.length,
+                statistics: calculateNotesStatistics()
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-notes-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showNotification('Notes exported successfully', 'success');
+
+        } catch (error) {
+            console.error('Export error:', error);
+            showNotification('Failed to export notes', 'danger');
+        }
+    }
+
+    // Auto-refresh when window gains focus
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            syncNotes();
+        }
+    });
+</script>

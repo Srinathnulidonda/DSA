@@ -1,0 +1,2106 @@
+<div class="roadmap-container">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="page-title mb-2">
+                    <i class="fas fa-road me-3 text-primary"></i>
+                    14-Week DSA Learning Roadmap
+                </h1>
+                <p class="page-subtitle text-muted mb-0">
+                    Master Data Structures & Algorithms with our comprehensive learning path
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex justify-content-md-end gap-2">
+                    <button class="btn btn-outline-secondary" onclick="exportRoadmapProgress()">
+                        <i class="fas fa-download me-2"></i>Export Progress
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-2"></i>Filter
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('all')">All Topics</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('completed')">Completed</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('in-progress')">In
+                                    Progress</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByStatus('pending')">Pending</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByDifficulty('beginner')">Beginner</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#"
+                                    onclick="filterByDifficulty('intermediate')">Intermediate</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByDifficulty('advanced')">Advanced</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="overview-card">
+                <div class="overview-icon bg-primary">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="overview-content">
+                    <div class="overview-number" id="totalTopics">98</div>
+                    <div class="overview-label">Total Topics</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="overview-card">
+                <div class="overview-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="overview-content">
+                    <div class="overview-number" id="completedTopics">0</div>
+                    <div class="overview-label">Completed</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="overview-card">
+                <div class="overview-icon bg-warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="overview-content">
+                    <div class="overview-number" id="inProgressTopics">0</div>
+                    <div class="overview-label">In Progress</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="overview-card">
+                <div class="overview-icon bg-info">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="overview-content">
+                    <div class="overview-number" id="totalHours">0</div>
+                    <div class="overview-label">Hours Studied</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Week View Toggle -->
+    <div class="view-controls mb-4">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active" id="timelineView"
+                onclick="switchView('timeline')">
+                <i class="fas fa-list me-2"></i>Timeline View
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="calendarView" onclick="switchView('calendar')">
+                <i class="fas fa-calendar me-2"></i>Calendar View
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="gridView" onclick="switchView('grid')">
+                <i class="fas fa-th me-2"></i>Grid View
+            </button>
+        </div>
+
+        <div class="search-container ms-auto">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control search-input" placeholder="Search topics..." id="roadmapSearch">
+        </div>
+    </div>
+
+    <!-- Real-time Progress Bar -->
+    <div class="overall-progress-container mb-4">
+        <div class="progress-header">
+            <h5 class="mb-0">Overall Progress</h5>
+            <span class="progress-percentage" id="overallProgressPercent">0%</span>
+        </div>
+        <div class="progress-bar-custom mb-2">
+            <div class="progress-bar-fill progress-bar-animated" id="overallProgressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-details">
+            <span>Week <span id="currentWeekNumber">1</span> of 14</span>
+            <span id="estimatedCompletion">~14 weeks remaining</span>
+        </div>
+    </div>
+
+    <!-- Roadmap Content -->
+    <div id="roadmapContent" class="roadmap-content">
+        <!-- Timeline View -->
+        <div id="timelineViewContent" class="timeline-view">
+            <div class="week-timeline" id="weekTimeline">
+                <!-- Week items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="calendarViewContent" class="calendar-view d-none">
+            <div class="calendar-container">
+                <div id="roadmapCalendar"></div>
+            </div>
+        </div>
+
+        <!-- Grid View -->
+        <div id="gridViewContent" class="grid-view d-none">
+            <div class="topics-grid" id="topicsGrid">
+                <!-- Grid items will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="roadmapLoading" class="text-center py-5 d-none">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted">Loading roadmap data...</p>
+    </div>
+</div>
+
+<!-- Topic Detail Modal -->
+<div class="modal fade" id="topicModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="topicModalTitle">Topic Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="topicModalBody">
+                <!-- Topic details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="startTopicBtn">Start Learning</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Time Tracking Modal -->
+<div class="modal fade" id="timeTrackingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-clock me-2 text-primary"></i>
+                    Track Study Time
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="current-topic mb-3">
+                    <h6 id="trackingTopicTitle">Topic Title</h6>
+                    <small class="text-muted" id="trackingTopicWeek">Week 1 - Monday</small>
+                </div>
+
+                <div class="timer-display text-center mb-4">
+                    <div class="timer-clock" id="studyTimer">00:00:00</div>
+                    <div class="timer-controls mt-3">
+                        <button class="btn btn-success me-2" id="startTimerBtn" onclick="startStudyTimer()">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="btn btn-warning me-2" id="pauseTimerBtn" onclick="pauseStudyTimer()" disabled>
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="btn btn-danger" id="stopTimerBtn" onclick="stopStudyTimer()" disabled>
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                    </div>
+                </div>
+
+                <div class="manual-time-entry">
+                    <label class="form-label">Or enter time manually:</label>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <input type="number" class="form-control" placeholder="Hours" min="0" max="23"
+                                id="manualHours">
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" placeholder="Minutes" min="0" max="59"
+                                id="manualMinutes">
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-outline-primary w-100" onclick="addManualTime()">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="difficulty-rating mt-4">
+                    <label class="form-label">How difficult was this topic?</label>
+                    <div class="rating-stars" id="difficultyRating">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+
+                <div class="completion-status mt-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="topicCompleted">
+                        <label class="form-check-label" for="topicCompleted">
+                            Mark this topic as completed
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveProgress()">Save Progress</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .roadmap-container {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .overview-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+    }
+
+    .overview-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
+
+    .overview-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .overview-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .view-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-container {
+        position: relative;
+        max-width: 300px;
+    }
+
+    .overall-progress-container {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .progress-percentage {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .week-timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .week-timeline::before {
+        content: '';
+        position: absolute;
+        left: 1rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    }
+
+    .week-item {
+        position: relative;
+        margin-bottom: 3rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+    }
+
+    .week-item:hover {
+        transform: translateX(8px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .week-item::before {
+        content: '';
+        position: absolute;
+        left: -3rem;
+        top: 2rem;
+        width: 20px;
+        height: 20px;
+        background: var(--primary);
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: var(--shadow-sm);
+        z-index: 2;
+    }
+
+    .week-item.completed::before {
+        background: var(--success);
+    }
+
+    .week-item.current::before {
+        background: var(--warning);
+        animation: pulse 2s infinite;
+    }
+
+    .week-item.locked::before {
+        background: var(--text-tertiary);
+    }
+
+    .week-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .week-header.completed {
+        background: linear-gradient(135deg, var(--success), #059669);
+    }
+
+    .week-header.current {
+        background: linear-gradient(135deg, var(--warning), #d97706);
+    }
+
+    .week-number {
+        font-size: 0.875rem;
+        font-weight: 600;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+    }
+
+    .week-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .week-goal {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    .week-stats {
+        display: flex;
+        gap: 2rem;
+        font-size: 0.875rem;
+    }
+
+    .week-stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .week-progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .week-progress-fill {
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        transition: width 0.3s ease;
+    }
+
+    .week-body {
+        padding: 0;
+    }
+
+    .day-accordion {
+        border: none;
+    }
+
+    .accordion-item {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .accordion-item:last-child {
+        border-bottom: none;
+    }
+
+    .accordion-button {
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border: none;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: var(--primary-light);
+        color: var(--primary);
+        box-shadow: none;
+    }
+
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .accordion-body {
+        padding: 1.5rem;
+        background: var(--bg-secondary);
+    }
+
+    .day-content {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .day-info {
+        flex: 1;
+    }
+
+    .day-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .day-activities {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .day-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .day-difficulty {
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+    }
+
+    .day-time {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .resource-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .resource-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+
+    .resource-link:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .resource-icon {
+        width: 16px;
+        height: 16px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.625rem;
+        flex-shrink: 0;
+    }
+
+    .day-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-width: 120px;
+    }
+
+    .day-status {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .status-indicator {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .status-indicator.completed {
+        background: var(--success);
+        color: white;
+    }
+
+    .status-indicator.in-progress {
+        background: var(--warning);
+        color: white;
+    }
+
+    .status-indicator.pending {
+        background: var(--bg-tertiary);
+        color: var(--text-tertiary);
+    }
+
+    .status-text {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .day-progress {
+        margin-bottom: 1rem;
+    }
+
+    .day-progress-bar {
+        height: 6px;
+        background: var(--bg-tertiary);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .day-progress-fill {
+        height: 100%;
+        background: var(--primary);
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    .topics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .topic-grid-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+    }
+
+    .topic-grid-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .topic-grid-header {
+        padding: 1rem 1.5rem;
+        background: var(--primary-light);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .topic-grid-week {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+    }
+
+    .topic-grid-day {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: capitalize;
+    }
+
+    .topic-grid-body {
+        padding: 1.5rem;
+    }
+
+    .topic-grid-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+    }
+
+    .topic-grid-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .timer-clock {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary);
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .timer-controls {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: 0.25rem;
+        cursor: pointer;
+    }
+
+    .rating-stars i {
+        font-size: 1.5rem;
+        color: var(--text-tertiary);
+        transition: color 0.2s ease;
+    }
+
+    .rating-stars i:hover,
+    .rating-stars i.active {
+        color: var(--warning);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .view-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-container {
+            max-width: 100%;
+        }
+
+        .week-timeline {
+            padding-left: 1rem;
+        }
+
+        .week-timeline::before {
+            left: 0.5rem;
+        }
+
+        .week-item::before {
+            left: -1.5rem;
+            width: 16px;
+            height: 16px;
+        }
+
+        .day-content {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .day-actions {
+            flex-direction: row;
+            min-width: auto;
+        }
+
+        .resource-links {
+            grid-template-columns: 1fr;
+        }
+
+        .topics-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Real-time update animations */
+    .week-item.just-updated {
+        animation: updateGlow 1s ease-out;
+    }
+
+    @keyframes updateGlow {
+        0% {
+            box-shadow: var(--shadow-sm);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        100% {
+            box-shadow: var(--shadow-sm);
+        }
+    }
+
+    .day-content.just-completed {
+        animation: completionCelebration 1s ease-out;
+    }
+
+    @keyframes completionCelebration {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.02);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .overview-number.updating {
+        animation: numberUpdate 0.6s ease-in-out;
+    }
+
+    @keyframes numberUpdate {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+            color: var(--primary);
+        }
+    }
+</style>
+
+<script>
+    // Roadmap page real-time functionality
+    let currentView = 'timeline';
+    let roadmapData = null;
+    let userProgress = [];
+    let filteredData = null;
+    let studyTimer = {
+        startTime: null,
+        elapsedTime: 0,
+        interval: null,
+        isRunning: false
+    };
+    let currentTrackingTopic = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeRoadmap();
+    });
+
+    async function initializeRoadmap() {
+        try {
+            showLoadingState();
+
+            // Load roadmap data
+            await loadRoadmapData();
+
+            // Load user progress
+            await loadUserProgress();
+
+            // Initialize UI
+            initializeUI();
+
+            // Set up real-time updates
+            setupRealTimeUpdates();
+
+            // Load content based on current view
+            await loadViewContent();
+
+            hideLoadingState();
+
+            console.log('✅ Roadmap initialized successfully');
+
+        } catch (error) {
+            console.error('❌ Roadmap initialization failed:', error);
+            showErrorState();
+        }
+    }
+
+    function showLoadingState() {
+        document.getElementById('roadmapLoading').classList.remove('d-none');
+        document.getElementById('roadmapContent').classList.add('d-none');
+    }
+
+    function hideLoadingState() {
+        document.getElementById('roadmapLoading').classList.add('d-none');
+        document.getElementById('roadmapContent').classList.remove('d-none');
+    }
+
+    async function loadRoadmapData() {
+        if (window.DSAApp?.api) {
+            roadmapData = await window.DSAApp.api.getRoadmap();
+        } else {
+            // Fallback to stored data
+            roadmapData = window.DSAApp?.roadmapData || {};
+        }
+
+        console.log('Roadmap data loaded:', Object.keys(roadmapData).length, 'weeks');
+    }
+
+    async function loadUserProgress() {
+        if (window.DSAApp?.api) {
+            try {
+                userProgress = await window.DSAApp.api.getProgress();
+            } catch (error) {
+                console.error('Error loading user progress:', error);
+                userProgress = window.DSAApp?.userProgress || [];
+            }
+        } else {
+            userProgress = window.DSAApp?.userProgress || [];
+        }
+
+        console.log('User progress loaded:', userProgress.length, 'entries');
+    }
+
+    function initializeUI() {
+        // Update overview cards
+        updateOverviewCards();
+
+        // Update overall progress
+        updateOverallProgress();
+
+        // Initialize search
+        initializeSearch();
+
+        // Initialize difficulty rating
+        initializeDifficultyRating();
+
+        // Set up view switching
+        initializeViewSwitching();
+    }
+
+    function updateOverviewCards() {
+        const totalTopics = getTotalTopicsCount();
+        const completedTopics = getCompletedTopicsCount();
+        const inProgressTopics = getInProgressTopicsCount();
+        const totalHours = getTotalStudyHours();
+
+        animateNumberUpdate('totalTopics', totalTopics);
+        animateNumberUpdate('completedTopics', completedTopics);
+        animateNumberUpdate('inProgressTopics', inProgressTopics);
+        animateNumberUpdate('totalHours', totalHours);
+    }
+
+    function getTotalTopicsCount() {
+        if (!roadmapData) return 0;
+
+        return Object.values(roadmapData).reduce((total, week) => {
+            return total + Object.keys(week.days).length;
+        }, 0);
+    }
+
+    function getCompletedTopicsCount() {
+        return userProgress.filter(p => p.completed).length;
+    }
+
+    function getInProgressTopicsCount() {
+        return userProgress.filter(p => !p.completed && p.time_spent > 0).length;
+    }
+
+    function getTotalStudyHours() {
+        return Math.round(userProgress.reduce((total, p) => total + (p.time_spent || 0), 0));
+    }
+
+    function animateNumberUpdate(elementId, newValue) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        const currentValue = parseInt(element.textContent) || 0;
+        element.classList.add('updating');
+
+        const duration = 1000;
+        const steps = 30;
+        const increment = (newValue - currentValue) / steps;
+        let current = currentValue;
+        let step = 0;
+
+        const timer = setInterval(() => {
+            step++;
+            current += increment;
+
+            if (step >= steps) {
+                element.textContent = newValue;
+                clearInterval(timer);
+                element.classList.remove('updating');
+            } else {
+                element.textContent = Math.round(current);
+            }
+        }, duration / steps);
+    }
+
+    function updateOverallProgress() {
+        const totalTopics = getTotalTopicsCount();
+        const completedTopics = getCompletedTopicsCount();
+        const percentage = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+
+        const progressBar = document.getElementById('overallProgressBar');
+        const progressPercent = document.getElementById('overallProgressPercent');
+        const currentWeekNumber = document.getElementById('currentWeekNumber');
+        const estimatedCompletion = document.getElementById('estimatedCompletion');
+
+        if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        if (progressPercent) {
+            progressPercent.textContent = `${percentage}%`;
+        }
+
+        if (currentWeekNumber) {
+            const currentWeek = getCurrentWeekNumber();
+            currentWeekNumber.textContent = currentWeek;
+        }
+
+        if (estimatedCompletion) {
+            const remaining = calculateRemainingWeeks();
+            estimatedCompletion.textContent = remaining > 0 ? `~${remaining} weeks remaining` : 'Completed! 🎉';
+        }
+    }
+
+    function getCurrentWeekNumber() {
+        // Find the first week with incomplete topics
+        let weekNumber = 1;
+
+        for (const [weekKey, weekData] of Object.entries(roadmapData)) {
+            const weekProgress = getWeekProgress(weekKey);
+            if (weekProgress.completed < weekProgress.total) {
+                break;
+            }
+            weekNumber++;
+        }
+
+        return Math.min(weekNumber, 14);
+    }
+
+    function calculateRemainingWeeks() {
+        const totalTopics = getTotalTopicsCount();
+        const completedTopics = getCompletedTopicsCount();
+        const remainingTopics = totalTopics - completedTopics;
+        const averageTopicsPerWeek = 7;
+
+        return Math.ceil(remainingTopics / averageTopicsPerWeek);
+    }
+
+    function initializeSearch() {
+        const searchInput = document.getElementById('roadmapSearch');
+        if (!searchInput) return;
+
+        let searchTimeout;
+        searchInput.addEventListener('input', function (e) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(e.target.value);
+            }, 300);
+        });
+    }
+
+    function performSearch(query) {
+        if (!query.trim()) {
+            filteredData = null;
+            loadViewContent();
+            return;
+        }
+
+        const searchTerm = query.toLowerCase();
+        filteredData = {};
+
+        Object.entries(roadmapData).forEach(([weekKey, weekData]) => {
+            const matchedDays = {};
+
+            Object.entries(weekData.days).forEach(([dayKey, dayData]) => {
+                if (
+                    dayData.topic.toLowerCase().includes(searchTerm) ||
+                    dayData.activities.toLowerCase().includes(searchTerm) ||
+                    dayData.resources?.some(r => r.name.toLowerCase().includes(searchTerm))
+                ) {
+                    matchedDays[dayKey] = dayData;
+                }
+            });
+
+            if (Object.keys(matchedDays).length > 0) {
+                filteredData[weekKey] = {
+                    ...weekData,
+                    days: matchedDays
+                };
+            }
+        });
+
+        loadViewContent();
+    }
+
+    function initializeDifficultyRating() {
+        const ratingStars = document.getElementById('difficultyRating');
+        if (!ratingStars) return;
+
+        ratingStars.addEventListener('click', function (e) {
+            if (e.target.tagName === 'I') {
+                const rating = parseInt(e.target.dataset.rating);
+                setDifficultyRating(rating);
+            }
+        });
+
+        ratingStars.addEventListener('mouseover', function (e) {
+            if (e.target.tagName === 'I') {
+                const rating = parseInt(e.target.dataset.rating);
+                highlightStars(rating);
+            }
+        });
+
+        ratingStars.addEventListener('mouseleave', function () {
+            const currentRating = getCurrentDifficultyRating();
+            highlightStars(currentRating);
+        });
+    }
+
+    function setDifficultyRating(rating) {
+        currentTrackingTopic.difficultyRating = rating;
+        highlightStars(rating);
+    }
+
+    function highlightStars(rating) {
+        const stars = document.querySelectorAll('#difficultyRating i');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    function getCurrentDifficultyRating() {
+        return currentTrackingTopic?.difficultyRating || 0;
+    }
+
+    function initializeViewSwitching() {
+        // Set up view toggle buttons
+        document.querySelectorAll('[id$="View"]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const view = this.id.replace('View', '').toLowerCase();
+                switchView(view);
+            });
+        });
+    }
+
+    async function loadViewContent() {
+        const dataToRender = filteredData || roadmapData;
+
+        switch (currentView) {
+            case 'timeline':
+                await loadTimelineView(dataToRender);
+                break;
+            case 'calendar':
+                await loadCalendarView(dataToRender);
+                break;
+            case 'grid':
+                await loadGridView(dataToRender);
+                break;
+        }
+    }
+
+    async function loadTimelineView(data) {
+        const container = document.getElementById('weekTimeline');
+        if (!container) return;
+
+        let html = '';
+
+        Object.entries(data).forEach(([weekKey, weekData]) => {
+            const weekNumber = parseInt(weekKey.split('_')[1]);
+            const weekProgress = getWeekProgress(weekKey);
+            const weekStatus = getWeekStatus(weekProgress);
+
+            html += `
+            <div class="week-item ${weekStatus}" data-week="${weekKey}">
+                <div class="week-header ${weekStatus}">
+                    <div class="week-number">Week ${weekNumber}</div>
+                    <div class="week-title">${weekData.title}</div>
+                    <div class="week-goal">${weekData.goal}</div>
+                    <div class="week-stats">
+                        <div class="week-stat">
+                            <i class="fas fa-list-check"></i>
+                            <span>${weekProgress.completed}/${weekProgress.total} topics</span>
+                        </div>
+                        <div class="week-stat">
+                            <i class="fas fa-clock"></i>
+                            <span>${weekProgress.totalTime}h studied</span>
+                        </div>
+                        <div class="week-stat">
+                            <i class="fas fa-star"></i>
+                            <span>${weekProgress.avgDifficulty.toFixed(1)}/5 difficulty</span>
+                        </div>
+                    </div>
+                    <div class="week-progress-bar">
+                        <div class="week-progress-fill" style="width: ${weekProgress.percentage}%"></div>
+                    </div>
+                </div>
+                <div class="week-body">
+                    <div class="accordion day-accordion" id="week${weekNumber}Accordion">
+                        ${generateDayAccordion(weekKey, weekData.days, weekNumber)}
+                    </div>
+                </div>
+            </div>
+        `;
+        });
+
+        container.innerHTML = html;
+
+        // Add event listeners for interactive elements
+        addTimelineEventListeners();
+    }
+
+    function generateDayAccordion(weekKey, days, weekNumber) {
+        let html = '';
+
+        Object.entries(days).forEach(([dayKey, dayData], index) => {
+            const dayProgress = getUserTopicProgress(weekKey, dayKey);
+            const dayStatus = getTopicStatus(dayProgress);
+            const dayId = `day${weekNumber}_${index}`;
+
+            html += `
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#${dayId}"
+                            aria-expanded="${index === 0 ? 'true' : 'false'}">
+                        <div class="d-flex align-items-center w-100">
+                            <div class="me-3">
+                                <i class="fas fa-${getStatusIcon(dayStatus)} text-${getStatusColor(dayStatus)}"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">${dayKey.charAt(0).toUpperCase() + dayKey.slice(1)}: ${dayData.topic}</div>
+                                <small class="text-muted">${dayData.estimated_time || '2-3 hours'} • ${dayData.difficulty || 'Intermediate'}</small>
+                            </div>
+                            <div class="text-end me-3">
+                                <div class="badge bg-${getStatusColor(dayStatus)}">${dayStatus.replace('-', ' ')}</div>
+                                ${dayProgress ? `<div class="small text-muted">${dayProgress.time_spent || 0}h spent</div>` : ''}
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+                <div id="${dayId}" 
+                     class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" 
+                     data-bs-parent="#week${weekNumber}Accordion">
+                    <div class="accordion-body">
+                        ${generateDayContent(weekKey, dayKey, dayData, dayProgress)}
+                    </div>
+                </div>
+            </div>
+        `;
+        });
+
+        return html;
+    }
+
+    function generateDayContent(weekKey, dayKey, dayData, dayProgress) {
+        const status = getTopicStatus(dayProgress);
+        const progressPercentage = getProgressPercentage(dayProgress);
+
+        return `
+        <div class="day-content">
+            <div class="day-info">
+                <div class="day-title">${dayData.topic}</div>
+                <div class="day-activities">${dayData.activities}</div>
+                
+                <div class="day-meta">
+                    <span class="day-difficulty difficulty-${(dayData.difficulty || 'intermediate').toLowerCase()}">
+                        ${dayData.difficulty || 'Intermediate'}
+                    </span>
+                    <span class="day-time">
+                        <i class="fas fa-clock"></i>
+                        ${dayData.estimated_time || '2-3 hours'}
+                    </span>
+                </div>
+                
+                ${dayData.resources ? `
+                    <div class="resource-links">
+                        ${dayData.resources.map(resource => `
+                            <a href="${resource.url}" target="_blank" class="resource-link">
+                                <div class="resource-icon">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                                <span>${resource.name}</span>
+                            </a>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                <div class="day-progress">
+                    <div class="day-progress-bar">
+                        <div class="day-progress-fill" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>${progressPercentage}% complete</span>
+                        <span>${dayProgress?.time_spent || 0}h spent</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="day-actions">
+                <div class="day-status">
+                    <div class="status-indicator ${status}">
+                        <i class="fas fa-${getStatusIcon(status)}"></i>
+                    </div>
+                    <div class="status-text">${status.replace('-', ' ')}</div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    ${status === 'completed' ? `
+                        <button class="btn btn-outline-success btn-sm" onclick="reviewTopic('${weekKey}', '${dayKey}')">
+                            <i class="fas fa-redo me-1"></i>Review
+                        </button>
+                    ` : `
+                        <button class="btn btn-primary btn-sm" onclick="startTopic('${weekKey}', '${dayKey}')">
+                            <i class="fas fa-play me-1"></i>${status === 'in-progress' ? 'Continue' : 'Start'}
+                        </button>
+                    `}
+                    
+                    <button class="btn btn-outline-secondary btn-sm" onclick="openTopicDetails('${weekKey}', '${dayKey}')">
+                        <i class="fas fa-info-circle me-1"></i>Details
+                    </button>
+                    
+                    <button class="btn btn-outline-info btn-sm" onclick="openTimeTracking('${weekKey}', '${dayKey}')">
+                        <i class="fas fa-clock me-1"></i>Track Time
+                    </button>
+                    
+                    <button class="btn btn-outline-warning btn-sm" onclick="addTopicNote('${weekKey}', '${dayKey}')">
+                        <i class="fas fa-sticky-note me-1"></i>Add Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    async function loadCalendarView(data) {
+        const container = document.getElementById('roadmapCalendar');
+        if (!container) return;
+
+        // Initialize FullCalendar
+        const calendar = new FullCalendar.Calendar(container, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            events: generateCalendarEvents(data),
+            eventClick: function (info) {
+                const { week, day } = info.event.extendedProps;
+                openTopicDetails(week, day);
+            },
+            eventDidMount: function (info) {
+                const status = info.event.extendedProps.status;
+                info.el.classList.add(`event-${status}`);
+            }
+        });
+
+        calendar.render();
+    }
+
+    function generateCalendarEvents(data) {
+        const events = [];
+        const startDate = new Date(); // This would be user's start date
+
+        Object.entries(data).forEach(([weekKey, weekData]) => {
+            const weekNumber = parseInt(weekKey.split('_')[1]) - 1;
+
+            Object.entries(weekData.days).forEach(([dayKey, dayData]) => {
+                const dayIndex = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(dayKey);
+                const eventDate = new Date(startDate);
+                eventDate.setDate(startDate.getDate() + (weekNumber * 7) + dayIndex);
+
+                const progress = getUserTopicProgress(weekKey, dayKey);
+                const status = getTopicStatus(progress);
+
+                events.push({
+                    title: dayData.topic,
+                    start: eventDate,
+                    allDay: true,
+                    color: getStatusEventColor(status),
+                    extendedProps: {
+                        week: weekKey,
+                        day: dayKey,
+                        status: status,
+                        activities: dayData.activities,
+                        estimatedTime: dayData.estimated_time,
+                        difficulty: dayData.difficulty
+                    }
+                });
+            });
+        });
+
+        return events;
+    }
+
+    async function loadGridView(data) {
+        const container = document.getElementById('topicsGrid');
+        if (!container) return;
+
+        let html = '';
+
+        Object.entries(data).forEach(([weekKey, weekData]) => {
+            Object.entries(weekData.days).forEach(([dayKey, dayData]) => {
+                const progress = getUserTopicProgress(weekKey, dayKey);
+                const status = getTopicStatus(progress);
+                const progressPercentage = getProgressPercentage(progress);
+
+                html += `
+                <div class="topic-grid-card ${status}" onclick="openTopicDetails('${weekKey}', '${dayKey}')">
+                    <div class="topic-grid-header">
+                        <div class="topic-grid-week">${weekKey.replace('_', ' ')}</div>
+                        <div class="topic-grid-day">${dayKey}</div>
+                    </div>
+                    <div class="topic-grid-body">
+                        <div class="topic-grid-title">${dayData.topic}</div>
+                        <div class="topic-grid-description">${dayData.activities}</div>
+                        
+                        <div class="day-meta mb-3">
+                            <span class="day-difficulty difficulty-${(dayData.difficulty || 'intermediate').toLowerCase()}">
+                                ${dayData.difficulty || 'Intermediate'}
+                            </span>
+                            <span class="day-time">
+                                <i class="fas fa-clock"></i>
+                                ${dayData.estimated_time || '2-3 hours'}
+                            </span>
+                        </div>
+                        
+                        <div class="day-progress">
+                            <div class="day-progress-bar">
+                                <div class="day-progress-fill" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>${progressPercentage}% complete</span>
+                                <span>${progress?.time_spent || 0}h spent</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-3">
+                            ${status === 'completed' ? `
+                                <button class="btn btn-outline-success btn-sm" onclick="event.stopPropagation(); reviewTopic('${weekKey}', '${dayKey}')">
+                                    <i class="fas fa-redo me-1"></i>Review
+                                </button>
+                            ` : `
+                                <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); startTopic('${weekKey}', '${dayKey}')">
+                                    <i class="fas fa-play me-1"></i>${status === 'in-progress' ? 'Continue' : 'Start'}
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+            });
+        });
+
+        container.innerHTML = html;
+    }
+
+    function addTimelineEventListeners() {
+        // Add any additional event listeners for timeline view
+        document.querySelectorAll('.week-item').forEach(item => {
+            item.addEventListener('mouseenter', function () {
+                this.classList.add('hover');
+            });
+
+            item.addEventListener('mouseleave', function () {
+                this.classList.remove('hover');
+            });
+        });
+    }
+
+    // Helper functions
+    function getWeekProgress(weekKey) {
+        const weekTopics = userProgress.filter(p => p.week === weekKey);
+        const total = Object.keys(roadmapData[weekKey]?.days || {}).length;
+        const completed = weekTopics.filter(p => p.completed).length;
+        const totalTime = weekTopics.reduce((sum, p) => sum + (p.time_spent || 0), 0);
+        const difficulties = weekTopics.filter(p => p.difficulty_rating).map(p => p.difficulty_rating);
+        const avgDifficulty = difficulties.length > 0 ? difficulties.reduce((a, b) => a + b) / difficulties.length : 0;
+
+        return {
+            total,
+            completed,
+            percentage: total > 0 ? Math.round((completed / total) * 100) : 0,
+            totalTime: Math.round(totalTime),
+            avgDifficulty
+        };
+    }
+
+    function getWeekStatus(weekProgress) {
+        if (weekProgress.completed === weekProgress.total && weekProgress.total > 0) {
+            return 'completed';
+        } else if (weekProgress.completed > 0) {
+            return 'current';
+        } else {
+            return 'pending';
+        }
+    }
+
+    function getUserTopicProgress(weekKey, dayKey) {
+        return userProgress.find(p => p.week === weekKey && p.day === dayKey);
+    }
+
+    function getTopicStatus(progress) {
+        if (!progress) return 'pending';
+        if (progress.completed) return 'completed';
+        if (progress.time_spent > 0) return 'in-progress';
+        return 'pending';
+    }
+
+    function getProgressPercentage(progress) {
+        if (!progress) return 0;
+        if (progress.completed) return 100;
+
+        // Calculate based on time spent (assuming 3 hours = 100%)
+        const estimatedHours = 3;
+        return Math.min(100, Math.round((progress.time_spent / estimatedHours) * 100));
+    }
+
+    function getStatusIcon(status) {
+        const icons = {
+            'completed': 'check-circle',
+            'in-progress': 'clock',
+            'pending': 'circle'
+        };
+        return icons[status] || 'circle';
+    }
+
+    function getStatusColor(status) {
+        const colors = {
+            'completed': 'success',
+            'in-progress': 'warning',
+            'pending': 'secondary'
+        };
+        return colors[status] || 'secondary';
+    }
+
+    function getStatusEventColor(status) {
+        const colors = {
+            'completed': '#10b981',
+            'in-progress': '#f59e0b',
+            'pending': '#6b7280'
+        };
+        return colors[status] || '#6b7280';
+    }
+
+    // View switching
+    function switchView(view) {
+        if (view === currentView) return;
+
+        // Update button states
+        document.querySelectorAll('[id$="View"]').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(`${view}View`).classList.add('active');
+
+        // Hide all view contents
+        document.querySelectorAll('[id$="ViewContent"]').forEach(content => {
+            content.classList.add('d-none');
+        });
+
+        // Show selected view
+        document.getElementById(`${view}ViewContent`).classList.remove('d-none');
+
+        currentView = view;
+        loadViewContent();
+    }
+
+    // Filter functions
+    function filterByStatus(status) {
+        if (status === 'all') {
+            filteredData = null;
+        } else {
+            filteredData = {};
+
+            Object.entries(roadmapData).forEach(([weekKey, weekData]) => {
+                const matchedDays = {};
+
+                Object.entries(weekData.days).forEach(([dayKey, dayData]) => {
+                    const progress = getUserTopicProgress(weekKey, dayKey);
+                    const topicStatus = getTopicStatus(progress);
+
+                    if (topicStatus === status) {
+                        matchedDays[dayKey] = dayData;
+                    }
+                });
+
+                if (Object.keys(matchedDays).length > 0) {
+                    filteredData[weekKey] = {
+                        ...weekData,
+                        days: matchedDays
+                    };
+                }
+            });
+        }
+
+        loadViewContent();
+    }
+
+    function filterByDifficulty(difficulty) {
+        filteredData = {};
+
+        Object.entries(roadmapData).forEach(([weekKey, weekData]) => {
+            const matchedDays = {};
+
+            Object.entries(weekData.days).forEach(([dayKey, dayData]) => {
+                if ((dayData.difficulty || 'intermediate').toLowerCase() === difficulty) {
+                    matchedDays[dayKey] = dayData;
+                }
+            });
+
+            if (Object.keys(matchedDays).length > 0) {
+                filteredData[weekKey] = {
+                    ...weekData,
+                    days: matchedDays
+                };
+            }
+        });
+
+        loadViewContent();
+    }
+
+    // Topic actions
+    function startTopic(weekKey, dayKey) {
+        openTimeTracking(weekKey, dayKey);
+    }
+
+    function reviewTopic(weekKey, dayKey) {
+        openTopicDetails(weekKey, dayKey);
+    }
+
+    function openTopicDetails(weekKey, dayKey) {
+        const weekData = roadmapData[weekKey];
+        const dayData = weekData?.days[dayKey];
+        const progress = getUserTopicProgress(weekKey, dayKey);
+
+        if (!dayData) return;
+
+        const modal = document.getElementById('topicModal');
+        const title = document.getElementById('topicModalTitle');
+        const body = document.getElementById('topicModalBody');
+        const startBtn = document.getElementById('startTopicBtn');
+
+        title.textContent = `${dayData.topic} - ${weekKey.replace('_', ' ')} ${dayKey}`;
+
+        body.innerHTML = `
+        <div class="topic-detail-content">
+            <div class="topic-overview mb-4">
+                <h6>Overview</h6>
+                <p class="text-muted">${dayData.activities}</p>
+            </div>
+            
+            <div class="topic-metadata mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="metadata-item">
+                            <strong>Difficulty:</strong>
+                            <span class="ms-2 badge bg-${getDifficultyColor(dayData.difficulty)}">
+                                ${dayData.difficulty || 'Intermediate'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="metadata-item">
+                            <strong>Estimated Time:</strong>
+                            <span class="ms-2">${dayData.estimated_time || '2-3 hours'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            ${progress ? `
+                <div class="progress-summary mb-4">
+                    <h6>Your Progress</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" style="width: ${getProgressPercentage(progress)}%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>${getProgressPercentage(progress)}% complete</span>
+                        <span>${progress.time_spent || 0}h spent</span>
+                    </div>
+                    ${progress.notes ? `
+                        <div class="progress-notes mt-2">
+                            <small class="text-muted">Notes: ${progress.notes}</small>
+                        </div>
+                    ` : ''}
+                </div>
+            ` : ''}
+            
+            ${dayData.resources ? `
+                <div class="resources-section mb-4">
+                    <h6>Learning Resources</h6>
+                    <div class="list-group">
+                        ${dayData.resources.map(resource => `
+                            <a href="${resource.url}" target="_blank" class="list-group-item list-group-item-action">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-external-link-alt me-3 text-primary"></i>
+                                    <div>
+                                        <h6 class="mb-1">${resource.name}</h6>
+                                        <small class="text-muted">${resource.url}</small>
+                                    </div>
+                                </div>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+            
+            <div class="quick-actions">
+                <h6>Quick Actions</h6>
+                <div class="d-grid gap-2 d-md-flex">
+                    <button class="btn btn-outline-primary" onclick="openTimeTracking('${weekKey}', '${dayKey}')">
+                        <i class="fas fa-clock me-2"></i>Track Time
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="addTopicNote('${weekKey}', '${dayKey}')">
+                        <i class="fas fa-sticky-note me-2"></i>Add Note
+                    </button>
+                    <button class="btn btn-outline-info" onclick="exportTopicProgress('${weekKey}', '${dayKey}')">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+        startBtn.onclick = () => {
+            modal.querySelector('[data-bs-dismiss="modal"]').click();
+            openTimeTracking(weekKey, dayKey);
+        };
+
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+    }
+
+    function openTimeTracking(weekKey, dayKey) {
+        const weekData = roadmapData[weekKey];
+        const dayData = weekData?.days[dayKey];
+        const progress = getUserTopicProgress(weekKey, dayKey);
+
+        if (!dayData) return;
+
+        currentTrackingTopic = {
+            week: weekKey,
+            day: dayKey,
+            topic: dayData.topic,
+            progress: progress,
+            difficultyRating: progress?.difficulty_rating || 0
+        };
+
+        // Update modal content
+        document.getElementById('trackingTopicTitle').textContent = dayData.topic;
+        document.getElementById('trackingTopicWeek').textContent = `${weekKey.replace('_', ' ')} - ${dayKey}`;
+
+        // Reset timer
+        resetStudyTimer();
+
+        // Set difficulty rating
+        highlightStars(currentTrackingTopic.difficultyRating);
+
+        // Set completion status
+        document.getElementById('topicCompleted').checked = progress?.completed || false;
+
+        const modal = new bootstrap.Modal(document.getElementById('timeTrackingModal'));
+        modal.show();
+    }
+
+    // Timer functions
+    function startStudyTimer() {
+        if (studyTimer.isRunning) return;
+
+        studyTimer.startTime = Date.now() - studyTimer.elapsedTime;
+        studyTimer.isRunning = true;
+
+        studyTimer.interval = setInterval(updateTimerDisplay, 1000);
+
+        // Update buttons
+        document.getElementById('startTimerBtn').disabled = true;
+        document.getElementById('pauseTimerBtn').disabled = false;
+        document.getElementById('stopTimerBtn').disabled = false;
+
+        // Emit timer start event
+        window.dispatchEvent(new CustomEvent('pomodoroTimer', {
+            detail: { isRunning: true, timeLeft: studyTimer.elapsedTime }
+        }));
+    }
+
+    function pauseStudyTimer() {
+        if (!studyTimer.isRunning) return;
+
+        studyTimer.isRunning = false;
+        clearInterval(studyTimer.interval);
+
+        // Update buttons
+        document.getElementById('startTimerBtn').disabled = false;
+        document.getElementById('pauseTimerBtn').disabled = true;
+
+        // Emit timer pause event
+        window.dispatchEvent(new CustomEvent('pomodoroTimer', {
+            detail: { isRunning: false, timeLeft: studyTimer.elapsedTime }
+        }));
+    }
+
+    function stopStudyTimer() {
+        studyTimer.isRunning = false;
+        clearInterval(studyTimer.interval);
+
+        // Save elapsed time
+        const hoursSpent = studyTimer.elapsedTime / (1000 * 60 * 60);
+        if (currentTrackingTopic) {
+            currentTrackingTopic.timeSpent = hoursSpent;
+        }
+
+        // Reset timer
+        resetStudyTimer();
+
+        // Update buttons
+        document.getElementById('startTimerBtn').disabled = false;
+        document.getElementById('pauseTimerBtn').disabled = true;
+        document.getElementById('stopTimerBtn').disabled = true;
+
+        // Show summary
+        showTimerSummary(hoursSpent);
+    }
+
+    function resetStudyTimer() {
+        studyTimer.elapsedTime = 0;
+        studyTimer.startTime = null;
+        updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+        if (studyTimer.isRunning) {
+            studyTimer.elapsedTime = Date.now() - studyTimer.startTime;
+        }
+
+        const totalSeconds = Math.floor(studyTimer.elapsedTime / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById('studyTimer').textContent = display;
+    }
+
+    function addManualTime() {
+        const hours = parseInt(document.getElementById('manualHours').value) || 0;
+        const minutes = parseInt(document.getElementById('manualMinutes').value) || 0;
+
+        if (hours === 0 && minutes === 0) return;
+
+        const totalMs = (hours * 60 * 60 + minutes * 60) * 1000;
+        studyTimer.elapsedTime += totalMs;
+
+        updateTimerDisplay();
+
+        // Clear inputs
+        document.getElementById('manualHours').value = '';
+        document.getElementById('manualMinutes').value = '';
+
+        showNotification(`Added ${hours}h ${minutes}m to study time`, 'success');
+    }
+
+    function showTimerSummary(hoursSpent) {
+        const message = `
+        Session completed! 
+        Time spent: ${hoursSpent.toFixed(2)} hours
+        Topic: ${currentTrackingTopic.topic}
+    `;
+
+        showNotification(message, 'success');
+    }
+
+    async function saveProgress() {
+        if (!currentTrackingTopic) return;
+
+        try {
+            const progressData = {
+                week: currentTrackingTopic.week,
+                day: currentTrackingTopic.day,
+                topic: currentTrackingTopic.topic,
+                completed: document.getElementById('topicCompleted').checked,
+                time_spent: (studyTimer.elapsedTime / (1000 * 60 * 60)) + (currentTrackingTopic.timeSpent || 0),
+                difficulty_rating: currentTrackingTopic.difficultyRating,
+                notes: '' // This could be expanded to include notes
+            };
+
+            // Update progress via API
+            if (window.DSAApp?.api) {
+                await window.DSAApp.api.updateProgress(progressData);
+            }
+
+            // Update local progress
+            const existingIndex = userProgress.findIndex(p =>
+                p.week === progressData.week && p.day === progressData.day
+            );
+
+            if (existingIndex >= 0) {
+                userProgress[existingIndex] = { ...userProgress[existingIndex], ...progressData };
+            } else {
+                userProgress.push(progressData);
+            }
+
+            // Close modal
+            document.querySelector('#timeTrackingModal [data-bs-dismiss="modal"]').click();
+
+            // Refresh UI
+            updateOverviewCards();
+            updateOverallProgress();
+            loadViewContent();
+
+            // Show success message
+            showNotification('Progress saved successfully!', 'success');
+
+            // Trigger real-time update
+            if (window.DSAApp?.api) {
+                window.DSAApp.api.emitRealTimeUpdate('progress-update', progressData);
+            }
+
+        } catch (error) {
+            console.error('Error saving progress:', error);
+            showNotification('Failed to save progress', 'danger');
+        }
+    }
+
+    // Real-time updates
+    function setupRealTimeUpdates() {
+        if (!window.DSAApp?.api) return;
+
+        // Listen for progress updates
+        window.DSAApp.api.addEventListener('progress-update', (data) => {
+            console.log('Real-time progress update:', data);
+
+            // Update local progress
+            const existingIndex = userProgress.findIndex(p =>
+                p.week === data.week && p.day === data.day
+            );
+
+            if (existingIndex >= 0) {
+                userProgress[existingIndex] = { ...userProgress[existingIndex], ...data };
+            } else {
+                userProgress.push(data);
+            }
+
+            // Refresh UI with animation
+            updateOverviewCards();
+            updateOverallProgress();
+            loadViewContent();
+
+            // Highlight updated item
+            highlightUpdatedTopic(data.week, data.day);
+
+            // Show notification
+            showNotification(`Progress updated: ${data.topic}`, 'info');
+        });
+
+        // Periodic refresh
+        setInterval(() => {
+            if (navigator.onLine) {
+                refreshRoadmapData();
+            }
+        }, 5 * 60 * 1000); // Every 5 minutes
+    }
+
+    function highlightUpdatedTopic(week, day) {
+        // Find and highlight the updated topic
+        const selector = `[data-week="${week}"][data-day="${day}"], .week-item[data-week="${week}"]`;
+        const elements = document.querySelectorAll(selector);
+
+        elements.forEach(element => {
+            element.classList.add('just-updated');
+            setTimeout(() => {
+                element.classList.remove('just-updated');
+            }, 2000);
+        });
+    }
+
+    async function refreshRoadmapData() {
+        try {
+            await loadUserProgress();
+            updateOverviewCards();
+            updateOverallProgress();
+
+            console.log('✅ Roadmap data refreshed');
+        } catch (error) {
+            console.error('❌ Failed to refresh roadmap data:', error);
+        }
+    }
+
+    // Utility functions
+    function getDifficultyColor(difficulty) {
+        const colors = {
+            'beginner': 'success',
+            'intermediate': 'warning',
+            'advanced': 'danger',
+            'expert': 'dark'
+        };
+        return colors[difficulty?.toLowerCase()] || 'warning';
+    }
+
+    function showNotification(message, type = 'info') {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-info-circle me-2"></i>${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+
+        document.querySelector('.toast-container').appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    function showErrorState() {
+        const container = document.querySelector('.roadmap-container');
+        if (container) {
+            container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-exclamation-triangle text-warning fa-4x mb-4"></i>
+                <h3>Failed to load roadmap</h3>
+                <p class="text-muted mb-4">We're having trouble loading the roadmap data. Please try refreshing the page.</p>
+                <button class="btn btn-primary" onclick="location.reload()">
+                    <i class="fas fa-refresh me-2"></i>Refresh Page
+                </button>
+            </div>
+        `;
+        }
+    }
+
+    // Export functions
+    function exportRoadmapProgress() {
+        const data = {
+            roadmap: roadmapData,
+            progress: userProgress,
+            exported_at: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `roadmap-progress-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function exportTopicProgress(week, day) {
+        const progress = getUserTopicProgress(week, day);
+        const topicData = roadmapData[week]?.days[day];
+
+        const data = {
+            topic: topicData,
+            progress: progress,
+            exported_at: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${week}-${day}-progress.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Notes integration
+    function addTopicNote(week, day) {
+        // This would integrate with the notes system
+        if (window.DSAApp) {
+            window.DSAApp.navigateTo('notes', { week, day });
+        }
+    }
+
+    // Auto-refresh when window gains focus
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            refreshRoadmapData();
+        }
+    });
+</script>
