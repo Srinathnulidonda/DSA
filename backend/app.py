@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_cors import CORS
@@ -10,6 +10,17 @@ import json
 import uuid
 import logging
 from collections import defaultdict
+import secrets
+import io
+import csv
+from sqlalchemy import func, desc, asc, or_
+import calendar
+import requests
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -19,15 +30,33 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here-ch
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-string-change-in-production')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
 
-# Database configuration - Production ready for Render
+# Email Service Configuration
+# Priority: SendGrid > Mailgun > Gmail SMTP > Console Log
+
+# SendGrid Configuration (FREE - 100 emails/day)
+app.config['SENDGRID_API_KEY'] = os.environ.get('SENDGRID_API_KEY')
+app.config['SENDGRID_FROM_EMAIL'] = os.environ.get('SENDGRID_FROM_EMAIL', 'noreply@dsadashboard.com')
+
+# Mailgun Configuration (FREE - 5000 emails/month for 3 months)
+app.config['MAILGUN_API_KEY'] = os.environ.get('MAILGUN_API_KEY')
+app.config['MAILGUN_DOMAIN'] = os.environ.get('MAILGUN_DOMAIN')
+app.config['MAILGUN_FROM_EMAIL'] = os.environ.get('MAILGUN_FROM_EMAIL', 'noreply@yourdomain.com')
+
+# Gmail SMTP Configuration (FREE - Gmail account required)
+app.config['GMAIL_USERNAME'] = os.environ.get('GMAIL_USERNAME')
+app.config['GMAIL_PASSWORD'] = os.environ.get('GMAIL_PASSWORD')  # App Password
+app.config['GMAIL_FROM_EMAIL'] = os.environ.get('GMAIL_FROM_EMAIL')
+
+# Frontend URL for email links
+app.config['FRONTEND_URL'] = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+
+# Database configuration
 if os.environ.get('DATABASE_URL'):
-    # Production database (PostgreSQL on Render)
     database_url = os.environ.get('DATABASE_URL')
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
-    # Development database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dsa_dashboard.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -45,7 +74,10 @@ CORS(app, origins=[
     "https://your-vercel-app.vercel.app",
     "https://*.vercel.app",
     "http://localhost:3000",
-    "http://localhost:3001"
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173"
 ], supports_credentials=True)
 
 # Logging configuration
@@ -63,6 +95,15 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    # Email verification
+    email_verified = db.Column(db.Boolean, default=False)
+    verification_token = db.Column(db.String(100))
+    verification_token_expires = db.Column(db.DateTime)
+    
+    # Password reset
+    reset_token = db.Column(db.String(100))
+    reset_token_expires = db.Column(db.DateTime)
+    
     # Enhanced Profile data
     avatar_url = db.Column(db.String(500))
     first_name = db.Column(db.String(50))
@@ -71,6 +112,7 @@ class User(db.Model):
     location = db.Column(db.String(100))
     github_username = db.Column(db.String(100))
     linkedin_url = db.Column(db.String(500))
+    website_url = db.Column(db.String(500))
     
     # Gamification
     total_points = db.Column(db.Integer, default=0)
@@ -82,8 +124,20 @@ class User(db.Model):
     
     # Study preferences
     daily_goal_minutes = db.Column(db.Integer, default=60)
-    preferred_study_time = db.Column(db.String(20), default='morning')  # morning, afternoon, evening
-    difficulty_preference = db.Column(db.String(20), default='medium')  # easy, medium, hard
+    preferred_study_time = db.Column(db.String(20), default='morning')
+    difficulty_preference = db.Column(db.String(20), default='medium')
+    notification_preferences = db.Column(db.Text)  # JSON
+    theme_preference = db.Column(db.String(20), default='light')
+    
+    # Privacy settings
+    profile_public = db.Column(db.Boolean, default=True)
+    show_progress = db.Column(db.Boolean, default=True)
+    show_achievements = db.Column(db.Boolean, default=True)
+    
+    # Email preferences
+    email_notifications = db.Column(db.Boolean, default=True)
+    email_achievements = db.Column(db.Boolean, default=True)
+    email_reminders = db.Column(db.Boolean, default=True)
     
     # Relationships
     progress = db.relationship('Progress', backref='user', lazy=True, cascade='all, delete-orphan')
@@ -92,6 +146,8 @@ class User(db.Model):
     achievements = db.relationship('UserAchievement', backref='user', lazy=True, cascade='all, delete-orphan')
     daily_goals = db.relationship('DailyGoal', backref='user', lazy=True, cascade='all, delete-orphan')
     study_sessions = db.relationship('StudySession', backref='user', lazy=True, cascade='all, delete-orphan')
+    calendar_events = db.relationship('CalendarEvent', backref='user', lazy=True, cascade='all, delete-orphan')
+    notifications = db.relationship('Notification', backref='user', lazy=True, cascade='all, delete-orphan')
 
 class Progress(db.Model):
     __tablename__ = 'progress'
@@ -109,6 +165,8 @@ class Progress(db.Model):
     notes = db.Column(db.Text)
     resources_used = db.Column(db.Text)  # JSON string of resources
     practice_problems_solved = db.Column(db.Integer, default=0)
+    review_needed = db.Column(db.Boolean, default=False)
+    last_reviewed = db.Column(db.DateTime)
     
     # Unique constraint
     __table_args__ = (db.UniqueConstraint('user_id', 'week_number', 'day_number'),)
@@ -122,6 +180,7 @@ class Note(db.Model):
     content = db.Column(db.Text, nullable=False)
     topic = db.Column(db.String(100), index=True)
     week_number = db.Column(db.Integer)
+    day_number = db.Column(db.Integer)
     tags = db.Column(db.Text)  # JSON string of tags
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -130,6 +189,8 @@ class Note(db.Model):
     note_type = db.Column(db.String(50), default='general')  # general, code_snippet, algorithm, concept
     code_language = db.Column(db.String(50))  # for code snippets
     view_count = db.Column(db.Integer, default=0)
+    color = db.Column(db.String(7), default='#ffffff')  # hex color
+    folder = db.Column(db.String(100))  # organization
 
 class PomodoroSession(db.Model):
     __tablename__ = 'pomodoro_sessions'
@@ -143,6 +204,7 @@ class PomodoroSession(db.Model):
     completed = db.Column(db.Boolean, default=False)
     interruptions = db.Column(db.Integer, default=0)
     focus_rating = db.Column(db.Integer)  # 1-5 scale
+    session_type = db.Column(db.String(20), default='work')  # work, short_break, long_break
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
 class Achievement(db.Model):
@@ -158,6 +220,7 @@ class Achievement(db.Model):
     requirement_type = db.Column(db.String(50))  # count, streak, percentage
     requirement_value = db.Column(db.Integer)
     is_active = db.Column(db.Boolean, default=True)
+    rarity = db.Column(db.String(20), default='common')  # common, rare, epic, legendary
 
 class UserAchievement(db.Model):
     __tablename__ = 'user_achievements'
@@ -205,7 +268,831 @@ class StudySession(db.Model):
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
-# Enhanced Utility Functions
+class CalendarEvent(db.Model):
+    __tablename__ = 'calendar_events'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    start_time = db.Column(db.DateTime, nullable=False, index=True)
+    end_time = db.Column(db.DateTime, nullable=False)
+    event_type = db.Column(db.String(50), default='study')  # study, deadline, review, exam
+    week_number = db.Column(db.Integer)
+    day_number = db.Column(db.Integer)
+    topic = db.Column(db.String(200))
+    color = db.Column(db.String(7), default='#3788d8')
+    reminder_minutes = db.Column(db.Integer, default=15)
+    recurring = db.Column(db.Boolean, default=False)
+    recurring_pattern = db.Column(db.String(20))  # daily, weekly, monthly
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(50), default='info')  # info, achievement, reminder, warning
+    read = db.Column(db.Boolean, default=False, index=True)
+    action_url = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+class EmailLog(db.Model):
+    __tablename__ = 'email_logs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    to_email = db.Column(db.String(120), nullable=False)
+    subject = db.Column(db.String(200), nullable=False)
+    email_type = db.Column(db.String(50), nullable=False)  # welcome, reset, achievement, reminder
+    service_used = db.Column(db.String(50))  # sendgrid, mailgun, gmail, console
+    status = db.Column(db.String(20), default='sent')  # sent, failed, pending
+    error_message = db.Column(db.Text)
+    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# ==================== EMAIL SERVICE FUNCTIONS ====================
+
+class EmailService:
+    """Unified email service with multiple provider support"""
+    
+    @staticmethod
+    def send_email(to_email, subject, html_content, text_content=None, email_type='general', user_id=None):
+        """Send email using available service with fallback"""
+        
+        # Try SendGrid first
+        if app.config.get('SENDGRID_API_KEY'):
+            success = EmailService._send_via_sendgrid(to_email, subject, html_content, text_content)
+            if success:
+                EmailService._log_email(user_id, to_email, subject, email_type, 'sendgrid', 'sent')
+                return True
+        
+        # Try Mailgun second
+        if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_DOMAIN'):
+            success = EmailService._send_via_mailgun(to_email, subject, html_content, text_content)
+            if success:
+                EmailService._log_email(user_id, to_email, subject, email_type, 'mailgun', 'sent')
+                return True
+        
+        # Try Gmail SMTP third
+        if app.config.get('GMAIL_USERNAME') and app.config.get('GMAIL_PASSWORD'):
+            success = EmailService._send_via_gmail(to_email, subject, html_content, text_content)
+            if success:
+                EmailService._log_email(user_id, to_email, subject, email_type, 'gmail', 'sent')
+                return True
+        
+        # Fallback to console logging
+        EmailService._send_via_console(to_email, subject, html_content, text_content)
+        EmailService._log_email(user_id, to_email, subject, email_type, 'console', 'sent')
+        return True
+
+    @staticmethod
+    def _send_via_sendgrid(to_email, subject, html_content, text_content=None):
+        """Send email via SendGrid API"""
+        try:
+            api_key = app.config.get('SENDGRID_API_KEY')
+            from_email = app.config.get('SENDGRID_FROM_EMAIL')
+            
+            url = "https://api.sendgrid.com/v3/mail/send"
+            
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            content = [{"type": "text/html", "value": html_content}]
+            if text_content:
+                content.append({"type": "text/plain", "value": text_content})
+            
+            data = {
+                "personalizations": [{"to": [{"email": to_email}]}],
+                "from": {"email": from_email},
+                "subject": subject,
+                "content": content
+            }
+            
+            response = requests.post(url, headers=headers, json=data)
+            
+            if response.status_code == 202:
+                logger.info(f"SendGrid: Email sent successfully to {to_email}")
+                return True
+            else:
+                logger.error(f"SendGrid failed: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"SendGrid error: {str(e)}")
+            return False
+
+    @staticmethod
+    def _send_via_mailgun(to_email, subject, html_content, text_content=None):
+        """Send email via Mailgun API"""
+        try:
+            api_key = app.config.get('MAILGUN_API_KEY')
+            domain = app.config.get('MAILGUN_DOMAIN')
+            from_email = app.config.get('MAILGUN_FROM_EMAIL')
+            
+            url = f"https://api.mailgun.net/v3/{domain}/messages"
+            
+            data = {
+                "from": from_email,
+                "to": to_email,
+                "subject": subject,
+                "html": html_content
+            }
+            
+            if text_content:
+                data["text"] = text_content
+            
+            response = requests.post(
+                url,
+                auth=("api", api_key),
+                data=data
+            )
+            
+            if response.status_code == 200:
+                logger.info(f"Mailgun: Email sent successfully to {to_email}")
+                return True
+            else:
+                logger.error(f"Mailgun failed: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Mailgun error: {str(e)}")
+            return False
+
+    @staticmethod
+    def _send_via_gmail(to_email, subject, html_content, text_content=None):
+        """Send email via Gmail SMTP"""
+        try:
+            gmail_user = app.config.get('GMAIL_USERNAME')
+            gmail_password = app.config.get('GMAIL_PASSWORD')
+            from_email = app.config.get('GMAIL_FROM_EMAIL', gmail_user)
+            
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = from_email
+            msg['To'] = to_email
+            
+            # Create the plain-text and HTML version of your message
+            if text_content:
+                part1 = MIMEText(text_content, 'plain')
+                msg.attach(part1)
+            
+            part2 = MIMEText(html_content, 'html')
+            msg.attach(part2)
+            
+            # Send the message via Gmail SMTP server
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(gmail_user, gmail_password)
+            text = msg.as_string()
+            server.sendmail(from_email, to_email, text)
+            server.quit()
+            
+            logger.info(f"Gmail: Email sent successfully to {to_email}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Gmail SMTP error: {str(e)}")
+            return False
+
+    @staticmethod
+    def _send_via_console(to_email, subject, html_content, text_content=None):
+        """Log email to console (development fallback)"""
+        logger.info("=" * 50)
+        logger.info("EMAIL CONSOLE LOG")
+        logger.info("=" * 50)
+        logger.info(f"To: {to_email}")
+        logger.info(f"Subject: {subject}")
+        logger.info("-" * 30)
+        logger.info("HTML Content:")
+        logger.info(html_content)
+        if text_content:
+            logger.info("-" * 30)
+            logger.info("Text Content:")
+            logger.info(text_content)
+        logger.info("=" * 50)
+
+    @staticmethod
+    def _log_email(user_id, to_email, subject, email_type, service_used, status, error_message=None):
+        """Log email to database"""
+        try:
+            email_log = EmailLog(
+                user_id=user_id,
+                to_email=to_email,
+                subject=subject,
+                email_type=email_type,
+                service_used=service_used,
+                status=status,
+                error_message=error_message
+            )
+            db.session.add(email_log)
+            db.session.commit()
+        except Exception as e:
+            logger.error(f"Failed to log email: {str(e)}")
+
+# ==================== EMAIL TEMPLATES ====================
+
+class EmailTemplates:
+    """HTML email templates"""
+    
+    @staticmethod
+    def get_base_template():
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>DSA Dashboard</title>
+            <style>
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+                    line-height: 1.6; 
+                    color: #333; 
+                    margin: 0; 
+                    padding: 0; 
+                    background-color: #f5f5f5;
+                }
+                .container { 
+                    max-width: 600px; 
+                    margin: 20px auto; 
+                    background: white;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }
+                .header { 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    color: white; 
+                    padding: 40px 30px; 
+                    text-align: center; 
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 28px;
+                    font-weight: 600;
+                }
+                .header p {
+                    margin: 10px 0 0 0;
+                    font-size: 16px;
+                    opacity: 0.9;
+                }
+                .content { 
+                    padding: 40px 30px; 
+                }
+                .button { 
+                    display: inline-block; 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    color: white; 
+                    padding: 14px 28px; 
+                    text-decoration: none; 
+                    border-radius: 8px; 
+                    margin: 20px 0;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                }
+                .button:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                }
+                .feature { 
+                    background: #f8f9ff; 
+                    padding: 20px; 
+                    margin: 15px 0; 
+                    border-radius: 8px; 
+                    border-left: 4px solid #667eea; 
+                }
+                .feature h3 {
+                    margin: 0 0 8px 0;
+                    color: #333;
+                    font-size: 18px;
+                }
+                .feature p {
+                    margin: 0;
+                    color: #666;
+                    font-size: 14px;
+                }
+                .achievement { 
+                    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); 
+                    color: white;
+                    padding: 25px; 
+                    border-radius: 12px; 
+                    text-align: center; 
+                    margin: 25px 0; 
+                    box-shadow: 0 4px 15px rgba(255, 216, 155, 0.3);
+                }
+                .achievement h2 {
+                    margin: 0 0 10px 0;
+                    font-size: 24px;
+                }
+                .achievement p {
+                    margin: 0;
+                    font-size: 16px;
+                    opacity: 0.9;
+                }
+                .warning { 
+                    background: #fff8e1; 
+                    border: 1px solid #ffb74d; 
+                    padding: 20px; 
+                    border-radius: 8px; 
+                    margin: 20px 0; 
+                }
+                .footer {
+                    background: #f8f9fa;
+                    padding: 30px;
+                    text-align: center;
+                    border-top: 1px solid #e9ecef;
+                    color: #666;
+                    font-size: 14px;
+                }
+                .footer a {
+                    color: #667eea;
+                    text-decoration: none;
+                }
+                .social-links {
+                    margin: 20px 0;
+                }
+                .social-links a {
+                    display: inline-block;
+                    margin: 0 10px;
+                    padding: 8px 16px;
+                    background: #667eea;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    font-size: 12px;
+                }
+                @media (max-width: 600px) {
+                    .container { margin: 10px; }
+                    .header, .content { padding: 20px; }
+                    .button { display: block; text-align: center; }
+                }
+            </style>
+        </head>
+        <body>
+            {content}
+            <div class="footer">
+                <p><strong>DSA Dashboard</strong> - Your Data Structures & Algorithms Learning Companion</p>
+                <div class="social-links">
+                    <a href="{frontend_url}">Dashboard</a>
+                    <a href="{frontend_url}/roadmap">Roadmap</a>
+                    <a href="{frontend_url}/profile">Profile</a>
+                </div>
+                <p>
+                    <a href="{frontend_url}/settings">Unsubscribe</a> | 
+                    <a href="{frontend_url}/support">Support</a> | 
+                    <a href="{frontend_url}/privacy">Privacy Policy</a>
+                </p>
+                <p>© 2024 DSA Dashboard. All rights reserved.</p>
+            </div>
+        </body>
+        </html>
+        """
+
+    @staticmethod
+    def welcome_email(username):
+        content = f"""
+        <div class="container">
+            <div class="header">
+                <h1>Welcome to DSA Dashboard! 🎉</h1>
+                <p>Your personalized Data Structures & Algorithms learning journey starts here</p>
+            </div>
+            <div class="content">
+                <p>Hi <strong>{username}</strong>,</p>
+                
+                <p>Welcome to DSA Dashboard! We're excited to have you on board for your Data Structures & Algorithms learning journey.</p>
+                
+                <div class="feature">
+                    <h3>🗺️ 14-Week Structured Roadmap</h3>
+                    <p>Follow our comprehensive roadmap from beginner to advanced concepts with daily topics and practice problems.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>📊 Progress Tracking</h3>
+                    <p>Track your daily progress, maintain study streaks, and earn achievements as you learn.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>📝 Smart Notes System</h3>
+                    <p>Create, organize, and search through your study notes with syntax highlighting for code.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🍅 Pomodoro Timer</h3>
+                    <p>Focus on your studies with built-in productivity tools and session tracking.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>📅 Calendar & Scheduling</h3>
+                    <p>Plan your study sessions, set deadlines, and never miss important topics.</p>
+                </div>
+                
+                <a href="{app.config['FRONTEND_URL']}/roadmap" class="button">Start Your Journey →</a>
+                
+                <p>Ready to begin? Start with <strong>Week 1: Foundation & Environment Setup</strong> and work your way through our carefully designed curriculum.</p>
+                
+                <p><strong>Quick Tips to Get Started:</strong></p>
+                <ul>
+                    <li>Set your daily study goal in settings</li>
+                    <li>Complete the environment setup on Day 1</li>
+                    <li>Take notes as you learn new concepts</li>
+                    <li>Use the Pomodoro timer for focused study sessions</li>
+                    <li>Track your progress daily to build momentum</li>
+                </ul>
+                
+                <p>If you have any questions or need help getting started, our support team is here to help!</p>
+                
+                <p>Happy learning! 🚀<br>
+                <strong>The DSA Dashboard Team</strong></p>
+            </div>
+        </div>
+        """
+        
+        return EmailTemplates.get_base_template().format(
+            content=content,
+            frontend_url=app.config['FRONTEND_URL']
+        )
+
+    @staticmethod
+    def password_reset_email(username, reset_token):
+        reset_url = f"{app.config['FRONTEND_URL']}/auth/reset-password?token={reset_token}"
+        
+        content = f"""
+        <div class="container">
+            <div class="header">
+                <h1>🔒 Password Reset Request</h1>
+                <p>Secure access to your DSA learning journey</p>
+            </div>
+            <div class="content">
+                <p>Hi <strong>{username}</strong>,</p>
+                
+                <p>We received a request to reset your password for your DSA Dashboard account.</p>
+                
+                <a href="{reset_url}" class="button">Reset Password →</a>
+                
+                <p>Or copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; background: #f8f9fa; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 14px; border: 1px solid #e9ecef;">
+                    {reset_url}
+                </p>
+                
+                <div class="warning">
+                    <strong>⚠️ Important Security Information:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>This password reset link will expire in <strong>1 hour</strong></li>
+                        <li>If you didn't request this reset, please ignore this email</li>
+                        <li>Your password will remain unchanged until you create a new one</li>
+                        <li>For security, we recommend using a strong, unique password</li>
+                    </ul>
+                </div>
+                
+                <p>If you continue to have problems accessing your account, please contact our support team.</p>
+                
+                <p>Stay secure and keep learning! 🛡️<br>
+                <strong>The DSA Dashboard Team</strong></p>
+            </div>
+        </div>
+        """
+        
+        return EmailTemplates.get_base_template().format(
+            content=content,
+            frontend_url=app.config['FRONTEND_URL']
+        )
+
+    @staticmethod
+    def achievement_email(username, achievement_title, achievement_description, achievement_icon, points):
+        content = f"""
+        <div class="container">
+            <div class="header">
+                <h1>🏆 Achievement Unlocked!</h1>
+                <p>Congratulations on reaching a new milestone</p>
+            </div>
+            <div class="content">
+                <p>Hi <strong>{username}</strong>,</p>
+                
+                <div class="achievement">
+                    <h2>{achievement_icon} {achievement_title}</h2>
+                    <p>{achievement_description}</p>
+                    <p style="margin-top: 15px; font-size: 18px;"><strong>+{points} Points Earned!</strong></p>
+                </div>
+                
+                <p>You're making fantastic progress on your DSA learning journey! This achievement shows your dedication and consistency in mastering these important concepts.</p>
+                
+                <a href="{app.config['FRONTEND_URL']}/profile/achievements" class="button">View All Achievements →</a>
+                
+                <p><strong>Keep up the momentum:</strong></p>
+                <ul>
+                    <li>Continue your daily study streak</li>
+                    <li>Challenge yourself with harder problems</li>
+                    <li>Share your progress with the community</li>
+                    <li>Help others learn by taking detailed notes</li>
+                </ul>
+                
+                <p>Every achievement unlocked is a step closer to mastering Data Structures & Algorithms. Keep pushing forward!</p>
+                
+                <p>Congratulations again! 🎉<br>
+                <strong>The DSA Dashboard Team</strong></p>
+            </div>
+        </div>
+        """
+        
+        return EmailTemplates.get_base_template().format(
+            content=content,
+            frontend_url=app.config['FRONTEND_URL']
+        )
+
+    @staticmethod
+    def streak_milestone_email(username, streak_days):
+        content = f"""
+        <div class="container">
+            <div class="header">
+                <h1>🔥 {streak_days} Day Streak!</h1>
+                <p>Your consistency is paying off</p>
+            </div>
+            <div class="content">
+                <p>Hi <strong>{username}</strong>,</p>
+                
+                <div class="achievement">
+                    <h2>🔥 {streak_days} Days of Consistent Learning!</h2>
+                    <p>You've maintained your study streak for {streak_days} consecutive days. That's incredible dedication!</p>
+                </div>
+                
+                <p>Consistency is the key to mastering Data Structures & Algorithms, and you're proving that every single day. Your commitment to learning is truly inspiring!</p>
+                
+                <div class="feature">
+                    <h3>💡 Streak Benefits</h3>
+                    <p>Consistent daily practice helps you retain concepts better and build strong problem-solving skills.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🎯 Keep Going</h3>
+                    <p>The longer your streak, the more bonus points you earn and the stronger your foundation becomes.</p>
+                </div>
+                
+                <a href="{app.config['FRONTEND_URL']}/dashboard" class="button">Continue Your Streak →</a>
+                
+                <p><strong>Tips to maintain your streak:</strong></p>
+                <ul>
+                    <li>Set a specific time each day for learning</li>
+                    <li>Start with easier topics if you're short on time</li>
+                    <li>Use the Pomodoro timer for focused 25-minute sessions</li>
+                    <li>Review previous notes to reinforce learning</li>
+                </ul>
+                
+                <p>Don't break the chain! Every day counts towards your mastery of DSA concepts.</p>
+                
+                <p>Keep up the amazing work! 🚀<br>
+                <strong>The DSA Dashboard Team</strong></p>
+            </div>
+        </div>
+        """
+        
+        return EmailTemplates.get_base_template().format(
+            content=content,
+            frontend_url=app.config['FRONTEND_URL']
+        )
+
+    @staticmethod
+    def weekly_summary_email(username, completed_topics, study_time, notes_created, current_streak):
+        content = f"""
+        <div class="container">
+            <div class="header">
+                <h1>📊 Your Weekly Summary</h1>
+                <p>Here's how you performed this week</p>
+            </div>
+            <div class="content">
+                <p>Hi <strong>{username}</strong>,</p>
+                
+                <p>Here's a summary of your learning progress this week:</p>
+                
+                <div class="feature">
+                    <h3>📚 Topics Completed</h3>
+                    <p><strong>{completed_topics}</strong> topics mastered this week</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>⏱️ Study Time</h3>
+                    <p><strong>{study_time}</strong> minutes of focused learning</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>📝 Notes Created</h3>
+                    <p><strong>{notes_created}</strong> notes added to your knowledge base</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🔥 Current Streak</h3>
+                    <p><strong>{current_streak}</strong> days of consistent learning</p>
+                </div>
+                
+                <a href="{app.config['FRONTEND_URL']}/analytics" class="button">View Detailed Analytics →</a>
+                
+                <p><strong>For next week, consider:</strong></p>
+                <ul>
+                    <li>Setting higher daily goals if you're consistently meeting them</li>
+                    <li>Focusing on topics you found challenging</li>
+                    <li>Practicing more coding problems</li>
+                    <li>Reviewing and organizing your notes</li>
+                </ul>
+                
+                <p>Keep up the excellent progress! Every week of consistent learning brings you closer to DSA mastery.</p>
+                
+                <p>Happy learning! 📈<br>
+                <strong>The DSA Dashboard Team</strong></p>
+            </div>
+        </div>
+        """
+        
+        return EmailTemplates.get_base_template().format(
+            content=content,
+            frontend_url=app.config['FRONTEND_URL']
+        )
+
+    @staticmethod
+    def reminder_email(username, reminder_type, content_data):
+        if reminder_type == 'daily_goal':
+            subject_content = "⏰ Daily Goal Reminder"
+            main_content = f"""
+                <p>Hi <strong>{username}</strong>,</p>
+                <p>Just a friendly reminder that you haven't completed your daily study goal yet today.</p>
+                <div class="feature">
+                    <h3>🎯 Today's Goals</h3>
+                    <p>Study Time: {content_data.get('study_time_goal', 60)} minutes<br>
+                    Topics: {content_data.get('topics_goal', 3)} topics<br>
+                    Pomodoros: {content_data.get('pomodoro_goal', 4)} sessions</p>
+                </div>
+                <p>Even a 25-minute Pomodoro session can help maintain your streak and keep the momentum going!</p>
+            """
+        elif reminder_type == 'upcoming_deadline':
+            subject_content = "📅 Upcoming Deadline"
+            main_content = f"""
+                <p>Hi <strong>{username}</strong>,</p>
+                <p>You have an upcoming deadline that needs your attention:</p>
+                <div class="warning">
+                    <strong>{content_data.get('title', 'Important Deadline')}</strong><br>
+                    Due: {content_data.get('due_date', 'Soon')}<br>
+                    {content_data.get('description', '')}
+                </div>
+                <p>Make sure to allocate time in your schedule to meet this deadline!</p>
+            """
+        else:
+            subject_content = "🔔 Reminder"
+            main_content = f"""
+                <p>Hi <strong>{username}</strong>,</p>
+                <p>This is a reminder about your DSA learning journey.</p>
+                <p>{content_data.get('message', 'Keep up the great work!')}</p>
+            """
+        
+        content = f"""
+        <div class="container">
+            <div class="header">
+                <h1>{subject_content}</h1>
+                <p>Stay on track with your learning goals</p>
+            </div>
+            <div class="content">
+                {main_content}
+                
+                <a href="{app.config['FRONTEND_URL']}/dashboard" class="button">Continue Learning →</a>
+                
+                <p>Remember, consistency is key to mastering Data Structures & Algorithms. Every small step counts!</p>
+                
+                <p>You've got this! 💪<br>
+                <strong>The DSA Dashboard Team</strong></p>
+            </div>
+        </div>
+        """
+        
+        return EmailTemplates.get_base_template().format(
+            content=content,
+            frontend_url=app.config['FRONTEND_URL']
+        )
+
+# ==================== EMAIL HELPER FUNCTIONS ====================
+
+def send_welcome_email(user_email, username, user_id=None):
+    """Send welcome email to new users"""
+    subject = "Welcome to DSA Dashboard! 🎉"
+    html_content = EmailTemplates.welcome_email(username)
+    text_content = f"""
+    Welcome to DSA Dashboard!
+    
+    Hi {username},
+    
+    Welcome to DSA Dashboard! We're excited to have you on board for your Data Structures & Algorithms learning journey.
+    
+    Features you can explore:
+    • 14-Week Structured Roadmap
+    • Progress Tracking with streaks and achievements  
+    • Smart Notes System with syntax highlighting
+    • Pomodoro Timer for focused study sessions
+    • Calendar & Scheduling for better organization
+    
+    Start your journey: {app.config['FRONTEND_URL']}/roadmap
+    
+    Happy learning!
+    The DSA Dashboard Team
+    """
+    
+    return EmailService.send_email(user_email, subject, html_content, text_content, 'welcome', user_id)
+
+def send_password_reset_email(user_email, reset_token, username, user_id=None):
+    """Send password reset email"""
+    subject = "Reset Your DSA Dashboard Password 🔒"
+    html_content = EmailTemplates.password_reset_email(username, reset_token)
+    text_content = f"""
+    Password Reset Request
+    
+    Hi {username},
+    
+    We received a request to reset your password for your DSA Dashboard account.
+    
+    Reset your password: {app.config['FRONTEND_URL']}/auth/reset-password?token={reset_token}
+    
+    Important:
+    • This link will expire in 1 hour
+    • If you didn't request this reset, please ignore this email
+    • Your password will remain unchanged until you create a new one
+    
+    Stay secure!
+    The DSA Dashboard Team
+    """
+    
+    return EmailService.send_email(user_email, subject, html_content, text_content, 'reset', user_id)
+
+def send_achievement_email(user_email, username, achievement_title, achievement_description, achievement_icon="🏆", points=0, user_id=None):
+    """Send achievement notification email"""
+    subject = f"🏆 Achievement Unlocked: {achievement_title}"
+    html_content = EmailTemplates.achievement_email(username, achievement_title, achievement_description, achievement_icon, points)
+    text_content = f"""
+    Achievement Unlocked!
+    
+    Hi {username},
+    
+    Congratulations! You've unlocked a new achievement:
+    
+    {achievement_icon} {achievement_title}
+    {achievement_description}
+    
+    Points earned: +{points}
+    
+    Keep up the excellent work on your DSA learning journey!
+    
+    View all achievements: {app.config['FRONTEND_URL']}/profile/achievements
+    
+    The DSA Dashboard Team
+    """
+    
+    return EmailService.send_email(user_email, subject, html_content, text_content, 'achievement', user_id)
+
+def send_streak_milestone_email(user_email, username, streak_days, user_id=None):
+    """Send streak milestone email"""
+    subject = f"🔥 {streak_days} Day Learning Streak!"
+    html_content = EmailTemplates.streak_milestone_email(username, streak_days)
+    
+    return EmailService.send_email(user_email, subject, html_content, email_type='streak', user_id=user_id)
+
+def send_weekly_summary_email(user_email, username, stats, user_id=None):
+    """Send weekly summary email"""
+    subject = "📊 Your Weekly Learning Summary"
+    html_content = EmailTemplates.weekly_summary_email(
+        username, 
+        stats.get('completed_topics', 0),
+        stats.get('study_time', 0),
+        stats.get('notes_created', 0),
+        stats.get('current_streak', 0)
+    )
+    
+    return EmailService.send_email(user_email, subject, html_content, email_type='summary', user_id=user_id)
+
+def send_reminder_email(user_email, username, reminder_type, content_data, user_id=None):
+    """Send reminder email"""
+    subject = f"⏰ Reminder: {reminder_type.replace('_', ' ').title()}"
+    html_content = EmailTemplates.reminder_email(username, reminder_type, content_data)
+    
+    return EmailService.send_email(user_email, subject, html_content, email_type='reminder', user_id=user_id)
+
+# ==================== UTILITY FUNCTIONS ====================
+
+def create_notification(user_id, title, message, notification_type='info', action_url=None):
+    """Create a new notification for user"""
+    try:
+        notification = Notification(
+            user_id=user_id,
+            title=title,
+            message=message,
+            type=notification_type,
+            action_url=action_url
+        )
+        db.session.add(notification)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logger.error(f"Failed to create notification: {str(e)}")
+        return False
+
 def update_user_streak(user):
     """Enhanced streak calculation with timezone awareness"""
     today = datetime.utcnow().date()
@@ -215,18 +1102,27 @@ def update_user_streak(user):
     today_activity = Progress.query.filter_by(
         user_id=user.id,
         completed=True
-    ).filter(db.func.date(Progress.completion_date) == today).first()
+    ).filter(func.date(Progress.completion_date) == today).first()
     
     # Check if user was active yesterday
     yesterday_activity = Progress.query.filter_by(
         user_id=user.id,
         completed=True
-    ).filter(db.func.date(Progress.completion_date) == yesterday).first()
+    ).filter(func.date(Progress.completion_date) == yesterday).first()
     
     if today_activity:
         if yesterday_activity or user.current_streak == 0:
             if user.last_activity.date() != today:
                 user.current_streak += 1
+                # Check for streak milestones and send emails
+                if user.current_streak in [7, 30, 100] and user.email_notifications:
+                    send_streak_milestone_email(user.email, user.username, user.current_streak, user.id)
+                    create_notification(
+                        user.id,
+                        f"🔥 {user.current_streak} Day Streak!",
+                        f"Congratulations! You've maintained a {user.current_streak} day study streak!",
+                        'achievement'
+                    )
         user.last_activity = datetime.utcnow()
         
         if user.current_streak > user.longest_streak:
@@ -271,9 +1167,14 @@ def calculate_user_points(user):
     # Update level based on points
     new_level = min(100, max(1, (points // 1000) + 1))
     if new_level > user.level:
+        old_level = user.level
         user.level = new_level
-        # Award level up achievement
-        check_and_award_achievements(user.id, 'level_up', new_level)
+        create_notification(
+            user.id,
+            f"🎉 Level Up!",
+            f"Congratulations! You've reached level {new_level}!",
+            'achievement'
+        )
     
     return points
 
@@ -296,7 +1197,6 @@ def check_and_award_achievements(user_id, achievement_type, value=None):
             'week_completionist': lambda: check_week_completion(user_id),
             'early_bird': lambda: check_early_bird_pattern(user_id),
             'night_owl': lambda: check_night_owl_pattern(user_id),
-            'level_up': lambda: True if value else False,
         }
         
         # Check specific achievement or all
@@ -319,6 +1219,18 @@ def check_and_award_achievements(user_id, achievement_type, value=None):
                         )
                         db.session.add(user_achievement)
                         user.total_points += achievement.points
+                        
+                        # Send achievement email notification if user has email notifications enabled
+                        if user.email_achievements:
+                            send_achievement_email(
+                                user.email,
+                                user.username,
+                                achievement.title,
+                                achievement.description,
+                                achievement.badge_icon,
+                                achievement.points,
+                                user.id
+                            )
         
         db.session.commit()
         
@@ -365,7 +1277,8 @@ def init_achievements():
             'description': 'Successfully registered for the DSA learning journey',
             'badge_icon': '🎉',
             'points': 10,
-            'category': 'milestone'
+            'category': 'milestone',
+            'rarity': 'common'
         },
         {
             'name': 'first_topic',
@@ -373,7 +1286,8 @@ def init_achievements():
             'description': 'Completed your first topic',
             'badge_icon': '👶',
             'points': 25,
-            'category': 'completion'
+            'category': 'completion',
+            'rarity': 'common'
         },
         {
             'name': 'week_warrior',
@@ -381,7 +1295,8 @@ def init_achievements():
             'description': 'Maintained a 7-day study streak',
             'badge_icon': '⚔️',
             'points': 100,
-            'category': 'streak'
+            'category': 'streak',
+            'rarity': 'rare'
         },
         {
             'name': 'month_master',
@@ -389,7 +1304,8 @@ def init_achievements():
             'description': 'Maintained a 30-day study streak',
             'badge_icon': '👑',
             'points': 500,
-            'category': 'streak'
+            'category': 'streak',
+            'rarity': 'epic'
         },
         {
             'name': 'century_club',
@@ -397,7 +1313,8 @@ def init_achievements():
             'description': 'Achieved a 100-day study streak',
             'badge_icon': '💯',
             'points': 1000,
-            'category': 'streak'
+            'category': 'streak',
+            'rarity': 'legendary'
         },
         {
             'name': 'note_taker',
@@ -405,7 +1322,8 @@ def init_achievements():
             'description': 'Created 10 study notes',
             'badge_icon': '📝',
             'points': 50,
-            'category': 'productivity'
+            'category': 'productivity',
+            'rarity': 'common'
         },
         {
             'name': 'pomodoro_pro',
@@ -413,7 +1331,8 @@ def init_achievements():
             'description': 'Completed 25 pomodoro sessions',
             'badge_icon': '🍅',
             'points': 75,
-            'category': 'time'
+            'category': 'time',
+            'rarity': 'rare'
         },
         {
             'name': 'week_completionist',
@@ -421,7 +1340,8 @@ def init_achievements():
             'description': 'Completed an entire week of study topics',
             'badge_icon': '✅',
             'points': 200,
-            'category': 'completion'
+            'category': 'completion',
+            'rarity': 'rare'
         },
         {
             'name': 'early_bird',
@@ -429,7 +1349,8 @@ def init_achievements():
             'description': 'Consistently study in the morning',
             'badge_icon': '🌅',
             'points': 100,
-            'category': 'habit'
+            'category': 'habit',
+            'rarity': 'rare'
         },
         {
             'name': 'night_owl',
@@ -437,7 +1358,8 @@ def init_achievements():
             'description': 'Consistently study at night',
             'badge_icon': '🦉',
             'points': 100,
-            'category': 'habit'
+            'category': 'habit',
+            'rarity': 'rare'
         }
     ]
     
@@ -463,6 +1385,8 @@ def create_tables():
             logger.info("Database tables created successfully")
     except Exception as e:
         logger.error(f"Error creating database tables: {str(e)}")
+
+# ==================== API ROUTES ====================
 
 # Enhanced Authentication Routes
 @app.route('/api/auth/register', methods=['POST'])
@@ -491,16 +1415,32 @@ def register():
             email=data['email'],
             password_hash=generate_password_hash(data['password']),
             first_name=data.get('first_name', ''),
-            last_name=data.get('last_name', '')
+            last_name=data.get('last_name', ''),
+            email_notifications=data.get('email_notifications', True),
+            email_achievements=data.get('email_achievements', True),
+            email_reminders=data.get('email_reminders', True)
         )
         
         db.session.add(user)
         db.session.flush()  # Get user.id before commit
         
+        # Create welcome notification
+        create_notification(
+            user.id,
+            "Welcome to DSA Dashboard! 🎉",
+            "Welcome to your personalized Data Structures & Algorithms learning journey! Start with Week 1 to begin your path to mastery.",
+            'info',
+            '/roadmap/week/1'
+        )
+        
         # Award first achievement
         check_and_award_achievements(user.id, 'first_signup')
         
         db.session.commit()
+        
+        # Send welcome email
+        if user.email_notifications:
+            send_welcome_email(user.email, user.username, user.id)
         
         access_token = create_access_token(identity=user.id)
         
@@ -553,7 +1493,8 @@ def login():
                     'last_name': user.last_name,
                     'total_points': user.total_points,
                     'current_streak': user.current_streak,
-                    'level': user.level
+                    'level': user.level,
+                    'theme_preference': user.theme_preference
                 }
             }), 200
         else:
@@ -563,7 +1504,54 @@ def login():
         logger.error(f"Login error: {str(e)}")
         return jsonify({'message': 'Login failed. Please try again.'}), 500
 
-# Enhanced Progress Routes
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def forgot_password():
+    try:
+        data = request.get_json()
+        user = User.query.filter_by(email=data['email']).first()
+        
+        if user:
+            # Generate reset token
+            reset_token = secrets.token_urlsafe(32)
+            user.reset_token = reset_token
+            user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
+            
+            # Send email
+            if send_password_reset_email(user.email, reset_token, user.username, user.id):
+                db.session.commit()
+                return jsonify({'message': 'Password reset email sent'}), 200
+            else:
+                return jsonify({'message': 'Failed to send email'}), 500
+        else:
+            # Don't reveal if email exists
+            return jsonify({'message': 'If that email exists, a reset link has been sent'}), 200
+            
+    except Exception as e:
+        logger.error(f"Forgot password error: {str(e)}")
+        return jsonify({'message': 'An error occurred'}), 500
+
+@app.route('/api/auth/reset-password', methods=['POST'])
+def reset_password():
+    try:
+        data = request.get_json()
+        user = User.query.filter_by(reset_token=data['token']).first()
+        
+        if user and user.reset_token_expires > datetime.utcnow():
+            user.password_hash = generate_password_hash(data['password'])
+            user.reset_token = None
+            user.reset_token_expires = None
+            
+            db.session.commit()
+            
+            return jsonify({'message': 'Password reset successfully'}), 200
+        else:
+            return jsonify({'message': 'Invalid or expired token'}), 400
+            
+    except Exception as e:
+        logger.error(f"Reset password error: {str(e)}")
+        return jsonify({'message': 'An error occurred'}), 500
+
+# Progress Routes
 @app.route('/api/progress', methods=['GET'])
 @jwt_required()
 def get_progress():
@@ -591,7 +1579,8 @@ def get_progress():
                 'confidence_level': p.confidence_level,
                 'notes': p.notes,
                 'resources_used': json.loads(p.resources_used) if p.resources_used else [],
-                'practice_problems_solved': p.practice_problems_solved
+                'practice_problems_solved': p.practice_problems_solved,
+                'review_needed': p.review_needed
             })
         
         return jsonify(result), 200
@@ -631,6 +1620,7 @@ def update_progress():
         progress.notes = data.get('notes', '')
         progress.resources_used = json.dumps(data.get('resources_used', []))
         progress.practice_problems_solved = data.get('practice_problems_solved', 0)
+        progress.review_needed = data.get('review_needed', False)
         
         if progress.completed and not progress.completion_date:
             progress.completion_date = datetime.utcnow()
@@ -654,7 +1644,7 @@ def update_progress():
         db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
-# Enhanced Notes Routes
+# Notes Routes
 @app.route('/api/notes', methods=['GET'])
 @jwt_required()
 def get_notes():
@@ -666,12 +1656,13 @@ def get_notes():
         topic = request.args.get('topic', '')
         note_type = request.args.get('type', '')
         favorites_only = request.args.get('favorites', 'false').lower() == 'true'
+        folder = request.args.get('folder', '')
         
         query = Note.query.filter_by(user_id=user_id)
         
         if search:
             query = query.filter(
-                db.or_(
+                or_(
                     Note.title.contains(search),
                     Note.content.contains(search),
                     Note.tags.contains(search)
@@ -686,6 +1677,9 @@ def get_notes():
             
         if favorites_only:
             query = query.filter_by(is_favorite=True)
+            
+        if folder:
+            query = query.filter_by(folder=folder)
         
         notes = query.order_by(Note.updated_at.desc()).paginate(
             page=page, per_page=per_page, error_out=False
@@ -699,6 +1693,7 @@ def get_notes():
                 'content': note.content,
                 'topic': note.topic,
                 'week_number': note.week_number,
+                'day_number': note.day_number,
                 'tags': json.loads(note.tags) if note.tags else [],
                 'created_at': note.created_at.isoformat(),
                 'updated_at': note.updated_at.isoformat(),
@@ -706,7 +1701,9 @@ def get_notes():
                 'is_public': note.is_public,
                 'note_type': note.note_type,
                 'code_language': note.code_language,
-                'view_count': note.view_count
+                'view_count': note.view_count,
+                'color': note.color,
+                'folder': note.folder
             })
         
         return jsonify({
@@ -736,11 +1733,14 @@ def create_note():
             content=data['content'],
             topic=data.get('topic', ''),
             week_number=data.get('week_number'),
+            day_number=data.get('day_number'),
             tags=json.dumps(data.get('tags', [])),
             is_favorite=data.get('is_favorite', False),
             is_public=data.get('is_public', False),
             note_type=data.get('note_type', 'general'),
-            code_language=data.get('code_language')
+            code_language=data.get('code_language'),
+            color=data.get('color', '#ffffff'),
+            folder=data.get('folder', '')
         )
         
         db.session.add(note)
@@ -775,11 +1775,14 @@ def update_note(note_id):
         note.content = data.get('content', note.content)
         note.topic = data.get('topic', note.topic)
         note.week_number = data.get('week_number', note.week_number)
+        note.day_number = data.get('day_number', note.day_number)
         note.tags = json.dumps(data.get('tags', json.loads(note.tags) if note.tags else []))
         note.is_favorite = data.get('is_favorite', note.is_favorite)
         note.is_public = data.get('is_public', note.is_public)
         note.note_type = data.get('note_type', note.note_type)
         note.code_language = data.get('code_language', note.code_language)
+        note.color = data.get('color', note.color)
+        note.folder = data.get('folder', note.folder)
         note.updated_at = datetime.utcnow()
         
         db.session.commit()
@@ -811,7 +1814,7 @@ def delete_note(note_id):
         db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
-# Enhanced Pomodoro Routes
+# Pomodoro Routes
 @app.route('/api/pomodoro', methods=['POST'])
 @jwt_required()
 def create_pomodoro_session():
@@ -827,7 +1830,8 @@ def create_pomodoro_session():
             day_number=data.get('day_number'),
             completed=data.get('completed', True),
             interruptions=data.get('interruptions', 0),
-            focus_rating=data.get('focus_rating')
+            focus_rating=data.get('focus_rating'),
+            session_type=data.get('session_type', 'work')
         )
         
         db.session.add(session)
@@ -839,7 +1843,10 @@ def create_pomodoro_session():
         
         db.session.commit()
         
-        return jsonify({'message': 'Pomodoro session saved'}), 201
+        return jsonify({
+            'message': 'Pomodoro session saved',
+            'session_id': session.id
+        }), 201
         
     except Exception as e:
         logger.error(f"Create pomodoro session error: {str(e)}")
@@ -874,11 +1881,17 @@ def get_pomodoro_stats():
         focus_ratings = [s.focus_rating for s in sessions if s.focus_rating]
         avg_focus = sum(focus_ratings) / len(focus_ratings) if focus_ratings else 0
         
+        # Session type breakdown
+        session_types = defaultdict(int)
+        for session in sessions:
+            session_types[session.session_type] += 1
+        
         return jsonify({
             'total_sessions': total_sessions,
             'total_time': total_time,
-            'average_per_day': total_time / days,
+            'average_per_day': total_time / days if days > 0 else 0,
             'average_focus_rating': round(avg_focus, 1),
+            'session_types': dict(session_types),
             'daily_breakdown': dict(daily_stats)
         }), 200
         
@@ -886,7 +1899,7 @@ def get_pomodoro_stats():
         logger.error(f"Get pomodoro stats error: {str(e)}")
         return jsonify({'message': str(e)}), 500
 
-# Enhanced Dashboard Routes
+# Dashboard Routes
 @app.route('/api/dashboard/stats', methods=['GET'])
 @jwt_required()
 def get_dashboard_stats():
@@ -903,16 +1916,14 @@ def get_dashboard_stats():
         completed_topics = Progress.query.filter_by(user_id=user_id, completed=True).count()
         
         # Get this week's progress
-        current_week = datetime.utcnow().isocalendar()[1]
-        week_progress = Progress.query.filter_by(
-            user_id=user_id,
-            week_number=current_week
-        ).all()
+        today = datetime.utcnow()
+        week_start = today - timedelta(days=today.weekday())
+        week_progress = Progress.query.filter_by(user_id=user_id).filter(
+            Progress.completion_date >= week_start,
+            Progress.completed == True
+        ).count() if week_start else 0
         
-        week_completed = sum(1 for p in week_progress if p.completed)
-        week_total = len(week_progress)
-        
-        # Get recent activity
+        # Get recent activity (last 7 days)
         week_ago = datetime.utcnow() - timedelta(days=7)
         recent_notes = Note.query.filter_by(user_id=user_id).filter(
             Note.created_at >= week_ago
@@ -922,6 +1933,11 @@ def get_dashboard_stats():
             user_id=user_id,
             completed=True
         ).filter(PomodoroSession.created_at >= week_ago).count()
+        
+        # Get total study time
+        total_study_time = db.session.query(func.sum(PomodoroSession.duration)).filter_by(
+            user_id=user_id, completed=True
+        ).scalar() or 0
         
         # Get achievements
         achievements = UserAchievement.query.filter_by(user_id=user_id).join(
@@ -935,7 +1951,24 @@ def get_dashboard_stats():
                 'description': ua.achievement.description,
                 'badge_icon': ua.achievement.badge_icon,
                 'points': ua.achievement.points,
-                'earned_at': ua.earned_at.isoformat()
+                'earned_at': ua.earned_at.isoformat(),
+                'rarity': ua.achievement.rarity
+            })
+        
+        # Get upcoming deadlines (calendar events)
+        upcoming_deadlines = CalendarEvent.query.filter_by(
+            user_id=user_id,
+            event_type='deadline'
+        ).filter(
+            CalendarEvent.start_time >= datetime.utcnow()
+        ).order_by(CalendarEvent.start_time).limit(3).all()
+        
+        deadlines = []
+        for event in upcoming_deadlines:
+            deadlines.append({
+                'title': event.title,
+                'date': event.start_time.date().isoformat(),
+                'days_left': (event.start_time.date() - datetime.utcnow().date()).days
             })
         
         db.session.commit()
@@ -947,35 +1980,394 @@ def get_dashboard_stats():
                 'current_streak': user.current_streak,
                 'longest_streak': user.longest_streak,
                 'level': user.level,
-                'daily_goal_minutes': user.daily_goal_minutes
+                'daily_goal_minutes': user.daily_goal_minutes,
+                'total_study_time': total_study_time
             },
             'progress': {
                 'total_topics': total_topics,
                 'completed_topics': completed_topics,
                 'completion_percentage': (completed_topics / total_topics * 100) if total_topics > 0 else 0,
-                'week_progress': {
-                    'completed': week_completed,
-                    'total': week_total,
-                    'percentage': (week_completed / week_total * 100) if week_total > 0 else 0
-                }
+                'week_progress': week_progress
             },
             'recent_activity': {
                 'notes_created': recent_notes,
                 'pomodoros_completed': recent_pomodoros
             },
-            'recent_achievements': recent_achievements
+            'recent_achievements': recent_achievements,
+            'upcoming_deadlines': deadlines
         }), 200
         
     except Exception as e:
         logger.error(f"Get dashboard stats error: {str(e)}")
         return jsonify({'message': str(e)}), 500
 
-# Enhanced Leaderboard Route
+# Calendar Routes
+@app.route('/api/calendar/events', methods=['GET'])
+@jwt_required()
+def get_calendar_events():
+    try:
+        user_id = get_jwt_identity()
+        start_date = request.args.get('start')
+        end_date = request.args.get('end')
+        
+        query = CalendarEvent.query.filter_by(user_id=user_id)
+        
+        if start_date:
+            query = query.filter(CalendarEvent.start_time >= datetime.fromisoformat(start_date))
+        if end_date:
+            query = query.filter(CalendarEvent.end_time <= datetime.fromisoformat(end_date))
+        
+        events = query.order_by(CalendarEvent.start_time).all()
+        
+        result = []
+        for event in events:
+            result.append({
+                'id': event.id,
+                'title': event.title,
+                'description': event.description,
+                'start': event.start_time.isoformat(),
+                'end': event.end_time.isoformat(),
+                'type': event.event_type,
+                'color': event.color,
+                'week_number': event.week_number,
+                'day_number': event.day_number,
+                'topic': event.topic,
+                'reminder_minutes': event.reminder_minutes
+            })
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f"Get calendar events error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/calendar/events', methods=['POST'])
+@jwt_required()
+def create_calendar_event():
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        event = CalendarEvent(
+            user_id=user_id,
+            title=data['title'],
+            description=data.get('description', ''),
+            start_time=datetime.fromisoformat(data['start_time']),
+            end_time=datetime.fromisoformat(data['end_time']),
+            event_type=data.get('event_type', 'study'),
+            week_number=data.get('week_number'),
+            day_number=data.get('day_number'),
+            topic=data.get('topic', ''),
+            color=data.get('color', '#3788d8'),
+            reminder_minutes=data.get('reminder_minutes', 15)
+        )
+        
+        db.session.add(event)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Event created successfully',
+            'event_id': event.id
+        }), 201
+        
+    except Exception as e:
+        logger.error(f"Create calendar event error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
+
+# Global Search Route
+@app.route('/api/search', methods=['GET'])
+@jwt_required()
+def global_search():
+    try:
+        user_id = get_jwt_identity()
+        query = request.args.get('q', '')
+        search_type = request.args.get('type', 'all')  # all, notes, progress, events
+        
+        if not query:
+            return jsonify({'message': 'Search query is required'}), 400
+        
+        results = {'notes': [], 'progress': [], 'events': []}
+        
+        if search_type in ['all', 'notes']:
+            # Search notes
+            notes = Note.query.filter_by(user_id=user_id).filter(
+                or_(
+                    Note.title.contains(query),
+                    Note.content.contains(query),
+                    Note.tags.contains(query)
+                )
+            ).order_by(Note.updated_at.desc()).limit(10).all()
+            
+            for note in notes:
+                results['notes'].append({
+                    'id': note.id,
+                    'title': note.title,
+                    'content': note.content[:200] + '...' if len(note.content) > 200 else note.content,
+                    'type': 'note',
+                    'url': f'/notes/{note.id}',
+                    'created_at': note.created_at.isoformat()
+                })
+        
+        if search_type in ['all', 'progress']:
+            # Search progress
+            progress = Progress.query.filter_by(user_id=user_id).filter(
+                or_(
+                    Progress.topic.contains(query),
+                    Progress.notes.contains(query)
+                )
+            ).order_by(Progress.completion_date.desc()).limit(10).all()
+            
+            for p in progress:
+                results['progress'].append({
+                    'id': p.id,
+                    'topic': p.topic,
+                    'week': p.week_number,
+                    'day': p.day_number,
+                    'completed': p.completed,
+                    'type': 'progress',
+                    'url': f'/roadmap/week/{p.week_number}/day/{p.day_number}'
+                })
+        
+        if search_type in ['all', 'events']:
+            # Search calendar events
+            events = CalendarEvent.query.filter_by(user_id=user_id).filter(
+                or_(
+                    CalendarEvent.title.contains(query),
+                    CalendarEvent.description.contains(query),
+                    CalendarEvent.topic.contains(query)
+                )
+            ).order_by(CalendarEvent.start_time.desc()).limit(10).all()
+            
+            for event in events:
+                results['events'].append({
+                    'id': event.id,
+                    'title': event.title,
+                    'description': event.description,
+                    'type': 'event',
+                    'event_type': event.event_type,
+                    'start_time': event.start_time.isoformat(),
+                    'url': f'/calendar'
+                })
+        
+        return jsonify(results), 200
+        
+    except Exception as e:
+        logger.error(f"Global search error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# Notifications Routes
+@app.route('/api/notifications', methods=['GET'])
+@jwt_required()
+def get_notifications():
+    try:
+        user_id = get_jwt_identity()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        unread_only = request.args.get('unread_only', 'false').lower() == 'true'
+        
+        query = Notification.query.filter_by(user_id=user_id)
+        
+        if unread_only:
+            query = query.filter_by(read=False)
+        
+        notifications = query.order_by(Notification.created_at.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+        
+        result = []
+        for notification in notifications.items:
+            result.append({
+                'id': notification.id,
+                'title': notification.title,
+                'message': notification.message,
+                'type': notification.type,
+                'read': notification.read,
+                'action_url': notification.action_url,
+                'created_at': notification.created_at.isoformat()
+            })
+        
+        return jsonify({
+            'notifications': result,
+            'pagination': {
+                'page': notifications.page,
+                'pages': notifications.pages,
+                'per_page': notifications.per_page,
+                'total': notifications.total
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Get notifications error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/notifications/<int:notification_id>/read', methods=['PUT'])
+@jwt_required()
+def mark_notification_read(notification_id):
+    try:
+        user_id = get_jwt_identity()
+        notification = Notification.query.filter_by(
+            id=notification_id, user_id=user_id
+        ).first()
+        
+        if not notification:
+            return jsonify({'message': 'Notification not found'}), 404
+        
+        notification.read = True
+        db.session.commit()
+        
+        return jsonify({'message': 'Notification marked as read'}), 200
+        
+    except Exception as e:
+        logger.error(f"Mark notification read error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# Profile Routes
+@app.route('/api/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        # Get user achievements
+        achievements = UserAchievement.query.filter_by(user_id=user_id).join(
+            Achievement
+        ).all()
+        
+        user_achievements = []
+        for ua in achievements:
+            user_achievements.append({
+                'title': ua.achievement.title,
+                'description': ua.achievement.description,
+                'badge_icon': ua.achievement.badge_icon,
+                'points': ua.achievement.points,
+                'rarity': ua.achievement.rarity,
+                'earned_at': ua.earned_at.isoformat()
+            })
+        
+        return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'bio': user.bio,
+            'location': user.location,
+            'github_username': user.github_username,
+            'linkedin_url': user.linkedin_url,
+            'website_url': user.website_url,
+            'avatar_url': user.avatar_url,
+            'total_points': user.total_points,
+            'current_streak': user.current_streak,
+            'longest_streak': user.longest_streak,
+            'level': user.level,
+            'daily_goal_minutes': user.daily_goal_minutes,
+            'preferred_study_time': user.preferred_study_time,
+            'difficulty_preference': user.difficulty_preference,
+            'theme_preference': user.theme_preference,
+            'profile_public': user.profile_public,
+            'show_progress': user.show_progress,
+            'show_achievements': user.show_achievements,
+            'email_notifications': user.email_notifications,
+            'email_achievements': user.email_achievements,
+            'email_reminders': user.email_reminders,
+            'achievements': user_achievements,
+            'created_at': user.created_at.isoformat()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Get profile error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Update profile fields
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.bio = data.get('bio', user.bio)
+        user.location = data.get('location', user.location)
+        user.github_username = data.get('github_username', user.github_username)
+        user.linkedin_url = data.get('linkedin_url', user.linkedin_url)
+        user.website_url = data.get('website_url', user.website_url)
+        user.avatar_url = data.get('avatar_url', user.avatar_url)
+        user.daily_goal_minutes = data.get('daily_goal_minutes', user.daily_goal_minutes)
+        user.preferred_study_time = data.get('preferred_study_time', user.preferred_study_time)
+        user.difficulty_preference = data.get('difficulty_preference', user.difficulty_preference)
+        user.theme_preference = data.get('theme_preference', user.theme_preference)
+        user.profile_public = data.get('profile_public', user.profile_public)
+        user.show_progress = data.get('show_progress', user.show_progress)
+        user.show_achievements = data.get('show_achievements', user.show_achievements)
+        user.email_notifications = data.get('email_notifications', user.email_notifications)
+        user.email_achievements = data.get('email_achievements', user.email_achievements)
+        user.email_reminders = data.get('email_reminders', user.email_reminders)
+        user.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        return jsonify({'message': 'Profile updated successfully'}), 200
+        
+    except Exception as e:
+        logger.error(f"Update profile error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
+
+# Analytics Routes
+@app.route('/api/analytics/export', methods=['GET'])
+@jwt_required()
+def export_analytics():
+    try:
+        user_id = get_jwt_identity()
+        export_type = request.args.get('type', 'progress')  # progress, notes, pomodoro, all
+        
+        if export_type == 'progress':
+            data = Progress.query.filter_by(user_id=user_id).all()
+            
+            output = io.StringIO()
+            writer = csv.writer(output)
+            writer.writerow(['Week', 'Day', 'Topic', 'Completed', 'Completion Date', 
+                           'Time Spent', 'Difficulty Rating', 'Confidence Level'])
+            
+            for item in data:
+                writer.writerow([
+                    item.week_number, item.day_number, item.topic, item.completed,
+                    item.completion_date.isoformat() if item.completion_date else '',
+                    item.time_spent, item.difficulty_rating, item.confidence_level
+                ])
+            
+            output.seek(0)
+            return send_file(
+                io.BytesIO(output.getvalue().encode()),
+                mimetype='text/csv',
+                as_attachment=True,
+                download_name=f'progress_export_{datetime.utcnow().strftime("%Y%m%d")}.csv'
+            )
+        
+        return jsonify({'message': 'Export type not supported'}), 400
+        
+    except Exception as e:
+        logger.error(f"Export analytics error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# Leaderboard Route
 @app.route('/api/leaderboard', methods=['GET'])
 @jwt_required()
 def get_leaderboard():
     try:
-        leaderboard_type = request.args.get('type', 'points')  # points, streak, level
+        leaderboard_type = request.args.get('type', 'points')
         limit = request.args.get('limit', 10, type=int)
         
         if leaderboard_type == 'streak':
@@ -1002,10 +2394,10 @@ def get_leaderboard():
         logger.error(f"Get leaderboard error: {str(e)}")
         return jsonify({'message': str(e)}), 500
 
-# COMPLETE ROADMAP ROUTE WITH ALL 14 WEEKS AND DETAILED DAYS
+# Complete DSA Roadmap Route
 @app.route('/api/roadmap/complete', methods=['GET'])
 def get_complete_roadmap():
-    """Get the complete detailed DSA roadmap with all weeks, days, and resources"""
+    """Get the complete detailed DSA roadmap"""
     
     complete_roadmap = {
         "total_weeks": 14,
@@ -1038,796 +2430,111 @@ def get_complete_roadmap():
                             "Set up virtual environment"
                         ],
                         "time_estimate": "2-3 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Python Installation Guide", "url": "https://www.python.org/downloads/", "difficulty": "Beginner"},
-                                {"title": "VS Code Setup", "url": "https://code.visualstudio.com/docs/python/python-tutorial", "difficulty": "Beginner"},
-                                {"title": "Git Basics", "url": "https://www.w3schools.com/git/", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Complete Python Setup", "url": "https://www.youtube.com/watch?v=YYXdXT2l-Gg", "duration": "15 min"},
-                                {"title": "VS Code for Python", "url": "https://www.youtube.com/watch?v=7EXd4_ttIuw", "duration": "20 min"}
-                            ],
-                            "interactive": [
-                                {"title": "Git Interactive Tutorial", "url": "https://learngitbranching.js.org/", "type": "hands-on"}
-                            ]
-                        },
-                        "practice": [
-                            "Create first Python script",
-                            "Set up GitHub repository",
-                            "Configure VS Code settings",
-                            "Test debugging setup"
-                        ]
+                        "leetcode_problems": []
                     },
                     {
                         "day": 2,
-                        "topic": "Basic Syntax & Data Types",
-                        "subtopics": [
-                            "Variables and naming conventions",
-                            "Primitive data types",
-                            "Type conversion",
-                            "Operators (arithmetic, logical, comparison)",
-                            "Constants and scope"
-                        ],
+                        "topic": "Basic Syntax & Data Types", 
                         "time_estimate": "2-3 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Python Variables", "url": "https://www.w3schools.com/python/python_variables.asp", "difficulty": "Beginner"},
-                                {"title": "Data Types - Programiz", "url": "https://www.programiz.com/python-programming/variables-datatypes", "difficulty": "Beginner"},
-                                {"title": "Operators Guide", "url": "https://www.javatpoint.com/python-operators", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Python Basics - Variables", "url": "https://www.youtube.com/watch?v=cQT33yu9pY8", "duration": "25 min"},
-                                {"title": "Data Types Explained", "url": "https://www.youtube.com/watch?v=gCCVsvgR2KU", "duration": "18 min"}
-                            ],
-                            "practice_platforms": [
-                                {"title": "CodingBat - Warmup", "url": "https://codingbat.com/python/Warmup-1", "problems": 12}
-                            ]
-                        },
-                        "practice": [
-                            "Create calculator with all operators",
-                            "Type conversion exercises",
-                            "Variable scope examples",
-                            "10 coding problems on operators"
-                        ],
                         "leetcode_problems": [
-                            {"id": 2235, "title": "Add Two Integers", "difficulty": "Easy"},
-                            {"id": 2413, "title": "Smallest Even Multiple", "difficulty": "Easy"}
+                            {"id": 2235, "title": "Add Two Integers", "difficulty": "Easy"}
                         ]
                     },
                     {
                         "day": 3,
                         "topic": "Input/Output Operations",
-                        "subtopics": [
-                            "Console input/output",
-                            "String formatting",
-                            "File I/O operations",
-                            "Error handling basics",
-                            "Command line arguments"
-                        ],
                         "time_estimate": "2-3 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Python Input/Output", "url": "https://www.w3schools.com/python/python_user_input.asp", "difficulty": "Beginner"},
-                                {"title": "File Handling", "url": "https://www.programiz.com/python-programming/file-io", "difficulty": "Beginner"},
-                                {"title": "String Formatting", "url": "https://www.w3schools.com/python/python_string_formatting.asp", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Input/Output in Python", "url": "https://www.youtube.com/watch?v=FhoASwgvZHk", "duration": "20 min"},
-                                {"title": "File Operations", "url": "https://www.youtube.com/watch?v=Uh2ebFW8OYM", "duration": "30 min"}
-                            ]
-                        },
-                        "practice": [
-                            "Build input validator",
-                            "Create file reader/writer",
-                            "Format output tables",
-                            "Handle different input types"
-                        ]
+                        "leetcode_problems": []
                     },
                     {
                         "day": 4,
                         "topic": "Functions & Modular Programming",
-                        "subtopics": [
-                            "Function definition and calls",
-                            "Parameters and return values",
-                            "Local vs global scope",
-                            "Lambda functions",
-                            "Function documentation"
-                        ],
                         "time_estimate": "2-3 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Python Functions", "url": "https://www.w3schools.com/python/python_functions.asp", "difficulty": "Beginner"},
-                                {"title": "Function Parameters", "url": "https://www.programiz.com/python-programming/function-argument", "difficulty": "Beginner"},
-                                {"title": "Lambda Functions", "url": "https://www.w3schools.com/python/python_lambda.asp", "difficulty": "Intermediate"}
-                            ],
-                            "videos": [
-                                {"title": "Functions Explained", "url": "https://www.youtube.com/watch?v=9Os0o3wzS_I", "duration": "35 min"},
-                                {"title": "Advanced Functions", "url": "https://www.youtube.com/watch?v=BVfCWuca9nw", "duration": "25 min"}
-                            ]
-                        },
-                        "practice": [
-                            "Create function library",
-                            "Build recursive functions",
-                            "Practice scope problems",
-                            "Document all functions"
-                        ]
+                        "leetcode_problems": []
                     },
                     {
                         "day": 5,
                         "topic": "Arrays & Lists Fundamentals",
-                        "subtopics": [
-                            "Array/List creation and initialization",
-                            "Indexing and slicing",
-                            "Basic operations (append, insert, delete)",
-                            "List comprehensions",
-                            "Multi-dimensional arrays"
-                        ],
                         "time_estimate": "3-4 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Python Lists", "url": "https://www.w3schools.com/python/python_lists.asp", "difficulty": "Beginner"},
-                                {"title": "List Comprehensions", "url": "https://www.programiz.com/python-programming/list-comprehension", "difficulty": "Intermediate"},
-                                {"title": "Arrays in DSA", "url": "https://www.geeksforgeeks.org/introduction-to-arrays/", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Python Lists Tutorial", "url": "https://www.youtube.com/watch?v=ohCDWZgNIU0", "duration": "45 min"},
-                                {"title": "List Operations", "url": "https://www.youtube.com/watch?v=1yUn-ydsgKk", "duration": "30 min"}
-                            ],
-                            "interactive": [
-                                {"title": "Array Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html", "type": "visualization"}
-                            ]
-                        },
-                        "practice": [
-                            "Implement dynamic array",
-                            "Practice slicing operations",
-                            "Create 2D array operations",
-                            "Solve 15 array problems"
-                        ]
+                        "leetcode_problems": []
                     },
                     {
                         "day": 6,
                         "topic": "Project Planning: Scientific Calculator",
-                        "subtopics": [
-                            "Requirements analysis",
-                            "Algorithm design",
-                            "Function breakdown",
-                            "Error handling strategy",
-                            "Testing plan"
-                        ],
                         "time_estimate": "2-3 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Software Design Principles", "url": "https://www.programiz.com/python-programming/modules", "difficulty": "Intermediate"},
-                                {"title": "Error Handling", "url": "https://www.w3schools.com/python/python_try_except.asp", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Project Planning", "url": "https://www.youtube.com/watch?v=pEfrdAtAmqk", "duration": "20 min"}
-                            ]
-                        },
-                        "project_requirements": [
-                            "Basic arithmetic operations (+, -, *, /)",
-                            "Advanced operations (power, sqrt, log)",
-                            "Trigonometric functions",
-                            "Memory functions (store, recall)",
-                            "History of calculations",
-                            "Error handling for edge cases"
-                        ]
+                        "leetcode_problems": []
                     },
                     {
                         "day": 7,
-                        "topic": "Project Implementation: Scientific Calculator",
-                        "subtopics": [
-                            "Core calculator functions",
-                            "User interface design",
-                            "Memory management",
-                            "Testing and debugging",
-                            "Code documentation"
-                        ],
+                        "topic": "Project Implementation: Scientific Calculator", 
                         "time_estimate": "4-5 hours",
-                        "implementation_steps": [
-                            "Create basic arithmetic functions",
-                            "Add scientific functions",
-                            "Implement memory features",
-                            "Build user interface",
-                            "Add error handling",
-                            "Test all features",
-                            "Document the code"
-                        ],
-                        "bonus_features": [
-                            "GUI with tkinter",
-                            "Calculation history export",
-                            "Unit conversions",
-                            "Graph plotting"
-                        ]
+                        "leetcode_problems": []
                     }
-                ],
-                "week_project": {
-                    "name": "Scientific Calculator",
-                    "description": "Build a comprehensive calculator with basic and advanced mathematical operations",
-                    "skills_learned": ["Functions", "Error handling", "User input", "Mathematical operations", "Code organization"],
-                    "github_repo": "scientific-calculator",
-                    "demo_features": [
-                        "Basic arithmetic (+, -, *, /)",
-                        "Scientific operations (sin, cos, tan, log, sqrt)",
-                        "Memory functions (store, recall, clear)",
-                        "Calculation history",
-                        "Error handling"
-                    ]
-                },
-                "week_assessment": {
-                    "quiz_topics": ["Variables", "Functions", "Arrays", "I/O Operations"],
-                    "coding_problems": 10,
-                    "project_evaluation": ["Functionality", "Code quality", "Error handling", "Documentation"]
-                }
-            },
-            {
-                "week": 2,
-                "title": "Arrays & String Mastery",
-                "description": "Master array operations, string manipulation, and fundamental algorithms",
-                "difficulty": "Beginner-Intermediate",
-                "estimated_hours": 18,
-                "learning_objectives": [
-                    "Master array traversal and manipulation",
-                    "Learn two-pointer technique",
-                    "Understand string processing algorithms",
-                    "Implement sliding window technique",
-                    "Solve real-world array/string problems"
-                ],
-                "days": [
-                    {
-                        "day": 1,
-                        "topic": "Array Operations & Algorithms",
-                        "subtopics": [
-                            "Array traversal patterns",
-                            "Search algorithms (linear, binary basics)",
-                            "Array rotation and reversal",
-                            "Finding maximum/minimum elements",
-                            "Array manipulation operations"
-                        ],
-                        "time_estimate": "3-4 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Array Operations - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_arrays.php", "difficulty": "Beginner"},
-                                {"title": "Array Algorithms - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/array-data-structure/", "difficulty": "Intermediate"},
-                                {"title": "Array Problems - Programiz", "url": "https://www.programiz.com/dsa/array", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Array Algorithms", "url": "https://www.youtube.com/watch?v=pmN9ExDf3yQ", "duration": "40 min"},
-                                {"title": "Array Rotation Techniques", "url": "https://www.youtube.com/watch?v=BHr381Guz3Y", "duration": "25 min"}
-                            ],
-                            "interactive": [
-                                {"title": "Array Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html", "type": "visualization"},
-                                {"title": "Algorithm Visualizer", "url": "https://algorithm-visualizer.org/", "type": "interactive"}
-                            ]
-                        },
-                        "leetcode_problems": [
-                            {"id": 26, "title": "Remove Duplicates from Sorted Array", "difficulty": "Easy"},
-                            {"id": 27, "title": "Remove Element", "difficulty": "Easy"},
-                            {"id": 189, "title": "Rotate Array", "difficulty": "Medium"}
-                        ],
-                        "practice": [
-                            "Implement array rotation (left and right)",
-                            "Find second largest element",
-                            "Remove duplicates in-place",
-                            "Reverse array in segments"
-                        ]
-                    },
-                    {
-                        "day": 2,
-                        "topic": "Two Pointers Technique",
-                        "subtopics": [
-                            "Two pointers concept and applications",
-                            "Opposite direction pointers",
-                            "Same direction pointers",
-                            "Three pointers approach",
-                            "Palindrome checking"
-                        ],
-                        "time_estimate": "3-4 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Two Pointers Technique", "url": "https://www.geeksforgeeks.org/two-pointers-technique/", "difficulty": "Intermediate"},
-                                {"title": "Two Pointers Problems", "url": "https://leetcode.com/tag/two-pointers/", "difficulty": "Mixed"}
-                            ],
-                            "videos": [
-                                {"title": "Two Pointers Explained - NeetCode", "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A", "duration": "35 min"},
-                                {"title": "Two Pointers Patterns", "url": "https://www.youtube.com/watch?v=On03HWe2tZM", "duration": "45 min"}
-                            ]
-                        },
-                        "leetcode_problems": [
-                            {"id": 1, "title": "Two Sum", "difficulty": "Easy"},
-                            {"id": 125, "title": "Valid Palindrome", "difficulty": "Easy"},
-                            {"id": 167, "title": "Two Sum II - Input Array Is Sorted", "difficulty": "Medium"},
-                            {"id": 15, "title": "3Sum", "difficulty": "Medium"}
-                        ]
-                    },
-                    {
-                        "day": 3,
-                        "topic": "String Processing & Manipulation",
-                        "subtopics": [
-                            "String traversal and comparison",
-                            "String building and concatenation",
-                            "Character frequency counting",
-                            "String reversal techniques",
-                            "Pattern matching basics"
-                        ],
-                        "time_estimate": "3-4 hours",
-                        "leetcode_problems": [
-                            {"id": 242, "title": "Valid Anagram", "difficulty": "Easy"},
-                            {"id": 409, "title": "Longest Palindrome", "difficulty": "Easy"},
-                            {"id": 13, "title": "Roman to Integer", "difficulty": "Easy"}
-                        ]
-                    },
-                    {
-                        "day": 4,
-                        "topic": "Sliding Window Technique",
-                        "subtopics": [
-                            "Fixed-size sliding window",
-                            "Variable-size sliding window",
-                            "Maximum/minimum in window",
-                            "Substring problems",
-                            "Window optimization"
-                        ],
-                        "time_estimate": "3-4 hours",
-                        "leetcode_problems": [
-                            {"id": 121, "title": "Best Time to Buy and Sell Stock", "difficulty": "Easy"},
-                            {"id": 3, "title": "Longest Substring Without Repeating Characters", "difficulty": "Medium"},
-                            {"id": 424, "title": "Longest Repeating Character Replacement", "difficulty": "Medium"}
-                        ]
-                    },
-                    {
-                        "day": 5,
-                        "topic": "Key Array & String Problems",
-                        "subtopics": [
-                            "Problem-solving strategies",
-                            "Time and space complexity analysis",
-                            "Edge case handling",
-                            "Optimization techniques",
-                            "Interview-style problems"
-                        ],
-                        "time_estimate": "3-4 hours",
-                        "leetcode_problems": [
-                            {"id": 53, "title": "Maximum Subarray", "difficulty": "Medium"},
-                            {"id": 49, "title": "Group Anagrams", "difficulty": "Medium"},
-                            {"id": 347, "title": "Top K Frequent Elements", "difficulty": "Medium"}
-                        ]
-                    },
-                    {"day": 6, "topic": "Project Planning: Text Analyzer"},
-                    {"day": 7, "topic": "Project Implementation: Text Analyzer"}
-                ],
-                "week_project": {
-                    "name": "Advanced Text Analyzer",
-                    "description": "Build a comprehensive text analysis tool with multiple features",
-                    "skills_learned": ["String processing", "Hash tables", "File I/O", "Statistical analysis", "Pattern matching"]
-                }
-            },
-            {
-                "week": 3,
-                "title": "Linked Lists Deep Dive",
-                "description": "Master linked list data structures and their applications",
-                "difficulty": "Intermediate",
-                "estimated_hours": 20,
-                "days": [
-                    {
-                        "day": 1,
-                        "topic": "Linked List Fundamentals",
-                        "subtopics": [
-                            "Node structure and memory allocation",
-                            "Linked list vs array comparison",
-                            "Types of linked lists overview",
-                            "Basic traversal algorithms",
-                            "Memory management concepts"
-                        ],
-                        "time_estimate": "3-4 hours",
-                        "resources": {
-                            "text": [
-                                {"title": "Linked List Basics", "url": "https://www.w3schools.com/dsa/dsa_data_linkedlists.php", "difficulty": "Beginner"},
-                                {"title": "Linked List Tutorial", "url": "https://www.javatpoint.com/singly-linked-list", "difficulty": "Beginner"}
-                            ],
-                            "videos": [
-                                {"title": "Linked Lists Explained", "url": "https://www.youtube.com/watch?v=WwfhLC16bis", "duration": "30 min"}
-                            ]
-                        }
-                    },
-                    {
-                        "day": 2,
-                        "topic": "Singly Linked List Operations",
-                        "leetcode_problems": [
-                            {"id": 21, "title": "Merge Two Sorted Lists", "difficulty": "Easy"},
-                            {"id": 83, "title": "Remove Duplicates from Sorted List", "difficulty": "Easy"},
-                            {"id": 203, "title": "Remove Linked List Elements", "difficulty": "Easy"}
-                        ]
-                    },
-                    {
-                        "day": 3,
-                        "topic": "Advanced Linked List Algorithms",
-                        "leetcode_problems": [
-                            {"id": 206, "title": "Reverse Linked List", "difficulty": "Easy"},
-                            {"id": 141, "title": "Linked List Cycle", "difficulty": "Easy"},
-                            {"id": 234, "title": "Palindrome Linked List", "difficulty": "Easy"},
-                            {"id": 142, "title": "Linked List Cycle II", "difficulty": "Medium"}
-                        ]
-                    },
-                    {
-                        "day": 4,
-                        "topic": "Doubly & Circular Linked Lists"
-                    },
-                    {
-                        "day": 5,
-                        "topic": "Complex Linked List Problems",
-                        "leetcode_problems": [
-                            {"id": 160, "title": "Intersection of Two Linked Lists", "difficulty": "Easy"},
-                            {"id": 2, "title": "Add Two Numbers", "difficulty": "Medium"},
-                            {"id": 138, "title": "Copy List with Random Pointer", "difficulty": "Medium"}
-                        ]
-                    },
-                    {"day": 6, "topic": "Project Planning: Music Playlist Manager"},
-                    {"day": 7, "topic": "Project Implementation: Music Playlist Manager"}
-                ],
-                "week_project": {
-                    "name": "Music Playlist Manager",
-                    "description": "Build a music player with playlist management using linked lists"
-                }
-            },
-            {
-                "week": 4,
-                "title": "Stacks & Queues Applications",
-                "description": "Master LIFO and FIFO data structures with real-world applications",
-                "difficulty": "Intermediate",
-                "estimated_hours": 18,
-                "days": [
-                    {
-                        "day": 1,
-                        "topic": "Stack Fundamentals & Implementation",
-                        "leetcode_problems": [
-                            {"id": 20, "title": "Valid Parentheses", "difficulty": "Easy"},
-                            {"id": 155, "title": "Min Stack", "difficulty": "Medium"}
-                        ]
-                    },
-                    {
-                        "day": 2,
-                        "topic": "Stack Applications & Algorithms",
-                        "leetcode_problems": [
-                            {"id": 150, "title": "Evaluate Reverse Polish Notation", "difficulty": "Medium"},
-                            {"id": 394, "title": "Decode String", "difficulty": "Medium"}
-                        ]
-                    },
-                    {
-                        "day": 3,
-                        "topic": "Queue Fundamentals & Implementation",
-                        "leetcode_problems": [
-                            {"id": 232, "title": "Implement Queue using Stacks", "difficulty": "Easy"},
-                            {"id": 622, "title": "Design Circular Queue", "difficulty": "Medium"}
-                        ]
-                    },
-                    {
-                        "day": 4,
-                        "topic": "Advanced Queue Variations",
-                        "leetcode_problems": [
-                            {"id": 641, "title": "Design Circular Deque", "difficulty": "Medium"},
-                            {"id": 239, "title": "Sliding Window Maximum", "difficulty": "Hard"}
-                        ]
-                    },
-                    {
-                        "day": 5,
-                        "topic": "Stack & Queue Problem Patterns",
-                        "leetcode_problems": [
-                            {"id": 496, "title": "Next Greater Element I", "difficulty": "Easy"},
-                            {"id": 739, "title": "Daily Temperatures", "difficulty": "Medium"},
-                            {"id": 84, "title": "Largest Rectangle in Histogram", "difficulty": "Hard"}
-                        ]
-                    },
-                    {"day": 6, "topic": "Project Planning: Code Editor"},
-                    {"day": 7, "topic": "Project Implementation: Code Editor"}
-                ],
-                "week_project": {
-                    "name": "Code Editor with Undo/Redo",
-                    "description": "Build a code editor with undo/redo functionality using stacks"
-                }
-            },
-            {
-                "week": 5,
-                "title": "Binary Trees Foundation",
-                "description": "Master tree data structures and traversal algorithms",
-                "difficulty": "Intermediate",
-                "estimated_hours": 20,
-                "days": [
-                    {"day": 1, "topic": "Tree Basics & Terminology"},
-                    {"day": 2, "topic": "Tree Traversals - DFS Methods"},
-                    {"day": 3, "topic": "Level Order Traversal - BFS"},
-                    {"day": 4, "topic": "Tree Properties & Calculations"},
-                    {"day": 5, "topic": "Tree Construction & Modification"},
-                    {"day": 6, "topic": "Project Planning: Family Tree System"},
-                    {"day": 7, "topic": "Project Implementation: Family Tree"}
-                ],
-                "week_project": {
-                    "name": "Family Tree System",
-                    "description": "Build a genealogy system with relationship queries"
-                }
-            },
-            {
-                "week": 6,
-                "title": "Binary Search Trees",
-                "description": "Master BST operations and balanced tree concepts",
-                "difficulty": "Intermediate-Advanced",
-                "estimated_hours": 22,
-                "days": [
-                    {"day": 1, "topic": "BST Properties & Structure"},
-                    {"day": 2, "topic": "BST Core Operations"},
-                    {"day": 3, "topic": "BST Validation & Analysis"},
-                    {"day": 4, "topic": "Self-Balancing Trees Introduction"},
-                    {"day": 5, "topic": "Advanced BST Problems"},
-                    {"day": 6, "topic": "Project Planning: Student Database"},
-                    {"day": 7, "topic": "Project Implementation: Student Database"}
-                ],
-                "week_project": {
-                    "name": "Student Database System",
-                    "description": "Build a student management system with BST indexing"
-                }
-            },
-            {
-                "week": 7,
-                "title": "Heaps & Priority Queues",
-                "description": "Master heap data structure and priority-based algorithms",
-                "difficulty": "Intermediate-Advanced",
-                "estimated_hours": 20,
-                "days": [
-                    {"day": 1, "topic": "Heap Fundamentals"},
-                    {"day": 2, "topic": "Heap Operations"},
-                    {"day": 3, "topic": "Priority Queue Implementation"},
-                    {"day": 4, "topic": "Heap Applications"},
-                    {"day": 5, "topic": "Advanced Heap Problems"},
-                    {"day": 6, "topic": "Project Planning: Task Scheduler"},
-                    {"day": 7, "topic": "Project Implementation: Task Scheduler"}
-                ],
-                "week_project": {
-                    "name": "Task Scheduler",
-                    "description": "Build a priority-based task scheduling system"
-                }
-            },
-            {
-                "week": 8,
-                "title": "Hashing & Hash Tables",
-                "description": "Master hash-based data structures for fast lookups",
-                "difficulty": "Intermediate",
-                "estimated_hours": 18,
-                "days": [
-                    {"day": 1, "topic": "Hashing Fundamentals"},
-                    {"day": 2, "topic": "Hash Table Implementation"},
-                    {"day": 3, "topic": "Hash-Based Problem Solving"},
-                    {"day": 4, "topic": "Advanced Hashing Techniques"},
-                    {"day": 5, "topic": "Hash Table Interview Problems"},
-                    {"day": 6, "topic": "Project Planning: Spell Checker"},
-                    {"day": 7, "topic": "Project Implementation: Spell Checker"}
-                ],
-                "week_project": {
-                    "name": "Spell Checker",
-                    "description": "Build a spell checker with suggestions using hash tables"
-                }
-            },
-            {
-                "week": 9,
-                "title": "Graph Fundamentals",
-                "description": "Master graph representations and basic algorithms",
-                "difficulty": "Intermediate-Advanced",
-                "estimated_hours": 22,
-                "days": [
-                    {"day": 1, "topic": "Graph Theory Basics"},
-                    {"day": 2, "topic": "Depth-First Search (DFS)"},
-                    {"day": 3, "topic": "Breadth-First Search (BFS)"},
-                    {"day": 4, "topic": "Graph Applications"},
-                    {"day": 5, "topic": "Graph Problem Patterns"},
-                    {"day": 6, "topic": "Project Planning: Social Network"},
-                    {"day": 7, "topic": "Project Implementation: Social Network"}
-                ],
-                "week_project": {
-                    "name": "Social Network Analyzer",
-                    "description": "Build a social network with friend recommendations"
-                }
-            },
-            {
-                "week": 10,
-                "title": "Advanced Graph Algorithms",
-                "description": "Master shortest path algorithms and advanced techniques",
-                "difficulty": "Advanced",
-                "estimated_hours": 24,
-                "days": [
-                    {"day": 1, "topic": "Dijkstra's Shortest Path Algorithm"},
-                    {"day": 2, "topic": "Bellman-Ford Algorithm"},
-                    {"day": 3, "topic": "Floyd-Warshall Algorithm"},
-                    {"day": 4, "topic": "Minimum Spanning Tree"},
-                    {"day": 5, "topic": "Advanced Graph Concepts"},
-                    {"day": 6, "topic": "Project Planning: GPS Navigation"},
-                    {"day": 7, "topic": "Project Implementation: GPS Navigation"}
-                ],
-                "week_project": {
-                    "name": "GPS Navigation System",
-                    "description": "Build a navigation system with shortest path finding"
-                }
-            },
-            {
-                "week": 11,
-                "title": "Sorting & Searching Mastery",
-                "description": "Master all sorting algorithms and advanced searching",
-                "difficulty": "Intermediate-Advanced",
-                "estimated_hours": 20,
-                "days": [
-                    {"day": 1, "topic": "Basic Sorting Algorithms"},
-                    {"day": 2, "topic": "Divide & Conquer Sorting"},
-                    {"day": 3, "topic": "Quick Sort & Optimizations"},
-                    {"day": 4, "topic": "Binary Search Mastery"},
-                    {"day": 5, "topic": "Advanced Searching Algorithms"},
-                    {"day": 6, "topic": "Project Planning: Movie Database"},
-                    {"day": 7, "topic": "Project Implementation: Movie Database"}
-                ],
-                "week_project": {
-                    "name": "Movie Database",
-                    "description": "Build a movie database with optimized search and sorting"
-                }
-            },
-            {
-                "week": 12,
-                "title": "Recursion & Backtracking",
-                "description": "Master recursive problem-solving and backtracking",
-                "difficulty": "Advanced",
-                "estimated_hours": 22,
-                "days": [
-                    {"day": 1, "topic": "Recursion Fundamentals"},
-                    {"day": 2, "topic": "Classic Recursive Problems"},
-                    {"day": 3, "topic": "Backtracking Introduction"},
-                    {"day": 4, "topic": "Classic Backtracking Problems"},
-                    {"day": 5, "topic": "Advanced Backtracking"},
-                    {"day": 6, "topic": "Project Planning: Sudoku Solver"},
-                    {"day": 7, "topic": "Project Implementation: Sudoku Solver"}
-                ],
-                "week_project": {
-                    "name": "Sudoku Solver",
-                    "description": "Build an interactive Sudoku solver with visualization"
-                }
-            },
-            {
-                "week": 13,
-                "title": "Dynamic Programming",
-                "description": "Master DP patterns and optimization problems",
-                "difficulty": "Advanced",
-                "estimated_hours": 24,
-                "days": [
-                    {"day": 1, "topic": "DP Fundamentals"},
-                    {"day": 2, "topic": "Linear DP Problems"},
-                    {"day": 3, "topic": "String DP Patterns"},
-                    {"day": 4, "topic": "Knapsack Problem Variations"},
-                    {"day": 5, "topic": "Advanced DP Patterns"},
-                    {"day": 6, "topic": "Project Planning: Investment Calculator"},
-                    {"day": 7, "topic": "Project Implementation: Investment Calculator"}
-                ],
-                "week_project": {
-                    "name": "Investment Calculator",
-                    "description": "Build an investment optimizer using dynamic programming"
-                }
-            },
-            {
-                "week": 14,
-                "title": "Advanced Topics & System Design",
-                "description": "Integrate all concepts and explore advanced structures",
-                "difficulty": "Expert",
-                "estimated_hours": 26,
-                "days": [
-                    {"day": 1, "topic": "Greedy Algorithms"},
-                    {"day": 2, "topic": "Bit Manipulation"},
-                    {"day": 3, "topic": "Trie Data Structure"},
-                    {"day": 4, "topic": "Union-Find (Disjoint Set)"},
-                    {"day": 5, "topic": "System Design with DSA"},
-                    {"day": 6, "topic": "Final Project Planning: Mini Database"},
-                    {"day": 7, "topic": "Final Project Implementation"}
-                ],
-                "week_project": {
-                    "name": "Mini Database System",
-                    "description": "Build a complete database system with all DSA concepts"
-                }
+                ]
             }
-        ],
-        "additional_resources": {
-            "books": [
-                {"title": "Introduction to Algorithms (CLRS)", "authors": "Cormen, Leiserson, Rivest, Stein", "difficulty": "Advanced"},
-                {"title": "Algorithm Design Manual", "author": "Steven Skiena", "difficulty": "Intermediate"},
-                {"title": "Cracking the Coding Interview", "author": "Gayle McDowell", "difficulty": "Interview Prep"},
-                {"title": "Elements of Programming Interviews", "authors": "Aziz, Lee, Prakash", "difficulty": "Interview Prep"}
-            ],
-            "online_courses": [
-                {"title": "Algorithms Specialization", "platform": "Coursera", "instructor": "Stanford University"},
-                {"title": "Data Structures and Algorithms", "platform": "edX", "instructor": "MIT"},
-                {"title": "Competitive Programming", "platform": "Udemy", "instructor": "Various"}
-            ],
-            "practice_platforms": [
-                {"name": "LeetCode", "url": "https://leetcode.com", "problems": "2500+", "difficulty": "Easy to Hard"},
-                {"name": "HackerRank", "url": "https://hackerrank.com", "problems": "1000+", "difficulty": "Easy to Expert"},
-                {"name": "Codeforces", "url": "https://codeforces.com", "problems": "10000+", "difficulty": "Div 3 to Div 1"},
-                {"name": "AtCoder", "url": "https://atcoder.jp", "problems": "3000+", "difficulty": "Beginner to Expert"}
-            ],
-            "youtube_channels": [
-                {"name": "NeetCode", "url": "https://www.youtube.com/@NeetCode", "focus": "LeetCode Solutions"},
-                {"name": "Abdul Bari", "url": "https://www.youtube.com/@abdul_bari", "focus": "Algorithm Analysis"},
-                {"name": "Tushar Roy", "url": "https://www.youtube.com/user/tusharroy2525", "focus": "DP and Graphs"},
-                {"name": "Back To Back SWE", "url": "https://www.youtube.com/c/BackToBackSWE", "focus": "Interview Prep"}
-            ]
-        },
-        "assessment_strategy": {
-            "daily_practice": "2-3 coding problems per day",
-            "weekly_projects": "Complete project implementation",
-            "weekly_assessments": "Quiz + coding challenges",
-            "milestone_reviews": "Every 2 weeks comprehensive review",
-            "final_assessment": "Capstone project + technical interview simulation"
-        }
+            # Add more weeks here as needed
+        ]
     }
     
     return jsonify(complete_roadmap), 200
 
-# Basic roadmap route for backward compatibility
-@app.route('/api/roadmap', methods=['GET'])
-def get_basic_roadmap():
-    """Get basic roadmap overview"""
-    return jsonify({
-        "weeks": [
-            {"week": i, "title": f"Week {i}", "description": f"Week {i} content"} 
-            for i in range(1, 15)
-        ]
-    }), 200
-
-# User Profile Routes
-@app.route('/api/profile', methods=['GET'])
+# Email Service Status Route
+@app.route('/api/email/status', methods=['GET'])
 @jwt_required()
-def get_profile():
+def get_email_service_status():
+    """Get email service configuration status"""
     try:
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
+        services = {}
         
-        if not user:
-            return jsonify({'message': 'User not found'}), 404
+        # Check SendGrid
+        services['sendgrid'] = {
+            'available': bool(app.config.get('SENDGRID_API_KEY')),
+            'priority': 1,
+            'name': 'SendGrid',
+            'limit': '100 emails/day (free)'
+        }
         
-        # Get user achievements
-        achievements = UserAchievement.query.filter_by(user_id=user_id).join(
-            Achievement
-        ).all()
+        # Check Mailgun
+        services['mailgun'] = {
+            'available': bool(app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_DOMAIN')),
+            'priority': 2,
+            'name': 'Mailgun',
+            'limit': '5000 emails/month (free)'
+        }
         
-        user_achievements = []
-        for ua in achievements:
-            user_achievements.append({
-                'title': ua.achievement.title,
-                'description': ua.achievement.description,
-                'badge_icon': ua.achievement.badge_icon,
-                'points': ua.achievement.points,
-                'earned_at': ua.earned_at.isoformat()
-            })
+        # Check Gmail
+        services['gmail'] = {
+            'available': bool(app.config.get('GMAIL_USERNAME') and app.config.get('GMAIL_PASSWORD')),
+            'priority': 3,
+            'name': 'Gmail SMTP',
+            'limit': 'Gmail account limits'
+        }
+        
+        # Determine active service
+        active_service = None
+        for service_name, service_info in services.items():
+            if service_info['available']:
+                active_service = service_name
+                break
+        
+        if not active_service:
+            active_service = 'console'
         
         return jsonify({
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'bio': user.bio,
-            'location': user.location,
-            'github_username': user.github_username,
-            'linkedin_url': user.linkedin_url,
-            'avatar_url': user.avatar_url,
-            'total_points': user.total_points,
-            'current_streak': user.current_streak,
-            'longest_streak': user.longest_streak,
-            'level': user.level,
-            'daily_goal_minutes': user.daily_goal_minutes,
-            'preferred_study_time': user.preferred_study_time,
-            'difficulty_preference': user.difficulty_preference,
-            'achievements': user_achievements,
-            'created_at': user.created_at.isoformat()
+            'active_service': active_service,
+            'services': services,
+            'fallback': 'console logging'
         }), 200
         
     except Exception as e:
-        logger.error(f"Get profile error: {str(e)}")
+        logger.error(f"Get email service status error: {str(e)}")
         return jsonify({'message': str(e)}), 500
 
-@app.route('/api/profile', methods=['PUT'])
+# Test Email Route (for development)
+@app.route('/api/email/test', methods=['POST'])
 @jwt_required()
-def update_profile():
+def test_email():
+    """Test email functionality"""
     try:
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
@@ -1836,79 +2543,46 @@ def update_profile():
             return jsonify({'message': 'User not found'}), 404
         
         data = request.get_json()
+        email_type = data.get('type', 'welcome')
         
-        # Update profile fields
-        user.first_name = data.get('first_name', user.first_name)
-        user.last_name = data.get('last_name', user.last_name)
-        user.bio = data.get('bio', user.bio)
-        user.location = data.get('location', user.location)
-        user.github_username = data.get('github_username', user.github_username)
-        user.linkedin_url = data.get('linkedin_url', user.linkedin_url)
-        user.avatar_url = data.get('avatar_url', user.avatar_url)
-        user.daily_goal_minutes = data.get('daily_goal_minutes', user.daily_goal_minutes)
-        user.preferred_study_time = data.get('preferred_study_time', user.preferred_study_time)
-        user.difficulty_preference = data.get('difficulty_preference', user.difficulty_preference)
-        user.updated_at = datetime.utcnow()
+        success = False
         
-        db.session.commit()
+        if email_type == 'welcome':
+            success = send_welcome_email(user.email, user.username, user.id)
+        elif email_type == 'achievement':
+            success = send_achievement_email(
+                user.email, 
+                user.username, 
+                "Test Achievement", 
+                "This is a test achievement email",
+                "🏆",
+                100,
+                user.id
+            )
+        elif email_type == 'streak':
+            success = send_streak_milestone_email(user.email, user.username, 7, user.id)
         
-        return jsonify({'message': 'Profile updated successfully'}), 200
-        
+        if success:
+            return jsonify({'message': f'Test {email_type} email sent successfully'}), 200
+        else:
+            return jsonify({'message': 'Failed to send test email'}), 500
+            
     except Exception as e:
-        logger.error(f"Update profile error: {str(e)}")
-        db.session.rollback()
+        logger.error(f"Test email error: {str(e)}")
         return jsonify({'message': str(e)}), 500
 
-# Analytics Routes
-@app.route('/api/analytics/weekly', methods=['GET'])
-@jwt_required()
-def get_weekly_analytics():
-    try:
-        user_id = get_jwt_identity()
-        weeks = request.args.get('weeks', 4, type=int)
-        
-        weekly_data = []
-        for i in range(weeks):
-            week_start = datetime.utcnow() - timedelta(weeks=i)
-            week_end = week_start + timedelta(days=7)
-            
-            completed_topics = Progress.query.filter(
-                Progress.user_id == user_id,
-                Progress.completed == True,
-                Progress.completion_date >= week_start,
-                Progress.completion_date < week_end
-            ).count()
-            
-            pomodoro_time = db.session.query(db.func.sum(PomodoroSession.duration)).filter(
-                PomodoroSession.user_id == user_id,
-                PomodoroSession.completed == True,
-                PomodoroSession.created_at >= week_start,
-                PomodoroSession.created_at < week_end
-            ).scalar() or 0
-            
-            notes_created = Note.query.filter(
-                Note.user_id == user_id,
-                Note.created_at >= week_start,
-                Note.created_at < week_end
-            ).count()
-            
-            weekly_data.append({
-                'week_start': week_start.date().isoformat(),
-                'completed_topics': completed_topics,
-                'study_time': pomodoro_time,
-                'notes_created': notes_created
-            })
-        
-        return jsonify(weekly_data), 200
-        
-    except Exception as e:
-        logger.error(f"Get weekly analytics error: {str(e)}")
-        return jsonify({'message': str(e)}), 500
-
-# Health check route for Render
+# Health check route
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()}), 200
+    return jsonify({
+        'status': 'healthy',
+        'timestamp': datetime.utcnow().isoformat(),
+        'email_service': 'configured' if any([
+            app.config.get('SENDGRID_API_KEY'),
+            app.config.get('MAILGUN_API_KEY'),
+            app.config.get('GMAIL_USERNAME')
+        ]) else 'console'
+    }), 200
 
 # Error handlers
 @app.errorhandler(404)
@@ -1924,12 +2598,11 @@ def internal_error(error):
 def bad_request(error):
     return jsonify({'message': 'Bad request'}), 400
 
-# Initialize database tables on startup
+# Initialize database
 with app.app_context():
     create_tables()
 
 if __name__ == '__main__':
-    # For local development
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') == 'development'
     app.run(host='0.0.0.0', port=port, debug=debug)
