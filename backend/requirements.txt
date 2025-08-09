@@ -1,11 +1,8 @@
 Flask
-flask-cors
-flask-pymongo
-firebase-admin
-requests
-gunicorn
-pymongo
-dnspython
-bson
+Flask-SQLAlchemy
+Flask-JWT-Extended
+Flask-CORS
 Werkzeug
+psycopg2-binary
+python-dotenv
 gunicorn

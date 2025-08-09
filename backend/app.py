@@ -1,2287 +1,1932 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_cors import CORS
-from flask_pymongo import PyMongo
-import firebase_admin
-from firebase_admin import credentials, auth
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta, date
 import os
-from datetime import datetime, timedelta
-import random
-from bson import ObjectId
-import requests
-import json
 from functools import wraps
+import json
+import uuid
+import logging
+from collections import defaultdict
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
 
-# MongoDB Configuration
-app.config["MONGO_URI"] = os.environ.get("MONGODB_URI", "mongodb+srv://your-username:your-password@cluster0.mongodb.net/dsa_tracker?retryWrites=true&w=majority")
-mongo = PyMongo(app)
+# Enhanced Configuration
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here-change-in-production')
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-string-change-in-production')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
 
-# Firebase Configuration
-firebase_config = {
-    "type": "service_account",
-    "project_id": os.environ.get("FIREBASE_PROJECT_ID", "your-firebase-project-id"),
-    "private_key_id": os.environ.get("FIREBASE_PRIVATE_KEY_ID"),
-    "private_key": os.environ.get("FIREBASE_PRIVATE_KEY", "").replace('\\n', '\n'),
-    "client_email": os.environ.get("FIREBASE_CLIENT_EMAIL"),
-    "client_id": os.environ.get("FIREBASE_CLIENT_ID"),
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": os.environ.get("FIREBASE_CLIENT_X509_CERT_URL")
+# Database configuration - Production ready for Render
+if os.environ.get('DATABASE_URL'):
+    # Production database (PostgreSQL on Render)
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Development database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dsa_dashboard.db'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_recycle': 300,
+    'pool_pre_ping': True,
 }
 
-# Initialize Firebase Admin SDK
-try:
-    cred = credentials.Certificate(firebase_config)
-    firebase_admin.initialize_app(cred)
-except Exception as e:
-    print(f"Firebase initialization error: {e}")
+# Initialize extensions
+db = SQLAlchemy(app)
+jwt = JWTManager(app)
 
-# Motivational Quotes API
-QUOTES_API = "https://api.quotable.io/random?tags=motivational,success,perseverance"
+# Enhanced CORS configuration
+CORS(app, origins=[
+    "https://your-vercel-app.vercel.app",
+    "https://*.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001"
+], supports_credentials=True)
 
-# COMPLETE DSA Learning Roadmap Data
-DSA_ROADMAP = {
-    "week_1": {
-        "title": "Foundation & Environment",
-        "goal": "Set up development environment and basic programming concepts",
-        "days": {
-            "monday": {
-                "topic": "Environment Setup",
-                "activities": "Install Python/C++, Git, IDE setup",
-                "resources": [
-                    {"name": "Python Setup - W3Schools", "url": "https://www.w3schools.com/python/python_getstarted.asp"},
-                    {"name": "C++ Setup - JavaTpoint", "url": "https://www.javatpoint.com/cpp-tutorial"},
-                    {"name": "Git Tutorial", "url": "https://git-scm.com/docs/gittutorial"},
-                    {"name": "VS Code Setup", "url": "https://code.visualstudio.com/docs/setup/setup-overview"}
-                ],
-                "estimated_time": "2-3 hours",
-                "difficulty": "Beginner"
-            },
-            "tuesday": {
-                "topic": "Basic Syntax",
-                "activities": "Variables, data types, operators",
-                "resources": [
-                    {"name": "Python Syntax - W3Schools", "url": "https://www.w3schools.com/python/python_syntax.asp"},
-                    {"name": "C++ Basics - Programiz", "url": "https://www.programiz.com/cpp-programming"},
-                    {"name": "Java Basics - Oracle", "url": "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "wednesday": {
-                "topic": "Input/Output",
-                "activities": "File I/O, console I/O, formatting",
-                "resources": [
-                    {"name": "Python I/O - W3Schools", "url": "https://www.w3schools.com/python/python_user_input.asp"},
-                    {"name": "C++ I/O - JavaTpoint", "url": "https://www.javatpoint.com/cpp-basic-input-output"},
-                    {"name": "File Handling", "url": "https://www.programiz.com/python-programming/file-io"}
-                ],
-                "estimated_time": "2-3 hours",
-                "difficulty": "Beginner"
-            },
-            "thursday": {
-                "topic": "Functions",
-                "activities": "Function definition, parameters, scope",
-                "resources": [
-                    {"name": "Python Functions - W3Schools", "url": "https://www.w3schools.com/python/python_functions.asp"},
-                    {"name": "C++ Functions - TutorialsPoint", "url": "https://www.tutorialspoint.com/cplusplus/cpp_functions.htm"},
-                    {"name": "Function Best Practices", "url": "https://realpython.com/defining-your-own-python-function/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "friday": {
-                "topic": "Arrays/Lists Basics",
-                "activities": "Creation, indexing, basic operations",
-                "resources": [
-                    {"name": "Python Lists - W3Schools", "url": "https://www.w3schools.com/python/python_lists.asp"},
-                    {"name": "C++ Arrays - Programiz", "url": "https://www.programiz.com/cpp-programming/arrays"},
-                    {"name": "Array Operations", "url": "https://www.geeksforgeeks.org/array-data-structure/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "saturday": {
-                "topic": "Project Start: Scientific Calculator",
-                "activities": "Plan features, basic arithmetic",
-                "resources": [
-                    {"name": "Calculator Project Guide", "url": "https://realpython.com/python-gui-tkinter/"},
-                    {"name": "Math Operations in Python", "url": "https://docs.python.org/3/library/math.html"},
-                    {"name": "GUI Development", "url": "https://tkdocs.com/tutorial/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "sunday": {
-                "topic": "Project Complete: Scientific Calculator",
-                "activities": "Advanced operations, error handling",
-                "resources": [
-                    {"name": "Error Handling in Python", "url": "https://docs.python.org/3/tutorial/errors.html"},
-                    {"name": "GUI Development", "url": "https://tkdocs.com/tutorial/"},
-                    {"name": "Testing Your Code", "url": "https://realpython.com/python-testing/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            }
-        }
-    },
-    "week_2": {
-        "title": "Arrays & String Mastery",
-        "goal": "Master array operations and string manipulation",
-        "days": {
-            "monday": {
-                "topic": "Array Operations",
-                "activities": "Iteration, searching, basic algorithms",
-                "resources": [
-                    {"name": "Arrays - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_arrays.php"},
-                    {"name": "Array Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html"},
-                    {"name": "VisuAlgo Arrays", "url": "https://visualgo.net/en/array"},
-                    {"name": "GeeksforGeeks Arrays", "url": "https://www.geeksforgeeks.org/array-data-structure/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "tuesday": {
-                "topic": "Two Pointers Technique",
-                "activities": "Two Sum, reverse array, palindrome",
-                "resources": [
-                    {"name": "Two Pointers - LeetCode", "url": "https://leetcode.com/tag/two-pointers/"},
-                    {"name": "NeetCode Two Pointers", "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A"},
-                    {"name": "GeeksforGeeks Two Pointers", "url": "https://www.geeksforgeeks.org/two-pointers-technique/"},
-                    {"name": "CS Dojo Two Pointers", "url": "https://www.youtube.com/@CSDojo"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "String Processing",
-                "activities": "Manipulation, pattern matching basics",
-                "resources": [
-                    {"name": "Strings - W3Schools", "url": "https://www.w3schools.com/python/python_strings.asp"},
-                    {"name": "String DSA - JavaTpoint", "url": "https://www.javatpoint.com/string-in-data-structure"},
-                    {"name": "mycodeschool Strings", "url": "https://www.youtube.com/playlist?list=PL2_aWCzGMAwLZp6LMUKI3cc7pgGsasm2_"},
-                    {"name": "String Algorithms", "url": "https://www.geeksforgeeks.org/string-data-structure/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Sliding Window",
-                "activities": "Maximum subarray, longest substring",
-                "resources": [
-                    {"name": "Sliding Window - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/window-sliding-technique/"},
-                    {"name": "NeetCode Sliding Window", "url": "https://www.youtube.com/watch?v=jM2dhDPYMQM"},
-                    {"name": "LeetCode Sliding Window", "url": "https://leetcode.com/tag/sliding-window/"},
-                    {"name": "Back To Back SWE", "url": "https://www.youtube.com/c/BackToBackSWE"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Two Sum, Longest Substring, Valid Palindrome",
-                "resources": [
-                    {"name": "LeetCode Two Sum", "url": "https://leetcode.com/problems/two-sum/"},
-                    {"name": "Longest Substring", "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"},
-                    {"name": "Valid Palindrome", "url": "https://leetcode.com/problems/valid-palindrome/"},
-                    {"name": "Codeforces Practice", "url": "https://codeforces.com/problemset"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Text Analyzer",
-                "activities": "Word count, frequency analysis",
-                "resources": [
-                    {"name": "Text Processing in Python", "url": "https://realpython.com/working-with-files-in-python/"},
-                    {"name": "NLTK Tutorial", "url": "https://www.nltk.org/book/"},
-                    {"name": "Regular Expressions", "url": "https://docs.python.org/3/library/re.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "sunday": {
-                "topic": "Project Complete: Text Analyzer",
-                "activities": "Pattern detection, statistics",
-                "resources": [
-                    {"name": "Regular Expressions", "url": "https://docs.python.org/3/library/re.html"},
-                    {"name": "Data Visualization", "url": "https://matplotlib.org/stable/tutorials/index.html"},
-                    {"name": "Text Analytics", "url": "https://textblob.readthedocs.io/en/dev/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            }
-        }
-    },
-    "week_3": {
-        "title": "Linked Lists Deep Dive",
-        "goal": "Master linked list operations and applications",
-        "days": {
-            "monday": {
-                "topic": "Linked List Basics",
-                "activities": "Node structure, traversal",
-                "resources": [
-                    {"name": "Linked Lists - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_data_linkedlists.php"},
-                    {"name": "VisuAlgo Linked Lists", "url": "https://visualgo.net/en/list"},
-                    {"name": "mycodeschool Linked Lists", "url": "https://www.youtube.com/watch?v=92S4zgXN17o"},
-                    {"name": "CS Dojo LL Tutorial", "url": "https://www.youtube.com/@CSDojo"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "tuesday": {
-                "topic": "Singly Linked Lists",
-                "activities": "Insert, delete, search operations",
-                "resources": [
-                    {"name": "LL Operations - Programiz", "url": "https://www.programiz.com/dsa/linked-list"},
-                    {"name": "GeeksforGeeks LL", "url": "https://www.geeksforgeeks.org/data-structures/linked-list/"},
-                    {"name": "CS Dojo Linked Lists", "url": "https://www.youtube.com/watch?v=WwfhLC16bis"},
-                    {"name": "JavaTpoint LL", "url": "https://www.javatpoint.com/singly-linked-list"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Reverse & Manipulation",
-                "activities": "Reverse list, merge, cycle detection",
-                "resources": [
-                    {"name": "Reverse LL - LeetCode", "url": "https://leetcode.com/problems/reverse-linked-list/"},
-                    {"name": "Merge Two Lists", "url": "https://leetcode.com/problems/merge-two-sorted-lists/"},
-                    {"name": "Cycle Detection", "url": "https://leetcode.com/problems/linked-list-cycle/"},
-                    {"name": "Back To Back SWE LL", "url": "https://www.youtube.com/c/BackToBackSWE"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Doubly & Circular Lists",
-                "activities": "Advanced variations and use cases",
-                "resources": [
-                    {"name": "Doubly LL - JavaTpoint", "url": "https://www.javatpoint.com/doubly-linked-list"},
-                    {"name": "Circular LL - Programiz", "url": "https://www.programiz.com/dsa/circular-linked-list"},
-                    {"name": "Advanced LL - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/doubly-linked-list/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Reverse, Merge Two Lists, Cycle Detection",
-                "resources": [
-                    {"name": "LeetCode LL Problems", "url": "https://leetcode.com/tag/linked-list/"},
-                    {"name": "Codeforces LL", "url": "https://codeforces.com/problemset?tags=data+structures"},
-                    {"name": "A2OJ Ladders", "url": "https://a2oj.com/ladders"},
-                    {"name": "Pramp LL Practice", "url": "https://www.pramp.com/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Music Playlist Manager",
-                "activities": "Song management using linked lists",
-                "resources": [
-                    {"name": "Python Music Player", "url": "https://realpython.com/playing-and-recording-sound-python/"},
-                    {"name": "Pygame Tutorial", "url": "https://realpython.com/pygame-a-primer/"},
-                    {"name": "File Management", "url": "https://docs.python.org/3/library/os.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "sunday": {
-                "topic": "Project Complete: Music Playlist Manager",
-                "activities": "Shuffle, repeat, playlist operations",
-                "resources": [
-                    {"name": "File Management Python", "url": "https://docs.python.org/3/library/os.html"},
-                    {"name": "Random Module", "url": "https://docs.python.org/3/library/random.html"},
-                    {"name": "JSON Data Handling", "url": "https://docs.python.org/3/library/json.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            }
-        }
-    },
-    "week_4": {
-        "title": "Stacks & Queues Applications",
-        "goal": "Understand LIFO/FIFO operations and real-world applications",
-        "days": {
-            "monday": {
-                "topic": "Stack Fundamentals",
-                "activities": "LIFO operations, implementation",
-                "resources": [
-                    {"name": "Stacks - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_data_stacks.php"},
-                    {"name": "Stack Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/StackArray.html"},
-                    {"name": "JavaTpoint Stack", "url": "https://www.javatpoint.com/data-structure-stack"},
-                    {"name": "mycodeschool Stacks", "url": "https://www.youtube.com/watch?v=F1F2imiOJfk"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "tuesday": {
-                "topic": "Stack Applications",
-                "activities": "Expression evaluation, parentheses matching",
-                "resources": [
-                    {"name": "Stack Applications - Programiz", "url": "https://www.programiz.com/dsa/stack"},
-                    {"name": "Expression Evaluation", "url": "https://www.geeksforgeeks.org/stack-set-2-infix-to-postfix/"},
-                    {"name": "Balanced Parentheses", "url": "https://leetcode.com/problems/valid-parentheses/"},
-                    {"name": "TutorialsPoint Stack", "url": "https://www.tutorialspoint.com/data_structures_algorithms/stack_algorithm.htm"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Queue Fundamentals",
-                "activities": "FIFO operations, circular queues",
-                "resources": [
-                    {"name": "Queues - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_data_queues.php"},
-                    {"name": "Queue Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/QueueArray.html"},
-                    {"name": "JavaTpoint Queue", "url": "https://www.javatpoint.com/data-structure-queue"},
-                    {"name": "Circular Queue", "url": "https://www.programiz.com/dsa/circular-queue"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "thursday": {
-                "topic": "Advanced Queues",
-                "activities": "Deque, priority queue introduction",
-                "resources": [
-                    {"name": "Deque - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/deque-set-1-introduction-applications/"},
-                    {"name": "Priority Queue - Programiz", "url": "https://www.programiz.com/dsa/priority-queue"},
-                    {"name": "Python Deque", "url": "https://docs.python.org/3/library/collections.html#collections.deque"},
-                    {"name": "VisuAlgo Queue", "url": "https://visualgo.net/en/list"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Valid Parentheses, Min Stack, Queue using Stacks",
-                "resources": [
-                    {"name": "Valid Parentheses - LeetCode", "url": "https://leetcode.com/problems/valid-parentheses/"},
-                    {"name": "Min Stack", "url": "https://leetcode.com/problems/min-stack/"},
-                    {"name": "Queue using Stacks", "url": "https://leetcode.com/problems/implement-queue-using-stacks/"},
-                    {"name": "GeeksforGeeks Practice", "url": "https://www.geeksforgeeks.org/practice/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Code Editor",
-                "activities": "Undo/redo functionality using stacks",
-                "resources": [
-                    {"name": "Command Pattern", "url": "https://refactoring.guru/design-patterns/command"},
-                    {"name": "Tkinter Text Editor", "url": "https://realpython.com/python-gui-tkinter/"},
-                    {"name": "Undo/Redo Implementation", "url": "https://stackoverflow.com/questions/tagged/undo-redo"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Code Editor",
-                "activities": "Bracket matching, syntax validation",
-                "resources": [
-                    {"name": "Syntax Highlighting", "url": "https://pygments.org/"},
-                    {"name": "Regular Expressions", "url": "https://docs.python.org/3/library/re.html"},
-                    {"name": "File I/O Operations", "url": "https://realpython.com/working-with-files-in-python/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_5": {
-        "title": "Binary Trees Foundation",
-        "goal": "Master tree traversals and basic tree operations",
-        "days": {
-            "monday": {
-                "topic": "Tree Basics",
-                "activities": "Terminology, node structure",
-                "resources": [
-                    {"name": "Trees - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_data_trees.php"},
-                    {"name": "Binary Trees - JavaTpoint", "url": "https://www.javatpoint.com/binary-tree"},
-                    {"name": "Tree Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/BST.html"},
-                    {"name": "mycodeschool Trees", "url": "https://www.youtube.com/watch?v=qH6yxkw0u78"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "tuesday": {
-                "topic": "Tree Traversals (DFS)",
-                "activities": "Preorder, inorder, postorder",
-                "resources": [
-                    {"name": "Tree Traversal - Programiz", "url": "https://www.programiz.com/dsa/tree-traversal"},
-                    {"name": "GeeksforGeeks Traversals", "url": "https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/"},
-                    {"name": "VisuAlgo Binary Tree", "url": "https://visualgo.net/en/bst"},
-                    {"name": "CS Dojo Tree Traversal", "url": "https://www.youtube.com/@CSDojo"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Level Order (BFS)",
-                "activities": "Breadth-first traversal using queues",
-                "resources": [
-                    {"name": "Level Order - TutorialsPoint", "url": "https://www.tutorialspoint.com/data_structures_algorithms/tree_traversal.htm"},
-                    {"name": "BFS in Trees", "url": "https://www.geeksforgeeks.org/level-order-tree-traversal/"},
-                    {"name": "W3Schools BFS", "url": "https://www.w3schools.com/dsa/dsa_algo_graphs_bfs.php"},
-                    {"name": "LeetCode Level Order", "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Tree Properties",
-                "activities": "Height, depth, diameter calculations",
-                "resources": [
-                    {"name": "Tree Properties - JavaTpoint", "url": "https://www.javatpoint.com/tree-data-structure"},
-                    {"name": "Tree Operations - Programiz", "url": "https://www.programiz.com/dsa/binary-tree"},
-                    {"name": "Tree Height/Depth", "url": "https://www.geeksforgeeks.org/write-a-c-program-to-find-the-maximum-depth-or-height-of-a-tree/"},
-                    {"name": "Tree Diameter", "url": "https://leetcode.com/problems/diameter-of-binary-tree/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Max Depth, Same Tree, Symmetric Tree",
-                "resources": [
-                    {"name": "Max Depth - LeetCode", "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"},
-                    {"name": "Same Tree", "url": "https://leetcode.com/problems/same-tree/"},
-                    {"name": "Symmetric Tree", "url": "https://leetcode.com/problems/symmetric-tree/"},
-                    {"name": "NeetCode Trees", "url": "https://www.youtube.com/@NeetCode"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Family Tree",
-                "activities": "Genealogy tree with traversals",
-                "resources": [
-                    {"name": "Tree Data Structure Design", "url": "https://realpython.com/python-data-structures/"},
-                    {"name": "Graphviz for Tree Visualization", "url": "https://graphviz.org/"},
-                    {"name": "JSON Tree Structure", "url": "https://docs.python.org/3/library/json.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Family Tree",
-                "activities": "Relationship queries, tree visualization",
-                "resources": [
-                    {"name": "Tree Queries", "url": "https://www.geeksforgeeks.org/lca-lowest-common-ancestor-in-a-binary-tree/"},
-                    {"name": "Family Tree Algorithms", "url": "https://en.wikipedia.org/wiki/Genealogical_DNA_test"},
-                    {"name": "Data Visualization", "url": "https://matplotlib.org/stable/tutorials/index.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_6": {
-        "title": "Binary Search Trees",
-        "goal": "Master BST operations and balanced tree concepts",
-        "days": {
-            "monday": {
-                "topic": "BST Properties",
-                "activities": "BST invariant, insertion, search",
-                "resources": [
-                    {"name": "BST Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/BST.html"},
-                    {"name": "BST - Abdul Bari", "url": "https://www.youtube.com/watch?v=pYT9F8_LFTM"},
-                    {"name": "BST - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/binary-search-tree-data-structure/"},
-                    {"name": "VisuAlgo BST", "url": "https://visualgo.net/en/bst"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "tuesday": {
-                "topic": "BST Operations",
-                "activities": "Insert, delete, find operations",
-                "resources": [
-                    {"name": "BST Operations - Programiz", "url": "https://www.programiz.com/dsa/binary-search-tree"},
-                    {"name": "BST Insert/Delete", "url": "https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/"},
-                    {"name": "mycodeschool BST", "url": "https://www.youtube.com/watch?v=COZK7NATh4k"},
-                    {"name": "JavaTpoint BST", "url": "https://www.javatpoint.com/binary-search-tree"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "BST Validation",
-                "activities": "Validate BST, range checking",
-                "resources": [
-                    {"name": "Validate BST - LeetCode", "url": "https://leetcode.com/problems/validate-binary-search-tree/"},
-                    {"name": "Validate BST - NeetCode", "url": "https://www.youtube.com/watch?v=s6ATEkipzow"},
-                    {"name": "BST Validation Techniques", "url": "https://www.geeksforgeeks.org/a-program-to-check-if-a-binary-tree-is-bst-or-not/"},
-                    {"name": "Range Validation", "url": "https://leetcode.com/problems/validate-binary-search-tree/discuss/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Balanced Trees",
-                "activities": "AVL introduction, rotation concepts",
-                "resources": [
-                    {"name": "AVL Trees - VisuAlgo", "url": "https://visualgo.net/en/bst"},
-                    {"name": "AVL Operations", "url": "https://www.geeksforgeeks.org/avl-tree-set-1-insertion/"},
-                    {"name": "Tree Rotations", "url": "https://www.cs.usfca.edu/~galles/visualization/AVLtree.html"},
-                    {"name": "Balanced BST", "url": "https://www.programiz.com/dsa/avl-tree"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Validate BST, Lowest Common Ancestor, Inorder Successor",
-                "resources": [
-                    {"name": "Validate BST", "url": "https://leetcode.com/problems/validate-binary-search-tree/"},
-                    {"name": "LCA in BST", "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"},
-                    {"name": "Inorder Successor", "url": "https://leetcode.com/problems/inorder-successor-in-bst/"},
-                    {"name": "BST Problems", "url": "https://leetcode.com/tag/binary-search-tree/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Student Database",
-                "activities": "BST-based student record system",
-                "resources": [
-                    {"name": "Database Design", "url": "https://realpython.com/python-sqlite-sqlalchemy/"},
-                    {"name": "BST for Databases", "url": "https://en.wikipedia.org/wiki/B-tree"},
-                    {"name": "File System Organization", "url": "https://docs.python.org/3/library/csv.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Student Database",
-                "activities": "Search, grade analysis, reporting",
-                "resources": [
-                    {"name": "Data Analysis with Pandas", "url": "https://pandas.pydata.org/docs/getting_started/index.html"},
-                    {"name": "Reporting with Python", "url": "https://realpython.com/python-data-analysis/"},
-                    {"name": "CSV Data Processing", "url": "https://docs.python.org/3/library/csv.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_7": {
-        "title": "Heaps & Priority Queues",
-        "goal": "Master heap operations and priority-based algorithms",
-        "days": {
-            "monday": {
-                "topic": "Heap Fundamentals",
-                "activities": "Min/max heap properties, heapify",
-                "resources": [
-                    {"name": "Heap Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Heap.html"},
-                    {"name": "Heap - Abdul Bari", "url": "https://www.youtube.com/watch?v=HqPJF2L5h9U"},
-                    {"name": "Heaps - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/binary-heap/"},
-                    {"name": "VisuAlgo Heap", "url": "https://visualgo.net/en/heap"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "tuesday": {
-                "topic": "Heap Operations",
-                "activities": "Insert, extract, build heap",
-                "resources": [
-                    {"name": "Heap Operations - Programiz", "url": "https://www.programiz.com/dsa/heap-data-structure"},
-                    {"name": "Python heapq", "url": "https://docs.python.org/3/library/heapq.html"},
-                    {"name": "Heap Implementation", "url": "https://www.geeksforgeeks.org/binary-heap/"},
-                    {"name": "mycodeschool Heaps", "url": "https://www.youtube.com/watch?v=t0Cq6tVNRBA"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Priority Queue",
-                "activities": "Implementation using heaps",
-                "resources": [
-                    {"name": "Priority Queue - Programiz", "url": "https://www.programiz.com/dsa/priority-queue"},
-                    {"name": "Python PriorityQueue", "url": "https://docs.python.org/3/library/queue.html#queue.PriorityQueue"},
-                    {"name": "Priority Queue Applications", "url": "https://www.geeksforgeeks.org/priority-queue-set-1-introduction/"},
-                    {"name": "Heap vs Priority Queue", "url": "https://stackoverflow.com/questions/18993269/difference-between-priority-queue-and-a-heap"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Heap Applications",
-                "activities": "Top K elements, median finding, heap sort",
-                "resources": [
-                    {"name": "Top K Elements", "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"},
-                    {"name": "Find Median", "url": "https://leetcode.com/problems/find-median-from-data-stream/"},
-                    {"name": "Heap Sort", "url": "https://www.geeksforgeeks.org/heap-sort/"},
-                    {"name": "Heap Sort Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/HeapSort.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Kth Largest, Merge K Lists, Top K Frequent",
-                "resources": [
-                    {"name": "Kth Largest Element", "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"},
-                    {"name": "Merge K Sorted Lists", "url": "https://leetcode.com/problems/merge-k-sorted-lists/"},
-                    {"name": "Top K Frequent Elements", "url": "https://leetcode.com/problems/top-k-frequent-elements/"},
-                    {"name": "Heap Problems - LeetCode", "url": "https://leetcode.com/tag/heap/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "saturday": {
-                "topic": "Project Start: Task Scheduler",
-                "activities": "Priority-based task management",
-                "resources": [
-                    {"name": "Task Scheduling Algorithms", "url": "https://en.wikipedia.org/wiki/Scheduling_(computing)"},
-                    {"name": "Priority Queue Implementation", "url": "https://realpython.com/python-heapq-module/"},
-                    {"name": "Task Management System", "url": "https://docs.python.org/3/library/sched.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Task Scheduler",
-                "activities": "Deadline handling, priority queues",
-                "resources": [
-                    {"name": "Datetime Operations", "url": "https://docs.python.org/3/library/datetime.html"},
-                    {"name": "Threading and Scheduling", "url": "https://docs.python.org/3/library/threading.html"},
-                    {"name": "GUI for Task Manager", "url": "https://realpython.com/python-gui-tkinter/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_8": {
-        "title": "Hashing & Hash Tables",
-        "goal": "Master hash-based data structures and fast lookups",
-        "days": {
-            "monday": {
-                "topic": "Hashing Basics",
-                "activities": "Hash functions, collision handling",
-                "resources": [
-                    {"name": "Hash Table Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/OpenHash.html"},
-                    {"name": "Hashing - CS Dojo", "url": "https://www.youtube.com/watch?v=shs0KM3wKv8"},
-                    {"name": "Hash Tables - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/hashing-data-structure/"},
-                    {"name": "VisuAlgo Hashing", "url": "https://visualgo.net/en/hashtable"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "tuesday": {
-                "topic": "Hash Table Operations",
-                "activities": "Insert, search, delete with collisions",
-                "resources": [
-                    {"name": "Hash Table Implementation", "url": "https://www.programiz.com/dsa/hash-table"},
-                    {"name": "Collision Resolution", "url": "https://www.geeksforgeeks.org/hashing-set-2-separate-chaining/"},
-                    {"name": "Open Addressing", "url": "https://www.geeksforgeeks.org/hashing-set-3-open-addressing/"},
-                    {"name": "Python Dictionary", "url": "https://docs.python.org/3/tutorial/datastructures.html#dictionaries"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Hash Applications",
-                "activities": "Frequency counting, duplicate detection",
-                "resources": [
-                    {"name": "Hash Map Applications", "url": "https://www.geeksforgeeks.org/applications-of-hashing/"},
-                    {"name": "Python Counter", "url": "https://docs.python.org/3/library/collections.html#collections.Counter"},
-                    {"name": "Set Operations", "url": "https://docs.python.org/3/tutorial/datastructures.html#sets"},
-                    {"name": "Hash-based Algorithms", "url": "https://leetcode.com/tag/hash-table/"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Advanced Hashing",
-                "activities": "Rolling hash, perfect hashing, bloom filters",
-                "resources": [
-                    {"name": "Rolling Hash", "url": "https://www.geeksforgeeks.org/rolling-hash-to-find-lexicographically-smallest-substring/"},
-                    {"name": "Rabin-Karp Algorithm", "url": "https://www.geeksforgeeks.org/rabin-karp-algorithm-for-pattern-searching/"},
-                    {"name": "Bloom Filters", "url": "https://en.wikipedia.org/wiki/Bloom_filter"},
-                    {"name": "Perfect Hashing", "url": "https://www.geeksforgeeks.org/perfect-hashing/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Two Sum, Group Anagrams, Valid Anagram, Subarray Sum",
-                "resources": [
-                    {"name": "Two Sum", "url": "https://leetcode.com/problems/two-sum/"},
-                    {"name": "Group Anagrams", "url": "https://leetcode.com/problems/group-anagrams/"},
-                    {"name": "Valid Anagram", "url": "https://leetcode.com/problems/valid-anagram/"},
-                    {"name": "Subarray Sum Equals K", "url": "https://leetcode.com/problems/subarray-sum-equals-k/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Spell Checker",
-                "activities": "Hash-based dictionary and suggestions",
-                "resources": [
-                    {"name": "Spell Checker Algorithm", "url": "https://en.wikipedia.org/wiki/Spell_checker"},
-                    {"name": "Edit Distance", "url": "https://en.wikipedia.org/wiki/Edit_distance"},
-                    {"name": "Trie for Spell Check", "url": "https://www.geeksforgeeks.org/auto-complete-feature-using-trie/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Spell Checker",
-                "activities": "Edit distance, word suggestions, performance optimization",
-                "resources": [
-                    {"name": "Levenshtein Distance", "url": "https://en.wikipedia.org/wiki/Levenshtein_distance"},
-                    {"name": "Fuzzy String Matching", "url": "https://pypi.org/project/fuzzywuzzy/"},
-                    {"name": "Performance Optimization", "url": "https://docs.python.org/3/library/profile.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_9": {
-        "title": "Graph Fundamentals",
-        "goal": "Master graph representations and basic algorithms",
-        "days": {
-            "monday": {
-                "topic": "Graph Basics",
-                "activities": "Representation, adjacency list/matrix",
-                "resources": [
-                    {"name": "Graph Visualization", "url": "https://visualgo.net/en/graphds"},
-                    {"name": "Graph Theory - CS Dojo", "url": "https://www.youtube.com/watch?v=gXgEDyodOJU"},
-                    {"name": "Graphs - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/"},
-                    {"name": "Graph Representations", "url": "https://www.programiz.com/dsa/graph"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "tuesday": {
-                "topic": "DFS Implementation",
-                "activities": "Depth-first search, applications",
-                "resources": [
-                    {"name": "DFS Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/DFS.html"},
-                    {"name": "DFS Algorithm", "url": "https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/"},
-                    {"name": "DFS Applications", "url": "https://www.programiz.com/dsa/graph-dfs"},
-                    {"name": "mycodeschool DFS", "url": "https://www.youtube.com/watch?v=7fujbpJ0LB4"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "BFS Implementation",
-                "activities": "Breadth-first search, shortest path",
-                "resources": [
-                    {"name": "BFS Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/BFS.html"},
-                    {"name": "BFS Algorithm", "url": "https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/"},
-                    {"name": "BFS Applications", "url": "https://www.programiz.com/dsa/graph-bfs"},
-                    {"name": "Shortest Path with BFS", "url": "https://www.geeksforgeeks.org/shortest-path-unweighted-graph/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Graph Applications",
-                "activities": "Connected components, cycle detection",
-                "resources": [
-                    {"name": "Connected Components", "url": "https://www.geeksforgeeks.org/connected-components-in-an-undirected-graph/"},
-                    {"name": "Cycle Detection", "url": "https://www.geeksforgeeks.org/detect-cycle-in-a-graph/"},
-                    {"name": "Graph Applications", "url": "https://www.geeksforgeeks.org/applications-of-graph-data-structure/"},
-                    {"name": "Topological Sort Intro", "url": "https://www.geeksforgeeks.org/topological-sorting/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "friday": {
-                "topic": "Key Problems",
-                "activities": "Number of Islands, Clone Graph, Course Schedule",
-                "resources": [
-                    {"name": "Number of Islands", "url": "https://leetcode.com/problems/number-of-islands/"},
-                    {"name": "Clone Graph", "url": "https://leetcode.com/problems/clone-graph/"},
-                    {"name": "Course Schedule", "url": "https://leetcode.com/problems/course-schedule/"},
-                    {"name": "Graph Problems - LeetCode", "url": "https://leetcode.com/tag/graph/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Intermediate"
-            },
-            "saturday": {
-                "topic": "Project Start: Social Network",
-                "activities": "Friend connections using graphs",
-                "resources": [
-                    {"name": "Social Network Analysis", "url": "https://en.wikipedia.org/wiki/Social_network_analysis"},
-                    {"name": "NetworkX Python", "url": "https://networkx.org/"},
-                    {"name": "Graph Databases", "url": "https://neo4j.com/developer/graph-database/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Social Network",
-                "activities": "Friend suggestions, mutual connections, communities",
-                "resources": [
-                    {"name": "Friend Recommendation", "url": "https://www.geeksforgeeks.org/suggest-friends-for-a-user-on-a-social-network/"},
-                    {"name": "Community Detection", "url": "https://en.wikipedia.org/wiki/Community_structure"},
-                    {"name": "Graph Visualization", "url": "https://matplotlib.org/stable/tutorials/index.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_10": {
-        "title": "Advanced Graph Algorithms",
-        "goal": "Master shortest path and advanced graph algorithms",
-        "days": {
-            "monday": {
-                "topic": "Dijkstra's Algorithm",
-                "activities": "Shortest path in weighted graphs",
-                "resources": [
-                    {"name": "Dijkstra Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Dijkstra.html"},
-                    {"name": "Dijkstra - Abdul Bari", "url": "https://www.youtube.com/watch?v=XB4MIexjvY0"},
-                    {"name": "Dijkstra's Algorithm", "url": "https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/"},
-                    {"name": "VisuAlgo SSSP", "url": "https://visualgo.net/en/sssp"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "tuesday": {
-                "topic": "Bellman-Ford Algorithm",
-                "activities": "Negative weight handling, cycle detection",
-                "resources": [
-                    {"name": "Bellman-Ford", "url": "https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/"},
-                    {"name": "Negative Cycle Detection", "url": "https://www.programiz.com/dsa/bellman-ford-algorithm"},
-                    {"name": "Bellman-Ford Visualization", "url": "https://visualgo.net/en/sssp"},
-                    {"name": "Comparison with Dijkstra", "url": "https://stackoverflow.com/questions/13159337/why-doesnt-dijkstras-algorithm-work-for-negative-weight-edges"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "wednesday": {
-                "topic": "Floyd-Warshall Algorithm",
-                "activities": "All-pairs shortest path",
-                "resources": [
-                    {"name": "Floyd-Warshall", "url": "https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/"},
-                    {"name": "All Pairs Shortest Path", "url": "https://www.programiz.com/dsa/floyd-warshall-algorithm"},
-                    {"name": "Floyd-Warshall Visualization", "url": "https://visualgo.net/en/sssp"},
-                    {"name": "Dynamic Programming Approach", "url": "https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "thursday": {
-                "topic": "MST Algorithms",
-                "activities": "Kruskal's and Prim's algorithms",
-                "resources": [
-                    {"name": "MST Visualization", "url": "https://visualgo.net/en/mst"},
-                    {"name": "Kruskal's Algorithm", "url": "https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/"},
-                    {"name": "Prim's Algorithm", "url": "https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/"},
-                    {"name": "MST Applications", "url": "https://www.programiz.com/dsa/spanning-tree-and-minimum-spanning-tree"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "Topological Sort & Advanced Problems",
-                "activities": "Ordering in DAGs, advanced graph problems",
-                "resources": [
-                    {"name": "Topological Sort", "url": "https://www.geeksforgeeks.org/topological-sorting/"},
-                    {"name": "Kahn's Algorithm", "url": "https://www.geeksforgeeks.org/topological-sorting-indegree-based-solution/"},
-                    {"name": "Network Delay Time", "url": "https://leetcode.com/problems/network-delay-time/"},
-                    {"name": "Course Schedule II", "url": "https://leetcode.com/problems/course-schedule-ii/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "saturday": {
-                "topic": "Project Start: GPS Navigation",
-                "activities": "Shortest path finder implementation",
-                "resources": [
-                    {"name": "GPS Algorithms", "url": "https://en.wikipedia.org/wiki/GPS_navigation_device"},
-                    {"name": "OpenStreetMap API", "url": "https://wiki.openstreetmap.org/wiki/API"},
-                    {"name": "Pathfinding Algorithms", "url": "https://en.wikipedia.org/wiki/Pathfinding"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            },
-            "sunday": {
-                "topic": "Project Complete: GPS Navigation",
-                "activities": "Route optimization, traffic handling, alternative routes",
-                "resources": [
-                    {"name": "A* Algorithm", "url": "https://en.wikipedia.org/wiki/A*_search_algorithm"},
-                    {"name": "Traffic Optimization", "url": "https://en.wikipedia.org/wiki/Traffic_optimization"},
-                    {"name": "Geospatial Analysis", "url": "https://geopandas.org/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            }
-        }
-    },
-    "week_11": {
-        "title": "Sorting & Searching Mastery",
-        "goal": "Master all major sorting algorithms and binary search variations",
-        "days": {
-            "monday": {
-                "topic": "Basic Sorting Algorithms",
-                "activities": "Bubble, selection, insertion sort",
-                "resources": [
-                    {"name": "Sorting Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html"},
-                    {"name": "Sorting Algorithms", "url": "https://www.geeksforgeeks.org/sorting-algorithms/"},
-                    {"name": "VisuAlgo Sorting", "url": "https://visualgo.net/en/sorting"},
-                    {"name": "Sorting Comparison", "url": "https://www.programiz.com/dsa/sorting-algorithm"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Beginner"
-            },
-            "tuesday": {
-                "topic": "Merge Sort",
-                "activities": "Divide and conquer approach",
-                "resources": [
-                    {"name": "Merge Sort - mycodeschool", "url": "https://www.youtube.com/watch?v=JSceec-wEyw"},
-                    {"name": "Merge Sort Algorithm", "url": "https://www.geeksforgeeks.org/merge-sort/"},
-                    {"name": "Merge Sort Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html"},
-                    {"name": "Divide and Conquer", "url": "https://www.programiz.com/dsa/divide-and-conquer"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Quick Sort",
-                "activities": "Partitioning and optimization",
-                "resources": [
-                    {"name": "Quick Sort Visualization", "url": "https://visualgo.net/en/sorting"},
-                    {"name": "Quick Sort Algorithm", "url": "https://www.geeksforgeeks.org/quick-sort/"},
-                    {"name": "Partitioning Schemes", "url": "https://www.geeksforgeeks.org/hoares-vs-lomuto-partition-scheme-quicksort/"},
-                    {"name": "Quick Sort Optimization", "url": "https://en.wikipedia.org/wiki/Quicksort#Optimizations"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "thursday": {
-                "topic": "Binary Search Mastery",
-                "activities": "Search variations, bounds, rotated arrays",
-                "resources": [
-                    {"name": "Binary Search - NeetCode", "url": "https://www.youtube.com/watch?v=s4DPM8ct1pI"},
-                    {"name": "Binary Search Template", "url": "https://leetcode.com/discuss/general-discussion/786126/python-powerful-ultimate-binary-search-template-solved-many-problems"},
-                    {"name": "Search in Rotated Array", "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/"},
-                    {"name": "Binary Search Patterns", "url": "https://leetcode.com/discuss/general-discussion/691825/binary-search-for-beginners-problems-patterns-sample-solutions"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "friday": {
-                "topic": "Advanced Searching & Sorting",
-                "activities": "Counting sort, radix sort, ternary search",
-                "resources": [
-                    {"name": "Counting Sort", "url": "https://www.geeksforgeeks.org/counting-sort/"},
-                    {"name": "Radix Sort", "url": "https://www.geeksforgeeks.org/radix-sort/"},
-                    {"name": "Ternary Search", "url": "https://www.geeksforgeeks.org/ternary-search/"},
-                    {"name": "Non-Comparison Sorts", "url": "https://en.wikipedia.org/wiki/Sorting_algorithm#Non-comparison_sorts"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "saturday": {
-                "topic": "Project Start: Movie Database",
-                "activities": "Sorting and searching optimization",
-                "resources": [
-                    {"name": "Database Indexing", "url": "https://en.wikipedia.org/wiki/Database_index"},
-                    {"name": "Full-Text Search", "url": "https://en.wikipedia.org/wiki/Full-text_search"},
-                    {"name": "Movie Database API", "url": "https://www.themoviedb.org/documentation/api"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "sunday": {
-                "topic": "Project Complete: Movie Database",
-                "activities": "Multi-criteria sorting, fast queries, recommendation engine",
-                "resources": [
-                    {"name": "Recommendation Systems", "url": "https://en.wikipedia.org/wiki/Recommender_system"},
-                    {"name": "Multi-key Sorting", "url": "https://docs.python.org/3/howto/sorting.html#sort-stability-and-complex-sorts"},
-                    {"name": "Search Optimization", "url": "https://elasticsearch-py.readthedocs.io/en/v8.8.0/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            }
-        }
-    },
-    "week_12": {
-        "title": "Recursion & Backtracking",
-        "goal": "Master recursive problem-solving and backtracking patterns",
-        "days": {
-            "monday": {
-                "topic": "Recursion Fundamentals",
-                "activities": "Base cases, recursive thinking, call stack",
-                "resources": [
-                    {"name": "Recursion - CS Dojo", "url": "https://www.youtube.com/watch?v=KEEKn7Me-ms"},
-                    {"name": "Recursion Visualization", "url": "http://pythontutor.com"},
-                    {"name": "Recursion Basics", "url": "https://www.geeksforgeeks.org/recursion/"},
-                    {"name": "mycodeschool Recursion", "url": "https://www.youtube.com/watch?v=k7-N8R0-KY4"}
-                ],
-                "estimated_time": "3-4 hours",
-                "difficulty": "Intermediate"
-            },
-            "tuesday": {
-                "topic": "Recursive Patterns",
-                "activities": "Tree recursion, memoization, tail recursion",
-                "resources": [
-                    {"name": "Recursion Patterns", "url": "https://www.geeksforgeeks.org/recursion-practice-problems-solutions/"},
-                    {"name": "Memoization", "url": "https://en.wikipedia.org/wiki/Memoization"},
-                    {"name": "Tail Recursion", "url": "https://www.geeksforgeeks.org/tail-recursion/"},
-                    {"name": "Python Recursion Limit", "url": "https://docs.python.org/3/library/sys.html#sys.setrecursionlimit"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Intermediate"
-            },
-            "wednesday": {
-                "topic": "Backtracking Introduction",
-                "activities": "Template, decision trees, pruning",
-                "resources": [
-                    {"name": "Backtracking - NeetCode", "url": "https://www.youtube.com/watch?v=pfiQ_PS1g8E"},
-                    {"name": "Backtracking Algorithm", "url": "https://www.geeksforgeeks.org/backtracking-algorithms/"},
-                    {"name": "Backtracking Template", "url": "https://leetcode.com/discuss/general-discussion/136503/what-is-backtracking-and-template-to-solve-backtracking-problems"},
-                    {"name": "Decision Tree Pruning", "url": "https://en.wikipedia.org/wiki/Pruning_(decision_trees)"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "thursday": {
-                "topic": "Classic Backtracking Problems",
-                "activities": "N-Queens, Sudoku solver, maze solving",
-                "resources": [
-                    {"name": "N-Queens Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/RecQueens.html"},
-                    {"name": "N-Queens Problem", "url": "https://leetcode.com/problems/n-queens/"},
-                    {"name": "Sudoku Solver", "url": "https://leetcode.com/problems/sudoku-solver/"},
-                    {"name": "Maze Solving", "url": "https://www.geeksforgeeks.org/rat-in-a-maze-backtracking-2/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "Combinatorial Problems",
-                "activities": "Subsets, permutations, combinations",
-                "resources": [
-                    {"name": "Subsets", "url": "https://leetcode.com/problems/subsets/"},
-                    {"name": "Permutations", "url": "https://leetcode.com/problems/permutations/"},
-                    {"name": "Combinations", "url": "https://leetcode.com/problems/combinations/"},
-                    {"name": "Backtracking Problems", "url": "https://leetcode.com/tag/backtracking/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "saturday": {
-                "topic": "Project Start: Sudoku Solver",
-                "activities": "Interactive puzzle solver with GUI",
-                "resources": [
-                    {"name": "Sudoku Rules", "url": "https://en.wikipedia.org/wiki/Sudoku"},
-                    {"name": "Constraint Satisfaction", "url": "https://en.wikipedia.org/wiki/Constraint_satisfaction_problem"},
-                    {"name": "Tkinter Grid Layout", "url": "https://tkdocs.com/tutorial/grid.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            },
-            "sunday": {
-                "topic": "Project Complete: Sudoku Solver",
-                "activities": "Validation, hints, difficulty levels, step-by-step solving",
-                "resources": [
-                    {"name": "Sudoku Generation", "url": "https://www.geeksforgeeks.org/program-sudoku-generator/"},
-                    {"name": "Difficulty Rating", "url": "https://en.wikipedia.org/wiki/Mathematics_of_Sudoku#Difficulty_rating"},
-                    {"name": "Interactive GUI", "url": "https://realpython.com/python-gui-tkinter/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            }
-        }
-    },
-    "week_13": {
-        "title": "Dynamic Programming",
-        "goal": "Master DP patterns and optimization problems",
-        "days": {
-            "monday": {
-                "topic": "DP Fundamentals",
-                "activities": "Memoization vs tabulation, optimal substructure",
-                "resources": [
-                    {"name": "DP - NeetCode", "url": "https://www.youtube.com/watch?v=oBt53YbR9Kk"},
-                    {"name": "Dynamic Programming", "url": "https://www.geeksforgeeks.org/dynamic-programming/"},
-                    {"name": "DP Introduction", "url": "https://www.programiz.com/dsa/dynamic-programming"},
-                    {"name": "Abdul Bari DP", "url": "https://www.youtube.com/watch?v=nqowUJzG-iM"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "tuesday": {
-                "topic": "Classic DP Problems",
-                "activities": "Fibonacci, climbing stairs, coin change",
-                "resources": [
-                    {"name": "DP Patterns", "url": "https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns"},
-                    {"name": "Climbing Stairs", "url": "https://leetcode.com/problems/climbing-stairs/"},
-                    {"name": "Coin Change", "url": "https://leetcode.com/problems/coin-change/"},
-                    {"name": "House Robber", "url": "https://leetcode.com/problems/house-robber/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "wednesday": {
-                "topic": "String DP",
-                "activities": "LCS, edit distance, palindromes",
-                "resources": [
-                    {"name": "Longest Common Subsequence", "url": "https://www.geeksforgeeks.org/longest-common-subsequence-dp-4/"},
-                    {"name": "Edit Distance", "url": "https://leetcode.com/problems/edit-distance/"},
-                    {"name": "Palindromic Subsequence", "url": "https://leetcode.com/problems/longest-palindromic-subsequence/"},
-                    {"name": "String DP Problems", "url": "https://leetcode.com/tag/string/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "thursday": {
-                "topic": "Knapsack Problems",
-                "activities": "0/1 knapsack, unbounded knapsack, variations",
-                "resources": [
-                    {"name": "0/1 Knapsack", "url": "https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/"},
-                    {"name": "Knapsack DP", "url": "https://www.youtube.com/watch?v=8LusJS5-AGo"},
-                    {"name": "Unbounded Knapsack", "url": "https://www.geeksforgeeks.org/unbounded-knapsack-repetition-items-allowed/"},
-                    {"name": "Partition Equal Subset", "url": "https://leetcode.com/problems/partition-equal-subset-sum/"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "Advanced DP",
-                "activities": "LIS, maximum subarray, matrix chain multiplication",
-                "resources": [
-                    {"name": "Longest Increasing Subsequence", "url": "https://leetcode.com/problems/longest-increasing-subsequence/"},
-                    {"name": "Maximum Subarray", "url": "https://leetcode.com/problems/maximum-subarray/"},
-                    {"name": "Matrix Chain Multiplication", "url": "https://www.geeksforgeeks.org/matrix-chain-multiplication-dp-8/"},
-                    {"name": "DP on Trees", "url": "https://www.geeksforgeeks.org/dynamic-programming-trees-set-1/"}
-                ],
-                "estimated_time": "6-7 hours",
-                "difficulty": "Expert"
-            },
-            "saturday": {
-                "topic": "Project Start: Investment Calculator",
-                "activities": "DP-based financial optimization",
-                "resources": [
-                    {"name": "Portfolio Optimization", "url": "https://en.wikipedia.org/wiki/Portfolio_optimization"},
-                    {"name": "Dynamic Investment", "url": "https://www.investopedia.com/terms/d/dynamicassetallocation.asp"},
-                    {"name": "Financial Modeling", "url": "https://en.wikipedia.org/wiki/Financial_modeling"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            },
-            "sunday": {
-                "topic": "Project Complete: Investment Calculator",
-                "activities": "Portfolio optimization, risk analysis, scenario planning",
-                "resources": [
-                    {"name": "Risk Management", "url": "https://en.wikipedia.org/wiki/Financial_risk_management"},
-                    {"name": "Monte Carlo Simulation", "url": "https://en.wikipedia.org/wiki/Monte_Carlo_method"},
-                    {"name": "Data Visualization", "url": "https://plotly.com/python/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            }
-        }
-    },
-    "week_14": {
-        "title": "Advanced Topics & System Design",
-        "goal": "Integrate all concepts into comprehensive systems",
-        "days": {
-            "monday": {
-                "topic": "Greedy Algorithms",
-                "activities": "Activity selection, Huffman coding, fractional knapsack",
-                "resources": [
-                    {"name": "Greedy Algorithms", "url": "https://www.geeksforgeeks.org/greedy-algorithms/"},
-                    {"name": "Activity Selection", "url": "https://www.geeksforgeeks.org/activity-selection-problem-greedy-algo-1/"},
-                    {"name": "Huffman Coding", "url": "https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/"},
-                    {"name": "Greedy vs DP", "url": "https://stackoverflow.com/questions/16690249/what-is-the-difference-between-dynamic-programming-and-greedy-approach"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "tuesday": {
-                "topic": "Bit Manipulation",
-                "activities": "Bitwise operations, bit tricks, XOR properties",
-                "resources": [
-                    {"name": "Bit Manipulation", "url": "https://www.youtube.com/watch?v=NLKQEOgBAnw"},
-                    {"name": "Bit Tricks", "url": "https://www.geeksforgeeks.org/bit-tricks-competitive-programming/"},
-                    {"name": "XOR Properties", "url": "https://www.geeksforgeeks.org/xor-of-two-numbers/"},
-                    {"name": "Bit Manipulation Problems", "url": "https://leetcode.com/tag/bit-manipulation/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "wednesday": {
-                "topic": "Trie Data Structure",
-                "activities": "Prefix trees, autocomplete, word search",
-                "resources": [
-                    {"name": "Trie Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Trie.html"},
-                    {"name": "Trie Data Structure", "url": "https://www.geeksforgeeks.org/trie-insert-and-search/"},
-                    {"name": "Autocomplete with Trie", "url": "https://www.geeksforgeeks.org/auto-complete-feature-using-trie/"},
-                    {"name": "Word Search II", "url": "https://leetcode.com/problems/word-search-ii/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "thursday": {
-                "topic": "Union-Find (Disjoint Set)",
-                "activities": "Path compression, union by rank, applications",
-                "resources": [
-                    {"name": "Union-Find Visualization", "url": "https://visualgo.net/en/ufds"},
-                    {"name": "Disjoint Set Union", "url": "https://www.geeksforgeeks.org/disjoint-set-data-structures/"},
-                    {"name": "Union-Find Applications", "url": "https://en.wikipedia.org/wiki/Disjoint-set_data_structure"},
-                    {"name": "Number of Islands II", "url": "https://leetcode.com/problems/number-of-islands-ii/"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Advanced"
-            },
-            "friday": {
-                "topic": "System Design Fundamentals",
-                "activities": "Scalability, data structure choices, trade-offs",
-                "resources": [
-                    {"name": "System Design Primer", "url": "https://github.com/donnemartin/system-design-primer"},
-                    {"name": "Scalability", "url": "https://en.wikipedia.org/wiki/Scalability"},
-                    {"name": "Database Design", "url": "https://en.wikipedia.org/wiki/Database_design"},
-                    {"name": "CAP Theorem", "url": "https://en.wikipedia.org/wiki/CAP_theorem"}
-                ],
-                "estimated_time": "5-6 hours",
-                "difficulty": "Expert"
-            },
-            "saturday": {
-                "topic": "Project Start: File Compressor",
-                "activities": "Huffman coding implementation",
-                "resources": [
-                    {"name": "File Compression", "url": "https://en.wikipedia.org/wiki/Data_compression"},
-                    {"name": "Huffman Coding Implementation", "url": "https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/"},
-                    {"name": "Binary File I/O", "url": "https://docs.python.org/3/library/io.html"}
-                ],
-                "estimated_time": "4-5 hours",
-                "difficulty": "Expert"
-            },
-            "sunday": {
-                "topic": "Final Project: Mini Database System",
-                "activities": "Complete system integrating all DSA concepts",
-                "resources": [
-                    {"name": "Database Implementation", "url": "https://en.wikipedia.org/wiki/Database_engine"},
-                    {"name": "B-Tree Implementation", "url": "https://www.geeksforgeeks.org/b-tree-set-1-introduction-2/"},
-                    {"name": "Query Processing", "url": "https://en.wikipedia.org/wiki/Query_optimization"},
-                    {"name": "ACID Properties", "url": "https://en.wikipedia.org/wiki/ACID"}
-                ],
-                "estimated_time": "6-8 hours",
-                "difficulty": "Expert"
-            }
-        }
-    }
-}
+# Logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Practice platforms with direct links
-PRACTICE_PLATFORMS = {
-    "primary": [
-        {"name": "LeetCode", "url": "https://leetcode.com", "description": "Primary coding interview preparation"},
-        {"name": "HackerRank", "url": "https://www.hackerrank.com", "description": "Structured learning with tutorials"},
-        {"name": "GeeksforGeeks Practice", "url": "https://practice.geeksforgeeks.org", "description": "Comprehensive problem sets"}
-    ],
-    "competitive": [
-        {"name": "Codeforces", "url": "https://codeforces.com", "description": "Competitive programming contests"},
-        {"name": "CodeChef", "url": "https://www.codechef.com", "description": "Monthly programming contests"},
-        {"name": "AtCoder", "url": "https://atcoder.jp", "description": "Japanese competitive programming"}
-    ],
-    "interview_prep": [
-        {"name": "Pramp", "url": "https://www.pramp.com", "description": "Mock technical interviews"},
-        {"name": "InterviewBit", "url": "https://www.interviewbit.com", "description": "Structured interview preparation"},
-        {"name": "A2OJ Ladders", "url": "https://a2oj.com/ladders", "description": "Progressive problem difficulty"}
-    ],
-    "visualization": [
-        {"name": "VisuAlgo", "url": "https://visualgo.net", "description": "Algorithm and data structure visualizations"},
-        {"name": "USFCA Visualizations", "url": "https://www.cs.usfca.edu/~galles/visualization/Algorithms.html", "description": "Interactive algorithm animations"},
-        {"name": "Python Tutor", "url": "http://pythontutor.com", "description": "Code execution visualization"}
-    ]
-}
+# Enhanced Database Models
+class User(db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Enhanced Profile data
+    avatar_url = db.Column(db.String(500))
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    bio = db.Column(db.Text)
+    location = db.Column(db.String(100))
+    github_username = db.Column(db.String(100))
+    linkedin_url = db.Column(db.String(500))
+    
+    # Gamification
+    total_points = db.Column(db.Integer, default=0)
+    current_streak = db.Column(db.Integer, default=0)
+    longest_streak = db.Column(db.Integer, default=0)
+    last_activity = db.Column(db.DateTime, default=datetime.utcnow)
+    level = db.Column(db.Integer, default=1)
+    experience_points = db.Column(db.Integer, default=0)
+    
+    # Study preferences
+    daily_goal_minutes = db.Column(db.Integer, default=60)
+    preferred_study_time = db.Column(db.String(20), default='morning')  # morning, afternoon, evening
+    difficulty_preference = db.Column(db.String(20), default='medium')  # easy, medium, hard
+    
+    # Relationships
+    progress = db.relationship('Progress', backref='user', lazy=True, cascade='all, delete-orphan')
+    notes = db.relationship('Note', backref='user', lazy=True, cascade='all, delete-orphan')
+    pomodoro_sessions = db.relationship('PomodoroSession', backref='user', lazy=True, cascade='all, delete-orphan')
+    achievements = db.relationship('UserAchievement', backref='user', lazy=True, cascade='all, delete-orphan')
+    daily_goals = db.relationship('DailyGoal', backref='user', lazy=True, cascade='all, delete-orphan')
+    study_sessions = db.relationship('StudySession', backref='user', lazy=True, cascade='all, delete-orphan')
 
-# Authentication decorator
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
+class Progress(db.Model):
+    __tablename__ = 'progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    week_number = db.Column(db.Integer, nullable=False, index=True)
+    day_number = db.Column(db.Integer, nullable=False)
+    topic = db.Column(db.String(200), nullable=False)
+    completed = db.Column(db.Boolean, default=False, index=True)
+    completion_date = db.Column(db.DateTime)
+    time_spent = db.Column(db.Integer, default=0)  # in minutes
+    difficulty_rating = db.Column(db.Integer)  # 1-5 scale
+    confidence_level = db.Column(db.Integer)  # 1-5 scale
+    notes = db.Column(db.Text)
+    resources_used = db.Column(db.Text)  # JSON string of resources
+    practice_problems_solved = db.Column(db.Integer, default=0)
+    
+    # Unique constraint
+    __table_args__ = (db.UniqueConstraint('user_id', 'week_number', 'day_number'),)
+
+class Note(db.Model):
+    __tablename__ = 'notes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    topic = db.Column(db.String(100), index=True)
+    week_number = db.Column(db.Integer)
+    tags = db.Column(db.Text)  # JSON string of tags
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_favorite = db.Column(db.Boolean, default=False)
+    is_public = db.Column(db.Boolean, default=False)
+    note_type = db.Column(db.String(50), default='general')  # general, code_snippet, algorithm, concept
+    code_language = db.Column(db.String(50))  # for code snippets
+    view_count = db.Column(db.Integer, default=0)
+
+class PomodoroSession(db.Model):
+    __tablename__ = 'pomodoro_sessions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    duration = db.Column(db.Integer, nullable=False)  # in minutes
+    topic = db.Column(db.String(200))
+    week_number = db.Column(db.Integer)
+    day_number = db.Column(db.Integer)
+    completed = db.Column(db.Boolean, default=False)
+    interruptions = db.Column(db.Integer, default=0)
+    focus_rating = db.Column(db.Integer)  # 1-5 scale
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+class Achievement(db.Model):
+    __tablename__ = 'achievements'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    badge_icon = db.Column(db.String(100))
+    points = db.Column(db.Integer, default=0)
+    category = db.Column(db.String(50))  # streak, completion, time, mastery
+    requirement_type = db.Column(db.String(50))  # count, streak, percentage
+    requirement_value = db.Column(db.Integer)
+    is_active = db.Column(db.Boolean, default=True)
+
+class UserAchievement(db.Model):
+    __tablename__ = 'user_achievements'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    achievement_id = db.Column(db.Integer, db.ForeignKey('achievements.id'), nullable=False)
+    earned_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    achievement = db.relationship('Achievement', backref='user_achievements')
+    
+    __table_args__ = (db.UniqueConstraint('user_id', 'achievement_id'),)
+
+class DailyGoal(db.Model):
+    __tablename__ = 'daily_goals'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    date = db.Column(db.Date, nullable=False, index=True)
+    study_time_goal = db.Column(db.Integer, default=60)  # minutes
+    study_time_actual = db.Column(db.Integer, default=0)
+    topics_goal = db.Column(db.Integer, default=3)
+    topics_completed = db.Column(db.Integer, default=0)
+    pomodoro_goal = db.Column(db.Integer, default=4)
+    pomodoro_completed = db.Column(db.Integer, default=0)
+    notes_goal = db.Column(db.Integer, default=2)
+    notes_created = db.Column(db.Integer, default=0)
+    goal_achieved = db.Column(db.Boolean, default=False)
+    
+    __table_args__ = (db.UniqueConstraint('user_id', 'date'),)
+
+class StudySession(db.Model):
+    __tablename__ = 'study_sessions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime)
+    duration = db.Column(db.Integer)  # in minutes
+    topics_covered = db.Column(db.Text)  # JSON array
+    week_number = db.Column(db.Integer)
+    productivity_rating = db.Column(db.Integer)  # 1-5 scale
+    mood_before = db.Column(db.String(20))  # energetic, tired, motivated, etc.
+    mood_after = db.Column(db.String(20))
+    notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+# Enhanced Utility Functions
+def update_user_streak(user):
+    """Enhanced streak calculation with timezone awareness"""
+    today = datetime.utcnow().date()
+    yesterday = today - timedelta(days=1)
+    
+    # Check if user was active today
+    today_activity = Progress.query.filter_by(
+        user_id=user.id,
+        completed=True
+    ).filter(db.func.date(Progress.completion_date) == today).first()
+    
+    # Check if user was active yesterday
+    yesterday_activity = Progress.query.filter_by(
+        user_id=user.id,
+        completed=True
+    ).filter(db.func.date(Progress.completion_date) == yesterday).first()
+    
+    if today_activity:
+        if yesterday_activity or user.current_streak == 0:
+            if user.last_activity.date() != today:
+                user.current_streak += 1
+        user.last_activity = datetime.utcnow()
         
-        try:
-            if token.startswith('Bearer '):
-                token = token[7:]
-            decoded_token = auth.verify_id_token(token)
-            current_user = decoded_token['uid']
-        except Exception as e:
-            return jsonify({'message': 'Token is invalid!'}), 401
+        if user.current_streak > user.longest_streak:
+            user.longest_streak = user.current_streak
+    else:
+        # Reset streak if no activity today and it's past the user's preferred study time
+        current_hour = datetime.utcnow().hour
+        if current_hour > 20:  # After 8 PM, consider day ended
+            if user.last_activity.date() < yesterday:
+                user.current_streak = 0
+
+def calculate_user_points(user):
+    """Enhanced points calculation with multiple factors"""
+    completed_topics = Progress.query.filter_by(user_id=user.id, completed=True).count()
+    pomodoro_sessions = PomodoroSession.query.filter_by(user_id=user.id, completed=True).count()
+    notes_count = Note.query.filter_by(user_id=user.id).count()
+    achievements_count = UserAchievement.query.filter_by(user_id=user.id).count()
+    
+    # Enhanced point calculation
+    points = (
+        (completed_topics * 15) +
+        (pomodoro_sessions * 5) +
+        (notes_count * 3) +
+        (user.current_streak * 10) +
+        (achievements_count * 25) +
+        (user.longest_streak * 5)
+    )
+    
+    # Bonus for consistency (completed topics in last 7 days)
+    week_ago = datetime.utcnow() - timedelta(days=7)
+    recent_completions = Progress.query.filter(
+        Progress.user_id == user.id,
+        Progress.completed == True,
+        Progress.completion_date >= week_ago
+    ).count()
+    
+    if recent_completions >= 5:
+        points += 50  # Consistency bonus
+    
+    user.total_points = points
+    
+    # Update level based on points
+    new_level = min(100, max(1, (points // 1000) + 1))
+    if new_level > user.level:
+        user.level = new_level
+        # Award level up achievement
+        check_and_award_achievements(user.id, 'level_up', new_level)
+    
+    return points
+
+def check_and_award_achievements(user_id, achievement_type, value=None):
+    """Check and award achievements based on user activity"""
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return
         
-        return f(current_user, *args, **kwargs)
-    return decorated
-
-# Helper function to serialize ObjectId
-def serialize_doc(doc):
-    if doc:
-        doc['_id'] = str(doc['_id'])
-    return doc
-
-@app.route('/')
-def index():
-    return jsonify({
-        "message": "DSA Learning Roadmap Tracker API",
-        "version": "1.0.0",
-        "features": [
-            "Complete 14-week DSA roadmap",
-            "Progress tracking with achievements",
-            "Calendar integration",
-            "Notes and review system",
-            "Motivational quotes",
-            "Analytics dashboard",
-            "Search functionality",
-            "Data export capabilities"
-        ],
-        "endpoints": {
-            "auth": "/auth/*",
-            "progress": "/api/progress/*",
-            "calendar": "/api/calendar/*",
-            "notes": "/api/notes/*",
-            "quotes": "/api/quotes/*",
-            "roadmap": "/api/roadmap/*",
-            "achievements": "/api/achievements/*",
-            "practice": "/api/practice/*"
+        # Define achievement criteria
+        achievement_criteria = {
+            'first_signup': lambda: True,
+            'first_topic': lambda: Progress.query.filter_by(user_id=user_id, completed=True).count() >= 1,
+            'week_warrior': lambda: user.current_streak >= 7,
+            'month_master': lambda: user.current_streak >= 30,
+            'century_club': lambda: user.current_streak >= 100,
+            'note_taker': lambda: Note.query.filter_by(user_id=user_id).count() >= 10,
+            'pomodoro_pro': lambda: PomodoroSession.query.filter_by(user_id=user_id, completed=True).count() >= 25,
+            'week_completionist': lambda: check_week_completion(user_id),
+            'early_bird': lambda: check_early_bird_pattern(user_id),
+            'night_owl': lambda: check_night_owl_pattern(user_id),
+            'level_up': lambda: True if value else False,
         }
-    })
+        
+        # Check specific achievement or all
+        achievements_to_check = [achievement_type] if achievement_type in achievement_criteria else achievement_criteria.keys()
+        
+        for ach_name in achievements_to_check:
+            if ach_name in achievement_criteria and achievement_criteria[ach_name]():
+                # Check if user already has this achievement
+                existing = UserAchievement.query.join(Achievement).filter(
+                    UserAchievement.user_id == user_id,
+                    Achievement.name == ach_name
+                ).first()
+                
+                if not existing:
+                    achievement = Achievement.query.filter_by(name=ach_name).first()
+                    if achievement:
+                        user_achievement = UserAchievement(
+                            user_id=user_id,
+                            achievement_id=achievement.id
+                        )
+                        db.session.add(user_achievement)
+                        user.total_points += achievement.points
+        
+        db.session.commit()
+        
+    except Exception as e:
+        logger.error(f"Error checking achievements: {str(e)}")
+        db.session.rollback()
 
-# Authentication Routes
-@app.route('/auth/register', methods=['POST'])
+def check_week_completion(user_id):
+    """Check if user completed a full week"""
+    for week in range(1, 15):  # Check weeks 1-14
+        week_progress = Progress.query.filter_by(
+            user_id=user_id,
+            week_number=week,
+            completed=True
+        ).count()
+        if week_progress >= 5:  # Assuming 5 days per week
+            return True
+    return False
+
+def check_early_bird_pattern(user_id):
+    """Check if user consistently studies in the morning"""
+    morning_sessions = PomodoroSession.query.filter(
+        PomodoroSession.user_id == user_id,
+        db.extract('hour', PomodoroSession.created_at) < 12
+    ).count()
+    total_sessions = PomodoroSession.query.filter_by(user_id=user_id).count()
+    return total_sessions > 10 and (morning_sessions / total_sessions) > 0.7
+
+def check_night_owl_pattern(user_id):
+    """Check if user consistently studies at night"""
+    night_sessions = PomodoroSession.query.filter(
+        PomodoroSession.user_id == user_id,
+        db.extract('hour', PomodoroSession.created_at) > 20
+    ).count()
+    total_sessions = PomodoroSession.query.filter_by(user_id=user_id).count()
+    return total_sessions > 10 and (night_sessions / total_sessions) > 0.7
+
+# Enhanced Authentication Routes
+@app.route('/api/auth/register', methods=['POST'])
 def register():
     try:
         data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-        display_name = data.get('displayName', '')
         
-        # Create user in Firebase
-        user = auth.create_user(
-            email=email,
-            password=password,
-            display_name=display_name
+        # Enhanced validation
+        if not data.get('username') or len(data['username']) < 3:
+            return jsonify({'message': 'Username must be at least 3 characters long'}), 400
+            
+        if not data.get('email') or '@' not in data['email']:
+            return jsonify({'message': 'Valid email is required'}), 400
+            
+        if not data.get('password') or len(data['password']) < 6:
+            return jsonify({'message': 'Password must be at least 6 characters long'}), 400
+        
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({'message': 'Username already exists'}), 400
+            
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'message': 'Email already exists'}), 400
+        
+        user = User(
+            username=data['username'],
+            email=data['email'],
+            password_hash=generate_password_hash(data['password']),
+            first_name=data.get('first_name', ''),
+            last_name=data.get('last_name', '')
         )
         
-        # Create user profile in MongoDB
-        user_profile = {
-            "uid": user.uid,
-            "email": email,
-            "display_name": display_name,
-            "created_at": datetime.utcnow(),
-            "total_streak": 0,
-            "current_streak": 0,
-            "last_activity": None,
-            "level": 1,
-            "experience": 0,
-            "achievements": [],
-            "preferences": {
-                "difficulty": "beginner",
-                "daily_goal_hours": 2,
-                "notifications": True,
-                "theme": "light"
-            }
-        }
+        db.session.add(user)
+        db.session.flush()  # Get user.id before commit
         
-        mongo.db.users.insert_one(user_profile)
+        # Award first achievement
+        check_and_award_achievements(user.id, 'first_signup')
+        
+        db.session.commit()
+        
+        access_token = create_access_token(identity=user.id)
+        
+        logger.info(f"New user registered: {user.username}")
         
         return jsonify({
-            "message": "User created successfully",
-            "uid": user.uid
+            'message': 'User created successfully',
+            'access_token': access_token,
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
         }), 201
-    
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        logger.error(f"Registration error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': 'Registration failed. Please try again.'}), 500
 
-@app.route('/auth/login', methods=['POST'])
+@app.route('/api/auth/login', methods=['POST'])
 def login():
     try:
         data = request.get_json()
-        token = data.get('token')
+        user = User.query.filter_by(email=data['email']).first()
         
-        # Verify the token
-        decoded_token = auth.verify_id_token(token)
-        uid = decoded_token['uid']
-        
-        # Get or create user profile
-        user_profile = mongo.db.users.find_one({"uid": uid})
-        if not user_profile:
-            user_profile = {
-                "uid": uid,
-                "email": decoded_token.get('email'),
-                "display_name": decoded_token.get('name', ''),
-                "created_at": datetime.utcnow(),
-                "total_streak": 0,
-                "current_streak": 0,
-                "last_activity": None,
-                "level": 1,
-                "experience": 0,
-                "achievements": [],
-                "preferences": {
-                    "difficulty": "beginner",
-                    "daily_goal_hours": 2,
-                    "notifications": True,
-                    "theme": "light"
+        if user and check_password_hash(user.password_hash, data['password']):
+            # Update last activity
+            user.last_activity = datetime.utcnow()
+            
+            # Update user stats
+            update_user_streak(user)
+            calculate_user_points(user)
+            
+            db.session.commit()
+            
+            access_token = create_access_token(identity=user.id)
+            
+            logger.info(f"User logged in: {user.username}")
+            
+            return jsonify({
+                'access_token': access_token,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'total_points': user.total_points,
+                    'current_streak': user.current_streak,
+                    'level': user.level
                 }
-            }
-            mongo.db.users.insert_one(user_profile)
-        
-        return jsonify({
-            "message": "Login successful",
-            "user": serialize_doc(user_profile)
-        }), 200
-    
+            }), 200
+        else:
+            return jsonify({'message': 'Invalid credentials'}), 401
+            
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        logger.error(f"Login error: {str(e)}")
+        return jsonify({'message': 'Login failed. Please try again.'}), 500
 
-# Progress Routes
+# Enhanced Progress Routes
 @app.route('/api/progress', methods=['GET'])
-@token_required
-def get_progress(current_user):
+@jwt_required()
+def get_progress():
     try:
-        week = request.args.get('week')
-        query = {"uid": current_user}
+        user_id = get_jwt_identity()
+        week = request.args.get('week', type=int)
         
+        query = Progress.query.filter_by(user_id=user_id)
         if week:
-            query["week"] = week
+            query = query.filter_by(week_number=week)
         
-        progress = list(mongo.db.progress.find(query).sort("updated_at", -1))
-        return jsonify([serialize_doc(p) for p in progress]), 200
+        progress = query.all()
+        
+        result = []
+        for p in progress:
+            result.append({
+                'id': p.id,
+                'week_number': p.week_number,
+                'day_number': p.day_number,
+                'topic': p.topic,
+                'completed': p.completed,
+                'completion_date': p.completion_date.isoformat() if p.completion_date else None,
+                'time_spent': p.time_spent,
+                'difficulty_rating': p.difficulty_rating,
+                'confidence_level': p.confidence_level,
+                'notes': p.notes,
+                'resources_used': json.loads(p.resources_used) if p.resources_used else [],
+                'practice_problems_solved': p.practice_problems_solved
+            })
+        
+        return jsonify(result), 200
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Get progress error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
 
 @app.route('/api/progress', methods=['POST'])
-@token_required
-def update_progress(current_user):
+@jwt_required()
+def update_progress():
     try:
+        user_id = get_jwt_identity()
         data = request.get_json()
-        week = data.get('week')
-        day = data.get('day')
-        topic = data.get('topic')
-        completed = data.get('completed', False)
-        time_spent = data.get('time_spent', 0)
-        difficulty_rating = data.get('difficulty_rating', 1)
-        notes = data.get('notes', '')
         
-        # Check if progress exists
-        existing_progress = mongo.db.progress.find_one({
-            "uid": current_user,
-            "week": week,
-            "day": day
-        })
+        # Check if progress entry exists
+        progress = Progress.query.filter_by(
+            user_id=user_id,
+            week_number=data['week_number'],
+            day_number=data['day_number']
+        ).first()
         
-        progress_data = {
-            "uid": current_user,
-            "week": week,
-            "day": day,
-            "topic": topic,
-            "completed": completed,
-            "time_spent": time_spent,
-            "difficulty_rating": difficulty_rating,
-            "notes": notes,
-            "updated_at": datetime.utcnow()
-        }
-        
-        if existing_progress:
-            mongo.db.progress.update_one(
-                {"_id": existing_progress["_id"]},
-                {"$set": progress_data}
+        if not progress:
+            progress = Progress(
+                user_id=user_id,
+                week_number=data['week_number'],
+                day_number=data['day_number'],
+                topic=data['topic']
             )
-        else:
-            progress_data["created_at"] = datetime.utcnow()
-            mongo.db.progress.insert_one(progress_data)
+            db.session.add(progress)
         
-        # Update user streak and experience
-        if completed:
-            update_user_streak_and_experience(current_user, time_spent)
+        # Update fields
+        progress.completed = data.get('completed', False)
+        progress.time_spent = data.get('time_spent', 0)
+        progress.difficulty_rating = data.get('difficulty_rating')
+        progress.confidence_level = data.get('confidence_level')
+        progress.notes = data.get('notes', '')
+        progress.resources_used = json.dumps(data.get('resources_used', []))
+        progress.practice_problems_solved = data.get('practice_problems_solved', 0)
         
-        return jsonify({"message": "Progress updated successfully"}), 200
-    
+        if progress.completed and not progress.completion_date:
+            progress.completion_date = datetime.utcnow()
+        
+        # Update user streak and points
+        user = User.query.get(user_id)
+        update_user_streak(user)
+        calculate_user_points(user)
+        
+        # Check for achievements
+        if progress.completed:
+            check_and_award_achievements(user_id, 'first_topic')
+            check_and_award_achievements(user_id, 'week_completionist')
+        
+        db.session.commit()
+        
+        return jsonify({'message': 'Progress updated successfully'}), 200
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Update progress error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
 
-def update_user_streak_and_experience(uid, time_spent):
-    user = mongo.db.users.find_one({"uid": uid})
-    if not user:
-        return
-    
-    today = datetime.utcnow().date()
-    last_activity = user.get('last_activity')
-    
-    if last_activity:
-        last_activity_date = last_activity.date() if isinstance(last_activity, datetime) else datetime.strptime(last_activity, '%Y-%m-%d').date()
+# Enhanced Notes Routes
+@app.route('/api/notes', methods=['GET'])
+@jwt_required()
+def get_notes():
+    try:
+        user_id = get_jwt_identity()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        search = request.args.get('search', '')
+        topic = request.args.get('topic', '')
+        note_type = request.args.get('type', '')
+        favorites_only = request.args.get('favorites', 'false').lower() == 'true'
         
-        if last_activity_date == today:
-            # Already updated today
-            return
-        elif last_activity_date == today - timedelta(days=1):
-            # Consecutive day
-            current_streak = user.get('current_streak', 0) + 1
-        else:
-            # Streak broken
-            current_streak = 1
-    else:
-        current_streak = 1
-    
-    # Calculate experience based on time spent (10 exp per hour)
-    experience_gained = time_spent * 10
-    total_experience = user.get('experience', 0) + experience_gained
-    
-    # Calculate level (every 1000 exp = 1 level)
-    level = (total_experience // 1000) + 1
-    
-    # Update user
-    mongo.db.users.update_one(
-        {"uid": uid},
-        {
-            "$set": {
-                "current_streak": current_streak,
-                "total_streak": max(user.get('total_streak', 0), current_streak),
-                "last_activity": datetime.utcnow(),
-                "experience": total_experience,
-                "level": level
-            }
-        }
-    )
-    
-    # Check for achievements
-    check_achievements(uid, current_streak, level, total_experience)
-
-def check_achievements(uid, streak, level, experience):
-    user = mongo.db.users.find_one({"uid": uid})
-    current_achievements = user.get('achievements', [])
-    
-    new_achievements = []
-    
-    # Streak achievements
-    streak_milestones = [7, 30, 100, 365]
-    for milestone in streak_milestones:
-        achievement_id = f"streak_{milestone}"
-        if streak >= milestone and achievement_id not in current_achievements:
-            new_achievements.append({
-                "id": achievement_id,
-                "title": f"{milestone} Day Streak!",
-                "description": f"Completed {milestone} consecutive days of learning",
-                "earned_at": datetime.utcnow(),
-                "type": "streak",
-                "icon": "🔥",
-                "points": milestone * 10
-            })
-    
-    # Level achievements
-    level_milestones = [5, 10, 25, 50, 100]
-    for milestone in level_milestones:
-        achievement_id = f"level_{milestone}"
-        if level >= milestone and achievement_id not in current_achievements:
-            new_achievements.append({
-                "id": achievement_id,
-                "title": f"Level {milestone} Master!",
-                "description": f"Reached level {milestone}",
-                "earned_at": datetime.utcnow(),
-                "type": "level",
-                "icon": "⭐",
-                "points": milestone * 100
-            })
-    
-    # Weekly completion achievements
-    completed_weeks = mongo.db.progress.distinct("week", {"uid": uid, "completed": True})
-    week_milestones = [1, 5, 10, 14]
-    for milestone in week_milestones:
-        achievement_id = f"weeks_{milestone}"
-        if len(completed_weeks) >= milestone and achievement_id not in current_achievements:
-            new_achievements.append({
-                "id": achievement_id,
-                "title": f"Completed {milestone} Week{'s' if milestone > 1 else ''}!",
-                "description": f"Successfully completed {milestone} week{'s' if milestone > 1 else ''} of the roadmap",
-                "earned_at": datetime.utcnow(),
-                "type": "completion",
-                "icon": "🏆",
-                "points": milestone * 500
-            })
-    
-    if new_achievements:
-        achievement_ids = [a["id"] for a in new_achievements]
-        mongo.db.users.update_one(
-            {"uid": uid},
-            {"$addToSet": {"achievements": {"$each": achievement_ids}}}
+        query = Note.query.filter_by(user_id=user_id)
+        
+        if search:
+            query = query.filter(
+                db.or_(
+                    Note.title.contains(search),
+                    Note.content.contains(search),
+                    Note.tags.contains(search)
+                )
+            )
+        
+        if topic:
+            query = query.filter_by(topic=topic)
+            
+        if note_type:
+            query = query.filter_by(note_type=note_type)
+            
+        if favorites_only:
+            query = query.filter_by(is_favorite=True)
+        
+        notes = query.order_by(Note.updated_at.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
         )
         
-        # Store detailed achievements
-        for achievement in new_achievements:
-            achievement["uid"] = uid
-            mongo.db.achievements.insert_one(achievement)
-
-# Calendar Routes
-@app.route('/api/calendar', methods=['GET'])
-@token_required
-def get_calendar_events(current_user):
-    try:
-        start_date = request.args.get('start')
-        end_date = request.args.get('end')
+        result = []
+        for note in notes.items:
+            result.append({
+                'id': note.id,
+                'title': note.title,
+                'content': note.content,
+                'topic': note.topic,
+                'week_number': note.week_number,
+                'tags': json.loads(note.tags) if note.tags else [],
+                'created_at': note.created_at.isoformat(),
+                'updated_at': note.updated_at.isoformat(),
+                'is_favorite': note.is_favorite,
+                'is_public': note.is_public,
+                'note_type': note.note_type,
+                'code_language': note.code_language,
+                'view_count': note.view_count
+            })
         
-        query = {"uid": current_user}
-        if start_date and end_date:
-            query["date"] = {
-                "$gte": datetime.strptime(start_date, '%Y-%m-%d'),
-                "$lte": datetime.strptime(end_date, '%Y-%m-%d')
+        return jsonify({
+            'notes': result,
+            'pagination': {
+                'page': notes.page,
+                'pages': notes.pages,
+                'per_page': notes.per_page,
+                'total': notes.total
             }
+        }), 200
         
-        events = list(mongo.db.calendar_events.find(query).sort("date", 1))
-        
-        # Add automatic events from roadmap
-        if not start_date or not end_date:
-            auto_events = generate_roadmap_events(current_user)
-            events.extend(auto_events)
-        
-        return jsonify([serialize_doc(event) for event in events]), 200
-    
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-def generate_roadmap_events(uid):
-    """Generate calendar events from roadmap data"""
-    events = []
-    start_date = datetime.utcnow().date()
-    
-    for week_num, week_data in DSA_ROADMAP.items():
-        week_index = int(week_num.split('_')[1]) - 1
-        
-        for day_name, day_data in week_data["days"].items():
-            # Calculate the date for this day
-            day_offset = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].index(day_name)
-            event_date = start_date + timedelta(weeks=week_index, days=day_offset)
-            
-            event = {
-                "uid": uid,
-                "title": f"{day_data['topic']}",
-                "description": day_data["activities"],
-                "date": datetime.combine(event_date, datetime.min.time()),
-                "type": "roadmap",
-                "week": week_num,
-                "day": day_name,
-                "estimated_time": day_data.get("estimated_time", "3-4 hours"),
-                "difficulty": day_data.get("difficulty", "Intermediate"),
-                "auto_generated": True
-            }
-            events.append(event)
-    
-    return events[:50]  # Limit to prevent too many events
-
-@app.route('/api/calendar', methods=['POST'])
-@token_required
-def create_calendar_event(current_user):
-    try:
-        data = request.get_json()
-        
-        event = {
-            "uid": current_user,
-            "title": data.get('title'),
-            "description": data.get('description', ''),
-            "date": datetime.strptime(data.get('date'), '%Y-%m-%d'),
-            "time": data.get('time'),
-            "type": data.get('type', 'study'),  # study, review, project, break
-            "week": data.get('week'),
-            "day": data.get('day'),
-            "completed": False,
-            "reminder": data.get('reminder', False),
-            "created_at": datetime.utcnow()
-        }
-        
-        result = mongo.db.calendar_events.insert_one(event)
-        event['_id'] = str(result.inserted_id)
-        
-        return jsonify(event), 201
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Notes Routes
-@app.route('/api/notes', methods=['GET'])
-@token_required
-def get_notes(current_user):
-    try:
-        week = request.args.get('week')
-        day = request.args.get('day')
-        search = request.args.get('search')
-        
-        query = {"uid": current_user}
-        if week:
-            query["week"] = week
-        if day:
-            query["day"] = day
-        if search:
-            query["$or"] = [
-                {"content": {"$regex": search, "$options": "i"}},
-                {"topic": {"$regex": search, "$options": "i"}},
-                {"tags": {"$in": [search]}}
-            ]
-        
-        notes = list(mongo.db.notes.find(query).sort("created_at", -1))
-        return jsonify([serialize_doc(note) for note in notes]), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Get notes error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
 
 @app.route('/api/notes', methods=['POST'])
-@token_required
-def create_note(current_user):
+@jwt_required()
+def create_note():
     try:
+        user_id = get_jwt_identity()
         data = request.get_json()
         
-        note = {
-            "uid": current_user,
-            "week": data.get('week'),
-            "day": data.get('day'),
-            "topic": data.get('topic'),
-            "content": data.get('content'),
-            "tags": data.get('tags', []),
-            "review_needed": data.get('review_needed', False),
-            "priority": data.get('priority', 'medium'),  # low, medium, high
-            "category": data.get('category', 'general'),  # concept, problem, insight, question
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
-        }
-        
-        result = mongo.db.notes.insert_one(note)
-        note['_id'] = str(result.inserted_id)
-        
-        return jsonify(note), 201
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/notes/<note_id>', methods=['PUT'])
-@token_required
-def update_note(current_user, note_id):
-    try:
-        data = request.get_json()
-        
-        update_data = {
-            "content": data.get('content'),
-            "tags": data.get('tags', []),
-            "review_needed": data.get('review_needed', False),
-            "priority": data.get('priority', 'medium'),
-            "category": data.get('category', 'general'),
-            "updated_at": datetime.utcnow()
-        }
-        
-        result = mongo.db.notes.update_one(
-            {"_id": ObjectId(note_id), "uid": current_user},
-            {"$set": update_data}
+        note = Note(
+            user_id=user_id,
+            title=data['title'],
+            content=data['content'],
+            topic=data.get('topic', ''),
+            week_number=data.get('week_number'),
+            tags=json.dumps(data.get('tags', [])),
+            is_favorite=data.get('is_favorite', False),
+            is_public=data.get('is_public', False),
+            note_type=data.get('note_type', 'general'),
+            code_language=data.get('code_language')
         )
         
-        if result.matched_count:
-            return jsonify({"message": "Note updated successfully"}), 200
-        else:
-            return jsonify({"error": "Note not found"}), 404
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/notes/<note_id>', methods=['DELETE'])
-@token_required
-def delete_note(current_user, note_id):
-    try:
-        result = mongo.db.notes.delete_one({
-            "_id": ObjectId(note_id),
-            "uid": current_user
-        })
+        db.session.add(note)
         
-        if result.deleted_count:
-            return jsonify({"message": "Note deleted successfully"}), 200
-        else:
-            return jsonify({"error": "Note not found"}), 404
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Quotes Route
-@app.route('/api/quotes/daily', methods=['GET'])
-def get_daily_quote():
-    try:
-        # Try to get from external API
-        response = requests.get(QUOTES_API, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            return jsonify({
-                "quote": data.get('content', ''),
-                "author": data.get('author', ''),
-                "source": "quotable.io"
-            }), 200
-        else:
-            # Fallback quotes specifically for programmers/learners
-            fallback_quotes = [
-                {"quote": "The only way to do great work is to love what you do.", "author": "Steve Jobs"},
-                {"quote": "Code is like humor. When you have to explain it, it's bad.", "author": "Cory House"},
-                {"quote": "First, solve the problem. Then, write the code.", "author": "John Johnson"},
-                {"quote": "Experience is the name everyone gives to their mistakes.", "author": "Oscar Wilde"},
-                {"quote": "In order to be irreplaceable, one must always be different.", "author": "Coco Chanel"},
-                {"quote": "Java is to JavaScript what car is to Carpet.", "author": "Chris Heilmann"},
-                {"quote": "Knowledge is power.", "author": "Francis Bacon"},
-                {"quote": "Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday's code.", "author": "Dan Salomon"},
-                {"quote": "Programming isn't about what you know; it's about what you can figure out.", "author": "Chris Pine"},
-                {"quote": "The best error message is the one that never shows up.", "author": "Thomas Fuchs"},
-                {"quote": "Simplicity is the ultimate sophistication.", "author": "Leonardo da Vinci"},
-                {"quote": "Before software can be reusable it first has to be usable.", "author": "Ralph Johnson"},
-                {"quote": "Make it work, make it right, make it fast.", "author": "Kent Beck"},
-                {"quote": "The most disastrous thing that you can ever learn is your first programming language.", "author": "Alan Kay"},
-                {"quote": "Walking on water and developing software from a specification are easy if both are frozen.", "author": "Edward V Berard"}
-            ]
-            
-            quote = random.choice(fallback_quotes)
-            return jsonify({
-                "quote": quote["quote"],
-                "author": quote["author"],
-                "source": "local"
-            }), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Roadmap Routes
-@app.route('/api/roadmap', methods=['GET'])
-def get_roadmap():
-    try:
-        week = request.args.get('week')
+        # Check for note-taking achievements
+        check_and_award_achievements(user_id, 'note_taker')
         
-        if week:
-            if week in DSA_ROADMAP:
-                return jsonify(DSA_ROADMAP[week]), 200
-            else:
-                return jsonify({"error": "Week not found"}), 404
-        else:
-            return jsonify(DSA_ROADMAP), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/roadmap/weeks', methods=['GET'])
-def get_roadmap_overview():
-    try:
-        overview = {}
-        for week_key, week_data in DSA_ROADMAP.items():
-            overview[week_key] = {
-                "title": week_data["title"],
-                "goal": week_data["goal"],
-                "total_days": len(week_data["days"]),
-                "topics": [day_data["topic"] for day_data in week_data["days"].values()]
-            }
-        
-        return jsonify(overview), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/roadmap/day/<week>/<day>', methods=['GET'])
-def get_day_details(week, day):
-    try:
-        if week in DSA_ROADMAP and day in DSA_ROADMAP[week]["days"]:
-            day_data = DSA_ROADMAP[week]["days"][day]
-            day_data["week_title"] = DSA_ROADMAP[week]["title"]
-            day_data["week_goal"] = DSA_ROADMAP[week]["goal"]
-            return jsonify(day_data), 200
-        else:
-            return jsonify({"error": "Week or day not found"}), 404
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Practice Platforms Route
-@app.route('/api/practice', methods=['GET'])
-def get_practice_platforms():
-    try:
-        category = request.args.get('category')
-        
-        if category and category in PRACTICE_PLATFORMS:
-            return jsonify(PRACTICE_PLATFORMS[category]), 200
-        else:
-            return jsonify(PRACTICE_PLATFORMS), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Achievements Routes
-@app.route('/api/achievements', methods=['GET'])
-@token_required
-def get_achievements(current_user):
-    try:
-        achievements = list(mongo.db.achievements.find({"uid": current_user}).sort("earned_at", -1))
-        return jsonify([serialize_doc(achievement) for achievement in achievements]), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/user/stats', methods=['GET'])
-@token_required
-def get_user_stats(current_user):
-    try:
-        user = mongo.db.users.find_one({"uid": current_user})
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-        
-        # Get progress statistics
-        total_completed = mongo.db.progress.count_documents({
-            "uid": current_user,
-            "completed": True
-        })
-        
-        total_time = mongo.db.progress.aggregate([
-            {"$match": {"uid": current_user}},
-            {"$group": {"_id": None, "total": {"$sum": "$time_spent"}}}
-        ])
-        total_time = list(total_time)
-        total_time_spent = total_time[0]["total"] if total_time else 0
-        
-        # Get weekly progress
-        weekly_progress = mongo.db.progress.aggregate([
-            {"$match": {"uid": current_user, "completed": True}},
-            {"$group": {
-                "_id": "$week",
-                "completed_days": {"$sum": 1},
-                "total_time": {"$sum": "$time_spent"}
-            }},
-            {"$sort": {"_id": 1}}
-        ])
-        
-        # Get completion percentage
-        total_topics = sum(len(week_data["days"]) for week_data in DSA_ROADMAP.values())
-        completion_percentage = (total_completed / total_topics) * 100 if total_topics > 0 else 0
-        
-        stats = {
-            "user_info": serialize_doc(user),
-            "total_completed_topics": total_completed,
-            "total_topics": total_topics,
-            "completion_percentage": round(completion_percentage, 2),
-            "total_time_spent": total_time_spent,
-            "current_streak": user.get("current_streak", 0),
-            "total_streak": user.get("total_streak", 0),
-            "level": user.get("level", 1),
-            "experience": user.get("experience", 0),
-            "weekly_progress": list(weekly_progress),
-            "achievement_count": len(user.get("achievements", [])),
-            "preferences": user.get("preferences", {})
-        }
-        
-        return jsonify(stats), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Review Topics Route
-@app.route('/api/review', methods=['GET'])
-@token_required
-def get_review_topics(current_user):
-    try:
-        # Get topics marked for review
-        review_notes = list(mongo.db.notes.find({
-            "uid": current_user,
-            "review_needed": True
-        }).sort("updated_at", -1))
-        
-        # Get topics with low performance (not completed or low time spent)
-        weak_topics = list(mongo.db.progress.find({
-            "uid": current_user,
-            "$or": [
-                {"completed": False},
-                {"time_spent": {"$lt": 1}}  # Less than 1 hour
-            ]
-        }).sort("updated_at", -1))
-        
-        # Get topics with low difficulty rating
-        difficult_topics = list(mongo.db.progress.find({
-            "uid": current_user,
-            "difficulty_rating": {"$gte": 4}  # Rated 4 or 5 stars difficulty
-        }).sort("difficulty_rating", -1))
+        db.session.commit()
         
         return jsonify({
-            "review_notes": [serialize_doc(note) for note in review_notes],
-            "weak_topics": [serialize_doc(topic) for topic in weak_topics],
-            "difficult_topics": [serialize_doc(topic) for topic in difficult_topics]
-        }), 200
-    
+            'message': 'Note created successfully',
+            'note_id': note.id
+        }), 201
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Create note error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
 
-# Search Route
-@app.route('/api/search', methods=['GET'])
-@token_required
-def search_content(current_user):
+@app.route('/api/notes/<int:note_id>', methods=['PUT'])
+@jwt_required()
+def update_note(note_id):
     try:
-        query = request.args.get('q', '')
-        if not query:
-            return jsonify({"error": "Search query required"}), 400
+        user_id = get_jwt_identity()
+        note = Note.query.filter_by(id=note_id, user_id=user_id).first()
         
-        # Search in notes
-        notes = list(mongo.db.notes.find({
-            "uid": current_user,
-            "$or": [
-                {"content": {"$regex": query, "$options": "i"}},
-                {"topic": {"$regex": query, "$options": "i"}},
-                {"tags": {"$in": [query]}}
-            ]
-        }).limit(20))
+        if not note:
+            return jsonify({'message': 'Note not found'}), 404
         
-        # Search in roadmap
-        roadmap_results = []
-        for week_key, week_data in DSA_ROADMAP.items():
-            for day_key, day_data in week_data["days"].items():
-                if (query.lower() in day_data["topic"].lower() or 
-                    query.lower() in day_data["activities"].lower()):
-                    roadmap_results.append({
-                        "week": week_key,
-                        "day": day_key,
-                        "topic": day_data["topic"],
-                        "activities": day_data["activities"],
-                        "week_title": week_data["title"]
-                    })
+        data = request.get_json()
+        note.title = data.get('title', note.title)
+        note.content = data.get('content', note.content)
+        note.topic = data.get('topic', note.topic)
+        note.week_number = data.get('week_number', note.week_number)
+        note.tags = json.dumps(data.get('tags', json.loads(note.tags) if note.tags else []))
+        note.is_favorite = data.get('is_favorite', note.is_favorite)
+        note.is_public = data.get('is_public', note.is_public)
+        note.note_type = data.get('note_type', note.note_type)
+        note.code_language = data.get('code_language', note.code_language)
+        note.updated_at = datetime.utcnow()
         
-        # Search in resources
-        resource_results = []
-        for week_key, week_data in DSA_ROADMAP.items():
-            for day_key, day_data in week_data["days"].items():
-                for resource in day_data.get("resources", []):
-                    if query.lower() in resource["name"].lower():
-                        resource_results.append({
-                            "week": week_key,
-                            "day": day_key,
-                            "resource": resource,
-                            "topic": day_data["topic"]
-                        })
+        db.session.commit()
         
-        return jsonify({
-            "notes": [serialize_doc(note) for note in notes],
-            "roadmap": roadmap_results[:10],  # Limit roadmap results
-            "resources": resource_results[:10]  # Limit resource results
-        }), 200
-    
+        return jsonify({'message': 'Note updated successfully'}), 200
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Update note error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
 
-# Analytics Route
-@app.route('/api/analytics', methods=['GET'])
-@token_required
-def get_analytics(current_user):
+@app.route('/api/notes/<int:note_id>', methods=['DELETE'])
+@jwt_required()
+def delete_note(note_id):
     try:
-        # Time-based analytics
-        daily_progress = mongo.db.progress.aggregate([
-            {"$match": {"uid": current_user, "completed": True}},
-            {"$group": {
-                "_id": {
-                    "$dateToString": {
-                        "format": "%Y-%m-%d",
-                        "date": "$updated_at"
-                    }
-                },
-                "topics_completed": {"$sum": 1},
-                "time_spent": {"$sum": "$time_spent"}
-            }},
-            {"$sort": {"_id": 1}},
-            {"$limit": 30}  # Last 30 days
-        ])
+        user_id = get_jwt_identity()
+        note = Note.query.filter_by(id=note_id, user_id=user_id).first()
         
-        # Topic-wise analytics
-        topic_analytics = mongo.db.progress.aggregate([
-            {"$match": {"uid": current_user}},
-            {"$group": {
-                "_id": "$topic",
-                "total_time": {"$sum": "$time_spent"},
-                "completed": {"$sum": {"$cond": ["$completed", 1, 0]}},
-                "attempts": {"$sum": 1},
-                "avg_difficulty": {"$avg": "$difficulty_rating"}
-            }},
-            {"$sort": {"total_time": -1}},
-            {"$limit": 10}
-        ])
+        if not note:
+            return jsonify({'message': 'Note not found'}), 404
         
-        # Weekly analytics
-        weekly_analytics = mongo.db.progress.aggregate([
-            {"$match": {"uid": current_user}},
-            {"$group": {
-                "_id": "$week",
-                "total_time": {"$sum": "$time_spent"},
-                "completed_topics": {"$sum": {"$cond": ["$completed", 1, 0]}},
-                "total_topics": {"$sum": 1}
-            }},
-            {"$addFields": {
-                "completion_rate": {
-                    "$multiply": [
-                        {"$divide": ["$completed_topics", "$total_topics"]},
-                        100
-                    ]
-                }
-            }},
-            {"$sort": {"_id": 1}}
-        ])
+        db.session.delete(note)
+        db.session.commit()
         
-        return jsonify({
-            "daily_progress": list(daily_progress),
-            "topic_analytics": list(topic_analytics),
-            "weekly_analytics": list(weekly_analytics)
-        }), 200
-    
+        return jsonify({'message': 'Note deleted successfully'}), 200
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Delete note error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
 
-# Leaderboard Route
-@app.route('/api/leaderboard', methods=['GET'])
-@token_required
-def get_leaderboard(current_user):
+# Enhanced Pomodoro Routes
+@app.route('/api/pomodoro', methods=['POST'])
+@jwt_required()
+def create_pomodoro_session():
     try:
-        # Get top users by experience
-        top_users = list(mongo.db.users.find(
-            {},
-            {"display_name": 1, "level": 1, "experience": 1, "current_streak": 1}
-        ).sort("experience", -1).limit(10))
-        
-        # Get current user's rank
-        user_rank = mongo.db.users.count_documents({
-            "experience": {"$gt": mongo.db.users.find_one({"uid": current_user})["experience"]}
-        }) + 1
-        
-        return jsonify({
-            "top_users": [serialize_doc(user) for user in top_users],
-            "user_rank": user_rank
-        }), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Export Data Route
-@app.route('/api/export', methods=['GET'])
-@token_required
-def export_data(current_user):
-    try:
-        # Get all user data
-        user = mongo.db.users.find_one({"uid": current_user})
-        progress = list(mongo.db.progress.find({"uid": current_user}))
-        notes = list(mongo.db.notes.find({"uid": current_user}))
-        achievements = list(mongo.db.achievements.find({"uid": current_user}))
-        calendar_events = list(mongo.db.calendar_events.find({"uid": current_user}))
-        
-        export_data = {
-            "user_profile": serialize_doc(user),
-            "progress": [serialize_doc(p) for p in progress],
-            "notes": [serialize_doc(n) for n in notes],
-            "achievements": [serialize_doc(a) for a in achievements],
-            "calendar_events": [serialize_doc(e) for e in calendar_events],
-            "roadmap_data": DSA_ROADMAP,
-            "practice_platforms": PRACTICE_PLATFORMS,
-            "exported_at": datetime.utcnow().isoformat(),
-            "export_version": "1.0"
-        }
-        
-        return jsonify(export_data), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Import Data Route
-@app.route('/api/import', methods=['POST'])
-@token_required
-def import_data(current_user):
-    try:
+        user_id = get_jwt_identity()
         data = request.get_json()
         
-        # Validate import data
-        if not data or 'export_version' not in data:
-            return jsonify({"error": "Invalid import data"}), 400
+        session = PomodoroSession(
+            user_id=user_id,
+            duration=data['duration'],
+            topic=data.get('topic', ''),
+            week_number=data.get('week_number'),
+            day_number=data.get('day_number'),
+            completed=data.get('completed', True),
+            interruptions=data.get('interruptions', 0),
+            focus_rating=data.get('focus_rating')
+        )
         
-        # Import progress
-        if 'progress' in data:
-            for progress_item in data['progress']:
-                progress_item['uid'] = current_user
-                progress_item.pop('_id', None)  # Remove old ID
-                mongo.db.progress.insert_one(progress_item)
+        db.session.add(session)
         
-        # Import notes
-        if 'notes' in data:
-            for note in data['notes']:
-                note['uid'] = current_user
-                note.pop('_id', None)  # Remove old ID
-                mongo.db.notes.insert_one(note)
+        # Update user points and check achievements
+        user = User.query.get(user_id)
+        calculate_user_points(user)
+        check_and_award_achievements(user_id, 'pomodoro_pro')
         
-        # Import calendar events
-        if 'calendar_events' in data:
-            for event in data['calendar_events']:
-                event['uid'] = current_user
-                event.pop('_id', None)  # Remove old ID
-                mongo.db.calendar_events.insert_one(event)
+        db.session.commit()
         
-        return jsonify({"message": "Data imported successfully"}), 200
-    
+        return jsonify({'message': 'Pomodoro session saved'}), 201
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Create pomodoro session error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
 
-# User Preferences Route
-@app.route('/api/user/preferences', methods=['GET', 'PUT'])
-@token_required
-def user_preferences(current_user):
+@app.route('/api/pomodoro/stats', methods=['GET'])
+@jwt_required()
+def get_pomodoro_stats():
     try:
-        if request.method == 'GET':
-            user = mongo.db.users.find_one({"uid": current_user})
-            if user:
-                return jsonify(user.get('preferences', {})), 200
-            else:
-                return jsonify({"error": "User not found"}), 404
+        user_id = get_jwt_identity()
+        days = request.args.get('days', 7, type=int)
         
-        elif request.method == 'PUT':
-            data = request.get_json()
-            preferences = {
-                "difficulty": data.get('difficulty', 'beginner'),
-                "daily_goal_hours": data.get('daily_goal_hours', 2),
-                "notifications": data.get('notifications', True),
-                "theme": data.get('theme', 'light'),
-                "timezone": data.get('timezone', 'UTC'),
-                "language": data.get('language', 'python')
+        # Get stats for the specified number of days
+        start_date = datetime.utcnow() - timedelta(days=days)
+        sessions = PomodoroSession.query.filter_by(
+            user_id=user_id,
+            completed=True
+        ).filter(PomodoroSession.created_at >= start_date).all()
+        
+        total_sessions = len(sessions)
+        total_time = sum(session.duration for session in sessions)
+        
+        # Calculate daily breakdown
+        daily_stats = defaultdict(lambda: {'sessions': 0, 'time': 0})
+        for session in sessions:
+            day_key = session.created_at.date().isoformat()
+            daily_stats[day_key]['sessions'] += 1
+            daily_stats[day_key]['time'] += session.duration
+        
+        # Focus rating average
+        focus_ratings = [s.focus_rating for s in sessions if s.focus_rating]
+        avg_focus = sum(focus_ratings) / len(focus_ratings) if focus_ratings else 0
+        
+        return jsonify({
+            'total_sessions': total_sessions,
+            'total_time': total_time,
+            'average_per_day': total_time / days,
+            'average_focus_rating': round(avg_focus, 1),
+            'daily_breakdown': dict(daily_stats)
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Get pomodoro stats error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# Enhanced Dashboard Routes
+@app.route('/api/dashboard/stats', methods=['GET'])
+@jwt_required()
+def get_dashboard_stats():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        # Update user data
+        update_user_streak(user)
+        calculate_user_points(user)
+        
+        # Get completion stats
+        total_topics = Progress.query.filter_by(user_id=user_id).count()
+        completed_topics = Progress.query.filter_by(user_id=user_id, completed=True).count()
+        
+        # Get this week's progress
+        current_week = datetime.utcnow().isocalendar()[1]
+        week_progress = Progress.query.filter_by(
+            user_id=user_id,
+            week_number=current_week
+        ).all()
+        
+        week_completed = sum(1 for p in week_progress if p.completed)
+        week_total = len(week_progress)
+        
+        # Get recent activity
+        week_ago = datetime.utcnow() - timedelta(days=7)
+        recent_notes = Note.query.filter_by(user_id=user_id).filter(
+            Note.created_at >= week_ago
+        ).count()
+        
+        recent_pomodoros = PomodoroSession.query.filter_by(
+            user_id=user_id,
+            completed=True
+        ).filter(PomodoroSession.created_at >= week_ago).count()
+        
+        # Get achievements
+        achievements = UserAchievement.query.filter_by(user_id=user_id).join(
+            Achievement
+        ).order_by(UserAchievement.earned_at.desc()).limit(5).all()
+        
+        recent_achievements = []
+        for ua in achievements:
+            recent_achievements.append({
+                'title': ua.achievement.title,
+                'description': ua.achievement.description,
+                'badge_icon': ua.achievement.badge_icon,
+                'points': ua.achievement.points,
+                'earned_at': ua.earned_at.isoformat()
+            })
+        
+        db.session.commit()
+        
+        return jsonify({
+            'user': {
+                'username': user.username,
+                'total_points': user.total_points,
+                'current_streak': user.current_streak,
+                'longest_streak': user.longest_streak,
+                'level': user.level,
+                'daily_goal_minutes': user.daily_goal_minutes
+            },
+            'progress': {
+                'total_topics': total_topics,
+                'completed_topics': completed_topics,
+                'completion_percentage': (completed_topics / total_topics * 100) if total_topics > 0 else 0,
+                'week_progress': {
+                    'completed': week_completed,
+                    'total': week_total,
+                    'percentage': (week_completed / week_total * 100) if week_total > 0 else 0
+                }
+            },
+            'recent_activity': {
+                'notes_created': recent_notes,
+                'pomodoros_completed': recent_pomodoros
+            },
+            'recent_achievements': recent_achievements
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Get dashboard stats error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# Enhanced Leaderboard Route
+@app.route('/api/leaderboard', methods=['GET'])
+@jwt_required()
+def get_leaderboard():
+    try:
+        leaderboard_type = request.args.get('type', 'points')  # points, streak, level
+        limit = request.args.get('limit', 10, type=int)
+        
+        if leaderboard_type == 'streak':
+            top_users = User.query.order_by(User.current_streak.desc()).limit(limit).all()
+        elif leaderboard_type == 'level':
+            top_users = User.query.order_by(User.level.desc(), User.total_points.desc()).limit(limit).all()
+        else:  # points
+            top_users = User.query.order_by(User.total_points.desc()).limit(limit).all()
+        
+        leaderboard = []
+        for i, user in enumerate(top_users):
+            leaderboard.append({
+                'rank': i + 1,
+                'username': user.username,
+                'points': user.total_points,
+                'streak': user.current_streak,
+                'level': user.level,
+                'avatar_url': user.avatar_url
+            })
+        
+        return jsonify(leaderboard), 200
+        
+    except Exception as e:
+        logger.error(f"Get leaderboard error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# COMPLETE ROADMAP ROUTE WITH ALL 14 WEEKS AND DETAILED DAYS
+@app.route('/api/roadmap/complete', methods=['GET'])
+def get_complete_roadmap():
+    """Get the complete detailed DSA roadmap with all weeks, days, and resources"""
+    
+    complete_roadmap = {
+        "total_weeks": 14,
+        "total_days": 98,
+        "estimated_hours": 280,
+        "difficulty_progression": "Beginner → Intermediate → Advanced → Expert",
+        "weeks": [
+            {
+                "week": 1,
+                "title": "Foundation & Environment Setup",
+                "description": "Build strong programming foundations and set up development environment",
+                "difficulty": "Beginner",
+                "estimated_hours": 15,
+                "learning_objectives": [
+                    "Set up complete development environment",
+                    "Master basic programming syntax",
+                    "Understand input/output operations",
+                    "Learn function creation and usage",
+                    "Practice basic array operations"
+                ],
+                "days": [
+                    {
+                        "day": 1,
+                        "topic": "Environment Setup & IDE Configuration",
+                        "subtopics": [
+                            "Install Python 3.11+ or C++17",
+                            "Set up VS Code with extensions",
+                            "Configure Git and GitHub",
+                            "Install debugging tools",
+                            "Set up virtual environment"
+                        ],
+                        "time_estimate": "2-3 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Python Installation Guide", "url": "https://www.python.org/downloads/", "difficulty": "Beginner"},
+                                {"title": "VS Code Setup", "url": "https://code.visualstudio.com/docs/python/python-tutorial", "difficulty": "Beginner"},
+                                {"title": "Git Basics", "url": "https://www.w3schools.com/git/", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Complete Python Setup", "url": "https://www.youtube.com/watch?v=YYXdXT2l-Gg", "duration": "15 min"},
+                                {"title": "VS Code for Python", "url": "https://www.youtube.com/watch?v=7EXd4_ttIuw", "duration": "20 min"}
+                            ],
+                            "interactive": [
+                                {"title": "Git Interactive Tutorial", "url": "https://learngitbranching.js.org/", "type": "hands-on"}
+                            ]
+                        },
+                        "practice": [
+                            "Create first Python script",
+                            "Set up GitHub repository",
+                            "Configure VS Code settings",
+                            "Test debugging setup"
+                        ]
+                    },
+                    {
+                        "day": 2,
+                        "topic": "Basic Syntax & Data Types",
+                        "subtopics": [
+                            "Variables and naming conventions",
+                            "Primitive data types",
+                            "Type conversion",
+                            "Operators (arithmetic, logical, comparison)",
+                            "Constants and scope"
+                        ],
+                        "time_estimate": "2-3 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Python Variables", "url": "https://www.w3schools.com/python/python_variables.asp", "difficulty": "Beginner"},
+                                {"title": "Data Types - Programiz", "url": "https://www.programiz.com/python-programming/variables-datatypes", "difficulty": "Beginner"},
+                                {"title": "Operators Guide", "url": "https://www.javatpoint.com/python-operators", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Python Basics - Variables", "url": "https://www.youtube.com/watch?v=cQT33yu9pY8", "duration": "25 min"},
+                                {"title": "Data Types Explained", "url": "https://www.youtube.com/watch?v=gCCVsvgR2KU", "duration": "18 min"}
+                            ],
+                            "practice_platforms": [
+                                {"title": "CodingBat - Warmup", "url": "https://codingbat.com/python/Warmup-1", "problems": 12}
+                            ]
+                        },
+                        "practice": [
+                            "Create calculator with all operators",
+                            "Type conversion exercises",
+                            "Variable scope examples",
+                            "10 coding problems on operators"
+                        ],
+                        "leetcode_problems": [
+                            {"id": 2235, "title": "Add Two Integers", "difficulty": "Easy"},
+                            {"id": 2413, "title": "Smallest Even Multiple", "difficulty": "Easy"}
+                        ]
+                    },
+                    {
+                        "day": 3,
+                        "topic": "Input/Output Operations",
+                        "subtopics": [
+                            "Console input/output",
+                            "String formatting",
+                            "File I/O operations",
+                            "Error handling basics",
+                            "Command line arguments"
+                        ],
+                        "time_estimate": "2-3 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Python Input/Output", "url": "https://www.w3schools.com/python/python_user_input.asp", "difficulty": "Beginner"},
+                                {"title": "File Handling", "url": "https://www.programiz.com/python-programming/file-io", "difficulty": "Beginner"},
+                                {"title": "String Formatting", "url": "https://www.w3schools.com/python/python_string_formatting.asp", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Input/Output in Python", "url": "https://www.youtube.com/watch?v=FhoASwgvZHk", "duration": "20 min"},
+                                {"title": "File Operations", "url": "https://www.youtube.com/watch?v=Uh2ebFW8OYM", "duration": "30 min"}
+                            ]
+                        },
+                        "practice": [
+                            "Build input validator",
+                            "Create file reader/writer",
+                            "Format output tables",
+                            "Handle different input types"
+                        ]
+                    },
+                    {
+                        "day": 4,
+                        "topic": "Functions & Modular Programming",
+                        "subtopics": [
+                            "Function definition and calls",
+                            "Parameters and return values",
+                            "Local vs global scope",
+                            "Lambda functions",
+                            "Function documentation"
+                        ],
+                        "time_estimate": "2-3 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Python Functions", "url": "https://www.w3schools.com/python/python_functions.asp", "difficulty": "Beginner"},
+                                {"title": "Function Parameters", "url": "https://www.programiz.com/python-programming/function-argument", "difficulty": "Beginner"},
+                                {"title": "Lambda Functions", "url": "https://www.w3schools.com/python/python_lambda.asp", "difficulty": "Intermediate"}
+                            ],
+                            "videos": [
+                                {"title": "Functions Explained", "url": "https://www.youtube.com/watch?v=9Os0o3wzS_I", "duration": "35 min"},
+                                {"title": "Advanced Functions", "url": "https://www.youtube.com/watch?v=BVfCWuca9nw", "duration": "25 min"}
+                            ]
+                        },
+                        "practice": [
+                            "Create function library",
+                            "Build recursive functions",
+                            "Practice scope problems",
+                            "Document all functions"
+                        ]
+                    },
+                    {
+                        "day": 5,
+                        "topic": "Arrays & Lists Fundamentals",
+                        "subtopics": [
+                            "Array/List creation and initialization",
+                            "Indexing and slicing",
+                            "Basic operations (append, insert, delete)",
+                            "List comprehensions",
+                            "Multi-dimensional arrays"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Python Lists", "url": "https://www.w3schools.com/python/python_lists.asp", "difficulty": "Beginner"},
+                                {"title": "List Comprehensions", "url": "https://www.programiz.com/python-programming/list-comprehension", "difficulty": "Intermediate"},
+                                {"title": "Arrays in DSA", "url": "https://www.geeksforgeeks.org/introduction-to-arrays/", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Python Lists Tutorial", "url": "https://www.youtube.com/watch?v=ohCDWZgNIU0", "duration": "45 min"},
+                                {"title": "List Operations", "url": "https://www.youtube.com/watch?v=1yUn-ydsgKk", "duration": "30 min"}
+                            ],
+                            "interactive": [
+                                {"title": "Array Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html", "type": "visualization"}
+                            ]
+                        },
+                        "practice": [
+                            "Implement dynamic array",
+                            "Practice slicing operations",
+                            "Create 2D array operations",
+                            "Solve 15 array problems"
+                        ]
+                    },
+                    {
+                        "day": 6,
+                        "topic": "Project Planning: Scientific Calculator",
+                        "subtopics": [
+                            "Requirements analysis",
+                            "Algorithm design",
+                            "Function breakdown",
+                            "Error handling strategy",
+                            "Testing plan"
+                        ],
+                        "time_estimate": "2-3 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Software Design Principles", "url": "https://www.programiz.com/python-programming/modules", "difficulty": "Intermediate"},
+                                {"title": "Error Handling", "url": "https://www.w3schools.com/python/python_try_except.asp", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Project Planning", "url": "https://www.youtube.com/watch?v=pEfrdAtAmqk", "duration": "20 min"}
+                            ]
+                        },
+                        "project_requirements": [
+                            "Basic arithmetic operations (+, -, *, /)",
+                            "Advanced operations (power, sqrt, log)",
+                            "Trigonometric functions",
+                            "Memory functions (store, recall)",
+                            "History of calculations",
+                            "Error handling for edge cases"
+                        ]
+                    },
+                    {
+                        "day": 7,
+                        "topic": "Project Implementation: Scientific Calculator",
+                        "subtopics": [
+                            "Core calculator functions",
+                            "User interface design",
+                            "Memory management",
+                            "Testing and debugging",
+                            "Code documentation"
+                        ],
+                        "time_estimate": "4-5 hours",
+                        "implementation_steps": [
+                            "Create basic arithmetic functions",
+                            "Add scientific functions",
+                            "Implement memory features",
+                            "Build user interface",
+                            "Add error handling",
+                            "Test all features",
+                            "Document the code"
+                        ],
+                        "bonus_features": [
+                            "GUI with tkinter",
+                            "Calculation history export",
+                            "Unit conversions",
+                            "Graph plotting"
+                        ]
+                    }
+                ],
+                "week_project": {
+                    "name": "Scientific Calculator",
+                    "description": "Build a comprehensive calculator with basic and advanced mathematical operations",
+                    "skills_learned": ["Functions", "Error handling", "User input", "Mathematical operations", "Code organization"],
+                    "github_repo": "scientific-calculator",
+                    "demo_features": [
+                        "Basic arithmetic (+, -, *, /)",
+                        "Scientific operations (sin, cos, tan, log, sqrt)",
+                        "Memory functions (store, recall, clear)",
+                        "Calculation history",
+                        "Error handling"
+                    ]
+                },
+                "week_assessment": {
+                    "quiz_topics": ["Variables", "Functions", "Arrays", "I/O Operations"],
+                    "coding_problems": 10,
+                    "project_evaluation": ["Functionality", "Code quality", "Error handling", "Documentation"]
+                }
+            },
+            {
+                "week": 2,
+                "title": "Arrays & String Mastery",
+                "description": "Master array operations, string manipulation, and fundamental algorithms",
+                "difficulty": "Beginner-Intermediate",
+                "estimated_hours": 18,
+                "learning_objectives": [
+                    "Master array traversal and manipulation",
+                    "Learn two-pointer technique",
+                    "Understand string processing algorithms",
+                    "Implement sliding window technique",
+                    "Solve real-world array/string problems"
+                ],
+                "days": [
+                    {
+                        "day": 1,
+                        "topic": "Array Operations & Algorithms",
+                        "subtopics": [
+                            "Array traversal patterns",
+                            "Search algorithms (linear, binary basics)",
+                            "Array rotation and reversal",
+                            "Finding maximum/minimum elements",
+                            "Array manipulation operations"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Array Operations - W3Schools", "url": "https://www.w3schools.com/dsa/dsa_arrays.php", "difficulty": "Beginner"},
+                                {"title": "Array Algorithms - GeeksforGeeks", "url": "https://www.geeksforgeeks.org/array-data-structure/", "difficulty": "Intermediate"},
+                                {"title": "Array Problems - Programiz", "url": "https://www.programiz.com/dsa/array", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Array Algorithms", "url": "https://www.youtube.com/watch?v=pmN9ExDf3yQ", "duration": "40 min"},
+                                {"title": "Array Rotation Techniques", "url": "https://www.youtube.com/watch?v=BHr381Guz3Y", "duration": "25 min"}
+                            ],
+                            "interactive": [
+                                {"title": "Array Visualization", "url": "https://www.cs.usfca.edu/~galles/visualization/Array.html", "type": "visualization"},
+                                {"title": "Algorithm Visualizer", "url": "https://algorithm-visualizer.org/", "type": "interactive"}
+                            ]
+                        },
+                        "leetcode_problems": [
+                            {"id": 26, "title": "Remove Duplicates from Sorted Array", "difficulty": "Easy"},
+                            {"id": 27, "title": "Remove Element", "difficulty": "Easy"},
+                            {"id": 189, "title": "Rotate Array", "difficulty": "Medium"}
+                        ],
+                        "practice": [
+                            "Implement array rotation (left and right)",
+                            "Find second largest element",
+                            "Remove duplicates in-place",
+                            "Reverse array in segments"
+                        ]
+                    },
+                    {
+                        "day": 2,
+                        "topic": "Two Pointers Technique",
+                        "subtopics": [
+                            "Two pointers concept and applications",
+                            "Opposite direction pointers",
+                            "Same direction pointers",
+                            "Three pointers approach",
+                            "Palindrome checking"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Two Pointers Technique", "url": "https://www.geeksforgeeks.org/two-pointers-technique/", "difficulty": "Intermediate"},
+                                {"title": "Two Pointers Problems", "url": "https://leetcode.com/tag/two-pointers/", "difficulty": "Mixed"}
+                            ],
+                            "videos": [
+                                {"title": "Two Pointers Explained - NeetCode", "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A", "duration": "35 min"},
+                                {"title": "Two Pointers Patterns", "url": "https://www.youtube.com/watch?v=On03HWe2tZM", "duration": "45 min"}
+                            ]
+                        },
+                        "leetcode_problems": [
+                            {"id": 1, "title": "Two Sum", "difficulty": "Easy"},
+                            {"id": 125, "title": "Valid Palindrome", "difficulty": "Easy"},
+                            {"id": 167, "title": "Two Sum II - Input Array Is Sorted", "difficulty": "Medium"},
+                            {"id": 15, "title": "3Sum", "difficulty": "Medium"}
+                        ]
+                    },
+                    {
+                        "day": 3,
+                        "topic": "String Processing & Manipulation",
+                        "subtopics": [
+                            "String traversal and comparison",
+                            "String building and concatenation",
+                            "Character frequency counting",
+                            "String reversal techniques",
+                            "Pattern matching basics"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "leetcode_problems": [
+                            {"id": 242, "title": "Valid Anagram", "difficulty": "Easy"},
+                            {"id": 409, "title": "Longest Palindrome", "difficulty": "Easy"},
+                            {"id": 13, "title": "Roman to Integer", "difficulty": "Easy"}
+                        ]
+                    },
+                    {
+                        "day": 4,
+                        "topic": "Sliding Window Technique",
+                        "subtopics": [
+                            "Fixed-size sliding window",
+                            "Variable-size sliding window",
+                            "Maximum/minimum in window",
+                            "Substring problems",
+                            "Window optimization"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "leetcode_problems": [
+                            {"id": 121, "title": "Best Time to Buy and Sell Stock", "difficulty": "Easy"},
+                            {"id": 3, "title": "Longest Substring Without Repeating Characters", "difficulty": "Medium"},
+                            {"id": 424, "title": "Longest Repeating Character Replacement", "difficulty": "Medium"}
+                        ]
+                    },
+                    {
+                        "day": 5,
+                        "topic": "Key Array & String Problems",
+                        "subtopics": [
+                            "Problem-solving strategies",
+                            "Time and space complexity analysis",
+                            "Edge case handling",
+                            "Optimization techniques",
+                            "Interview-style problems"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "leetcode_problems": [
+                            {"id": 53, "title": "Maximum Subarray", "difficulty": "Medium"},
+                            {"id": 49, "title": "Group Anagrams", "difficulty": "Medium"},
+                            {"id": 347, "title": "Top K Frequent Elements", "difficulty": "Medium"}
+                        ]
+                    },
+                    {"day": 6, "topic": "Project Planning: Text Analyzer"},
+                    {"day": 7, "topic": "Project Implementation: Text Analyzer"}
+                ],
+                "week_project": {
+                    "name": "Advanced Text Analyzer",
+                    "description": "Build a comprehensive text analysis tool with multiple features",
+                    "skills_learned": ["String processing", "Hash tables", "File I/O", "Statistical analysis", "Pattern matching"]
+                }
+            },
+            {
+                "week": 3,
+                "title": "Linked Lists Deep Dive",
+                "description": "Master linked list data structures and their applications",
+                "difficulty": "Intermediate",
+                "estimated_hours": 20,
+                "days": [
+                    {
+                        "day": 1,
+                        "topic": "Linked List Fundamentals",
+                        "subtopics": [
+                            "Node structure and memory allocation",
+                            "Linked list vs array comparison",
+                            "Types of linked lists overview",
+                            "Basic traversal algorithms",
+                            "Memory management concepts"
+                        ],
+                        "time_estimate": "3-4 hours",
+                        "resources": {
+                            "text": [
+                                {"title": "Linked List Basics", "url": "https://www.w3schools.com/dsa/dsa_data_linkedlists.php", "difficulty": "Beginner"},
+                                {"title": "Linked List Tutorial", "url": "https://www.javatpoint.com/singly-linked-list", "difficulty": "Beginner"}
+                            ],
+                            "videos": [
+                                {"title": "Linked Lists Explained", "url": "https://www.youtube.com/watch?v=WwfhLC16bis", "duration": "30 min"}
+                            ]
+                        }
+                    },
+                    {
+                        "day": 2,
+                        "topic": "Singly Linked List Operations",
+                        "leetcode_problems": [
+                            {"id": 21, "title": "Merge Two Sorted Lists", "difficulty": "Easy"},
+                            {"id": 83, "title": "Remove Duplicates from Sorted List", "difficulty": "Easy"},
+                            {"id": 203, "title": "Remove Linked List Elements", "difficulty": "Easy"}
+                        ]
+                    },
+                    {
+                        "day": 3,
+                        "topic": "Advanced Linked List Algorithms",
+                        "leetcode_problems": [
+                            {"id": 206, "title": "Reverse Linked List", "difficulty": "Easy"},
+                            {"id": 141, "title": "Linked List Cycle", "difficulty": "Easy"},
+                            {"id": 234, "title": "Palindrome Linked List", "difficulty": "Easy"},
+                            {"id": 142, "title": "Linked List Cycle II", "difficulty": "Medium"}
+                        ]
+                    },
+                    {
+                        "day": 4,
+                        "topic": "Doubly & Circular Linked Lists"
+                    },
+                    {
+                        "day": 5,
+                        "topic": "Complex Linked List Problems",
+                        "leetcode_problems": [
+                            {"id": 160, "title": "Intersection of Two Linked Lists", "difficulty": "Easy"},
+                            {"id": 2, "title": "Add Two Numbers", "difficulty": "Medium"},
+                            {"id": 138, "title": "Copy List with Random Pointer", "difficulty": "Medium"}
+                        ]
+                    },
+                    {"day": 6, "topic": "Project Planning: Music Playlist Manager"},
+                    {"day": 7, "topic": "Project Implementation: Music Playlist Manager"}
+                ],
+                "week_project": {
+                    "name": "Music Playlist Manager",
+                    "description": "Build a music player with playlist management using linked lists"
+                }
+            },
+            {
+                "week": 4,
+                "title": "Stacks & Queues Applications",
+                "description": "Master LIFO and FIFO data structures with real-world applications",
+                "difficulty": "Intermediate",
+                "estimated_hours": 18,
+                "days": [
+                    {
+                        "day": 1,
+                        "topic": "Stack Fundamentals & Implementation",
+                        "leetcode_problems": [
+                            {"id": 20, "title": "Valid Parentheses", "difficulty": "Easy"},
+                            {"id": 155, "title": "Min Stack", "difficulty": "Medium"}
+                        ]
+                    },
+                    {
+                        "day": 2,
+                        "topic": "Stack Applications & Algorithms",
+                        "leetcode_problems": [
+                            {"id": 150, "title": "Evaluate Reverse Polish Notation", "difficulty": "Medium"},
+                            {"id": 394, "title": "Decode String", "difficulty": "Medium"}
+                        ]
+                    },
+                    {
+                        "day": 3,
+                        "topic": "Queue Fundamentals & Implementation",
+                        "leetcode_problems": [
+                            {"id": 232, "title": "Implement Queue using Stacks", "difficulty": "Easy"},
+                            {"id": 622, "title": "Design Circular Queue", "difficulty": "Medium"}
+                        ]
+                    },
+                    {
+                        "day": 4,
+                        "topic": "Advanced Queue Variations",
+                        "leetcode_problems": [
+                            {"id": 641, "title": "Design Circular Deque", "difficulty": "Medium"},
+                            {"id": 239, "title": "Sliding Window Maximum", "difficulty": "Hard"}
+                        ]
+                    },
+                    {
+                        "day": 5,
+                        "topic": "Stack & Queue Problem Patterns",
+                        "leetcode_problems": [
+                            {"id": 496, "title": "Next Greater Element I", "difficulty": "Easy"},
+                            {"id": 739, "title": "Daily Temperatures", "difficulty": "Medium"},
+                            {"id": 84, "title": "Largest Rectangle in Histogram", "difficulty": "Hard"}
+                        ]
+                    },
+                    {"day": 6, "topic": "Project Planning: Code Editor"},
+                    {"day": 7, "topic": "Project Implementation: Code Editor"}
+                ],
+                "week_project": {
+                    "name": "Code Editor with Undo/Redo",
+                    "description": "Build a code editor with undo/redo functionality using stacks"
+                }
+            },
+            {
+                "week": 5,
+                "title": "Binary Trees Foundation",
+                "description": "Master tree data structures and traversal algorithms",
+                "difficulty": "Intermediate",
+                "estimated_hours": 20,
+                "days": [
+                    {"day": 1, "topic": "Tree Basics & Terminology"},
+                    {"day": 2, "topic": "Tree Traversals - DFS Methods"},
+                    {"day": 3, "topic": "Level Order Traversal - BFS"},
+                    {"day": 4, "topic": "Tree Properties & Calculations"},
+                    {"day": 5, "topic": "Tree Construction & Modification"},
+                    {"day": 6, "topic": "Project Planning: Family Tree System"},
+                    {"day": 7, "topic": "Project Implementation: Family Tree"}
+                ],
+                "week_project": {
+                    "name": "Family Tree System",
+                    "description": "Build a genealogy system with relationship queries"
+                }
+            },
+            {
+                "week": 6,
+                "title": "Binary Search Trees",
+                "description": "Master BST operations and balanced tree concepts",
+                "difficulty": "Intermediate-Advanced",
+                "estimated_hours": 22,
+                "days": [
+                    {"day": 1, "topic": "BST Properties & Structure"},
+                    {"day": 2, "topic": "BST Core Operations"},
+                    {"day": 3, "topic": "BST Validation & Analysis"},
+                    {"day": 4, "topic": "Self-Balancing Trees Introduction"},
+                    {"day": 5, "topic": "Advanced BST Problems"},
+                    {"day": 6, "topic": "Project Planning: Student Database"},
+                    {"day": 7, "topic": "Project Implementation: Student Database"}
+                ],
+                "week_project": {
+                    "name": "Student Database System",
+                    "description": "Build a student management system with BST indexing"
+                }
+            },
+            {
+                "week": 7,
+                "title": "Heaps & Priority Queues",
+                "description": "Master heap data structure and priority-based algorithms",
+                "difficulty": "Intermediate-Advanced",
+                "estimated_hours": 20,
+                "days": [
+                    {"day": 1, "topic": "Heap Fundamentals"},
+                    {"day": 2, "topic": "Heap Operations"},
+                    {"day": 3, "topic": "Priority Queue Implementation"},
+                    {"day": 4, "topic": "Heap Applications"},
+                    {"day": 5, "topic": "Advanced Heap Problems"},
+                    {"day": 6, "topic": "Project Planning: Task Scheduler"},
+                    {"day": 7, "topic": "Project Implementation: Task Scheduler"}
+                ],
+                "week_project": {
+                    "name": "Task Scheduler",
+                    "description": "Build a priority-based task scheduling system"
+                }
+            },
+            {
+                "week": 8,
+                "title": "Hashing & Hash Tables",
+                "description": "Master hash-based data structures for fast lookups",
+                "difficulty": "Intermediate",
+                "estimated_hours": 18,
+                "days": [
+                    {"day": 1, "topic": "Hashing Fundamentals"},
+                    {"day": 2, "topic": "Hash Table Implementation"},
+                    {"day": 3, "topic": "Hash-Based Problem Solving"},
+                    {"day": 4, "topic": "Advanced Hashing Techniques"},
+                    {"day": 5, "topic": "Hash Table Interview Problems"},
+                    {"day": 6, "topic": "Project Planning: Spell Checker"},
+                    {"day": 7, "topic": "Project Implementation: Spell Checker"}
+                ],
+                "week_project": {
+                    "name": "Spell Checker",
+                    "description": "Build a spell checker with suggestions using hash tables"
+                }
+            },
+            {
+                "week": 9,
+                "title": "Graph Fundamentals",
+                "description": "Master graph representations and basic algorithms",
+                "difficulty": "Intermediate-Advanced",
+                "estimated_hours": 22,
+                "days": [
+                    {"day": 1, "topic": "Graph Theory Basics"},
+                    {"day": 2, "topic": "Depth-First Search (DFS)"},
+                    {"day": 3, "topic": "Breadth-First Search (BFS)"},
+                    {"day": 4, "topic": "Graph Applications"},
+                    {"day": 5, "topic": "Graph Problem Patterns"},
+                    {"day": 6, "topic": "Project Planning: Social Network"},
+                    {"day": 7, "topic": "Project Implementation: Social Network"}
+                ],
+                "week_project": {
+                    "name": "Social Network Analyzer",
+                    "description": "Build a social network with friend recommendations"
+                }
+            },
+            {
+                "week": 10,
+                "title": "Advanced Graph Algorithms",
+                "description": "Master shortest path algorithms and advanced techniques",
+                "difficulty": "Advanced",
+                "estimated_hours": 24,
+                "days": [
+                    {"day": 1, "topic": "Dijkstra's Shortest Path Algorithm"},
+                    {"day": 2, "topic": "Bellman-Ford Algorithm"},
+                    {"day": 3, "topic": "Floyd-Warshall Algorithm"},
+                    {"day": 4, "topic": "Minimum Spanning Tree"},
+                    {"day": 5, "topic": "Advanced Graph Concepts"},
+                    {"day": 6, "topic": "Project Planning: GPS Navigation"},
+                    {"day": 7, "topic": "Project Implementation: GPS Navigation"}
+                ],
+                "week_project": {
+                    "name": "GPS Navigation System",
+                    "description": "Build a navigation system with shortest path finding"
+                }
+            },
+            {
+                "week": 11,
+                "title": "Sorting & Searching Mastery",
+                "description": "Master all sorting algorithms and advanced searching",
+                "difficulty": "Intermediate-Advanced",
+                "estimated_hours": 20,
+                "days": [
+                    {"day": 1, "topic": "Basic Sorting Algorithms"},
+                    {"day": 2, "topic": "Divide & Conquer Sorting"},
+                    {"day": 3, "topic": "Quick Sort & Optimizations"},
+                    {"day": 4, "topic": "Binary Search Mastery"},
+                    {"day": 5, "topic": "Advanced Searching Algorithms"},
+                    {"day": 6, "topic": "Project Planning: Movie Database"},
+                    {"day": 7, "topic": "Project Implementation: Movie Database"}
+                ],
+                "week_project": {
+                    "name": "Movie Database",
+                    "description": "Build a movie database with optimized search and sorting"
+                }
+            },
+            {
+                "week": 12,
+                "title": "Recursion & Backtracking",
+                "description": "Master recursive problem-solving and backtracking",
+                "difficulty": "Advanced",
+                "estimated_hours": 22,
+                "days": [
+                    {"day": 1, "topic": "Recursion Fundamentals"},
+                    {"day": 2, "topic": "Classic Recursive Problems"},
+                    {"day": 3, "topic": "Backtracking Introduction"},
+                    {"day": 4, "topic": "Classic Backtracking Problems"},
+                    {"day": 5, "topic": "Advanced Backtracking"},
+                    {"day": 6, "topic": "Project Planning: Sudoku Solver"},
+                    {"day": 7, "topic": "Project Implementation: Sudoku Solver"}
+                ],
+                "week_project": {
+                    "name": "Sudoku Solver",
+                    "description": "Build an interactive Sudoku solver with visualization"
+                }
+            },
+            {
+                "week": 13,
+                "title": "Dynamic Programming",
+                "description": "Master DP patterns and optimization problems",
+                "difficulty": "Advanced",
+                "estimated_hours": 24,
+                "days": [
+                    {"day": 1, "topic": "DP Fundamentals"},
+                    {"day": 2, "topic": "Linear DP Problems"},
+                    {"day": 3, "topic": "String DP Patterns"},
+                    {"day": 4, "topic": "Knapsack Problem Variations"},
+                    {"day": 5, "topic": "Advanced DP Patterns"},
+                    {"day": 6, "topic": "Project Planning: Investment Calculator"},
+                    {"day": 7, "topic": "Project Implementation: Investment Calculator"}
+                ],
+                "week_project": {
+                    "name": "Investment Calculator",
+                    "description": "Build an investment optimizer using dynamic programming"
+                }
+            },
+            {
+                "week": 14,
+                "title": "Advanced Topics & System Design",
+                "description": "Integrate all concepts and explore advanced structures",
+                "difficulty": "Expert",
+                "estimated_hours": 26,
+                "days": [
+                    {"day": 1, "topic": "Greedy Algorithms"},
+                    {"day": 2, "topic": "Bit Manipulation"},
+                    {"day": 3, "topic": "Trie Data Structure"},
+                    {"day": 4, "topic": "Union-Find (Disjoint Set)"},
+                    {"day": 5, "topic": "System Design with DSA"},
+                    {"day": 6, "topic": "Final Project Planning: Mini Database"},
+                    {"day": 7, "topic": "Final Project Implementation"}
+                ],
+                "week_project": {
+                    "name": "Mini Database System",
+                    "description": "Build a complete database system with all DSA concepts"
+                }
             }
-            
-            mongo.db.users.update_one(
-                {"uid": current_user},
-                {"$set": {"preferences": preferences}}
-            )
-            
-            return jsonify({"message": "Preferences updated successfully"}), 200
+        ],
+        "additional_resources": {
+            "books": [
+                {"title": "Introduction to Algorithms (CLRS)", "authors": "Cormen, Leiserson, Rivest, Stein", "difficulty": "Advanced"},
+                {"title": "Algorithm Design Manual", "author": "Steven Skiena", "difficulty": "Intermediate"},
+                {"title": "Cracking the Coding Interview", "author": "Gayle McDowell", "difficulty": "Interview Prep"},
+                {"title": "Elements of Programming Interviews", "authors": "Aziz, Lee, Prakash", "difficulty": "Interview Prep"}
+            ],
+            "online_courses": [
+                {"title": "Algorithms Specialization", "platform": "Coursera", "instructor": "Stanford University"},
+                {"title": "Data Structures and Algorithms", "platform": "edX", "instructor": "MIT"},
+                {"title": "Competitive Programming", "platform": "Udemy", "instructor": "Various"}
+            ],
+            "practice_platforms": [
+                {"name": "LeetCode", "url": "https://leetcode.com", "problems": "2500+", "difficulty": "Easy to Hard"},
+                {"name": "HackerRank", "url": "https://hackerrank.com", "problems": "1000+", "difficulty": "Easy to Expert"},
+                {"name": "Codeforces", "url": "https://codeforces.com", "problems": "10000+", "difficulty": "Div 3 to Div 1"},
+                {"name": "AtCoder", "url": "https://atcoder.jp", "problems": "3000+", "difficulty": "Beginner to Expert"}
+            ],
+            "youtube_channels": [
+                {"name": "NeetCode", "url": "https://www.youtube.com/@NeetCode", "focus": "LeetCode Solutions"},
+                {"name": "Abdul Bari", "url": "https://www.youtube.com/@abdul_bari", "focus": "Algorithm Analysis"},
+                {"name": "Tushar Roy", "url": "https://www.youtube.com/user/tusharroy2525", "focus": "DP and Graphs"},
+                {"name": "Back To Back SWE", "url": "https://www.youtube.com/c/BackToBackSWE", "focus": "Interview Prep"}
+            ]
+        },
+        "assessment_strategy": {
+            "daily_practice": "2-3 coding problems per day",
+            "weekly_projects": "Complete project implementation",
+            "weekly_assessments": "Quiz + coding challenges",
+            "milestone_reviews": "Every 2 weeks comprehensive review",
+            "final_assessment": "Capstone project + technical interview simulation"
+        }
+    }
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify(complete_roadmap), 200
 
-# Health Check
-@app.route('/health', methods=['GET'])
-def health_check():
-    try:
-        # Test database connection
-        mongo.db.command('ismaster')
-        db_status = "connected"
-    except:
-        db_status = "disconnected"
-    
+# Basic roadmap route for backward compatibility
+@app.route('/api/roadmap', methods=['GET'])
+def get_basic_roadmap():
+    """Get basic roadmap overview"""
     return jsonify({
-        "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
-        "database": db_status,
-        "firebase": "connected",
-        "api_version": "1.0.0",
-        "roadmap_weeks": len(DSA_ROADMAP),
-        "total_topics": sum(len(week_data["days"]) for week_data in DSA_ROADMAP.values())
+        "weeks": [
+            {"week": i, "title": f"Week {i}", "description": f"Week {i} content"} 
+            for i in range(1, 15)
+        ]
     }), 200
 
-# Error Handlers
+# User Profile Routes
+@app.route('/api/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        # Get user achievements
+        achievements = UserAchievement.query.filter_by(user_id=user_id).join(
+            Achievement
+        ).all()
+        
+        user_achievements = []
+        for ua in achievements:
+            user_achievements.append({
+                'title': ua.achievement.title,
+                'description': ua.achievement.description,
+                'badge_icon': ua.achievement.badge_icon,
+                'points': ua.achievement.points,
+                'earned_at': ua.earned_at.isoformat()
+            })
+        
+        return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'bio': user.bio,
+            'location': user.location,
+            'github_username': user.github_username,
+            'linkedin_url': user.linkedin_url,
+            'avatar_url': user.avatar_url,
+            'total_points': user.total_points,
+            'current_streak': user.current_streak,
+            'longest_streak': user.longest_streak,
+            'level': user.level,
+            'daily_goal_minutes': user.daily_goal_minutes,
+            'preferred_study_time': user.preferred_study_time,
+            'difficulty_preference': user.difficulty_preference,
+            'achievements': user_achievements,
+            'created_at': user.created_at.isoformat()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Get profile error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Update profile fields
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.bio = data.get('bio', user.bio)
+        user.location = data.get('location', user.location)
+        user.github_username = data.get('github_username', user.github_username)
+        user.linkedin_url = data.get('linkedin_url', user.linkedin_url)
+        user.avatar_url = data.get('avatar_url', user.avatar_url)
+        user.daily_goal_minutes = data.get('daily_goal_minutes', user.daily_goal_minutes)
+        user.preferred_study_time = data.get('preferred_study_time', user.preferred_study_time)
+        user.difficulty_preference = data.get('difficulty_preference', user.difficulty_preference)
+        user.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        return jsonify({'message': 'Profile updated successfully'}), 200
+        
+    except Exception as e:
+        logger.error(f"Update profile error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
+
+# Analytics Routes
+@app.route('/api/analytics/weekly', methods=['GET'])
+@jwt_required()
+def get_weekly_analytics():
+    try:
+        user_id = get_jwt_identity()
+        weeks = request.args.get('weeks', 4, type=int)
+        
+        weekly_data = []
+        for i in range(weeks):
+            week_start = datetime.utcnow() - timedelta(weeks=i)
+            week_end = week_start + timedelta(days=7)
+            
+            completed_topics = Progress.query.filter(
+                Progress.user_id == user_id,
+                Progress.completed == True,
+                Progress.completion_date >= week_start,
+                Progress.completion_date < week_end
+            ).count()
+            
+            pomodoro_time = db.session.query(db.func.sum(PomodoroSession.duration)).filter(
+                PomodoroSession.user_id == user_id,
+                PomodoroSession.completed == True,
+                PomodoroSession.created_at >= week_start,
+                PomodoroSession.created_at < week_end
+            ).scalar() or 0
+            
+            notes_created = Note.query.filter(
+                Note.user_id == user_id,
+                Note.created_at >= week_start,
+                Note.created_at < week_end
+            ).count()
+            
+            weekly_data.append({
+                'week_start': week_start.date().isoformat(),
+                'completed_topics': completed_topics,
+                'study_time': pomodoro_time,
+                'notes_created': notes_created
+            })
+        
+        return jsonify(weekly_data), 200
+        
+    except Exception as e:
+        logger.error(f"Get weekly analytics error: {str(e)}")
+        return jsonify({'message': str(e)}), 500
+
+# Health check route for Render
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()}), 200
+
+# Initialize achievements data
+def init_achievements():
+    """Initialize default achievements"""
+    achievements_data = [
+        {
+            'name': 'first_signup',
+            'title': 'Welcome Aboard!',
+            'description': 'Successfully registered for the DSA learning journey',
+            'badge_icon': '🎉',
+            'points': 10,
+            'category': 'milestone'
+        },
+        {
+            'name': 'first_topic',
+            'title': 'First Steps',
+            'description': 'Completed your first topic',
+            'badge_icon': '👶',
+            'points': 25,
+            'category': 'completion'
+        },
+        {
+            'name': 'week_warrior',
+            'title': 'Week Warrior',
+            'description': 'Maintained a 7-day study streak',
+            'badge_icon': '⚔️',
+            'points': 100,
+            'category': 'streak'
+        },
+        {
+            'name': 'month_master',
+            'title': 'Month Master',
+            'description': 'Maintained a 30-day study streak',
+            'badge_icon': '👑',
+            'points': 500,
+            'category': 'streak'
+        },
+        {
+            'name': 'century_club',
+            'title': 'Century Club',
+            'description': 'Achieved a 100-day study streak',
+            'badge_icon': '💯',
+            'points': 1000,
+            'category': 'streak'
+        },
+        {
+            'name': 'note_taker',
+            'title': 'Note Taker',
+            'description': 'Created 10 study notes',
+            'badge_icon': '📝',
+            'points': 50,
+            'category': 'productivity'
+        },
+        {
+            'name': 'pomodoro_pro',
+            'title': 'Pomodoro Pro',
+            'description': 'Completed 25 pomodoro sessions',
+            'badge_icon': '🍅',
+            'points': 75,
+            'category': 'time'
+        },
+        {
+            'name': 'week_completionist',
+            'title': 'Week Completionist',
+            'description': 'Completed an entire week of study topics',
+            'badge_icon': '✅',
+            'points': 200,
+            'category': 'completion'
+        },
+        {
+            'name': 'early_bird',
+            'title': 'Early Bird',
+            'description': 'Consistently study in the morning',
+            'badge_icon': '🌅',
+            'points': 100,
+            'category': 'habit'
+        },
+        {
+            'name': 'night_owl',
+            'title': 'Night Owl',
+            'description': 'Consistently study at night',
+            'badge_icon': '🦉',
+            'points': 100,
+            'category': 'habit'
+        }
+    ]
+    
+    for ach_data in achievements_data:
+        existing = Achievement.query.filter_by(name=ach_data['name']).first()
+        if not existing:
+            achievement = Achievement(**ach_data)
+            db.session.add(achievement)
+    
+    try:
+        db.session.commit()
+        logger.info("Achievements initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing achievements: {str(e)}")
+        db.session.rollback()
+
+# Error handlers
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({"error": "Endpoint not found"}), 404
+    return jsonify({'message': 'Resource not found'}), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    return jsonify({"error": "Internal server error"}), 500
+    logger.error(f"Internal server error: {str(error)}")
+    return jsonify({'message': 'Internal server error'}), 500
 
 @app.errorhandler(400)
 def bad_request(error):
-    return jsonify({"error": "Bad request"}), 400
+    return jsonify({'message': 'Bad request'}), 400
+
+# Initialize database and achievements
+@app.before_first_request
+def create_tables():
+    try:
+        db.create_all()
+        init_achievements()
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {str(e)}")
 
 if __name__ == '__main__':
+    # For local development
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    debug = os.environ.get('FLASK_ENV') == 'development'
+    app.run(host='0.0.0.0', port=port, debug=debug)
