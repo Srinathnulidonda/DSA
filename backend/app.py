@@ -356,6 +356,114 @@ def check_night_owl_pattern(user_id):
     total_sessions = PomodoroSession.query.filter_by(user_id=user_id).count()
     return total_sessions > 10 and (night_sessions / total_sessions) > 0.7
 
+def init_achievements():
+    """Initialize default achievements"""
+    achievements_data = [
+        {
+            'name': 'first_signup',
+            'title': 'Welcome Aboard!',
+            'description': 'Successfully registered for the DSA learning journey',
+            'badge_icon': '🎉',
+            'points': 10,
+            'category': 'milestone'
+        },
+        {
+            'name': 'first_topic',
+            'title': 'First Steps',
+            'description': 'Completed your first topic',
+            'badge_icon': '👶',
+            'points': 25,
+            'category': 'completion'
+        },
+        {
+            'name': 'week_warrior',
+            'title': 'Week Warrior',
+            'description': 'Maintained a 7-day study streak',
+            'badge_icon': '⚔️',
+            'points': 100,
+            'category': 'streak'
+        },
+        {
+            'name': 'month_master',
+            'title': 'Month Master',
+            'description': 'Maintained a 30-day study streak',
+            'badge_icon': '👑',
+            'points': 500,
+            'category': 'streak'
+        },
+        {
+            'name': 'century_club',
+            'title': 'Century Club',
+            'description': 'Achieved a 100-day study streak',
+            'badge_icon': '💯',
+            'points': 1000,
+            'category': 'streak'
+        },
+        {
+            'name': 'note_taker',
+            'title': 'Note Taker',
+            'description': 'Created 10 study notes',
+            'badge_icon': '📝',
+            'points': 50,
+            'category': 'productivity'
+        },
+        {
+            'name': 'pomodoro_pro',
+            'title': 'Pomodoro Pro',
+            'description': 'Completed 25 pomodoro sessions',
+            'badge_icon': '🍅',
+            'points': 75,
+            'category': 'time'
+        },
+        {
+            'name': 'week_completionist',
+            'title': 'Week Completionist',
+            'description': 'Completed an entire week of study topics',
+            'badge_icon': '✅',
+            'points': 200,
+            'category': 'completion'
+        },
+        {
+            'name': 'early_bird',
+            'title': 'Early Bird',
+            'description': 'Consistently study in the morning',
+            'badge_icon': '🌅',
+            'points': 100,
+            'category': 'habit'
+        },
+        {
+            'name': 'night_owl',
+            'title': 'Night Owl',
+            'description': 'Consistently study at night',
+            'badge_icon': '🦉',
+            'points': 100,
+            'category': 'habit'
+        }
+    ]
+    
+    for ach_data in achievements_data:
+        existing = Achievement.query.filter_by(name=ach_data['name']).first()
+        if not existing:
+            achievement = Achievement(**ach_data)
+            db.session.add(achievement)
+    
+    try:
+        db.session.commit()
+        logger.info("Achievements initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing achievements: {str(e)}")
+        db.session.rollback()
+
+def create_tables():
+    """Initialize database tables and achievements"""
+    try:
+        with app.app_context():
+            db.create_all()
+            init_achievements()
+            logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {str(e)}")
+
 # Enhanced Authentication Routes
 @app.route('/api/auth/register', methods=['POST'])
 def register():
@@ -1802,105 +1910,6 @@ def get_weekly_analytics():
 def health_check():
     return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()}), 200
 
-# Initialize achievements data
-def init_achievements():
-    """Initialize default achievements"""
-    achievements_data = [
-        {
-            'name': 'first_signup',
-            'title': 'Welcome Aboard!',
-            'description': 'Successfully registered for the DSA learning journey',
-            'badge_icon': '🎉',
-            'points': 10,
-            'category': 'milestone'
-        },
-        {
-            'name': 'first_topic',
-            'title': 'First Steps',
-            'description': 'Completed your first topic',
-            'badge_icon': '👶',
-            'points': 25,
-            'category': 'completion'
-        },
-        {
-            'name': 'week_warrior',
-            'title': 'Week Warrior',
-            'description': 'Maintained a 7-day study streak',
-            'badge_icon': '⚔️',
-            'points': 100,
-            'category': 'streak'
-        },
-        {
-            'name': 'month_master',
-            'title': 'Month Master',
-            'description': 'Maintained a 30-day study streak',
-            'badge_icon': '👑',
-            'points': 500,
-            'category': 'streak'
-        },
-        {
-            'name': 'century_club',
-            'title': 'Century Club',
-            'description': 'Achieved a 100-day study streak',
-            'badge_icon': '💯',
-            'points': 1000,
-            'category': 'streak'
-        },
-        {
-            'name': 'note_taker',
-            'title': 'Note Taker',
-            'description': 'Created 10 study notes',
-            'badge_icon': '📝',
-            'points': 50,
-            'category': 'productivity'
-        },
-        {
-            'name': 'pomodoro_pro',
-            'title': 'Pomodoro Pro',
-            'description': 'Completed 25 pomodoro sessions',
-            'badge_icon': '🍅',
-            'points': 75,
-            'category': 'time'
-        },
-        {
-            'name': 'week_completionist',
-            'title': 'Week Completionist',
-            'description': 'Completed an entire week of study topics',
-            'badge_icon': '✅',
-            'points': 200,
-            'category': 'completion'
-        },
-        {
-            'name': 'early_bird',
-            'title': 'Early Bird',
-            'description': 'Consistently study in the morning',
-            'badge_icon': '🌅',
-            'points': 100,
-            'category': 'habit'
-        },
-        {
-            'name': 'night_owl',
-            'title': 'Night Owl',
-            'description': 'Consistently study at night',
-            'badge_icon': '🦉',
-            'points': 100,
-            'category': 'habit'
-        }
-    ]
-    
-    for ach_data in achievements_data:
-        existing = Achievement.query.filter_by(name=ach_data['name']).first()
-        if not existing:
-            achievement = Achievement(**ach_data)
-            db.session.add(achievement)
-    
-    try:
-        db.session.commit()
-        logger.info("Achievements initialized successfully")
-    except Exception as e:
-        logger.error(f"Error initializing achievements: {str(e)}")
-        db.session.rollback()
-
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
@@ -1915,15 +1924,9 @@ def internal_error(error):
 def bad_request(error):
     return jsonify({'message': 'Bad request'}), 400
 
-# Initialize database and achievements
-@app.before_first_request
-def create_tables():
-    try:
-        db.create_all()
-        init_achievements()
-        logger.info("Database tables created successfully")
-    except Exception as e:
-        logger.error(f"Error creating database tables: {str(e)}")
+# Initialize database tables on startup
+with app.app_context():
+    create_tables()
 
 if __name__ == '__main__':
     # For local development
