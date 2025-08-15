@@ -416,4 +416,69 @@ function generateWeeklyReportRows() {
         let completed = 0;
         let timeSpent = 0;
 
-        for (let day = 1
+        for (let day = 1; day <= 7; day++) {
+            const key = `week${week}_day${day}`;
+            const progress = progressData.progress.progress[key];
+            if (progress?.completed) {
+                completed++;
+                timeSpent += progress.time_spent || 0;
+            }
+        }
+
+        weeklyData.push(`
+            <tr>
+                <td>Week ${week}</td>
+                <td>${completed} / 7 days</td>
+                <td>${window.DSAApp.formatTime(timeSpent)}</td>
+            </tr>
+        `);
+    }
+
+    return weeklyData.join('');
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Time range buttons
+    document.querySelectorAll('.btn-group button').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            // Remove active class from all buttons
+            e.target.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+
+            // Update chart based on selected range
+            const range = e.target.textContent.toLowerCase();
+            await updateChartRange(range);
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.querySelector('input[placeholder="Search topics..."]');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterProgressTable);
+    }
+}
+
+// Update chart range
+async function updateChartRange(range) {
+    try {
+        const days = range === 'week' ? 7 : range === 'month' ? 30 : 365;
+        const analytics = await window.API.getAnalytics(days);
+
+        progressData.analytics = analytics.data;
+        updateCharts();
+    } catch (error) {
+        console.error('Failed to update chart range:', error);
+    }
+}
+
+// Filter progress table
+function filterProgressTable(event) {
+    const query = event.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#progressTableBody tr');
+
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+    });
+}

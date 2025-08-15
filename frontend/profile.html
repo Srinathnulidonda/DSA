@@ -1,1 +1,213 @@
-<!-- Placeholder content for profile.html -->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - DSA Mastery</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Include Sidebar -->
+    <aside class="sidebar d-none d-lg-block position-fixed top-0 start-0 h-100 bg-white shadow-sm"
+        style="width: 250px; z-index: 1000;">
+        <!-- Same sidebar structure -->
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" style="margin-left: 250px;">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+            <!-- Same navigation -->
+        </nav>
+
+        <!-- Profile Content -->
+        <div class="container-fluid p-4">
+            <!-- Profile Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div
+                        class="card border-0 shadow-sm rounded-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                        <div class="card-body p-5">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center">
+                                        <div class="position-relative me-4">
+                                            <img src="https://i.pravatar.cc/150" alt="Profile"
+                                                class="rounded-circle border-4 border-white shadow"
+                                                style="width: 120px; height: 120px;">
+                                            <button
+                                                class="btn btn-sm btn-light rounded-circle position-absolute bottom-0 end-0"
+                                                onclick="changeAvatar()">
+                                                <i class="fas fa-camera"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <h2 class="fw-bold mb-1">John Doe</h2>
+                                            <p class="mb-2 opacity-75">@johndoe</p>
+                                            <p class="mb-0"><i class="fas fa-envelope me-2"></i> john.doe@example.com
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                                    <button class="btn btn-light rounded-pill px-4" onclick="editProfile()">
+                                        <i class="fas fa-edit me-2"></i> Edit Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-fire text-danger fs-2 mb-2"></i>
+                            <h3 class="fw-bold mb-1">30</h3>
+                            <p class="text-muted mb-0">Day Streak</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-trophy text-warning fs-2 mb-2"></i>
+                            <h3 class="fw-bold mb-1">15</h3>
+                            <p class="text-muted mb-0">Achievements</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-clock text-info fs-2 mb-2"></i>
+                            <h3 class="fw-bold mb-1">124h</h3>
+                            <p class="text-muted mb-0">Total Study Time</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-code text-success fs-2 mb-2"></i>
+                            <h3 class="fw-bold mb-1">156</h3>
+                            <p class="text-muted mb-0">Problems Solved</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Sections -->
+            <div class="row">
+                <!-- Basic Information -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Basic Information</h5>
+                            <div class="mb-3">
+                                <label class="text-muted small">Full Name</label>
+                                <p class="fw-semibold mb-0">John Doe</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Username</label>
+                                <p class="fw-semibold mb-0">@johndoe</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Email</label>
+                                <p class="fw-semibold mb-0">john.doe@example.com</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Member Since</label>
+                                <p class="fw-semibold mb-0">January 1, 2024</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Preferences -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Learning Preferences</h5>
+                            <div class="mb-3">
+                                <label class="text-muted small">Preferred Language</label>
+                                <p class="fw-semibold mb-0">Python</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Daily Goal</label>
+                                <p class="fw-semibold mb-0">2 hours</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Study Time</label>
+                                <p class="fw-semibold mb-0">Morning (6 AM - 9 AM)</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">Difficulty Level</label>
+                                <p class="fw-semibold mb-0">Intermediate</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Recent Achievements</h5>
+                            <div class="row">
+                                <div class="col-md-2 col-4 mb-3 text-center">
+                                    <img src="assets/images/badges/streak-30.svg" alt="30 Day Streak" class="mb-2"
+                                        style="width: 80px;">
+                                    <p class="small fw-semibold mb-0">Fire Starter</p>
+                                </div>
+                                <div class="col-md-2 col-4 mb-3 text-center">
+                                    <img src="assets/images/badges/week-complete.svg" alt="Week Complete" class="mb-2"
+                                        style="width: 80px;">
+                                    <p class="small fw-semibold mb-0">Week Master</p>
+                                </div>
+                                <div class="col-md-2 col-4 mb-3 text-center">
+                                    <img src="assets/images/badges/problem-solver.svg" alt="Problem Solver" class="mb-2"
+                                        style="width: 80px;">
+                                    <p class="small fw-semibold mb-0">Problem Solver</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav d-lg-none position-fixed bottom-0 start-0 end-0 bg-white shadow-lg">
+        <!-- Same structure -->
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+
+</html>

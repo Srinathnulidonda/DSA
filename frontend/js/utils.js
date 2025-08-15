@@ -1,239 +1,399 @@
-// Utility Functions
+// utils.js - Utility functions
 
-// Format date
-function formatDate(dateString, format = 'short') {
-    const date = new Date(dateString);
-    const options = {
-        short: { month: 'short', day: 'numeric' },
-        medium: { month: 'short', day: 'numeric', year: 'numeric' },
-        long: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
-        time: { hour: '2-digit', minute: '2-digit' },
-        datetime: { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }
-    };
+// Date and Time utilities
+const DateUtils = {
+    formatDate(date) {
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }).format(new Date(date));
+    },
 
-    return date.toLocaleDateString('en-US', options[format] || options.short);
-}
+    formatTime(date) {
+        return new Intl.DateTimeFormat('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        }).format(new Date(date));
+    },
 
-// Format time duration
-function formatDuration(minutes) {
-    if (minutes < 60) {
-        return `${minutes}m`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
-}
+    formatDateTime(date) {
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        }).format(new Date(date));
+    },
 
-// Format number with commas
-function formatNumber(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+    formatDuration(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
 
-// Calculate percentage
-function calculatePercentage(value, total) {
-    if (total === 0) return 0;
-    return Math.round((value / total) * 100);
-}
-
-// Debounce function
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Throttle function
-function throttle(func, limit) {
-    let inThrottle;
-    return function (...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
+        if (hours > 0) {
+            return `${hours}h ${mins}m`;
         }
-    };
-}
+        return `${mins}m`;
+    },
 
-// Show toast notification
-function showToast(message, type = 'info', duration = 3000) {
-    const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+    getRelativeTime(date) {
+        const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+        const daysDiff = Math.round((new Date(date) - new Date()) / (1000 * 60 * 60 * 24));
 
-    const toastEl = document.createElement('div');
-    toastEl.className = `toast align-items-center text-white bg-${type} border-0 show`;
-    toastEl.setAttribute('role', 'alert');
-    toastEl.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
+        if (Math.abs(daysDiff) < 1) {
+            const hoursDiff = Math.round((new Date(date) - new Date()) / (1000 * 60 * 60));
+            if (Math.abs(hoursDiff) < 1) {
+                const minutesDiff = Math.round((new Date(date) - new Date()) / (1000 * 60));
+                return rtf.format(minutesDiff, 'minute');
+            }
+            return rtf.format(hoursDiff, 'hour');
+        }
+        return rtf.format(daysDiff, 'day');
+    },
 
-    toastContainer.appendChild(toastEl);
-
-    const toast = new bootstrap.Toast(toastEl, { delay: duration });
-    toast.show();
-
-    toastEl.addEventListener('hidden.bs.toast', () => {
-        toastEl.remove();
-    });
-}
-
-function createToastContainer() {
-    const container = document.createElement('div');
-    container.id = 'toastContainer';
-    container.className = 'position-fixed bottom-0 end-0 p-3';
-    container.style.zIndex = '11';
-    document.body.appendChild(container);
-    return container;
-}
-
-// Show loading spinner
-function showLoading(element, message = 'Loading...') {
-    const originalContent = element.innerHTML;
-    element.innerHTML = `
-        <div class="text-center py-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">${message}</span>
-            </div>
-            <p class="mt-2 text-muted">${message}</p>
-        </div>
-    `;
-    return originalContent;
-}
-
-// Hide loading spinner
-function hideLoading(element, originalContent) {
-    element.innerHTML = originalContent;
-}
-
-// Create skeleton loader
-function createSkeleton(type = 'text', width = '100%', height = '20px') {
-    const types = {
-        text: `<div class="skeleton" style="width: ${width}; height: ${height}; border-radius: 4px;"></div>`,
-        title: `<div class="skeleton" style="width: ${width}; height: 28px; border-radius: 4px; margin-bottom: 10px;"></div>`,
-        avatar: `<div class="skeleton" style="width: 40px; height: 40px; border-radius: 50%;"></div>`,
-        card: `
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="skeleton" style="width: 60%; height: 24px; margin-bottom: 10px;"></div>
-                    <div class="skeleton" style="width: 100%; height: 16px; margin-bottom: 8px;"></div>
-                    <div class="skeleton" style="width: 80%; height: 16px;"></div>
-                </div>
-            </div>
-        `
-    };
-
-    return types[type] || types.text;
-}
-
-// Get user from localStorage
-function getCurrentUser() {
-    const userStr = localStorage.getItem(USER_KEY);
-    return userStr ? JSON.parse(userStr) : null;
-}
-
-// Update user in localStorage
-function updateCurrentUser(userData) {
-    const currentUser = getCurrentUser();
-    const updatedUser = { ...currentUser, ...userData };
-    localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
-    return updatedUser;
-}
-
-// Check if user is authenticated
-function isAuthenticated() {
-    return !!localStorage.getItem(TOKEN_KEY);
-}
-
-// Redirect if not authenticated
-function requireAuth() {
-    if (!isAuthenticated()) {
-        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
-        return false;
+    getWeekNumber(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+        const week1 = new Date(d.getFullYear(), 0, 4);
+        return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
     }
-    return true;
-}
+};
 
-// Get query parameters
-function getQueryParams() {
-    const params = new URLSearchParams(window.location.search);
-    const result = {};
-    for (const [key, value] of params) {
-        result[key] = value;
+// String utilities
+const StringUtils = {
+    truncate(str, length = 50, suffix = '...') {
+        if (str.length <= length) return str;
+        return str.substring(0, length).trim() + suffix;
+    },
+
+    slugify(str) {
+        return str
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    },
+
+    capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    },
+
+    capitalizeWords(str) {
+        return str.replace(/\b\w/g, char => char.toUpperCase());
+    },
+
+    stripHtml(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    },
+
+    escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
-    return result;
-}
+};
 
-// Update query parameters
-function updateQueryParams(params) {
-    const url = new URL(window.location);
-    Object.keys(params).forEach(key => {
-        if (params[key] === null || params[key] === undefined) {
-            url.searchParams.delete(key);
+// Number utilities
+const NumberUtils = {
+    formatNumber(num) {
+        return new Intl.NumberFormat('en-US').format(num);
+    },
+
+    formatCompact(num) {
+        return new Intl.NumberFormat('en-US', {
+            notation: 'compact',
+            compactDisplay: 'short'
+        }).format(num);
+    },
+
+    formatPercentage(num, decimals = 0) {
+        return `${num.toFixed(decimals)}%`;
+    },
+
+    clamp(num, min, max) {
+        return Math.min(Math.max(num, min), max);
+    },
+
+    randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+};
+
+// Array utilities
+const ArrayUtils = {
+    chunk(array, size) {
+        const chunks = [];
+        for (let i = 0; i < array.length; i += size) {
+            chunks.push(array.slice(i, i + size));
+        }
+        return chunks;
+    },
+
+    shuffle(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    },
+
+    unique(array) {
+        return [...new Set(array)];
+    },
+
+    groupBy(array, key) {
+        return array.reduce((groups, item) => {
+            const group = item[key];
+            if (!groups[group]) groups[group] = [];
+            groups[group].push(item);
+            return groups;
+        }, {});
+    },
+
+    sortBy(array, key, order = 'asc') {
+        return [...array].sort((a, b) => {
+            const aVal = a[key];
+            const bVal = b[key];
+
+            if (order === 'asc') {
+                return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+            } else {
+                return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+            }
+        });
+    }
+};
+
+// Storage utilities
+const StorageUtils = {
+    setItem(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
+        }
+    },
+
+    getItem(key, defaultValue = null) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return defaultValue;
+        }
+    },
+
+    removeItem(key) {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
+        }
+    },
+
+    clear() {
+        try {
+            localStorage.clear();
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
+        }
+    }
+};
+
+// Validation utilities
+const ValidationUtils = {
+    isEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    },
+
+    isUrl(url) {
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    },
+
+    isUsername(username) {
+        const re = /^[a-zA-Z0-9_]{3,20}$/;
+        return re.test(username);
+    },
+
+    isStrongPassword(password) {
+        // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return re.test(password);
+    },
+
+    sanitizeInput(input) {
+        return input.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    }
+};
+
+// Browser utilities
+const BrowserUtils = {
+    copyToClipboard(text) {
+        return navigator.clipboard.writeText(text);
+    },
+
+    share(data) {
+        if (navigator.share) {
+            return navigator.share(data);
         } else {
-            url.searchParams.set(key, params[key]);
+            throw new Error('Web Share API not supported');
         }
-    });
-    window.history.pushState({}, '', url);
-}
+    },
 
-// Copy to clipboard
-async function copyToClipboard(text) {
-    try {
-        await navigator.clipboard.writeText(text);
-        showToast('Copied to clipboard!', 'success');
-        return true;
-    } catch (err) {
-        console.error('Failed to copy:', err);
-        showToast('Failed to copy', 'danger');
-        return false;
+    getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    },
+
+    setQueryParam(param, value) {
+        const url = new URL(window.location);
+        url.searchParams.set(param, value);
+        window.history.pushState({}, '', url);
+    },
+
+    removeQueryParam(param) {
+        const url = new URL(window.location);
+        url.searchParams.delete(param);
+        window.history.pushState({}, '', url);
+    },
+
+    isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    },
+
+    isOnline() {
+        return navigator.onLine;
+    },
+
+    vibrate(pattern = 200) {
+        if ('vibrate' in navigator) {
+            navigator.vibrate(pattern);
+        }
     }
-}
+};
 
-// Download data as file
-function downloadFile(data, filename, type = 'application/json') {
-    const blob = new Blob([typeof data === 'string' ? data : JSON.stringify(data, null, 2)], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
+// Animation utilities
+const AnimationUtils = {
+    fadeIn(element, duration = 300) {
+        element.style.opacity = 0;
+        element.style.display = 'block';
 
-// Validate email
-function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
+        const start = performance.now();
 
-// Validate password strength
-function checkPasswordStrength(password) {
-    let strength = 0;
-    const feedback = [];
+        const animate = (timestamp) => {
+            const elapsed = timestamp - start;
+            const progress = Math.min(elapsed / duration, 1);
 
-    if (password.length >= 8) strength++;
-    else feedback.push('At least 8 characters');
+            element.style.opacity = progress;
 
-    if (/[a-z]/.test(password)) strength++;
-    else feedback.push('Lowercase letter');
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        };
 
-    if (/[A-Z]/.test(password)) strength++;
-    else feedback.push('Uppercase letter');
+        requestAnimationFrame(animate);
+    },
 
-    if (/[0-9]/.test(password)) strength++;
-    else feedback.push('Number');
+    fadeOut(element, duration = 300) {
+        const start = performance.now();
+        const initialOpacity = parseFloat(window.getComputedStyle(element).opacity);
 
-    if (/[^a-zA-Z0-9]/.test(password)) strength++;
-    else feedback.push('Special character');
+        const animate = (timestamp) => {
+            const elapsed = timestamp - start;
+            const progress = Math.min(elapsed / duration, 1);
 
-    const levels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-    const colors = ['danger', 'warning', 'warning', 
+            element.style.opacity = initialOpacity * (1 - progress);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                element.style.display = 'none';
+            }
+        };
+
+        requestAnimationFrame(animate);
+    },
+
+    slideDown(element, duration = 300) {
+        element.style.height = '0px';
+        element.style.overflow = 'hidden';
+        element.style.display = 'block';
+
+        const targetHeight = element.scrollHeight;
+        const start = performance.now();
+
+        const animate = (timestamp) => {
+            const elapsed = timestamp - start;
+            const progress = Math.min(elapsed / duration, 1);
+
+            element.style.height = `${targetHeight * progress}px`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                element.style.height = '';
+                element.style.overflow = '';
+            }
+        };
+
+        requestAnimationFrame(animate);
+    },
+
+    slideUp(element, duration = 300) {
+        const initialHeight = element.offsetHeight;
+        const start = performance.now();
+
+        element.style.height = `${initialHeight}px`;
+        element.style.overflow = 'hidden';
+
+        const animate = (timestamp) => {
+            const elapsed = timestamp - start;
+            const progress = Math.min(elapsed / duration, 1);
+
+            element.style.height = `${initialHeight * (1 - progress)}px`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                element.style.display = 'none';
+                element.style.height = '';
+                element.style.overflow = '';
+            }
+        };
+
+        requestAnimationFrame(animate);
+    }
+};
+
+// Export utilities
+window.Utils = {
+    Date: DateUtils,
+    String: StringUtils,
+    Number: NumberUtils,
+    Array: ArrayUtils,
+    Storage: StorageUtils,
+    Validation: ValidationUtils,
+    Browser: BrowserUtils,
+    Animation: AnimationUtils
+};
