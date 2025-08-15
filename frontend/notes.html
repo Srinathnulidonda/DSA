@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notes - DSA Mastery</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <!-- Prism.js for code highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Include Sidebar -->
+    <aside class="sidebar d-none d-lg-block position-fixed top-0 start-0 h-100 bg-white shadow-sm"
+        style="width: 250px; z-index: 1000;">
+        <!-- Same sidebar structure -->
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" style="margin-left: 250px;">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+            <!-- Same navigation -->
+        </nav>
+
+        <!-- Notes Content -->
+        <div class="container-fluid p-4">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 fw-bold mb-1">My Notes</h1>
+                            <p class="text-muted mb-0">Organize your learning with smart notes</p>
+                        </div>
+                        <button class="btn btn-primary rounded-pill" onclick="createNewNote()">
+                            <i class="fas fa-plus me-2"></i> New Note
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-lg-6 mb-3 mb-lg-0">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-0 bg-light"
+                                            placeholder="Search notes..." id="searchNotes">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="d-flex gap-2">
+                                        <select class="form-select" id="filterTopic">
+                                            <option value="">All Topics</option>
+                                            <option value="arrays">Arrays</option>
+                                            <option value="linkedlists">Linked Lists</option>
+                                            <option value="trees">Trees</option>
+                                            <option value="graphs">Graphs</option>
+                                        </select>
+                                        <select class="form-select" id="filterWeek">
+                                            <option value="">All Weeks</option>
+                                            <option value="1">Week 1</option>
+                                            <option value="2">Week 2</option>
+                                            <option value="3">Week 3</option>
+                                        </select>
+                                        <button class="btn btn-outline-secondary" onclick="toggleView()">
+                                            <i class="fas fa-th-large" id="viewIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Grid/List -->
+            <div class="row" id="notesContainer">
+                <!-- Pinned Notes -->
+                <div class="col-12 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-thumbtack text-primary me-2"></i> Pinned Notes</h5>
+                    <div class="row" id="pinnedNotes">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="note-card card border-0 shadow-sm rounded-4 h-100 hover-shadow">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <span class="badge bg-primary rounded-pill">Arrays</span>
+                                        <button class="btn btn-sm btn-light rounded-circle">
+                                            <i class="fas fa-thumbtack text-primary"></i>
+                                        </button>
+                                    </div>
+                                    <h5 class="fw-bold mb-2">Two Pointer Technique</h5>
+                                    <p class="text-muted mb-3">Key patterns and common problems using two pointers...
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Updated 2 hours ago</small>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-light rounded-circle">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-light rounded-circle">
+                                                <i class="fas fa-share"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Notes -->
+                <div class="col-12">
+                    <h5 class="fw-bold mb-3">All Notes</h5>
+                    <div class="row" id="allNotes">
+                        <!-- Dynamic notes will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Note Editor Modal -->
+    <div class="modal fade" id="noteEditorModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <input type="text" class="form-control border-0 fs-4 fw-bold" id="noteTitle"
+                        placeholder="Note Title">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <div class="col-lg-9">
+                            <div class="p-4">
+                                <div id="editor" style="height: 400px;"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 bg-light">
+                            <div class="p-4">
+                                <h6 class="fw-bold mb-3">Note Properties</h6>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Topic</label>
+                                    <select class="form-select" id="noteTopic">
+                                        <option value="">Select topic</option>
+                                        <option value="arrays">Arrays</option>
+                                        <option value="linkedlists">Linked Lists</option>
+                                        <option value="trees">Trees</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Week</label>
+                                    <select class="form-select" id="noteWeek">
+                                        <option value="">Select week</option>
+                                        <option value="1">Week 1</option>
+                                        <option value="2">Week 2</option>
+                                        <option value="3">Week 3</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Tags</label>
+                                    <input type="text" class="form-control" id="noteTags" placeholder="Add tags...">
+                                    <small class="text-muted">Separate with commas</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="pinNote">
+                                        <label class="form-check-label" for="pinNote">
+                                            Pin this note
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveNote()">
+                        <i class="fas fa-save me-2"></i> Save Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav d-lg-none position-fixed bottom-0 start-0 end-0 bg-white shadow-lg">
+        <!-- Same structure -->
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notes.js"></script>
+</body>
+
+</html>

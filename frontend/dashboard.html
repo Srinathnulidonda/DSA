@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DSA Mastery</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- FullCalendar -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar d-none d-lg-block position-fixed top-0 start-0 h-100 bg-white shadow-sm"
+        style="width: 250px; z-index: 1000;">
+        <div class="p-4">
+            <div class="d-flex align-items-center mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" class="me-2" style="width: 40px;">
+                <h4 class="mb-0 fw-bold text-primary">DSA Mastery</h4>
+            </div>
+
+            <nav class="nav flex-column">
+                <a href="dashboard.html" class="nav-link active rounded-3 mb-2">
+                    <i class="fas fa-home me-3"></i> Dashboard
+                </a>
+                <a href="roadmap.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-route me-3"></i> Roadmap
+                </a>
+                <a href="progress.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-chart-line me-3"></i> Progress
+                </a>
+                <a href="calendar.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-calendar-alt me-3"></i> Calendar
+                </a>
+                <a href="pomodoro.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-clock me-3"></i> Pomodoro
+                </a>
+                <a href="notes.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-sticky-note me-3"></i> Notes
+                </a>
+                <a href="profile.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-user me-3"></i> Profile
+                </a>
+                <a href="settings.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-cog me-3"></i> Settings
+                </a>
+            </nav>
+
+            <div class="position-absolute bottom-0 start-0 w-100 p-4">
+                <div class="bg-primary bg-opacity-10 rounded-3 p-3 text-center">
+                    <i class="fas fa-fire text-primary fs-3 mb-2"></i>
+                    <h6 class="mb-1 fw-bold">30 Day Streak!</h6>
+                    <small class="text-muted">Keep it going!</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" style="margin-left: 250px;">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+            <div class="container-fluid px-4">
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <!-- Search -->
+                    <div class="search-box d-none d-md-block">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-0" placeholder="Search topics, notes...">
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="dropdown">
+                        <button class="btn btn-light rounded-circle position-relative" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="width: 300px;">
+                            <li class="dropdown-header">Notifications</li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-3" href="#">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2">
+                                            <i class="fas fa-check text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">Week 3 Completed!</h6>
+                                        <small class="text-muted">2 hours ago</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-3" href="#">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-info bg-opacity-10 rounded-circle p-2">
+                                            <i class="fas fa-trophy text-info"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">New Achievement!</h6>
+                                        <small class="text-muted">5 hours ago</small>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Profile -->
+                    <div class="dropdown">
+                        <button class="btn btn-light rounded-circle" data-bs-toggle="dropdown">
+                            <img src="https://i.pravatar.cc/40" alt="Profile" class="rounded-circle"
+                                style="width: 32px;">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>
+                                    Profile</a></li>
+                            <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>
+                                    Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
+                                        class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="container-fluid p-4">
+            <!-- Welcome Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div
+                        class="welcome-card bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-4 p-4 p-md-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="display-6 fw-bold mb-3">Welcome back, <span id="userName">John</span>! 👋
+                                </h2>
+                                <p class="lead mb-4">You're on a <strong>30-day streak</strong>! Keep up the great work.
+                                </p>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <button class="btn btn-light btn-lg rounded-pill px-4" onclick="continueLearning()">
+                                        <i class="fas fa-play me-2"></i> Continue Learning
+                                    </button>
+                                    <button class="btn btn-outline-light btn-lg rounded-pill px-4"
+                                        onclick="viewProgress()">
+                                        <i class="fas fa-chart-line me-2"></i> View Progress
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="motivational-quote bg-white bg-opacity-20 rounded-3 p-3 mt-4 mt-md-0">
+                                    <i class="fas fa-quote-left text-white-50 mb-2"></i>
+                                    <p class="mb-2 font-italic">"The only way to do great work is to love what you do."
+                                    </p>
+                                    <small>- Steve Jobs</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stat-card bg-white rounded-4 p-4 shadow-sm hover-shadow transition-all">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="fas fa-fire text-primary fs-4"></i>
+                            </div>
+                            <span class="badge bg-success">+5%</span>
+                        </div>
+                        <h3 class="fw-bold mb-1">30 Days</h3>
+                        <p class="text-muted mb-0">Current Streak</p>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stat-card bg-white rounded-4 p-4 shadow-sm hover-shadow transition-all">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="fas fa-check-circle text-success fs-4"></i>
+                            </div>
+                            <span class="badge bg-info">42/98</span>
+                        </div>
+                        <h3 class="fw-bold mb-1">42.8%</h3>
+                        <p class="text-muted mb-0">Completion Rate</p>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stat-card bg-white rounded-4 p-4 shadow-sm hover-shadow transition-all">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="fas fa-clock text-info fs-4"></i>
+                            </div>
+                            <span class="badge bg-warning">Today</span>
+                        </div>
+                        <h3 class="fw-bold mb-1">2h 15m</h3>
+                        <p class="text-muted mb-0">Study Time</p>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stat-card bg-white rounded-4 p-4 shadow-sm hover-shadow transition-all">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="stat-icon bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="fas fa-trophy text-warning fs-4"></i>
+                            </div>
+                            <span class="badge bg-primary">Level 5</span>
+                        </div>
+                        <h3 class="fw-bold mb-1">1,250 XP</h3>
+                        <p class="text-muted mb-0">Total Points</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Chart & Calendar -->
+            <div class="row mb-4">
+                <!-- Progress Chart -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Learning Progress</h5>
+                                <select class="form-select form-select-sm w-auto">
+                                    <option>Last 7 days</option>
+                                    <option>Last 30 days</option>
+                                    <option>All time</option>
+                                </select>
+                            </div>
+                            <canvas id="progressChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Calendar -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Study Calendar</h5>
+                            <div id="miniCalendar"></div>
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <span class="badge bg-success me-2"></span> Completed
+                                    <span class="badge bg-warning ms-3 me-2"></span> In Progress
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Week Overview -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Week 6: Binary Search Trees</h5>
+                                <a href="roadmap.html" class="btn btn-sm btn-outline-primary rounded-pill">View Full
+                                    Roadmap</a>
+                            </div>
+
+                            <div class="week-timeline">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="day-card text-center p-3 rounded-3 bg-success bg-opacity-10">
+                                            <small class="text-muted">Mon</small>
+                                            <h6 class="mb-0 mt-1">BST Basics</h6>
+                                            <i class="fas fa-check-circle text-success mt-2"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="day-card text-center p-3 rounded-3 bg-success bg-opacity-10">
+                                            <small class="text-muted">Tue</small>
+                                            <h6 class="mb-0 mt-1">Operations</h6>
+                                            <i class="fas fa-check-circle text-success mt-2"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div
+                                            class="day-card text-center p-3 rounded-3 bg-warning bg-opacity-10 border-2 border-warning">
+                                            <small class="text-muted">Wed</small>
+                                            <h6 class="mb-0 mt-1">Validation</h6>
+                                            <div class="progress mt-2" style="height: 4px;">
+                                                <div class="progress-bar bg-warning" style="width: 60%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="day-card text-center p-3 rounded-3 bg-light">
+                                            <small class="text-muted">Thu</small>
+                                            <h6 class="mb-0 mt-1">Balanced Trees</h6>
+                                            <i class="fas fa-lock text-muted mt-2"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="day-card text-center p-3 rounded-3 bg-light">
+                                            <small class="text-muted">Fri</small>
+                                            <h6 class="mb-0 mt-1">Problems</h6>
+                                            <i class="fas fa-lock text-muted mt-2"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="day-card text-center p-3 rounded-3 bg-light">
+                                            <small class="text-muted">Weekend</small>
+                                            <h6 class="mb-0 mt-1">Project</h6>
+                                            <i class="fas fa-lock text-muted mt-2"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Leaderboard -->
+            <div class="row">
+                <!-- Recent Activity -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Recent Activity</h5>
+                            <div class="activity-list">
+                                <div class="activity-item d-flex align-items-start mb-3">
+                                    <div class="activity-icon bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                        <i class="fas fa-check text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Completed "BST Operations"</h6>
+                                        <small class="text-muted">2 hours ago • 45 minutes</small>
+                                    </div>
+                                </div>
+                                <div class="activity-item d-flex align-items-start mb-3">
+                                    <div class="activity-icon bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                        <i class="fas fa-sticky-note text-info"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Added note on "Tree Traversal"</h6>
+                                        <small class="text-muted">5 hours ago</small>
+                                    </div>
+                                </div>
+                                <div class="activity-item d-flex align-items-start mb-3">
+                                    <div class="activity-icon bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                        <i class="fas fa-trophy text-warning"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Achieved "Week 5 Master" badge</h6>
+                                        <small class="text-muted">Yesterday</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Leaderboard -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Top Learners This Week</h5>
+                            <div class="leaderboard-list">
+                                <div class="leaderboard-item d-flex align-items-center mb-3">
+                                    <span class="rank-badge bg-warning text-white rounded-circle me-3">1</span>
+                                    <img src="https://i.pravatar.cc/32?img=1" class="rounded-circle me-2" alt="User">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">Sarah Chen</h6>
+                                        <small class="text-muted">2,450 XP</small>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item d-flex align-items-center mb-3">
+                                    <span class="rank-badge bg-secondary text-white rounded-circle me-3">2</span>
+                                    <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle me-2" alt="User">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">You</h6>
+                                        <small class="text-muted">1,250 XP</small>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item d-flex align-items-center mb-3">
+                                    <span class="rank-badge bg-bronze text-white rounded-circle me-3">3</span>
+                                    <img src="https://i.pravatar.cc/32?img=3" class="rounded-circle me-2" alt="User">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">Mike Johnson</h6>
+                                        <small class="text-muted">1,180 XP</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="btn btn-outline-primary btn-sm w-100 rounded-pill mt-3">View Full
+                                Leaderboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav d-lg-none position-fixed bottom-0 start-0 end-0 bg-white shadow-lg"
+        style="z-index: 1000;">
+        <div class="d-flex justify-content-around align-items-center py-2">
+            <a href="dashboard.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="roadmap.html" class="nav-item">
+                <i class="fas fa-route"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="pomodoro.html" class="nav-item">
+                <i class="fas fa-clock"></i>
+                <span>Timer</span>
+            </a>
+            <a href="notes.html" class="nav-item">
+                <i class="fas fa-sticky-note"></i>
+                <span>Notes</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold">DSA Mastery</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav class="nav flex-column">
+                <a href="dashboard.html" class="nav-link active rounded-3 mb-2">
+                    <i class="fas fa-home me-3"></i> Dashboard
+                </a>
+                <a href="roadmap.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-route me-3"></i> Roadmap
+                </a>
+                <a href="progress.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-chart-line me-3"></i> Progress
+                </a>
+                <a href="calendar.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-calendar-alt me-3"></i> Calendar
+                </a>
+                <a href="pomodoro.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-clock me-3"></i> Pomodoro
+                </a>
+                <a href="notes.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-sticky-note me-3"></i> Notes
+                </a>
+                <a href="settings.html" class="nav-link rounded-3 mb-2">
+                    <i class="fas fa-cog me-3"></i> Settings
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Achievement Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+        <div id="achievementToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-trophy me-2"></i>
+                <strong class="me-auto">Achievement Unlocked!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                <div class="d-flex align-items-center">
+                    <img src="assets/images/badges/streak-30.svg" alt="Badge" style="width: 50px;" class="me-3">
+                    <div>
+                        <h6 class="mb-0">30 Day Streak Master</h6>
+                        <small class="text-muted">Keep up the amazing work!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+
+    <script>
+        // Initialize Progress Chart
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const progressChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Study Time (minutes)',
+                    data: [120, 150, 135, 165, 180, 90, 120],
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Topics Completed',
+                    data: [2, 3, 2, 3, 4, 1, 2],
+                    borderColor: 'rgb(16, 185, 129)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Initialize Mini Calendar
+        const calendarEl = document.getElementById('miniCalendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 300,
+            headerToolbar: {
+                left: 'prev',
+                center: 'title',
+                right: 'next'
+            },
+            events: [
+                {
+                    title: 'Completed',
+                    start: '2024-01-15',
+                    backgroundColor: '#10b981',
+                    borderColor: '#10b981'
+                },
+                {
+                    title: 'In Progress',
+                    start: '2024-01-17',
+                    backgroundColor: '#f59e0b',
+                    borderColor: '#f59e0b'
+                }
+            ]
+        });
+        calendar.render();
+
+        // Show achievement toast on load (demo)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const toast = new bootstrap.Toast(document.getElementById('achievementToast'));
+                toast.show();
+            }, 2000);
+        });
+    </script>
+</body>
+
+</html>

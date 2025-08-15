@@ -1,0 +1,15 @@
+Based on the backend/app.py file Create a modern, responsive, and interactive DSA Learning Dashboard web app with a beautiful UI/UX optimized for both PC and mobile devices. Use pure HTML5, CSS3, Bootstrap 5, Tailwind CSS, and vanilla JavaScript (no frameworks like React or Vue).
+The app should include:
+•	A 14-week timetable with daily schedules and tasks for each week.
+•	A Calendar View to visualize the schedule and mark completed tasks.
+•	Motivational widgets such as daily quotes, streak reminders, and achievement popups.
+•	A Bottom Navigation bar visible only on mobile for quick access to main sections (Dashboard, Calendar, Resources, Profile).
+•	Smooth, modern animations and transitions.
+•	Fully responsive layout with beautiful design using Bootstrap 5 and Tailwind CSS utilities and components.
+•	Clean, modular code with semantic HTML and well-organized CSS.
+Ensure:
+•	The design uses Tailwind for utility-first styling and Bootstrap for components and grid.
+•	Mobile UI has a bottom navigation that disappears on desktop.
+•	The calendar highlights completed tasks and lets users click dates to view tasks.
+•	Motivational widgets dynamically update daily quotes and show streak achievements.
+•	Use modern CSS features and best practices for accessibility and performance.

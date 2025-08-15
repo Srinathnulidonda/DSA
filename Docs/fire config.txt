@@ -1,0 +1,44 @@
+<script type="module" >
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyBiBzp81HCsV68q_1ox7oFR0DwfWi3nj-g",
+    authDomain: "dsa-roadmap-3c61a.firebaseapp.com",
+    projectId: "dsa-roadmap-3c61a",
+    storageBucket: "dsa-roadmap-3c61a.firebasestorage.app",
+    messagingSenderId: "272682601523",
+    appId: "1:272682601523:web:414ceb72b7138e0fb6a746",
+    measurementId: "G-V9T4M9LFG2"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+</script>
+
+
+
+povide the best power full version for this 
+settings, 
+Gmail SMTP Configuration, 
+forgot-password, 
+reset-password, 
+Progress tracking & streaks,
+Calendar & timetable,
+Pomodoro timer logs,
+User preferences (themes, layout),
+notes, 
+notifications, 
+profile, 
+dashboard,analytics/dashboard
+ai/generate-study-plan
+ai/generate-hint
+streaks
+profile/upload-avatar
+Search feature

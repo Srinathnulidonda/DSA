@@ -1,0 +1,31 @@
+# Flask and core extensions
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-CORS
+Flask-Mail
+Flask-Limiter
+Flask-Caching
+
+# Database
+SQLAlchemy
+psycopg2-binary
+
+# Authentication and Security
+PyJWT
+Werkzeug
+
+# Cloud Storage
+cloudinary
+
+# Background Tasks
+APScheduler
+
+# Redis for caching and rate limiting
+redis
+
+# Web Server (for production)
+gunicorn
+
+# Additional utilities
+python-dotenv
