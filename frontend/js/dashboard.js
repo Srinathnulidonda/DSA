@@ -1,401 +1,580 @@
-// dashboard.js - Dashboard specific functionality
+// Dashboard and main app functionality
 
-let dashboardCharts = {};
+class DashboardManager {
+    static currentView = 'dashboard';
+    static charts = {};
+    static intervals = {};
 
-// Initialize dashboard
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadDashboardData();
-    initializeCharts();
-    setupEventListeners();
-    startRealtimeUpdates();
-});
-
-// Load dashboard data
-async function loadDashboardData() {
-    try {
-        window.DSAApp.showLoader();
-
-        // Load all dashboard data in parallel
-        const [dashboardData, streakData, notificationsData] = await Promise.all([
-            window.API.getDashboardData(),
-            window.API.getStreaks(),
-            window.API.getNotifications(true)
-        ]);
-
-        // Update UI with data
-        updateDashboardStats(dashboardData.data);
-        updateStreakDisplay(streakData.data);
-        updateNotificationBadge(notificationsData.data.unread_count);
-        updateRecentActivity(dashboardData.data.recent_activity);
-        updateWeekProgress(dashboardData.data);
-
-    } catch (error) {
-        console.error('Failed to load dashboard data:', error);
-        window.DSAApp.showToast('Failed to load dashboard data', 'error');
-    } finally {
-        window.DSAApp.hideLoader();
-    }
-}
-
-// Update dashboard statistics
-function updateDashboardStats(data) {
-    const { statistics } = data;
-
-    // Update stat cards
-    document.querySelector('#totalCompleted').textContent = statistics.total_completed;
-    document.querySelector('#completionRate').textContent = `${statistics.completion_rate}%`;
-    document.querySelector('#weekTimeMinutes').textContent = window.DSAApp.formatTime(statistics.week_time_minutes);
-    document.querySelector('#weekPomodoros').textContent = statistics.week_pomodoros;
-
-    // Animate counters
-    animateCounters();
-}
-
-// Update streak display
-function updateStreakDisplay(streakData) {
-    const { current_streak, longest_streak, total_days_active } = streakData;
-
-    document.querySelector('#currentStreak').textContent = `${current_streak} Days`;
-    document.querySelector('#longestStreak').textContent = `Best: ${longest_streak} days`;
-
-    // Update streak fire animation if on streak
-    if (current_streak > 0) {
-        document.querySelector('.streak-fire').classList.add('animate-pulse');
+    static async init() {
+        this.setupEventListeners();
+        this.setupViewNavigation();
+        this.loadDailyQuote();
+        await this.loadDashboardData();
     }
 
-    // Check for milestone achievements
-    checkStreakMilestones(current_streak);
-}
+    static setupEventListeners() {
+        // Profile form submission
+        document.getElementById('profileForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = FormUtils.serializeForm(e.target);
+            await ProfileManager.updateProfile(formData);
+        });
 
-// Initialize charts
-function initializeCharts() {
-    // Progress Chart
-    const progressCtx = document.getElementById('progressChart')?.getContext('2d');
-    if (progressCtx) {
-        dashboardCharts.progress = new Chart(progressCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Study Time (minutes)',
-                    data: [],
-                    borderColor: 'rgb(59, 130, 246)',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    tension: 0.4
-                }, {
-                    label: 'Topics Completed',
-                    data: [],
-                    borderColor: 'rgb(16, 185, 129)',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+        // Search functionality
+        document.getElementById('notesSearch')?.addEventListener('input', (e) => {
+            NotesManager.filterNotes(e.target.value);
+        });
+
+        // Filter changes
+        document.getElementById('notesTopicFilter')?.addEventListener('change', (e) => {
+            NotesManager.filterByTopic(e.target.value);
+        });
+
+        document.getElementById('notesWeekFilter')?.addEventListener('change', (e) => {
+            NotesManager.filterByWeek(e.target.value);
+        });
+    }
+
+    static setupViewNavigation() {
+        // Update active navigation state
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.nav-link') || e.target.closest('.bottom-nav-item')) {
+                this.updateNavigation(e.target.closest('[onclick]'));
             }
         });
     }
-}
 
-// Update week progress
-function updateWeekProgress(data) {
-    const weekProgressContainer = document.querySelector('.week-timeline');
-    if (!weekProgressContainer) return;
+    static updateNavigation(activeElement) {
+        if (!activeElement) return;
 
-    // Get current week data
-    const currentWeek = getCurrentWeek();
-    const weekData = window.DSAApp.ROADMAP[currentWeek - 1];
+        // Update sidebar navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
 
-    if (!weekData) return;
+        // Update bottom navigation
+        document.querySelectorAll('.bottom-nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
 
-    // Update week title
-    document.querySelector('#weekTitle').textContent = `Week ${weekData.week}: ${weekData.title}`;
+        // Add active class to current item
+        activeElement.classList.add('active');
+    }
 
-    // Update day cards
-    weekData.days.forEach((day, index) => {
-        const dayCard = weekProgressContainer.querySelector(`.day-card:nth-child(${index + 1})`);
-        if (dayCard) {
-            updateDayCard(dayCard, day, currentWeek, index + 1);
+    static async loadDashboardData() {
+        try {
+            LoadingManager.show('dashboardView', 'Loading dashboard...');
+
+            const [dashboardData, streakData] = await Promise.all([
+                APIClient.get('/dashboard'),
+                APIClient.get('/streaks')
+            ]);
+
+            if (dashboardData) {
+                this.updateDashboardStats(dashboardData.statistics);
+                this.updateRecentActivity(dashboardData.recent_activity);
+                this.updateTopTopics(dashboardData.top_topics);
+                this.createWeeklyChart(dashboardData.statistics);
+            }
+
+            if (streakData) {
+                StreakManager.updateStreakDisplay(streakData);
+            }
+
+            this.updateTodaysFocus();
+
+        } catch (error) {
+            console.error('Failed to load dashboard data:', error);
+            ToastManager.error('Failed to load dashboard data');
         }
-    });
-}
+    }
 
-// Update individual day card
-function updateDayCard(card, dayData, week, day) {
-    const isCompleted = checkDayCompleted(week, day);
-    const isCurrent = checkCurrentDay(week, day);
+    static updateDashboardStats(stats) {
+        const elements = {
+            totalCompleted: document.getElementById('totalCompleted'),
+            totalTime: document.getElementById('totalTime'),
+            completionRate: document.getElementById('completionRate'),
+            weekProgress: document.getElementById('weekProgress')
+        };
 
-    card.classList.remove('bg-success', 'bg-warning', 'bg-light');
-    card.classList.add(isCompleted ? 'bg-success' : isCurrent ? 'bg-warning' : 'bg-light');
+        if (elements.totalCompleted) {
+            AnimationUtils.countUp(elements.totalCompleted, 0, stats.total_completed);
+        }
 
-    card.innerHTML = `
-        <small class="text-muted">${dayData.day}</small>
-        <h6 class="mb-0 mt-1">${dayData.topic}</h6>
-        ${isCompleted ? '<i class="fas fa-check-circle text-success mt-2"></i>' :
-            isCurrent ? '<div class="progress mt-2" style="height: 4px;"><div class="progress-bar bg-warning" style="width: 60%"></div></div>' :
-                '<i class="fas fa-lock text-muted mt-2"></i>'}
-    `;
-}
+        if (elements.totalTime) {
+            elements.totalTime.textContent = DateUtils.formatDuration(stats.total_time_minutes);
+        }
 
-// Update recent activity
-function updateRecentActivity(activities) {
-    const activityContainer = document.querySelector('.activity-list');
-    if (!activityContainer) return;
+        if (elements.completionRate) {
+            AnimationUtils.countUp(elements.completionRate, 0, Math.round(stats.completion_rate));
+            elements.completionRate.textContent += '%';
+        }
 
-    activityContainer.innerHTML = activities.map(activity => `
-        <div class="activity-item d-flex align-items-start mb-3 animate-fadeIn">
-            <div class="activity-icon bg-${getActivityColor(activity.type)} bg-opacity-10 rounded-circle p-2 me-3">
-                <i class="fas fa-${getActivityIcon(activity.type)} text-${getActivityColor(activity.type)}"></i>
+        if (elements.weekProgress) {
+            AnimationUtils.countUp(elements.weekProgress, 0, stats.week_pomodoros || 0);
+        }
+    }
+
+    static updateRecentActivity(activities) {
+        const container = document.getElementById('recentActivity');
+        if (!container) return;
+
+        if (!activities || activities.length === 0) {
+            container.innerHTML = '<p class="text-muted small">No recent activity</p>';
+            return;
+        }
+
+        const activitiesHtml = activities.map(activity => `
+            <div class="d-flex align-items-center mb-2">
+                <div class="tw-w-2 tw-h-2 tw-bg-green-500 tw-rounded-full me-2"></div>
+                <div class="flex-grow-1">
+                    <div class="small fw-medium">${activity.topic}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">
+                        Week ${activity.week}, Day ${activity.day}
+                    </div>
+                </div>
+                <small class="text-muted">
+                    ${DateUtils.formatDate(activity.completed_at, 'relative')}
+                </small>
             </div>
-            <div class="flex-grow-1">
-                <h6 class="mb-1">${activity.title}</h6>
-                <small class="text-muted">${formatTimeAgo(activity.created_at)}</small>
-            </div>
-        </div>
-    `).join('');
-}
+        `).join('');
 
-// Get activity icon based on type
-function getActivityIcon(type) {
-    const icons = {
-        'completed': 'check',
-        'achievement': 'trophy',
-        'note': 'sticky-note',
-        'streak': 'fire'
-    };
-    return icons[type] || 'circle';
-}
+        container.innerHTML = activitiesHtml;
+    }
 
-// Get activity color based on type
-function getActivityColor(type) {
-    const colors = {
-        'completed': 'success',
-        'achievement': 'warning',
-        'note': 'info',
-        'streak': 'danger'
-    };
-    return colors[type] || 'secondary';
-}
+    static updateTopTopics(topics) {
+        const container = document.getElementById('topicDistribution');
+        if (!container) return;
 
-// Format time ago
-function formatTimeAgo(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
+        if (!topics || topics.length === 0) {
+            container.innerHTML = '<p class="text-muted">No topic data available</p>';
+            return;
+        }
 
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+        const maxTime = Math.max(...topics.map(t => t.time));
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes} minutes ago`;
-    if (hours < 24) return `${hours} hours ago`;
-    if (days === 1) return 'Yesterday';
-    if (days < 30) return `${days} days ago`;
+        const topicsHtml = topics.map(topic => {
+            const percentage = (topic.time / maxTime) * 100;
+            return `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-medium">${topic.topic}</span>
+                        <span class="small text-muted">${DateUtils.formatDuration(topic.time)}</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
 
-    return date.toLocaleDateString();
-}
+        container.innerHTML = topicsHtml;
+    }
 
-// Check streak milestones
-function checkStreakMilestones(currentStreak) {
-    const milestones = [7, 14, 30, 60, 100];
+    static createWeeklyChart(stats) {
+        const canvas = document.getElementById('weeklyChart');
+        if (!canvas) return;
 
-    if (milestones.includes(currentStreak)) {
-        showAchievementToast({
-            title: `${currentStreak} Day Streak!`,
-            message: 'Amazing dedication! Keep it up!',
-            badge: `/assets/images/badges/streak-${currentStreak}.svg`
+        const ctx = canvas.getContext('2d');
+
+        // Destroy existing chart
+        if (this.charts.weekly) {
+            this.charts.weekly.destroy();
+        }
+
+        // Generate sample data for the last 7 days
+        const days = [];
+        const studyTime = [];
+        const today = new Date();
+
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+            studyTime.push(Math.floor(Math.random() * 120) + 30); // Sample data
+        }
+
+        this.charts.weekly = ChartUtils.createLineChart(ctx, {
+            labels: days,
+            datasets: [{
+                label: 'Study Time (minutes)',
+                data: studyTime,
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
         });
     }
-}
 
-// Show achievement toast
-function showAchievementToast(achievement) {
-    const toastHTML = `
-        <div class="toast align-items-center" role="alert">
-            <div class="toast-header bg-success text-white">
-                <i class="fas fa-trophy me-2"></i>
-                <strong class="me-auto">Achievement Unlocked!</strong>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body">
-                <div class="d-flex align-items-center">
-                    <img src="${achievement.badge}" alt="Badge" style="width: 50px;" class="me-3">
-                    <div>
-                        <h6 class="mb-0">${achievement.title}</h6>
-                        <small class="text-muted">${achievement.message}</small>
+    static updateTodaysFocus() {
+        const container = document.getElementById('todaysFocus');
+        if (!container) return;
+
+        // Get current week and day from roadmap
+        const today = new Date();
+        const currentWeek = Math.ceil((today.getTime() - new Date('2024-01-01').getTime()) / (7 * 24 * 60 * 60 * 1000)) % 14 || 1;
+        const currentDay = today.getDay() || 1; // 1-7 for Monday-Sunday
+
+        // This would be loaded from the roadmap data
+        container.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="tw-bg-blue-100 tw-text-blue-600 rounded-circle p-2 me-3 mt-1">
+                    <i class="bi bi-book"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold mb-2">Week ${currentWeek} - Day ${currentDay}</h6>
+                    <p class="mb-2">Today's focus: <strong>Continue your DSA journey</strong></p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge bg-primary">Study</span>
+                        <span class="badge bg-success">Practice</span>
+                        <span class="badge bg-info">Review</span>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    }
 
-    const toastContainer = document.querySelector('.toast-container');
-    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    static loadDailyQuote() {
+        const quotes = [
+            "The only way to do great work is to love what you do. - Steve Jobs",
+            "Code is like humor. When you have to explain it, it's bad. - Cory House",
+            "First, solve the problem. Then, write the code. - John Johnson",
+            "Experience is the name everyone gives to their mistakes. - Oscar Wilde",
+            "In order to be irreplaceable, one must always be different. - Coco Chanel",
+            "Java is to JavaScript what car is to Carpet. - Chris Heilmann",
+            "Talk is cheap. Show me the code. - Linus Torvalds",
+            "That's the thing about people who think they hate computers. What they really hate is lousy programmers. - Larry Niven",
+            "Programming isn't about what you know; it's about what you can figure out. - Chris Pine",
+            "The best error message is the one that never shows up. - Thomas Fuchs"
+        ];
 
-    const toastElement = toastContainer.lastElementChild;
-    const toast = new bootstrap.Toast(toastElement);
-    toast.show();
+        const dailyQuoteElement = document.getElementById('dailyQuote');
+        if (dailyQuoteElement) {
+            const today = new Date().toDateString();
+            const savedQuote = localStorage.getItem(`daily_quote_${today}`);
 
-    // Play achievement sound
-    playAchievementSound();
+            if (savedQuote) {
+                dailyQuoteElement.textContent = savedQuote;
+            } else {
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                dailyQuoteElement.textContent = randomQuote;
+                localStorage.setItem(`daily_quote_${today}`, randomQuote);
+            }
+        }
+    }
 }
 
-// Play achievement sound
-function playAchievementSound() {
-    const audio = new Audio('/assets/sounds/achievement.mp3');
-    audio.volume = 0.5;
-    audio.play().catch(e => console.log('Could not play sound'));
+// Streak Management
+class StreakManager {
+    static updateStreakDisplay(streakData) {
+        const elements = {
+            currentStreak: document.getElementById('currentStreak'),
+            longestStreak: document.getElementById('longestStreak'),
+            streakProgress: document.getElementById('streakProgress')
+        };
+
+        if (elements.currentStreak) {
+            AnimationUtils.countUp(elements.currentStreak, 0, streakData.current_streak);
+        }
+
+        if (elements.longestStreak) {
+            elements.longestStreak.textContent = streakData.longest_streak;
+        }
+
+        if (elements.streakProgress) {
+            const progressPercent = Math.min((streakData.current_streak / 30) * 100, 100);
+            elements.streakProgress.style.width = `${progressPercent}%`;
+        }
+
+        // Update progress view streak
+        const progressStreak = document.getElementById('progressStreak');
+        if (progressStreak) {
+            progressStreak.textContent = streakData.current_streak;
+        }
+    }
 }
 
-// Setup event listeners
-function setupEventListeners() {
-    // Continue learning button
-    document.querySelector('#continueLearning')?.addEventListener('click', continueLearning);
+// Roadmap Management
+class RoadmapManager {
+    static roadmapData = null;
 
-    // View progress button
-    document.querySelector('#viewProgress')?.addEventListener('click', () => {
-        window.location.href = '/progress.html';
-    });
+    static async loadRoadmap() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/roadmap`);
+            const data = await response.json();
 
-    // Chart time range selector
-    document.querySelectorAll('.chart-range-selector button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            updateChartRange(e.target.dataset.range);
+            if (data.roadmap) {
+                this.roadmapData = data.roadmap;
+                this.renderRoadmap();
+            }
+        } catch (error) {
+            console.error('Failed to load roadmap:', error);
+            ToastManager.error('Failed to load roadmap');
+        }
+    }
+
+    static renderRoadmap() {
+        const container = document.getElementById('roadmapContainer');
+        if (!container || !this.roadmapData) return;
+
+        const roadmapHtml = this.roadmapData.map(week => `
+            <div class="glass-card mb-4 week-card" data-week="${week.week}">
+                <div class="week-header" onclick="toggleWeek(${week.week})">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1 fw-bold">Week ${week.week}: ${week.title}</h5>
+                        <p class="mb-0 small opacity-75">${week.goal}</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-light text-dark me-2" id="weekProgress${week.week}">0/7</span>
+                        <i class="bi bi-chevron-down transition-transform" id="weekIcon${week.week}"></i>
+                    </div>
+                </div>
+                <div class="week-content collapse" id="weekContent${week.week}">
+                    ${this.renderWeekContent(week)}
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = roadmapHtml;
+        this.updateWeekProgress();
+    }
+
+    static renderWeekContent(week) {
+        const daysHtml = week.days.map((day, index) => `
+            <div class="day-item" data-week="${week.week}" data-day="${index + 1}">
+                <div class="day-checkbox">
+                    <input type="checkbox" class="form-check-input" 
+                           id="day${week.week}_${index + 1}"
+                           onchange="updateDayProgress(${week.week}, ${index + 1}, this.checked)">
+                </div>
+                <div class="day-info flex-grow-1">
+                    <div class="day-topic">${day.day}: ${day.topic}</div>
+                    <div class="day-activities">${day.activities}</div>
+                    <div class="mt-2">
+                        ${this.renderResources(day.resources)}
+                    </div>
+                    <small class="text-muted">
+                        <i class="bi bi-clock me-1"></i>~${day.time_estimate} minutes
+                    </small>
+                </div>
+                <div class="day-status">
+                    <span class="status-pending" id="status${week.week}_${index + 1}">Pending</span>
+                </div>
+            </div>
+        `).join('');
+
+        const projectHtml = week.project ? `
+            <div class="mt-3 p-3 rounded-3 tw-bg-gradient-to-r tw-from-green-400 tw-to-blue-500 text-white">
+                <h6 class="fw-bold mb-2">
+                    <i class="bi bi-trophy me-2"></i>Week Project: ${week.project.title}
+                </h6>
+                <p class="mb-2 small">${week.project.description}</p>
+                <div class="d-flex gap-1 flex-wrap">
+                    ${week.project.skills.map(skill => `
+                        <span class="badge bg-light text-dark">${skill}</span>
+                    `).join('')}
+                </div>
+            </div>
+        ` : '';
+
+        return daysHtml + projectHtml;
+    }
+
+    static renderResources(resourceKeys) {
+        if (!resourceKeys || resourceKeys.length === 0) return '';
+
+        // This would fetch from the resources API
+        return resourceKeys.map(key => {
+            // Placeholder resource rendering
+            return `<a href="#" class="resource-link" onclick="openResource('${key}')">
+                <i class="bi bi-link-45deg me-1"></i>Resource
+            </a>`;
+        }).join('');
+    }
+
+    static async updateWeekProgress() {
+        try {
+            const progressData = await APIClient.get('/progress');
+            if (progressData?.progress) {
+                this.applyProgressToRoadmap(progressData.progress);
+            }
+        } catch (error) {
+            console.error('Failed to load progress:', error);
+        }
+    }
+
+    static applyProgressToRoadmap(progressData) {
+        // Apply progress data to the roadmap display
+        for (const [key, progress] of Object.entries(progressData)) {
+            const [weekPart, dayPart] = key.split('_');
+            const week = parseInt(weekPart.replace('week', ''));
+            const day = parseInt(dayPart.replace('day', ''));
+
+            const checkbox = document.getElementById(`day${week}_${day}`);
+            const status = document.getElementById(`status${week}_${day}`);
+
+            if (checkbox) {
+                checkbox.checked = progress.completed;
+            }
+
+            if (status) {
+                if (progress.completed) {
+                    status.textContent = 'Completed';
+                    status.className = 'status-completed';
+                } else {
+                    status.textContent = 'Pending';
+                    status.className = 'status-pending';
+                }
+            }
+        }
+
+        // Update week progress counters
+        this.roadmapData?.forEach(week => {
+            const completed = week.days.filter((_, index) => {
+                const checkbox = document.getElementById(`day${week.week}_${index + 1}`);
+                return checkbox?.checked;
+            }).length;
+
+            const progressBadge = document.getElementById(`weekProgress${week.week}`);
+            if (progressBadge) {
+                progressBadge.textContent = `${completed}/7`;
+            }
         });
-    });
-}
-
-// Continue learning function
-async function continueLearning() {
-    try {
-        // Get current progress
-        const progressData = await window.API.getProgress();
-        const nextTopic = findNextTopic(progressData.data.progress);
-
-        if (nextTopic) {
-            // Redirect to roadmap with topic highlighted
-            window.location.href = `/roadmap.html?week=${nextTopic.week}&day=${nextTopic.day}`;
-        } else {
-            window.DSAApp.showToast('You have completed all topics!', 'success');
-        }
-    } catch (error) {
-        console.error('Failed to get next topic:', error);
-        window.location.href = '/roadmap.html';
     }
 }
 
-// Find next topic to study
-function findNextTopic(progress) {
-    for (let week = 1; week <= 14; week++) {
-        for (let day = 1; day <= 7; day++) {
-            const key = `week${week}_day${day}`;
-            if (!progress[key] || !progress[key].completed) {
-                return { week, day };
+// Progress Management
+class ProgressManager {
+    static progressData = null;
+
+    static async loadProgress() {
+        try {
+            const data = await APIClient.get('/progress');
+            if (data) {
+                this.progressData = data;
+                this.updateProgressView(data);
             }
+        } catch (error) {
+            console.error('Failed to load progress:', error);
         }
     }
-    return null;
-}
 
-// Get current week number
-function getCurrentWeek() {
-    // This is a simplified version - in production, calculate based on user's start date
-    const startDate = new Date('2024-01-01'); // Example start date
-    const currentDate = new Date();
-    const weeksDiff = Math.floor((currentDate - startDate) / (7 * 24 * 60 * 60 * 1000));
-    return Math.min(Math.max(1, weeksDiff + 1), 14);
-}
+    static updateProgressView(data) {
+        const stats = data.statistics;
 
-// Check if a day is completed
-function checkDayCompleted(week, day) {
-    // This would check against actual user progress
-    // For demo, mark some as completed
-    return week < getCurrentWeek() || (week === getCurrentWeek() && day < 3);
-}
+        // Update progress stats
+        const elements = {
+            progressCompleted: document.getElementById('progressCompleted'),
+            progressTime: document.getElementById('progressTime'),
+            progressPercentage: document.getElementById('progressPercentage')
+        };
 
-// Check if this is the current day
-function checkCurrentDay(week, day) {
-    return week === getCurrentWeek() && day === 3; // Example current day
-}
+        if (elements.progressCompleted) {
+            elements.progressCompleted.textContent = stats.total_completed;
+        }
 
-// Start real-time updates
-function startRealtimeUpdates() {
-    // Update time-based elements every minute
-    setInterval(() => {
-        updateTimeBasedElements();
-    }, 60000);
+        if (elements.progressTime) {
+            elements.progressTime.textContent = DateUtils.formatDuration(stats.total_time_minutes);
+        }
 
-    // Refresh dashboard data every 5 minutes
-    setInterval(() => {
-        loadDashboardData();
-    }, 300000);
-}
+        if (elements.progressPercentage) {
+            elements.progressPercentage.textContent = Math.round(stats.completion_percentage) + '%';
+        }
 
-// Update time-based elements
-function updateTimeBasedElements() {
-    // Update "time ago" displays
-    document.querySelectorAll('[data-timestamp]').forEach(el => {
-        const timestamp = el.dataset.timestamp;
-        el.textContent = formatTimeAgo(timestamp);
-    });
-}
+        this.renderProgressGrid();
+    }
 
-// Animate counters
-function animateCounters() {
-    document.querySelectorAll('.counter').forEach(counter => {
-        const target = parseInt(counter.dataset.target);
-        const duration = 1000;
-        const step = target / (duration / 16);
-        let current = 0;
+    static renderProgressGrid() {
+        const container = document.getElementById('progressGrid');
+        if (!container) return;
 
-        const timer = setInterval(() => {
-            current += step;
-            if (current >= target) {
-                current = target;
-                clearInterval(timer);
+        // This would render a visual progress grid
+        container.innerHTML = `
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Progress grid visualization will be rendered here with completed/pending topics.
+            </div>
+        `;
+    }
+
+    static async updateDayProgress(week, day, completed) {
+        try {
+            const response = await APIClient.post('/progress', {
+                week: week,
+                day: day,
+                completed: completed,
+                time_spent: completed ? 30 : 0 // Default time if completing
+            });
+
+            if (response) {
+                ToastManager.success(completed ? 'Progress updated!' : 'Progress cleared');
+
+                // Update UI
+                const status = document.getElementById(`status${week}_${day}`);
+                if (status) {
+                    if (completed) {
+                        status.textContent = 'Completed';
+                        status.className = 'status-completed';
+                    } else {
+                        status.textContent = 'Pending';
+                        status.className = 'status-pending';
+                    }
+                }
+
+                // Refresh dashboard data
+                await DashboardManager.loadDashboardData();
             }
-            counter.textContent = Math.floor(current);
-        }, 16);
-    });
-}
-
-// Update chart range
-async function updateChartRange(range) {
-    try {
-        const days = range === 'week' ? 7 : range === 'month' ? 30 : 365;
-        const analyticsData = await window.API.getAnalytics(days);
-
-        updateChartData(dashboardCharts.progress, analyticsData.data);
-    } catch (error) {
-        console.error('Failed to update chart:', error);
+        } catch (error) {
+            console.error('Failed to update progress:', error);
+            ToastManager.error('Failed to update progress');
+        }
     }
 }
 
-// Update chart data
-function updateChartData(chart, data) {
-    if (!chart) return;
+// Global functions for HTML onclick handlers
+window.showView = (viewName) => ViewManager.showView(viewName);
+window.toggleWeek = (weekNumber) => {
+    const content = document.getElementById(`weekContent${weekNumber}`);
+    const icon = document.getElementById(`weekIcon${weekNumber}`);
 
-    chart.data.labels = data.progress_timeline.map(d => formatChartDate(d.date));
-    chart.data.datasets[0].data = data.progress_timeline.map(d => d.time_spent);
-    chart.data.datasets[1].data = data.progress_timeline.map(d => d.completed);
+    if (content.classList.contains('show')) {
+        content.classList.remove('show');
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        content.classList.add('show');
+        icon.style.transform = 'rotate(180deg)';
+    }
+};
 
-    chart.update();
-}
+window.expandAllWeeks = () => {
+    document.querySelectorAll('.week-content').forEach(content => {
+        content.classList.add('show');
+    });
+    document.querySelectorAll('[id^="weekIcon"]').forEach(icon => {
+        icon.style.transform = 'rotate(180deg)';
+    });
+};
 
-// Format date for chart
-function formatChartDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
+window.collapseAllWeeks = () => {
+    document.querySelectorAll('.week-content').forEach(content => {
+        content.classList.remove('show');
+    });
+    document.querySelectorAll('[id^="weekIcon"]').forEach(icon => {
+        icon.style.transform = 'rotate(0deg)';
+    });
+};
+
+window.updateDayProgress = (week, day, completed) => {
+    ProgressManager.updateDayProgress(week, day, completed);
+};
+
+window.openResource = (resourceKey) => {
+    // This would open the resource in a new tab
+    window.open('#', '_blank');
+};
+
+window.DashboardManager = DashboardManager;
+window.StreakManager = StreakManager;
+window.RoadmapManager = RoadmapManager;
+window.ProgressManager = ProgressManager;   

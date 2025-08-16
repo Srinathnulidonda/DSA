@@ -1,35 +1,330 @@
-// utils.js - Utility functions
+// Utility functions for the DSA Learning Dashboard
 
-// Date and Time utilities
-const DateUtils = {
-    formatDate(date) {
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        }).format(new Date(date));
-    },
+// API configuration
+const API_BASE_URL = 'http://localhost:5000';
+const SSE_URL = `${API_BASE_URL}/stream`;
 
-    formatTime(date) {
-        return new Intl.DateTimeFormat('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-        }).format(new Date(date));
-    },
+// Token management
+class TokenManager {
+    static setTokens(accessToken, refreshToken) {
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('refresh_token', refreshToken);
+    }
 
-    formatDateTime(date) {
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-        }).format(new Date(date));
-    },
+    static getAccessToken() {
+        return localStorage.getItem('access_token');
+    }
 
-    formatDuration(minutes) {
+    static getRefreshToken() {
+        return localStorage.getItem('refresh_token');
+    }
+
+    static clearTokens() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user_data');
+    }
+
+    static isAuthenticated() {
+        return !!this.getAccessToken();
+    }
+}
+
+// API request wrapper
+class APIClient {
+    static async request(endpoint, options = {}) {
+        const url = `${API_BASE_URL}${endpoint}`;
+        const token = TokenManager.getAccessToken();
+
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        };
+
+        const config = { ...defaultOptions, ...options };
+
+        try {
+            const response = await fetch(url, config);
+
+            if (response.status === 401) {
+                // Token expired, try to refresh
+                const refreshed = await this.refreshToken();
+                if (refreshed) {
+                    // Retry the original request
+                    config.headers.Authorization = `Bearer ${TokenManager.getAccessToken()}`;
+                    return fetch(url, config);
+                } else {
+                    // Refresh failed, redirect to login
+                    this.handleAuthError();
+                    return null;
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.error('API request failed:', error);
+            throw error;
+        }
+    }
+
+    static async refreshToken() {
+        const refreshToken = TokenManager.getRefreshToken();
+        if (!refreshToken) return false;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refresh_token: refreshToken })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                TokenManager.setTokens(data.access_token, refreshToken);
+                return true;
+            }
+        } catch (error) {
+            console.error('Token refresh failed:', error);
+        }
+
+        return false;
+    }
+
+    static handleAuthError() {
+        TokenManager.clearTokens();
+        showAuthModal();
+    }
+
+    static async get(endpoint) {
+        const response = await this.request(endpoint);
+        return response?.json();
+    }
+
+    static async post(endpoint, data) {
+        const response = await this.request(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        return response?.json();
+    }
+
+    static async put(endpoint, data) {
+        const response = await this.request(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+        return response?.json();
+    }
+
+    static async delete(endpoint) {
+        const response = await this.request(endpoint, {
+            method: 'DELETE'
+        });
+        return response?.json();
+    }
+}
+
+// Local storage helpers
+class StorageManager {
+    static setUser(userData) {
+        localStorage.setItem('user_data', JSON.stringify(userData));
+    }
+
+    static getUser() {
+        const userData = localStorage.getItem('user_data');
+        return userData ? JSON.parse(userData) : null;
+    }
+
+    static clearUser() {
+        localStorage.removeItem('user_data');
+    }
+
+    static setSettings(settings) {
+        localStorage.setItem('app_settings', JSON.stringify(settings));
+    }
+
+    static getSettings() {
+        const settings = localStorage.getItem('app_settings');
+        return settings ? JSON.parse(settings) : {
+            theme: 'light',
+            notifications: true,
+            soundEnabled: true
+        };
+    }
+}
+
+// Toast notifications
+class ToastManager {
+    static show(message, type = 'info', duration = 5000) {
+        const toastContainer = document.querySelector('.toast-container');
+        const toastId = `toast-${Date.now()}`;
+
+        const toastHtml = `
+            <div class="toast align-items-center text-white bg-${this.getBootstrapClass(type)} border-0" 
+                 id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi ${this.getIcon(type)} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { delay: duration });
+        toast.show();
+
+        // Remove from DOM after hiding
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+
+    static getBootstrapClass(type) {
+        const classes = {
+            success: 'success',
+            error: 'danger',
+            warning: 'warning',
+            info: 'primary'
+        };
+        return classes[type] || 'primary';
+    }
+
+    static getIcon(type) {
+        const icons = {
+            success: 'bi-check-circle',
+            error: 'bi-exclamation-circle',
+            warning: 'bi-exclamation-triangle',
+            info: 'bi-info-circle'
+        };
+        return icons[type] || 'bi-info-circle';
+    }
+
+    static success(message) {
+        this.show(message, 'success');
+    }
+
+    static error(message) {
+        this.show(message, 'error');
+    }
+
+    static warning(message) {
+        this.show(message, 'warning');
+    }
+
+    static info(message) {
+        this.show(message, 'info');
+    }
+}
+
+// Loading states
+class LoadingManager {
+    static show(element, text = 'Loading...') {
+        if (typeof element === 'string') {
+            element = document.getElementById(element);
+        }
+
+        element.innerHTML = `
+            <div class="d-flex justify-content-center align-items-center py-5">
+                <div class="spinner-border text-primary me-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <span class="text-muted">${text}</span>
+            </div>
+        `;
+    }
+
+    static hide(element) {
+        if (typeof element === 'string') {
+            element = document.getElementById(element);
+        }
+        // This will be replaced by actual content
+    }
+
+    static showSkeleton(element, type = 'card') {
+        if (typeof element === 'string') {
+            element = document.getElementById(element);
+        }
+
+        let skeletonHtml = '';
+        switch (type) {
+            case 'card':
+                skeletonHtml = `
+                    <div class="loading-skeleton" style="height: 200px; border-radius: 12px;"></div>
+                `;
+                break;
+            case 'list':
+                skeletonHtml = Array(5).fill().map(() => `
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="loading-skeleton rounded-circle" style="width: 40px; height: 40px;"></div>
+                        <div class="ms-3 flex-grow-1">
+                            <div class="loading-skeleton" style="height: 20px; width: 60%; margin-bottom: 8px;"></div>
+                            <div class="loading-skeleton" style="height: 16px; width: 40%;"></div>
+                        </div>
+                    </div>
+                `).join('');
+                break;
+        }
+
+        element.innerHTML = skeletonHtml;
+    }
+}
+
+// Date/Time utilities
+class DateUtils {
+    static formatDate(date, format = 'short') {
+        const d = new Date(date);
+
+        switch (format) {
+            case 'short':
+                return d.toLocaleDateString();
+            case 'long':
+                return d.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            case 'time':
+                return d.toLocaleTimeString();
+            case 'datetime':
+                return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+            case 'relative':
+                return this.getRelativeTime(d);
+            default:
+                return d.toLocaleDateString();
+        }
+    }
+
+    static getRelativeTime(date) {
+        const now = new Date();
+        const diff = now - new Date(date);
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+        if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        return 'Just now';
+    }
+
+    static getGreeting() {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 17) return 'Good afternoon';
+        return 'Good evening';
+    }
+
+    static formatDuration(minutes) {
         const hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
 
@@ -37,363 +332,195 @@ const DateUtils = {
             return `${hours}h ${mins}m`;
         }
         return `${mins}m`;
-    },
+    }
+}
 
-    getRelativeTime(date) {
-        const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-        const daysDiff = Math.round((new Date(date) - new Date()) / (1000 * 60 * 60 * 24));
+// Form utilities
+class FormUtils {
+    static validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
 
-        if (Math.abs(daysDiff) < 1) {
-            const hoursDiff = Math.round((new Date(date) - new Date()) / (1000 * 60 * 60));
-            if (Math.abs(hoursDiff) < 1) {
-                const minutesDiff = Math.round((new Date(date) - new Date()) / (1000 * 60));
-                return rtf.format(minutesDiff, 'minute');
+    static validatePassword(password) {
+        return password.length >= 8;
+    }
+
+    static serializeForm(form) {
+        const formData = new FormData(form);
+        const data = {};
+
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+
+        return data;
+    }
+
+    static setFormData(form, data) {
+        for (const [key, value] of Object.entries(data)) {
+            const field = form.querySelector(`[name="${key}"], #${key}`);
+            if (field) {
+                if (field.type === 'checkbox') {
+                    field.checked = value;
+                } else {
+                    field.value = value;
+                }
             }
-            return rtf.format(hoursDiff, 'hour');
         }
-        return rtf.format(daysDiff, 'day');
-    },
-
-    getWeekNumber(date) {
-        const d = new Date(date);
-        d.setHours(0, 0, 0, 0);
-        d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
-        const week1 = new Date(d.getFullYear(), 0, 4);
-        return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
     }
-};
 
-// String utilities
-const StringUtils = {
-    truncate(str, length = 50, suffix = '...') {
-        if (str.length <= length) return str;
-        return str.substring(0, length).trim() + suffix;
-    },
-
-    slugify(str) {
-        return str
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/[\s_-]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-    },
-
-    capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    },
-
-    capitalizeWords(str) {
-        return str.replace(/\b\w/g, char => char.toUpperCase());
-    },
-
-    stripHtml(html) {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || '';
-    },
-
-    escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+    static clearForm(form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+        form.querySelectorAll('.invalid-feedback').forEach(el => {
+            el.remove();
+        });
     }
-};
 
-// Number utilities
-const NumberUtils = {
-    formatNumber(num) {
-        return new Intl.NumberFormat('en-US').format(num);
-    },
+    static showFieldError(field, message) {
+        field.classList.add('is-invalid');
 
-    formatCompact(num) {
-        return new Intl.NumberFormat('en-US', {
-            notation: 'compact',
-            compactDisplay: 'short'
-        }).format(num);
-    },
-
-    formatPercentage(num, decimals = 0) {
-        return `${num.toFixed(decimals)}%`;
-    },
-
-    clamp(num, min, max) {
-        return Math.min(Math.max(num, min), max);
-    },
-
-    randomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-};
-
-// Array utilities
-const ArrayUtils = {
-    chunk(array, size) {
-        const chunks = [];
-        for (let i = 0; i < array.length; i += size) {
-            chunks.push(array.slice(i, i + size));
+        // Remove existing error
+        const existingError = field.parentNode.querySelector('.invalid-feedback');
+        if (existingError) {
+            existingError.remove();
         }
-        return chunks;
-    },
 
-    shuffle(array) {
-        const arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    },
+        // Add new error
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'invalid-feedback';
+        errorDiv.textContent = message;
+        field.parentNode.appendChild(errorDiv);
+    }
+}
 
-    unique(array) {
-        return [...new Set(array)];
-    },
+// Animation utilities
+class AnimationUtils {
+    static fadeIn(element, duration = 300) {
+        element.style.opacity = '0';
+        element.style.transition = `opacity ${duration}ms ease-in-out`;
 
-    groupBy(array, key) {
-        return array.reduce((groups, item) => {
-            const group = item[key];
-            if (!groups[group]) groups[group] = [];
-            groups[group].push(item);
-            return groups;
-        }, {});
-    },
+        requestAnimationFrame(() => {
+            element.style.opacity = '1';
+        });
+    }
 
-    sortBy(array, key, order = 'asc') {
-        return [...array].sort((a, b) => {
-            const aVal = a[key];
-            const bVal = b[key];
+    static slideUp(element, duration = 300) {
+        element.style.transform = 'translateY(100%)';
+        element.style.transition = `transform ${duration}ms ease-out`;
 
-            if (order === 'asc') {
-                return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
-            } else {
-                return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+        requestAnimationFrame(() => {
+            element.style.transform = 'translateY(0)';
+        });
+    }
+
+    static countUp(element, start, end, duration = 1000) {
+        const range = end - start;
+        const increment = range / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+            current += increment;
+            element.textContent = Math.floor(current);
+
+            if (current >= end) {
+                element.textContent = end;
+                clearInterval(timer);
+            }
+        }, 16);
+    }
+}
+
+// Chart utilities
+class ChartUtils {
+    static createLineChart(ctx, data, options = {}) {
+        return new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                },
+                ...options
             }
         });
     }
-};
 
-// Storage utilities
-const StorageUtils = {
-    setItem(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-            return true;
-        } catch (e) {
-            console.error('Storage error:', e);
-            return false;
-        }
-    },
-
-    getItem(key, defaultValue = null) {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-        } catch (e) {
-            console.error('Storage error:', e);
-            return defaultValue;
-        }
-    },
-
-    removeItem(key) {
-        try {
-            localStorage.removeItem(key);
-            return true;
-        } catch (e) {
-            console.error('Storage error:', e);
-            return false;
-        }
-    },
-
-    clear() {
-        try {
-            localStorage.clear();
-            return true;
-        } catch (e) {
-            console.error('Storage error:', e);
-            return false;
-        }
-    }
-};
-
-// Validation utilities
-const ValidationUtils = {
-    isEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    },
-
-    isUrl(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    },
-
-    isUsername(username) {
-        const re = /^[a-zA-Z0-9_]{3,20}$/;
-        return re.test(username);
-    },
-
-    isStrongPassword(password) {
-        // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return re.test(password);
-    },
-
-    sanitizeInput(input) {
-        return input.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-    }
-};
-
-// Browser utilities
-const BrowserUtils = {
-    copyToClipboard(text) {
-        return navigator.clipboard.writeText(text);
-    },
-
-    share(data) {
-        if (navigator.share) {
-            return navigator.share(data);
-        } else {
-            throw new Error('Web Share API not supported');
-        }
-    },
-
-    getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    },
-
-    setQueryParam(param, value) {
-        const url = new URL(window.location);
-        url.searchParams.set(param, value);
-        window.history.pushState({}, '', url);
-    },
-
-    removeQueryParam(param) {
-        const url = new URL(window.location);
-        url.searchParams.delete(param);
-        window.history.pushState({}, '', url);
-    },
-
-    isMobile() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    },
-
-    isOnline() {
-        return navigator.onLine;
-    },
-
-    vibrate(pattern = 200) {
-        if ('vibrate' in navigator) {
-            navigator.vibrate(pattern);
-        }
-    }
-};
-
-// Animation utilities
-const AnimationUtils = {
-    fadeIn(element, duration = 300) {
-        element.style.opacity = 0;
-        element.style.display = 'block';
-
-        const start = performance.now();
-
-        const animate = (timestamp) => {
-            const elapsed = timestamp - start;
-            const progress = Math.min(elapsed / duration, 1);
-
-            element.style.opacity = progress;
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
+    static createDoughnutChart(ctx, data, options = {}) {
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                },
+                ...options
             }
-        };
-
-        requestAnimationFrame(animate);
-    },
-
-    fadeOut(element, duration = 300) {
-        const start = performance.now();
-        const initialOpacity = parseFloat(window.getComputedStyle(element).opacity);
-
-        const animate = (timestamp) => {
-            const elapsed = timestamp - start;
-            const progress = Math.min(elapsed / duration, 1);
-
-            element.style.opacity = initialOpacity * (1 - progress);
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                element.style.display = 'none';
-            }
-        };
-
-        requestAnimationFrame(animate);
-    },
-
-    slideDown(element, duration = 300) {
-        element.style.height = '0px';
-        element.style.overflow = 'hidden';
-        element.style.display = 'block';
-
-        const targetHeight = element.scrollHeight;
-        const start = performance.now();
-
-        const animate = (timestamp) => {
-            const elapsed = timestamp - start;
-            const progress = Math.min(elapsed / duration, 1);
-
-            element.style.height = `${targetHeight * progress}px`;
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                element.style.height = '';
-                element.style.overflow = '';
-            }
-        };
-
-        requestAnimationFrame(animate);
-    },
-
-    slideUp(element, duration = 300) {
-        const initialHeight = element.offsetHeight;
-        const start = performance.now();
-
-        element.style.height = `${initialHeight}px`;
-        element.style.overflow = 'hidden';
-
-        const animate = (timestamp) => {
-            const elapsed = timestamp - start;
-            const progress = Math.min(elapsed / duration, 1);
-
-            element.style.height = `${initialHeight * (1 - progress)}px`;
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                element.style.display = 'none';
-                element.style.height = '';
-                element.style.overflow = '';
-            }
-        };
-
-        requestAnimationFrame(animate);
+        });
     }
-};
 
-// Export utilities
-window.Utils = {
-    Date: DateUtils,
-    String: StringUtils,
-    Number: NumberUtils,
-    Array: ArrayUtils,
-    Storage: StorageUtils,
-    Validation: ValidationUtils,
-    Browser: BrowserUtils,
-    Animation: AnimationUtils
-};
+    static createBarChart(ctx, data, options = {}) {
+        return new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                },
+                ...options
+            }
+        });
+    }
+}
+
+// Export utilities for use in other files
+window.TokenManager = TokenManager;
+window.APIClient = APIClient;
+window.StorageManager = StorageManager;
+window.ToastManager = ToastManager;
+window.LoadingManager = LoadingManager;
+window.DateUtils = DateUtils;
+window.FormUtils = FormUtils;
+window.AnimationUtils = AnimationUtils;
+window.ChartUtils = ChartUtils;

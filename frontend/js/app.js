@@ -1,512 +1,872 @@
-// app.js
+// Main application controller and view management
 
-// API Configuration
-const API_BASE_URL = 'https://dsa-8ko1.onrender.com/api';
-const AUTH_TOKEN_KEY = 'dsa_auth_token';
-const REFRESH_TOKEN_KEY = 'dsa_refresh_token';
-const USER_KEY = 'dsa_user';
+class ViewManager {
+    static currentView = 'dashboard';
+    static viewInitializers = {};
 
-// Global App State
-const AppState = {
-    user: null,
-    preferences: {
-        theme: 'light',
-        layout: 'default',
-        notifications: true
-    },
-    currentPage: 'dashboard',
-    isLoading: false
-};
-
-// Initialize App
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-    setupEventListeners();
-    checkAuthentication();
-    loadUserPreferences();
-    initializeTheme();
-});
-
-// App Initialization
-function initializeApp() {
-    // Check if user is logged in
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    const user = localStorage.getItem(USER_KEY);
-
-    if (token && user) {
-        AppState.user = JSON.parse(user);
-        setupAuthenticatedApp();
-    } else if (window.location.pathname !== '/login.html' &&
-        window.location.pathname !== '/register.html' &&
-        window.location.pathname !== '/index.html') {
-        window.location.href = '/login.html';
+    static init() {
+        this.setupViewInitializers();
+        this.showView('dashboard');
     }
 
-    // Setup axios interceptors
-    setupAxiosInterceptors();
-}
+    static setupViewInitializers() {
+        this.viewInitializers = {
+            dashboard: () => DashboardManager.loadDashboardData(),
+            roadmap: () => RoadmapManager.loadRoadmap(),
+            calendar: () => CalendarManager.init(),
+            progress: () => ProgressManager.loadProgress(),
+            pomodoro: () => PomodoroManager.init(),
+            notes: () => NotesManager.loadNotes(),
+            analytics: () => AnalyticsManager.loadAnalytics(),
+            profile: () => ProfileManager.loadProfile(),
+            settings: () => SettingsManager.loadSettings()
+        };
+    }
 
-// Setup Axios Interceptors
-function setupAxiosInterceptors() {
-    // Request interceptor
-    axios.interceptors.request.use(
-        config => {
-            const token = localStorage.getItem(AUTH_TOKEN_KEY);
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-        },
-        error => {
-            return Promise.reject(error);
-        }
-    );
+    static async showView(viewName) {
+        if (this.currentView === viewName) return;
 
-    // Response interceptor
-    axios.interceptors.response.use(
-        response => response,
-        async error => {
-            const originalRequest = error.config;
+        // Hide all views
+        document.querySelectorAll('.view-content').forEach(view => {
+            view.classList.add('d-none');
+        });
 
-            if (error.response?.status === 401 && !originalRequest._retry) {
-                originalRequest._retry = true;
+        // Show target view
+        const targetView = document.getElementById(`${viewName}View`);
+        if (targetView) {
+            targetView.classList.remove('d-none');
+            AnimationUtils.fadeIn(targetView);
 
+            // Initialize view if needed
+            if (this.viewInitializers[viewName]) {
                 try {
-                    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-                    const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-                        refresh_token: refreshToken
-                    });
-
-                    const { access_token } = response.data;
-                    localStorage.setItem(AUTH_TOKEN_KEY, access_token);
-
-                    originalRequest.headers.Authorization = `Bearer ${access_token}`;
-                    return axios(originalRequest);
-                } catch (refreshError) {
-                    logout();
-                    return Promise.reject(refreshError);
+                    await this.viewInitializers[viewName]();
+                } catch (error) {
+                    console.error(`Failed to initialize ${viewName} view:`, error);
                 }
             }
 
-            return Promise.reject(error);
+            this.currentView = viewName;
         }
-    );
-}
-
-// Authentication Check
-function checkAuthentication() {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    const protectedPages = ['dashboard', 'roadmap', 'progress', 'calendar', 'pomodoro', 'notes', 'profile', 'settings'];
-    const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-
-    if (protectedPages.includes(currentPage) && !token) {
-        window.location.href = '/login.html';
     }
 }
 
-// Setup Authenticated App
-function setupAuthenticatedApp() {
-    updateUIWithUserData();
-    startActivityTracking();
-    setupNotifications();
-    loadDashboardData();
-}
+// Pomodoro Timer Management
+class PomodoroManager {
+    static timer = null;
+    static isRunning = false;
+    static isPaused = false;
+    static currentSession = 'focus';
+    static timeLeft = 25 * 60; // 25 minutes in seconds
+    static sessions = 0;
 
-// Update UI with User Data
-function updateUIWithUserData() {
-    const userNameElements = document.querySelectorAll('#userName');
-    const userAvatarElements = document.querySelectorAll('#userAvatar');
-
-    userNameElements.forEach(el => {
-        el.textContent = AppState.user?.username || 'User';
-    });
-
-    userAvatarElements.forEach(el => {
-        el.src = AppState.user?.avatar_url || `https://ui-avatars.com/api/?name=${AppState.user?.username}&background=3B82F6&color=fff`;
-    });
-}
-
-// Event Listeners
-function setupEventListeners() {
-    // Mobile menu toggle
-    const mobileMenuToggle = document.querySelector('[data-bs-toggle="offcanvas"]');
-    if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+    static init() {
+        this.setupEventListeners();
+        this.updateDisplay();
+        this.loadTodaySessions();
+        this.loadRecentSessions();
     }
 
-    // Theme switcher
-    const themeSwitcher = document.getElementById('themeSwitcher');
-    if (themeSwitcher) {
-        themeSwitcher.addEventListener('click', toggleTheme);
+    static setupEventListeners() {
+        // Timer settings changes
+        ['focusTime', 'shortBreak', 'longBreak'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', () => {
+                    if (!this.isRunning) {
+                        this.resetTimer();
+                    }
+                });
+            }
+        });
     }
 
-    // Search functionality
-    const searchInput = document.querySelector('.search-box input');
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce(handleSearch, 300));
-    }
-
-    // Notification bell
-    const notificationBell = document.querySelector('.notification-bell');
-    if (notificationBell) {
-        notificationBell.addEventListener('click', loadNotifications);
-    }
-}
-
-// Theme Management
-function initializeTheme() {
-    const savedTheme = localStorage.getItem('dsa_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    AppState.preferences.theme = savedTheme;
-}
-
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('dsa_theme', newTheme);
-    AppState.preferences.theme = newTheme;
-
-    // Update user preferences
-    updateUserPreferences({ theme: newTheme });
-}
-
-// User Preferences
-async function loadUserPreferences() {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/profile`);
-        const { preferences } = response.data;
-
-        AppState.preferences = { ...AppState.preferences, ...preferences };
-        applyUserPreferences();
-    } catch (error) {
-        console.error('Failed to load preferences:', error);
-    }
-}
-
-function applyUserPreferences() {
-    // Apply theme
-    document.documentElement.setAttribute('data-theme', AppState.preferences.theme);
-
-    // Apply layout
-    if (AppState.preferences.layout === 'compact') {
-        document.body.classList.add('layout-compact');
-    }
-
-    // Apply other preferences
-    if (!AppState.preferences.notifications) {
-        disableNotifications();
-    }
-}
-
-async function updateUserPreferences(preferences) {
-    try {
-        await axios.put(`${API_BASE_URL}/profile`, { preferences });
-        showToast('Preferences updated successfully', 'success');
-    } catch (error) {
-        console.error('Failed to update preferences:', error);
-        showToast('Failed to update preferences', 'error');
-    }
-}
-
-// Activity Tracking
-function startActivityTracking() {
-    let activityTimer;
-    let lastActivity = Date.now();
-
-    // Track user activity
-    document.addEventListener('click', trackActivity);
-    document.addEventListener('keypress', trackActivity);
-    document.addEventListener('scroll', trackActivity);
-
-    function trackActivity() {
-        lastActivity = Date.now();
-
-        if (!activityTimer) {
-            activityTimer = setTimeout(() => {
-                sendActivityPing();
-                activityTimer = null;
-            }, 30000); // Send ping every 30 seconds of activity
+    static toggleTimer() {
+        if (this.isRunning) {
+            this.pauseTimer();
+        } else {
+            this.startTimer();
         }
     }
 
-    async function sendActivityPing() {
+    static startTimer() {
+        const topic = document.getElementById('studyTopic')?.value || 'General Study';
+
+        this.isRunning = true;
+        this.isPaused = false;
+
+        this.timer = setInterval(() => {
+            this.timeLeft--;
+            this.updateDisplay();
+            this.updateProgress();
+
+            if (this.timeLeft <= 0) {
+                this.completeSession(topic);
+            }
+        }, 1000);
+
+        this.updateControls();
+
+        if (!this.isPaused) {
+            ToastManager.info(`${this.currentSession === 'focus' ? 'Focus' : 'Break'} session started!`);
+        }
+    }
+
+    static pauseTimer() {
+        this.isRunning = false;
+        this.isPaused = true;
+
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+
+        this.updateControls();
+        ToastManager.info('Timer paused');
+    }
+
+    static resetTimer() {
+        this.isRunning = false;
+        this.isPaused = false;
+
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+
+        // Reset time based on current session
+        const focusTime = parseInt(document.getElementById('focusTime')?.value || 25);
+        const shortBreak = parseInt(document.getElementById('shortBreak')?.value || 5);
+        const longBreak = parseInt(document.getElementById('longBreak')?.value || 15);
+
+        switch (this.currentSession) {
+            case 'focus':
+                this.timeLeft = focusTime * 60;
+                break;
+            case 'shortBreak':
+                this.timeLeft = shortBreak * 60;
+                break;
+            case 'longBreak':
+                this.timeLeft = longBreak * 60;
+                break;
+        }
+
+        this.updateDisplay();
+        this.updateProgress();
+        this.updateControls();
+    }
+
+    static async completeSession(topic) {
+        const wasBreak = this.currentSession !== 'focus';
+        const duration = this.getDuration();
+
+        // Log the session
+        await this.logSession(topic, duration, !wasBreak);
+
+        // Play notification sound (if enabled)
+        this.playNotificationSound();
+
+        // Show completion notification
+        ToastManager.success(`${wasBreak ? 'Break' : 'Focus session'} completed!`);
+
+        // Auto-start next session or reset
+        if (!wasBreak) {
+            this.sessions++;
+
+            // Determine next session type
+            if (this.sessions % 4 === 0) {
+                this.currentSession = 'longBreak';
+            } else {
+                this.currentSession = 'shortBreak';
+            }
+        } else {
+            this.currentSession = 'focus';
+        }
+
+        this.resetTimer();
+        this.updateSessionLabel();
+
+        // Ask user if they want to continue
+        if (confirm(`${wasBreak ? 'Break' : 'Focus session'} completed! Start ${this.currentSession === 'focus' ? 'focus' : 'break'} session?`)) {
+            setTimeout(() => this.startTimer(), 1000);
+        }
+    }
+
+    static getDuration() {
+        const focusTime = parseInt(document.getElementById('focusTime')?.value || 25);
+        const shortBreak = parseInt(document.getElementById('shortBreak')?.value || 5);
+        const longBreak = parseInt(document.getElementById('longBreak')?.value || 15);
+
+        switch (this.currentSession) {
+            case 'focus': return focusTime;
+            case 'shortBreak': return shortBreak;
+            case 'longBreak': return longBreak;
+            default: return focusTime;
+        }
+    }
+
+    static updateDisplay() {
+        const display = document.getElementById('timerDisplay');
+        if (display) {
+            const minutes = Math.floor(this.timeLeft / 60);
+            const seconds = this.timeLeft % 60;
+            display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+
+    static updateProgress() {
+        const progressCircle = document.getElementById('timerProgress');
+        if (progressCircle) {
+            const totalTime = this.getDuration() * 60;
+            const progress = (totalTime - this.timeLeft) / totalTime;
+            const circumference = 2 * Math.PI * 45; // radius is 45
+            const offset = circumference - (progress * circumference);
+            progressCircle.style.strokeDashoffset = offset;
+        }
+    }
+
+    static updateControls() {
+        const startPauseBtn = document.getElementById('startPauseBtn');
+        if (startPauseBtn) {
+            if (this.isRunning) {
+                startPauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+                startPauseBtn.className = 'btn btn-warning btn-lg me-2';
+            } else {
+                startPauseBtn.innerHTML = '<i class="bi bi-play-fill"></i> Start';
+                startPauseBtn.className = 'btn btn-primary btn-lg me-2';
+            }
+        }
+    }
+
+    static updateSessionLabel() {
+        const label = document.getElementById('timerLabel');
+        if (label) {
+            switch (this.currentSession) {
+                case 'focus':
+                    label.textContent = 'Focus Time';
+                    break;
+                case 'shortBreak':
+                    label.textContent = 'Short Break';
+                    break;
+                case 'longBreak':
+                    label.textContent = 'Long Break';
+                    break;
+            }
+        }
+    }
+
+    static async logSession(topic, duration, completed) {
         try {
-            await axios.post(`${API_BASE_URL}/activity/ping`, {
-                page: AppState.currentPage,
-                timestamp: new Date().toISOString()
-            });
+            const sessionData = {
+                topic: topic,
+                duration: duration,
+                completed: completed,
+                started_at: new Date(Date.now() - (duration * 60 * 1000)).toISOString(),
+                ended_at: new Date().toISOString()
+            };
+
+            await APIClient.post('/pomodoro', sessionData);
+
+            // Refresh session displays
+            this.loadTodaySessions();
+            this.loadRecentSessions();
+
         } catch (error) {
-            console.error('Failed to send activity ping:', error);
+            console.error('Failed to log pomodoro session:', error);
         }
     }
 
-    // Check for inactivity
-    setInterval(() => {
-        const inactiveTime = Date.now() - lastActivity;
-        if (inactiveTime > 30 * 60 * 1000) { // 30 minutes
-            showInactivityWarning();
+    static async loadTodaySessions() {
+        try {
+            const data = await APIClient.get('/pomodoro?limit=20');
+            if (data?.logs) {
+                const today = new Date().toDateString();
+                const todaySessions = data.logs.filter(log =>
+                    new Date(log.started_at).toDateString() === today
+                );
+
+                this.displayTodaySessions(todaySessions);
+            }
+        } catch (error) {
+            console.error('Failed to load today sessions:', error);
         }
-    }, 60000); // Check every minute
-}
-
-// Notifications
-async function setupNotifications() {
-    // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
-        await Notification.requestPermission();
     }
 
-    // Setup WebSocket for real-time notifications
-    setupWebSocket();
+    static displayTodaySessions(sessions) {
+        const container = document.getElementById('todaySessions');
+        if (!container) return;
 
-    // Load initial notifications
-    loadNotifications();
-}
+        if (sessions.length === 0) {
+            container.innerHTML = '<p class="text-muted">No sessions today</p>';
+            return;
+        }
 
-function setupWebSocket() {
-    const ws = new WebSocket(`wss://your-backend.onrender.com/ws`);
+        const totalTime = sessions.reduce((sum, session) => sum + session.duration, 0);
+        const completedSessions = sessions.filter(s => s.completed).length;
 
-    ws.onopen = () => {
-        console.log('WebSocket connected');
-        ws.send(JSON.stringify({ type: 'auth', token: localStorage.getItem(AUTH_TOKEN_KEY) }));
-    };
-
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        handleWebSocketMessage(data);
-    };
-
-    ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-        console.log('WebSocket disconnected');
-        // Reconnect after 5 seconds
-        setTimeout(setupWebSocket, 5000);
-    };
-}
-
-function handleWebSocketMessage(data) {
-    switch (data.type) {
-        case 'notification':
-            showNotification(data.notification);
-            updateNotificationBadge();
-            break;
-        case 'achievement':
-            showAchievementToast(data.achievement);
-            break;
-        case 'streak_update':
-            updateStreakDisplay(data.streak);
-            break;
-    }
-}
-
-async function loadNotifications() {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/notifications?unread_only=true`);
-        const { notifications, unread_count } = response.data;
-
-        updateNotificationBadge(unread_count);
-        displayNotifications(notifications);
-    } catch (error) {
-        console.error('Failed to load notifications:', error);
-    }
-}
-
-function showNotification(notification) {
-    // Browser notification
-    if (Notification.permission === 'granted' && AppState.preferences.notifications) {
-        new Notification(notification.title, {
-            body: notification.message,
-            icon: '/assets/images/logo.svg',
-            badge: '/assets/images/badge.svg'
-        });
-    }
-
-    // In-app notification
-    showToast(notification.message, notification.type);
-}
-
-// Dashboard Data Loading
-async function loadDashboardData() {
-    if (AppState.currentPage !== 'dashboard') return;
-
-    try {
-        showLoader();
-
-        const [dashboardData, streakData] = await Promise.all([
-            axios.get(`${API_BASE_URL}/dashboard`),
-            axios.get(`${API_BASE_URL}/streaks`)
-        ]);
-
-        updateDashboardUI(dashboardData.data);
-        updateStreakDisplay(streakData.data);
-
-    } catch (error) {
-        console.error('Failed to load dashboard data:', error);
-        showToast('Failed to load dashboard data', 'error');
-    } finally {
-        hideLoader();
-    }
-}
-
-// Search Functionality
-async function handleSearch(event) {
-    const query = event.target.value.trim();
-
-    if (query.length < 2) {
-        hideSearchResults();
-        return;
-    }
-
-    try {
-        const response = await axios.get(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`);
-        displaySearchResults(response.data.results);
-    } catch (error) {
-        console.error('Search failed:', error);
-    }
-}
-
-function displaySearchResults(results) {
-    const searchResultsContainer = document.getElementById('searchResults');
-    if (!searchResultsContainer) return;
-
-    searchResultsContainer.innerHTML = '';
-
-    if (results.resources.length === 0 && results.notes.length === 0 && results.topics.length === 0) {
-        searchResultsContainer.innerHTML = '<p class="text-muted p-3">No results found</p>';
-        return;
-    }
-
-    // Display resources
-    if (results.resources.length > 0) {
-        searchResultsContainer.innerHTML += '<h6 class="px-3 py-2 text-muted">Resources</h6>';
-        results.resources.forEach(resource => {
-            searchResultsContainer.innerHTML += `
-                <a href="${resource.url}" target="_blank" class="search-result-item d-block px-3 py-2 text-decoration-none">
-                    <h6 class="mb-0">${resource.title}</h6>
-                    <small class="text-muted">${resource.type}</small>
-                </a>
-            `;
-        });
-    }
-
-    // Display notes
-    if (results.notes.length > 0) {
-        searchResultsContainer.innerHTML += '<h6 class="px-3 py-2 text-muted">Notes</h6>';
-        results.notes.forEach(note => {
-            searchResultsContainer.innerHTML += `
-                <a href="/notes.html?id=${note.id}" class="search-result-item d-block px-3 py-2 text-decoration-none">
-                    <h6 class="mb-0">${note.title}</h6>
-                    <small class="text-muted">${note.excerpt}</small>
-                </a>
-            `;
-        });
-    }
-
-    searchResultsContainer.classList.add('show');
-}
-
-// Utility Functions
-function showLoader() {
-    const loader = document.getElementById('globalLoader');
-    if (loader) loader.classList.add('show');
-}
-
-function hideLoader() {
-    const loader = document.getElementById('globalLoader');
-    if (loader) loader.classList.remove('show');
-}
-
-function showToast(message, type = 'info') {
-    const toastContainer = document.querySelector('.toast-container') || createToastContainer();
-
-    const toastId = `toast-${Date.now()}`;
-    const toastHTML = `
-        <div id="${toastId}" class="toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'} border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
+        container.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <div class="fw-bold">${completedSessions} Sessions</div>
+                    <small class="text-muted">${DateUtils.formatDuration(totalTime)} total</small>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                <div class="text-end">
+                    <div class="fw-bold">${Math.round((completedSessions / sessions.length) * 100)}%</div>
+                    <small class="text-muted">Completion</small>
+                </div>
             </div>
-        </div>
-    `;
+            <div class="progress mb-2" style="height: 6px;">
+                <div class="progress-bar bg-success" style="width: ${(completedSessions / sessions.length) * 100}%"></div>
+            </div>
+        `;
+    }
 
-    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    static async loadRecentSessions() {
+        try {
+            const data = await APIClient.get('/pomodoro?limit=5');
+            if (data?.logs) {
+                this.displayRecentSessions(data.logs);
+            }
+        } catch (error) {
+            console.error('Failed to load recent sessions:', error);
+        }
+    }
 
-    const toastElement = document.getElementById(toastId);
-    const toast = new bootstrap.Toast(toastElement);
-    toast.show();
+    static displayRecentSessions(sessions) {
+        const container = document.getElementById('recentSessions');
+        if (!container) return;
 
-    toastElement.addEventListener('hidden.bs.toast', () => {
-        toastElement.remove();
-    });
+        if (sessions.length === 0) {
+            container.innerHTML = '<p class="text-muted">No recent sessions</p>';
+            return;
+        }
+
+        const sessionsHtml = sessions.map(session => `
+            <div class="d-flex align-items-center mb-2">
+                <div class="tw-w-3 tw-h-3 tw-rounded-full me-2 ${session.completed ? 'tw-bg-green-500' : 'tw-bg-red-500'}"></div>
+                <div class="flex-grow-1">
+                    <div class="small fw-medium">${session.topic || 'Study Session'}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">
+                        ${session.duration}m • ${DateUtils.formatDate(session.started_at, 'relative')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = sessionsHtml;
+    }
+
+    static playNotificationSound() {
+        // Play a simple notification sound
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.5);
+    }
 }
 
-function createToastContainer() {
-    const container = document.createElement('div');
-    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    container.style.zIndex = '9999';
-    document.body.appendChild(container);
-    return container;
-}
+// Notes Management
+class NotesManager {
+    static notes = [];
+    static currentNote = null;
+    static noteModal = null;
 
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
+    static init() {
+        this.noteModal = new bootstrap.Modal(document.getElementById('noteModal'));
+        this.setupEventListeners();
+    }
+
+    static setupEventListeners() {
+        document.getElementById('noteForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveNote();
+        });
+    }
+
+    static async loadNotes() {
+        try {
+            LoadingManager.show('notesGrid', 'Loading notes...');
+
+            const data = await APIClient.get('/notes');
+            if (data?.notes) {
+                this.notes = data.notes;
+                this.renderNotes();
+                this.populateFilters();
+            }
+        } catch (error) {
+            console.error('Failed to load notes:', error);
+            ToastManager.error('Failed to load notes');
+        }
+    }
+
+    static renderNotes(filteredNotes = null) {
+        const container = document.getElementById('notesGrid');
+        if (!container) return;
+
+        const notes = filteredNotes || this.notes;
+
+        if (notes.length === 0) {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="bi bi-journal-x text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="text-muted mt-3">No notes found</h5>
+                        <p class="text-muted">Start by creating your first note!</p>
+                        <button class="btn btn-primary" onclick="createNote()">
+                            <i class="bi bi-plus me-2"></i>Create Note
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const notesHtml = notes.map(note => `
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="glass-card note-card h-100 ${note.is_pinned ? 'note-pinned' : ''}" 
+                     onclick="editNote('${note.id}')">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">${this.escapeHtml(note.title)}</h6>
+                        <p class="card-text text-muted small">
+                            ${this.escapeHtml(note.content.substring(0, 100))}${note.content.length > 100 ? '...' : ''}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                ${note.topic ? `<span class="badge bg-primary">${note.topic}</span>` : ''}
+                                ${note.week ? `<span class="badge bg-secondary">Week ${note.week}</span>` : ''}
+                            </div>
+                            <small class="text-muted">${DateUtils.formatDate(note.updated_at, 'relative')}</small>
+                        </div>
+                        ${note.tags && note.tags.length > 0 ? `
+                            <div class="mt-2">
+                                ${note.tags.map(tag => `<span class="badge bg-light text-dark me-1">#${tag}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = notesHtml;
+    }
+
+    static populateFilters() {
+        // Populate topic filter
+        const topicFilter = document.getElementById('notesTopicFilter');
+        if (topicFilter) {
+            const topics = [...new Set(this.notes.map(note => note.topic).filter(Boolean))];
+            topicFilter.innerHTML = '<option value="">All Topics</option>' +
+                topics.map(topic => `<option value="${topic}">${topic}</option>`).join('');
+        }
+
+        // Populate week filter
+        const weekFilter = document.getElementById('notesWeekFilter');
+        if (weekFilter) {
+            const weeks = [...new Set(this.notes.map(note => note.week).filter(Boolean))].sort((a, b) => a - b);
+            weekFilter.innerHTML = '<option value="">All Weeks</option>' +
+                weeks.map(week => `<option value="${week}">Week ${week}</option>`).join('');
+        }
+    }
+
+    static filterNotes(searchTerm) {
+        const filteredNotes = this.notes.filter(note =>
+            note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (note.tags && note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
+        );
+        this.renderNotes(filteredNotes);
+    }
+
+    static filterByTopic(topic) {
+        const filteredNotes = topic ? this.notes.filter(note => note.topic === topic) : this.notes;
+        this.renderNotes(filteredNotes);
+    }
+
+    static filterByWeek(week) {
+        const filteredNotes = week ? this.notes.filter(note => note.week === parseInt(week)) : this.notes;
+        this.renderNotes(filteredNotes);
+    }
+
+    static createNote() {
+        this.currentNote = null;
+        this.clearNoteForm();
+        document.getElementById('noteModalTitle').textContent = 'New Note';
+        document.getElementById('deleteNoteBtn').style.display = 'none';
+        this.noteModal.show();
+    }
+
+    static editNote(noteId) {
+        this.currentNote = this.notes.find(note => note.id === noteId);
+        if (!this.currentNote) return;
+
+        document.getElementById('noteModalTitle').textContent = 'Edit Note';
+        document.getElementById('deleteNoteBtn').style.display = 'inline-block';
+        this.populateNoteForm(this.currentNote);
+        this.noteModal.show();
+    }
+
+    static populateNoteForm(note) {
+        document.getElementById('noteTitle').value = note.title;
+        document.getElementById('noteContent').value = note.content;
+        document.getElementById('noteTopic').value = note.topic || '';
+        document.getElementById('noteWeek').value = note.week || '';
+        document.getElementById('noteTags').value = note.tags ? note.tags.join(', ') : '';
+        document.getElementById('notePinned').checked = note.is_pinned;
+    }
+
+    static clearNoteForm() {
+        document.getElementById('noteForm').reset();
+    }
+
+    static async saveNote() {
+        const formData = {
+            title: document.getElementById('noteTitle').value.trim(),
+            content: document.getElementById('noteContent').value.trim(),
+            topic: document.getElementById('noteTopic').value.trim(),
+            week: document.getElementById('noteWeek').value ? parseInt(document.getElementById('noteWeek').value) : null,
+            tags: document.getElementById('noteTags').value.split(',').map(tag => tag.trim()).filter(Boolean),
+            is_pinned: document.getElementById('notePinned').checked
         };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+
+        if (!formData.title || !formData.content) {
+            ToastManager.error('Title and content are required');
+            return;
+        }
+
+        try {
+            let response;
+            if (this.currentNote) {
+                response = await APIClient.put(`/notes/${this.currentNote.id}`, formData);
+            } else {
+                response = await APIClient.post('/notes', formData);
+            }
+
+            if (response) {
+                ToastManager.success(`Note ${this.currentNote ? 'updated' : 'created'} successfully`);
+                this.noteModal.hide();
+                await this.loadNotes();
+            }
+        } catch (error) {
+            console.error('Failed to save note:', error);
+            ToastManager.error('Failed to save note');
+        }
+    }
+
+    static async deleteNote() {
+        if (!this.currentNote) return;
+
+        if (!confirm('Are you sure you want to delete this note?')) return;
+
+        try {
+            const response = await APIClient.delete(`/notes/${this.currentNote.id}`);
+            if (response) {
+                ToastManager.success('Note deleted successfully');
+                this.noteModal.hide();
+                await this.loadNotes();
+            }
+        } catch (error) {
+            console.error('Failed to delete note:', error);
+            ToastManager.error('Failed to delete note');
+        }
+    }
+
+    static escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// Calendar Management
+class CalendarManager {
+    static calendar = null;
+    static eventModal = null;
+
+    static init() {
+        this.eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        this.initializeCalendar();
+        this.setupEventListeners();
+    }
+
+    static initializeCalendar() {
+        // This would initialize a calendar library like FullCalendar
+        const calendarEl = document.getElementById('calendar');
+        if (calendarEl) {
+            calendarEl.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Calendar functionality would be implemented here using a library like FullCalendar.
+                    Features would include:
+                    <ul class="mb-0 mt-2">
+                        <li>Study session scheduling</li>
+                        <li>Deadline tracking</li>
+                        <li>Progress visualization</li>
+                        <li>Event management</li>
+                    </ul>
+                </div>
+            `;
+        }
+    }
+
+    static setupEventListeners() {
+        // Event form submission would be handled here
+    }
+}
+
+// Analytics Management
+class AnalyticsManager {
+    static charts = {};
+
+    static async loadAnalytics() {
+        try {
+            const data = await APIClient.get('/analytics/dashboard');
+            if (data) {
+                this.createTimeChart(data.progress_timeline);
+                this.createHoursChart(data.learning_hours);
+                this.updateAnalyticsStats(data);
+            }
+        } catch (error) {
+            console.error('Failed to load analytics:', error);
+        }
+    }
+
+    static createTimeChart(timelineData) {
+        const canvas = document.getElementById('timeChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+
+        if (this.charts.time) {
+            this.charts.time.destroy();
+        }
+
+        const labels = timelineData.map(d => DateUtils.formatDate(d.date, 'short'));
+        const data = timelineData.map(d => d.time_spent);
+
+        this.charts.time = ChartUtils.createLineChart(ctx, {
+            labels: labels,
+            datasets: [{
+                label: 'Study Time (minutes)',
+                data: data,
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        });
+    }
+
+    static createHoursChart(hoursData) {
+        const canvas = document.getElementById('hoursChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+
+        if (this.charts.hours) {
+            this.charts.hours.destroy();
+        }
+
+        const hours = Array.from({ length: 24 }, (_, i) => i);
+        const data = hours.map(hour => hoursData[hour] || 0);
+
+        this.charts.hours = ChartUtils.createBarChart(ctx, {
+            labels: hours.map(h => `${h}:00`),
+            datasets: [{
+                label: 'Sessions',
+                data: data,
+                backgroundColor: 'rgba(59, 130, 246, 0.7)'
+            }]
+        });
+    }
+
+    static updateAnalyticsStats(data) {
+        // Update analytics statistics display
+        const elements = {
+            analyticsTimeToday: document.getElementById('analyticsTimeToday'),
+            analyticsTimeWeek: document.getElementById('analyticsTimeWeek'),
+            analyticsAvgSession: document.getElementById('analyticsAvgSession'),
+            analyticsProductivity: document.getElementById('analyticsProductivity')
+        };
+
+        // These would be calculated from the data
+        if (elements.analyticsTimeToday) {
+            elements.analyticsTimeToday.textContent = '2h 30m'; // Sample data
+        }
+    }
+}
+
+// Notification Management
+class NotificationManager {
+    static notifications = [];
+
+    static async loadNotifications() {
+        try {
+            const data = await APIClient.get('/notifications');
+            if (data) {
+                this.notifications = data.notifications;
+                this.updateNotificationUI(data.unread_count);
+                this.renderNotifications();
+            }
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+        }
+    }
+
+    static updateNotificationUI(unreadCount) {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
+        }
+    }
+
+    static renderNotifications() {
+        const container = document.getElementById('notificationList');
+        if (!container) return;
+
+        if (this.notifications.length === 0) {
+            container.innerHTML = '<div class="p-3 text-center text-muted">No notifications</div>';
+            return;
+        }
+
+        const notificationsHtml = this.notifications.map(notification => `
+            <div class="notification-item ${notification.is_read ? '' : 'unread'}" 
+                 onclick="markNotificationRead('${notification.id}')">
+                <div class="notification-title">${notification.title}</div>
+                <div class="notification-message">${notification.message}</div>
+                <div class="notification-time">${DateUtils.formatDate(notification.created_at, 'relative')}</div>
+            </div>
+        `).join('');
+
+        container.innerHTML = notificationsHtml;
+    }
+
+    static addNotification(notification) {
+        this.notifications.unshift(notification);
+        this.renderNotifications();
+
+        // Show toast for new notification
+        ToastManager.info(notification.message);
+    }
+
+    static async markNotificationRead(notificationId) {
+        try {
+            await APIClient.put(`/notifications/${notificationId}/read`);
+
+            // Update local state
+            const notification = this.notifications.find(n => n.id === notificationId);
+            if (notification) {
+                notification.is_read = true;
+                this.renderNotifications();
+
+                const unreadCount = this.notifications.filter(n => !n.is_read).length;
+                this.updateNotificationUI(unreadCount);
+            }
+        } catch (error) {
+            console.error('Failed to mark notification as read:', error);
+        }
+    }
+
+    static async markAllRead() {
+        try {
+            await APIClient.put('/notifications/read-all');
+
+            // Update local state
+            this.notifications.forEach(n => n.is_read = true);
+            this.renderNotifications();
+            this.updateNotificationUI(0);
+
+            ToastManager.success('All notifications marked as read');
+        } catch (error) {
+            console.error('Failed to mark all notifications as read:', error);
+        }
+    }
+}
+
+// Achievement Management
+class AchievementManager {
+    static showAchievement(achievement) {
+        ToastManager.show(`🎉 Achievement Unlocked: ${achievement.title}!`, 'success', 8000);
+
+        // Could also show a modal with more details
+        console.log('Achievement earned:', achievement);
+    }
+}
+
+// Settings Management
+class SettingsManager {
+    static async loadSettings() {
+        // Load and display app settings
+        const container = document.getElementById('settingsView');
+        if (container) {
+            // Settings would be loaded and displayed here
+        }
+    }
+}
+
+// Upload functionality
+window.uploadAvatar = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            await ProfileManager.uploadAvatar(file);
+        }
     };
-}
-
-function formatDate(date) {
-    return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    }).format(new Date(date));
-}
-
-function formatTime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-
-    if (hours > 0) {
-        return `${hours}h ${mins}m`;
-    }
-    return `${mins}m`;
-}
-
-// Logout Function
-async function logout() {
-    try {
-        await axios.post(`${API_BASE_URL}/auth/logout`);
-    } catch (error) {
-        console.error('Logout error:', error);
-    } finally {
-        localStorage.removeItem(AUTH_TOKEN_KEY);
-        localStorage.removeItem(REFRESH_TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
-        window.location.href = '/login.html';
-    }
-}
-
-// Export for use in other modules
-window.DSAApp = {
-    API_BASE_URL,
-    AppState,
-    showToast,
-    showLoader,
-    hideLoader,
-    formatDate,
-    formatTime,
-    logout
+    input.click();
 };
+
+// Global functions for HTML onclick handlers
+window.createNote = () => NotesManager.createNote();
+window.editNote = (noteId) => NotesManager.editNote(noteId);
+window.deleteNote = () => NotesManager.deleteNote();
+window.saveNote = () => NotesManager.saveNote();
+window.toggleTimer = () => PomodoroManager.toggleTimer();
+window.resetTimer = () => PomodoroManager.resetTimer();
+window.saveEvent = () => CalendarManager.saveEvent();
+window.markNotificationRead = (id) => NotificationManager.markNotificationRead(id);
+window.markAllRead = () => NotificationManager.markAllRead();
+
+// Application initialization
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize authentication
+    AuthManager.init();
+
+    // Initialize view manager
+    ViewManager.init();
+
+    // Initialize notes manager
+    NotesManager.init();
+
+    // Initialize pomodoro manager
+    PomodoroManager.init();
+
+    // Set up mark all read button
+    document.getElementById('markAllRead')?.addEventListener('click', () => {
+        NotificationManager.markAllRead();
+    });
+});
+
+// Export managers for global access
+window.ViewManager = ViewManager;
+window.PomodoroManager = PomodoroManager;
+window.NotesManager = NotesManager;
+window.CalendarManager = CalendarManager;
+window.AnalyticsManager = AnalyticsManager;
+window.NotificationManager = NotificationManager;
+window.AchievementManager = AchievementManager; 

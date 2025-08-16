@@ -1,335 +1,906 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" class="h-full">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSA Mastery - Learn Data Structures & Algorithms</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/assets/images/logo.svg">
+    <title>DSA Learning Dashboard</title>
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS with prefix -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            prefix: 'tw-',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link href="css/main.css" rel="stylesheet">
 
-    <!-- PWA Manifest -->
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#3B82F6">
     <link rel="manifest" href="manifest.json">
 </head>
 
-<body class="bg-gray-50 font-inter">
+<body class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-indigo-100 tw-min-h-screen">
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm" id="mainNav">
-        <div class="container-fluid px-4 px-lg-5">
-            <a class="navbar-brand fw-bold text-primary" href="/">
-                <i class="fas fa-code-branch me-2"></i>DSA Mastery
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#roadmap">Roadmap</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#testimonials">Testimonials</a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <a class="btn btn-primary px-4 rounded-pill" href="login.html">Get Started</a>
-                    </li>
-                </ul>
-            </div>
+    <!-- Loading Screen -->
+    <!-- <div id="loadingScreen" class="tw-fixed tw-inset-0 tw-bg-white tw-flex tw-items-center tw-justify-center tw-z-50">
+        <div class="tw-text-center">
+            <div class="spinner-border text-primary mb-3" role="status"></div>
+            <h5 class="tw-text-gray-600">Loading DSA Dashboard...</h5>
         </div>
-    </nav>
+    </div> -->
 
-    <!-- Hero Section -->
-    <section class="hero-section min-vh-100 d-flex align-items-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div class="container px-4 px-lg-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <h1 class="display-3 fw-bold text-gray-900 mb-4">
-                        Master <span class="text-primary">Data Structures</span> &
-                        <span class="text-info">Algorithms</span>
-                    </h1>
-                    <p class="lead text-gray-700 mb-5">
-                        Join thousands of developers on a 14-week journey to DSA mastery.
-                        Interactive learning, real-time progress tracking, and AI-powered study plans.
-                    </p>
-                    <div class="d-flex flex-wrap gap-3">
-                        <a href="register.html" class="btn btn-primary btn-lg px-5 rounded-pill shadow-lg">
-                            Start Learning Free <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                        <a href="#demo" class="btn btn-outline-primary btn-lg px-5 rounded-pill">
-                            <i class="fas fa-play-circle me-2"></i> Watch Demo
-                        </a>
-                    </div>
-                    <div class="mt-5">
-                        <div class="d-flex align-items-center">
-                            <div class="d-flex">
-                                <img src="https://i.pravatar.cc/40?img=1"
-                                    class="rounded-circle border-3 border-white shadow" style="margin-right: -10px;">
-                                <img src="https://i.pravatar.cc/40?img=2"
-                                    class="rounded-circle border-3 border-white shadow" style="margin-right: -10px;">
-                                <img src="https://i.pravatar.cc/40?img=3"
-                                    class="rounded-circle border-3 border-white shadow" style="margin-right: -10px;">
-                                <img src="https://i.pravatar.cc/40?img=4"
-                                    class="rounded-circle border-3 border-white shadow">
-                            </div>
-                            <div class="ms-3">
-                                <p class="mb-0 fw-semibold">10,000+ Active Learners</p>
-                                <div class="text-warning">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <span class="text-muted ms-1">4.9/5</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Auth Modal -->
+    <div class="modal fade" id="authModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card tw-border-0">
+                <div class="modal-header tw-border-0 tw-pb-0">
+                    <h5 class="modal-title fw-bold tw-text-gray-800">Welcome to DSA Prep</h5>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="position-relative">
-                        <img src="assets/images/hero-bg.svg" alt="DSA Learning" class="img-fluid">
-                        <div class="floating-card position-absolute top-0 start-0 bg-white rounded-3 shadow-lg p-3 m-4"
-                            data-aos="zoom-in" data-aos-delay="200">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
-                                    <i class="fas fa-trophy text-primary fs-4"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Achievement Unlocked!</h6>
-                                    <small class="text-muted">Completed Arrays Module</small>
-                                </div>
-                            </div>
+                <div class="modal-body">
+                    <!-- Login Form -->
+                    <form id="loginForm" class="tw-space-y-4">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="loginEmail" placeholder="Email">
+                            <label for="loginEmail">Email or Username</label>
                         </div>
-                        <div class="floating-card position-absolute bottom-0 end-0 bg-white rounded-3 shadow-lg p-3 m-4"
-                            data-aos="zoom-in" data-aos-delay="400">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                                    <i class="fas fa-fire text-success fs-4"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">30 Day Streak!</h6>
-                                    <small class="text-muted">Keep it going!</small>
-                                </div>
-                            </div>
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                            <label for="loginPassword">Password</label>
                         </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="loginSpinner"></span>
+                            Sign In
+                        </button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="registerForm" class="tw-space-y-4 d-none">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="registerEmail" placeholder="Email">
+                            <label for="registerEmail">Email</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="registerUsername" placeholder="Username">
+                            <label for="registerUsername">Username</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="registerPassword" placeholder="Password">
+                            <label for="registerPassword">Password</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="registerSpinner"></span>
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <button class="btn btn-link p-0" id="toggleAuth">
+                            Don't have an account? <span class="fw-bold">Sign up</span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Features Section -->
-    <section id="features" class="py-5">
-        <div class="container px-4 px-lg-5">
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="display-5 fw-bold">Everything You Need to Master DSA</h2>
-                <p class="lead text-muted">Comprehensive tools and features designed for your success</p>
-            </div>
+    <!-- Main App Container -->
+    <div id="app" class="d-none">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-expand-lg glass-navbar tw-sticky tw-top-0 tw-z-40">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold tw-text-2xl tw-bg-gradient-to-r tw-from-blue-600 tw-to-purple-600 tw-bg-clip-text tw-text-transparent"
+                    href="#">
+                    <i class="bi bi-code-square me-2"></i>DSA Prep
+                </a>
 
-            <div class="row g-4">
-                <!-- Feature 1 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card h-100 p-4 rounded-4 bg-white shadow-sm hover-shadow transition-all">
-                        <div class="feature-icon bg-primary bg-opacity-10 rounded-3 p-3 d-inline-flex mb-4">
-                            <i class="fas fa-route text-primary fs-2"></i>
+                <div class="d-flex align-items-center">
+                    <!-- Notifications -->
+                    <div class="dropdown me-3">
+                        <button class="btn btn-outline-primary position-relative" id="notificationBtn"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                                id="notificationBadge">
+                                0
+                            </span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end notification-menu" style="width: 300px;">
+                            <div class="dropdown-header d-flex justify-content-between">
+                                <span>Notifications</span>
+                                <button class="btn btn-link btn-sm p-0" id="markAllRead">Mark all read</button>
+                            </div>
+                            <div id="notificationList" class="notification-list">
+                                <!-- Notifications will be loaded here -->
+                            </div>
                         </div>
-                        <h4 class="fw-bold mb-3">14-Week Roadmap</h4>
-                        <p class="text-muted">Structured curriculum from basics to advanced topics with daily schedules
-                        </p>
                     </div>
-                </div>
 
-                <!-- Feature 2 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card h-100 p-4 rounded-4 bg-white shadow-sm hover-shadow transition-all">
-                        <div class="feature-icon bg-success bg-opacity-10 rounded-3 p-3 d-inline-flex mb-4">
-                            <i class="fas fa-chart-line text-success fs-2"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Progress Tracking</h4>
-                        <p class="text-muted">Real-time analytics, streaks, and detailed performance insights</p>
-                    </div>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="feature-card h-100 p-4 rounded-4 bg-white shadow-sm hover-shadow transition-all">
-                        <div class="feature-icon bg-info bg-opacity-10 rounded-3 p-3 d-inline-flex mb-4">
-                            <i class="fas fa-brain text-info fs-2"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">AI Study Plans</h4>
-                        <p class="text-muted">Personalized learning paths adapted to your progress and goals</p>
-                    </div>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="feature-card h-100 p-4 rounded-4 bg-white shadow-sm hover-shadow transition-all">
-                        <div class="feature-icon bg-warning bg-opacity-10 rounded-3 p-3 d-inline-flex mb-4">
-                            <i class="fas fa-clock text-warning fs-2"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Pomodoro Timer</h4>
-                        <p class="text-muted">Built-in productivity timer with session tracking and breaks</p>
-                    </div>
-                </div>
-
-                <!-- Feature 5 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-                    <div class="feature-card h-100 p-4 rounded-4 bg-white shadow-sm hover-shadow transition-all">
-                        <div class="feature-icon bg-danger bg-opacity-10 rounded-3 p-3 d-inline-flex mb-4">
-                            <i class="fas fa-calendar-alt text-danger fs-2"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Smart Calendar</h4>
-                        <p class="text-muted">Schedule study sessions and track your learning journey</p>
-                    </div>
-                </div>
-
-                <!-- Feature 6 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
-                    <div class="feature-card h-100 p-4 rounded-4 bg-white shadow-sm hover-shadow transition-all">
-                        <div class="feature-icon bg-purple bg-opacity-10 rounded-3 p-3 d-inline-flex mb-4">
-                            <i class="fas fa-sticky-note text-purple fs-2"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Smart Notes</h4>
-                        <p class="text-muted">Organize your learning with searchable, tagged notes</p>
+                    <!-- User Menu -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff" alt="Avatar"
+                                class="rounded-circle me-2" width="24" height="24" id="userAvatar">
+                            <span id="userName">User</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" onclick="showView('profile')">
+                                    <i class="bi bi-person me-2"></i>Profile
+                                </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showView('settings')">
+                                    <i class="bi bi-gear me-2"></i>Settings
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </nav>
 
-    <!-- Stats Section -->
-    <section class="py-5 bg-primary text-white">
-        <div class="container px-4 px-lg-5">
-            <div class="row text-center">
-                <div class="col-md-3 col-6 mb-4 mb-md-0">
-                    <h2 class="display-4 fw-bold counter" data-target="10000">0</h2>
-                    <p class="mb-0">Active Learners</p>
-                </div>
-                <div class="col-md-3 col-6 mb-4 mb-md-0">
-                    <h2 class="display-4 fw-bold counter" data-target="500">0</h2>
-                    <p class="mb-0">Practice Problems</p>
-                </div>
-                <div class="col-md-3 col-6">
-                    <h2 class="display-4 fw-bold counter" data-target="98">0</h2>
-                    <p class="mb-0">Daily Lessons</p>
-                </div>
-                <div class="col-md-3 col-6">
-                    <h2 class="display-4 fw-bold counter" data-target="95">0</h2>
-                    <p class="mb-0">Success Rate %</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-5">
-        <div class="container px-4 px-lg-5">
+        <!-- Main Content -->
+        <div class="container-fluid px-4 py-3">
             <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h5 class="fw-bold mb-3">DSA Mastery</h5>
-                    <p class="text-muted">Your comprehensive platform for mastering Data Structures and Algorithms</p>
-                    <div class="social-links">
-                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-github"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-discord"></i></a>
+                <!-- Sidebar (Desktop) -->
+                <div class="col-lg-3 d-none d-lg-block">
+                    <div class="glass-card p-3 sticky-top" style="top: 100px;">
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link active" href="#" onclick="showView('dashboard')">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            </a>
+                            <a class="nav-link" href="#" onclick="showView('roadmap')">
+                                <i class="bi bi-map me-2"></i>Roadmap
+                            </a>
+                            <a class="nav-link" href="#" onclick="showView('calendar')">
+                                <i class="bi bi-calendar3 me-2"></i>Calendar
+                            </a>
+                            <a class="nav-link" href="#" onclick="showView('progress')">
+                                <i class="bi bi-graph-up me-2"></i>Progress
+                            </a>
+                            <a class="nav-link" href="#" onclick="showView('pomodoro')">
+                                <i class="bi bi-clock me-2"></i>Pomodoro
+                            </a>
+                            <a class="nav-link" href="#" onclick="showView('notes')">
+                                <i class="bi bi-journal-text me-2"></i>Notes
+                            </a>
+                            <a class="nav-link" href="#" onclick="showView('analytics')">
+                                <i class="bi bi-bar-chart me-2"></i>Analytics
+                            </a>
+                        </nav>
+
+                        <!-- Streak Widget -->
+                        <div class="mt-4 p-3 rounded-3 tw-bg-gradient-to-r tw-from-orange-400 tw-to-red-500 text-white">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-fire fs-4 me-2"></i>
+                                <div>
+                                    <div class="fw-bold fs-5" id="currentStreak">0</div>
+                                    <small>Day Streak</small>
+                                </div>
+                            </div>
+                            <div class="progress" style="height: 4px;">
+                                <div class="progress-bar bg-white" id="streakProgress" style="width: 0%"></div>
+                            </div>
+                            <small class="mt-1 d-block">Longest: <span id="longestStreak">0</span> days</small>
+                        </div>
+
+                        <!-- Daily Quote -->
+                        <div
+                            class="mt-3 p-3 rounded-3 tw-bg-gradient-to-r tw-from-purple-400 tw-to-pink-400 text-white">
+                            <i class="bi bi-quote fs-5"></i>
+                            <blockquote class="blockquote-footer text-white mt-2 mb-0">
+                                <small id="dailyQuote">Loading inspiration...</small>
+                            </blockquote>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h6 class="fw-bold mb-3">Product</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-muted text-decoration-none">Features</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Roadmap</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Pricing</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">FAQ</a></li>
-                    </ul>
+
+                <!-- Main Content Area -->
+                <div class="col-lg-9">
+                    <div id="viewContainer">
+                        <!-- Dashboard View -->
+                        <div id="dashboardView" class="view-content">
+                            <!-- Welcome Section -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div
+                                        class="glass-card p-4 tw-bg-gradient-to-r tw-from-blue-500 tw-to-purple-600 text-white">
+                                        <h1 class="display-6 fw-bold mb-2">
+                                            <span id="greetingText">Good morning</span>, <span
+                                                id="dashboardUserName">Coder</span>! 👋
+                                        </h1>
+                                        <p class="lead mb-3">Ready to level up your DSA skills today?</p>
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <div class="fs-3 fw-bold" id="totalCompleted">0</div>
+                                                    <small>Topics Completed</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <div class="fs-3 fw-bold" id="totalTime">0h</div>
+                                                    <small>Time Studied</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <div class="fs-3 fw-bold" id="completionRate">0%</div>
+                                                    <small>Progress</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-center">
+                                                    <div class="fs-3 fw-bold" id="weekProgress">0</div>
+                                                    <small>This Week</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-3">
+                                    <div class="glass-card p-3 h-100 hover-lift">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-blue-100 tw-text-blue-600 rounded-circle p-3 me-3">
+                                                <i class="bi bi-play-circle fs-4"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1">Start Studying</h6>
+                                                <small class="text-muted">Continue your journey</small>
+                                            </div>
+                                            <button class="btn btn-primary btn-sm"
+                                                onclick="showView('roadmap')">Go</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="glass-card p-3 h-100 hover-lift">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-green-100 tw-text-green-600 rounded-circle p-3 me-3">
+                                                <i class="bi bi-clock fs-4"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1">Pomodoro Timer</h6>
+                                                <small class="text-muted">Focus session</small>
+                                            </div>
+                                            <button class="btn btn-success btn-sm"
+                                                onclick="showView('pomodoro')">Start</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="glass-card p-3 h-100 hover-lift">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-purple-100 tw-text-purple-600 rounded-circle p-3 me-3">
+                                                <i class="bi bi-journal-plus fs-4"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1">Take Notes</h6>
+                                                <small class="text-muted">Capture ideas</small>
+                                            </div>
+                                            <button class="btn btn-outline-primary btn-sm"
+                                                onclick="showView('notes')">Write</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Today's Focus -->
+                            <div class="row mb-4">
+                                <div class="col-lg-8 mb-3">
+                                    <div class="glass-card p-4">
+                                        <h5 class="fw-bold mb-3">
+                                            <i class="bi bi-target text-primary me-2"></i>Today's Focus
+                                        </h5>
+                                        <div id="todaysFocus">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">
+                                            <i class="bi bi-calendar-check text-success me-2"></i>Recent Activity
+                                        </h6>
+                                        <div id="recentActivity">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Study Statistics -->
+                            <div class="row">
+                                <div class="col-lg-6 mb-3">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">
+                                            <i class="bi bi-graph-up text-info me-2"></i>Weekly Progress
+                                        </h6>
+                                        <canvas id="weeklyChart" height="200"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">
+                                            <i class="bi bi-pie-chart text-warning me-2"></i>Topic Distribution
+                                        </h6>
+                                        <div id="topicDistribution">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Roadmap View -->
+                        <div id="roadmapView" class="view-content d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="fw-bold">
+                                    <i class="bi bi-map text-primary me-2"></i>14-Week DSA Roadmap
+                                </h2>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" onclick="expandAllWeeks()">Expand
+                                        All</button>
+                                    <button class="btn btn-outline-secondary" onclick="collapseAllWeeks()">Collapse
+                                        All</button>
+                                </div>
+                            </div>
+
+                            <div id="roadmapContainer">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Calendar View -->
+                        <div id="calendarView" class="view-content d-none">
+                            <div class="glass-card p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h2 class="fw-bold">
+                                        <i class="bi bi-calendar3 text-primary me-2"></i>Study Calendar
+                                    </h2>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal">
+                                        <i class="bi bi-plus me-2"></i>Add Event
+                                    </button>
+                                </div>
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+
+                        <!-- Progress View -->
+                        <div id="progressView" class="view-content d-none">
+                            <h2 class="fw-bold mb-4">
+                                <i class="bi bi-graph-up text-primary me-2"></i>Progress Tracking
+                            </h2>
+
+                            <!-- Progress Overview -->
+                            <div class="row mb-4">
+                                <div class="col-md-3 mb-3">
+                                    <div class="glass-card p-3 text-center">
+                                        <div class="tw-text-3xl tw-font-bold tw-text-blue-600" id="progressCompleted">0
+                                        </div>
+                                        <small class="text-muted">Completed</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="glass-card p-3 text-center">
+                                        <div class="tw-text-3xl tw-font-bold tw-text-green-600" id="progressTime">0h
+                                        </div>
+                                        <small class="text-muted">Total Time</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="glass-card p-3 text-center">
+                                        <div class="tw-text-3xl tw-font-bold tw-text-purple-600"
+                                            id="progressPercentage">0%</div>
+                                        <small class="text-muted">Progress</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="glass-card p-3 text-center">
+                                        <div class="tw-text-3xl tw-font-bold tw-text-orange-600" id="progressStreak">0
+                                        </div>
+                                        <small class="text-muted">Day Streak</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Grid -->
+                            <div class="glass-card p-4">
+                                <h5 class="fw-bold mb-3">Weekly Progress</h5>
+                                <div id="progressGrid" class="progress-grid">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pomodoro View -->
+                        <div id="pomodoroView" class="view-content d-none">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-6">
+                                    <div class="glass-card p-5 text-center">
+                                        <h2 class="fw-bold mb-4">
+                                            <i class="bi bi-clock text-primary me-2"></i>Pomodoro Timer
+                                        </h2>
+
+                                        <!-- Timer Display -->
+                                        <div class="pomodoro-timer mb-4">
+                                            <div class="timer-circle">
+                                                <svg class="timer-svg" viewBox="0 0 100 100">
+                                                    <circle cx="50" cy="50" r="45" class="timer-bg"></circle>
+                                                    <circle cx="50" cy="50" r="45" class="timer-progress"
+                                                        id="timerProgress"></circle>
+                                                </svg>
+                                                <div class="timer-text">
+                                                    <div class="timer-display" id="timerDisplay">25:00</div>
+                                                    <div class="timer-label" id="timerLabel">Focus Time</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Timer Controls -->
+                                        <div class="timer-controls mb-4">
+                                            <button class="btn btn-primary btn-lg me-2" id="startPauseBtn"
+                                                onclick="toggleTimer()">
+                                                <i class="bi bi-play-fill"></i> Start
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-lg" id="resetBtn"
+                                                onclick="resetTimer()">
+                                                <i class="bi bi-arrow-clockwise"></i> Reset
+                                            </button>
+                                        </div>
+
+                                        <!-- Settings -->
+                                        <div class="timer-settings">
+                                            <div class="row g-3">
+                                                <div class="col-4">
+                                                    <label class="form-label">Focus</label>
+                                                    <input type="number" class="form-control" id="focusTime" value="25"
+                                                        min="1" max="60">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label">Short Break</label>
+                                                    <input type="number" class="form-control" id="shortBreak" value="5"
+                                                        min="1" max="30">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label">Long Break</label>
+                                                    <input type="number" class="form-control" id="longBreak" value="15"
+                                                        min="1" max="60">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Current Topic -->
+                                        <div class="mt-4">
+                                            <label class="form-label">What are you studying?</label>
+                                            <input type="text" class="form-control" id="studyTopic"
+                                                placeholder="e.g., Binary Trees">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pomodoro Stats -->
+                            <div class="row mt-4">
+                                <div class="col-lg-6 mb-3">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">Today's Sessions</h6>
+                                        <div id="todaySessions">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-3">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">Recent Sessions</h6>
+                                        <div id="recentSessions">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes View -->
+                        <div id="notesView" class="view-content d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="fw-bold">
+                                    <i class="bi bi-journal-text text-primary me-2"></i>Study Notes
+                                </h2>
+                                <button class="btn btn-primary" onclick="createNote()">
+                                    <i class="bi bi-plus me-2"></i>New Note
+                                </button>
+                            </div>
+
+                            <!-- Search and Filters -->
+                            <div class="glass-card p-3 mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                            <input type="text" class="form-control" id="notesSearch"
+                                                placeholder="Search notes...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="notesTopicFilter">
+                                            <option value="">All Topics</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="notesWeekFilter">
+                                            <option value="">All Weeks</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes Grid -->
+                            <div id="notesGrid" class="row">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Analytics View -->
+                        <div id="analyticsView" class="view-content d-none">
+                            <h2 class="fw-bold mb-4">
+                                <i class="bi bi-bar-chart text-primary me-2"></i>Learning Analytics
+                            </h2>
+
+                            <!-- Analytics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-lg-3 col-md-6 mb-3">
+                                    <div class="glass-card p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-blue-100 tw-text-blue-600 rounded-circle p-2 me-3">
+                                                <i class="bi bi-clock"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold" id="analyticsTimeToday">0h</div>
+                                                <small class="text-muted">Today</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-3">
+                                    <div class="glass-card p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-green-100 tw-text-green-600 rounded-circle p-2 me-3">
+                                                <i class="bi bi-calendar-week"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold" id="analyticsTimeWeek">0h</div>
+                                                <small class="text-muted">This Week</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-3">
+                                    <div class="glass-card p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-purple-100 tw-text-purple-600 rounded-circle p-2 me-3">
+                                                <i class="bi bi-trophy"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold" id="analyticsAvgSession">0m</div>
+                                                <small class="text-muted">Avg Session</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-3">
+                                    <div class="glass-card p-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="tw-bg-orange-100 tw-text-orange-600 rounded-circle p-2 me-3">
+                                                <i class="bi bi-graph-up"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold" id="analyticsProductivity">0%</div>
+                                                <small class="text-muted">Productivity</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Charts -->
+                            <div class="row">
+                                <div class="col-lg-8 mb-4">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">Study Time Trends</h6>
+                                        <canvas id="timeChart" height="100"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-4">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">Study Hours</h6>
+                                        <canvas id="hoursChart" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile View -->
+                        <div id="profileView" class="view-content d-none">
+                            <h2 class="fw-bold mb-4">
+                                <i class="bi bi-person text-primary me-2"></i>Profile Settings
+                            </h2>
+
+                            <div class="row">
+                                <div class="col-lg-4 mb-4">
+                                    <div class="glass-card p-4 text-center">
+                                        <img src="https://ui-avatars.com/api/?name=User&background=3B82F6&color=fff"
+                                            alt="Avatar" class="rounded-circle mb-3" width="120" height="120"
+                                            id="profileAvatar">
+                                        <h5 class="fw-bold" id="profileName">User Name</h5>
+                                        <p class="text-muted" id="profileEmail">user@example.com</p>
+                                        <button class="btn btn-outline-primary" onclick="uploadAvatar()">
+                                            <i class="bi bi-camera me-2"></i>Change Photo
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="glass-card p-4">
+                                        <h6 class="fw-bold mb-3">Account Information</h6>
+                                        <form id="profileForm">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Username</label>
+                                                    <input type="text" class="form-control" id="profileUsername">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control" id="profileEmailInput"
+                                                        readonly>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Daily Goal (minutes)</label>
+                                                    <input type="number" class="form-control" id="profileDailyGoal"
+                                                        min="30" max="480">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Preferred Language</label>
+                                                    <select class="form-select" id="profileLanguage">
+                                                        <option value="python">Python</option>
+                                                        <option value="cpp">C++</option>
+                                                        <option value="java">Java</option>
+                                                        <option value="javascript">JavaScript</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Theme</label>
+                                                    <select class="form-select" id="profileTheme">
+                                                        <option value="light">Light</option>
+                                                        <option value="dark">Dark</option>
+                                                        <option value="auto">Auto</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Timezone</label>
+                                                    <select class="form-select" id="profileTimezone">
+                                                        <option value="UTC">UTC</option>
+                                                        <option value="America/New_York">Eastern Time</option>
+                                                        <option value="America/Chicago">Central Time</option>
+                                                        <option value="America/Los_Angeles">Pacific Time</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-check me-2"></i>Save Changes
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Notifications Settings -->
+                                    <div class="glass-card p-4 mt-4">
+                                        <h6 class="fw-bold mb-3">Notification Preferences</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailNotifications">
+                                            <label class="form-check-label" for="emailNotifications">
+                                                Email Notifications
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="pushNotifications">
+                                            <label class="form-check-label" for="pushNotifications">
+                                                Push Notifications
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="streakReminders">
+                                            <label class="form-check-label" for="streakReminders">
+                                                Daily Streak Reminders
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Settings View -->
+                        <div id="settingsView" class="view-content d-none">
+                            <h2 class="fw-bold mb-4">
+                                <i class="bi bi-gear text-primary me-2"></i>Settings
+                            </h2>
+
+                            <div class="glass-card p-4">
+                                <h6 class="fw-bold mb-3">Application Settings</h6>
+                                <!-- Settings content will be added here -->
+                                <p class="text-muted">Settings configuration coming soon...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                    <h6 class="fw-bold mb-3">Resources</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-muted text-decoration-none">Blog</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Tutorials</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Documentation</a></li>
-                        <li><a href="#" class="text-muted text-decoration-none">Community</a></li>
-                    </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="bottom-nav d-lg-none">
+            <a href="#" onclick="showView('dashboard')" class="bottom-nav-item active">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" onclick="showView('roadmap')" class="bottom-nav-item">
+                <i class="bi bi-map"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="#" onclick="showView('progress')" class="bottom-nav-item">
+                <i class="bi bi-graph-up"></i>
+                <span>Progress</span>
+            </a>
+            <a href="#" onclick="showView('pomodoro')" class="bottom-nav-item">
+                <i class="bi bi-clock"></i>
+                <span>Timer</span>
+            </a>
+            <a href="#" onclick="showView('notes')" class="bottom-nav-item">
+                <i class="bi bi-journal-text"></i>
+                <span>Notes</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Event Modal -->
+    <div class="modal fade" id="eventModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content glass-card">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Study Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="col-lg-4 col-md-4">
-                    <h6 class="fw-bold mb-3">Stay Updated</h6>
-                    <p class="text-muted">Get the latest updates and learning tips</p>
-                    <form class="newsletter-form">
-                        <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Enter your email">
-                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="eventTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="eventDescription" rows="3"></textarea>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date & Time</label>
+                                <input type="datetime-local" class="form-control" id="eventStart" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">End Date & Time</label>
+                                <input type="datetime-local" class="form-control" id="eventEnd" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" id="eventType">
+                                <option value="study">Study Session</option>
+                                <option value="project">Project Work</option>
+                                <option value="deadline">Deadline</option>
+                                <option value="review">Review</option>
+                            </select>
                         </div>
                     </form>
                 </div>
-            </div>
-            <hr class="my-4 border-secondary">
-            <div class="text-center text-muted">
-                <p class="mb-0">&copy; 2024 DSA Mastery. All rights reserved.</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEvent()">Save Event</button>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Note Modal -->
+    <div class="modal fade" id="noteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass-card">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalTitle">New Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="noteForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="noteTitle" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Topic</label>
+                                <input type="text" class="form-control" id="noteTopic">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Week</label>
+                                <select class="form-select" id="noteWeek">
+                                    <option value="">Select Week</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content</label>
+                            <textarea class="form-control" id="noteContent" rows="10" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="noteTags"
+                                placeholder="Enter tags separated by commas">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notePinned">
+                            <label class="form-check-label" for="notePinned">
+                                Pin this note
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="deleteNoteBtn" onclick="deleteNote()"
+                        style="display: none;">Delete</button>
+                    <button type="button" class="btn btn-primary" onclick="saveNote()">Save Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 11;">
+        <!-- Toasts will be dynamically added here -->
+    </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
     <script src="js/app.js"></script>
 
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-
-        // Counter Animation
-        const counters = document.querySelectorAll('.counter');
-        const speed = 200;
-
-        counters.forEach(counter => {
-            const animate = () => {
-                const value = +counter.getAttribute('data-target');
-                const data = +counter.innerText;
-                const time = value / speed;
-
-                if (data < value) {
-                    counter.innerText = Math.ceil(data + time);
-                    setTimeout(animate, 1);
-                } else {
-                    counter.innerText = value;
-                }
-            }
-
-            animate();
-        });
-    </script>
 </body>
 
 </html>
