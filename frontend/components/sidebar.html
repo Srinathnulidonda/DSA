@@ -1,0 +1,199 @@
+<!-- Desktop Sidebar Component -->
+<aside id="desktopSidebar" class="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+    <div class="flex-1 flex flex-col min-h-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <!-- Sidebar Header -->
+        <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+            <div class="flex items-center flex-shrink-0 px-4">
+                <div class="flex items-center">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-code-slash text-white text-lg"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">DSA Learning</h1>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Master Algorithms</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="mt-8 flex-1 px-2 space-y-1">
+                <!-- Dashboard -->
+                <a href="dashboard.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="dashboard">
+                    <i
+                        class="bi bi-house nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Dashboard</span>
+                    <span class="ml-auto">
+                        <span
+                            class="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-blue-600 dark:text-blue-400">
+                            <i class="bi bi-dot text-2xl"></i>
+                        </span>
+                    </span>
+                </a>
+
+                <!-- Roadmap -->
+                <a href="roadmap.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="roadmap">
+                    <i
+                        class="bi bi-map nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Roadmap</span>
+                    <span class="ml-auto">
+                        <span
+                            class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full">
+                            14W
+                        </span>
+                    </span>
+                </a>
+
+                <!-- Progress -->
+                <a href="progress.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="progress">
+                    <i
+                        class="bi bi-graph-up nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Progress</span>
+                    <span class="ml-auto">
+                        <div class="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
+                            <div class="bg-blue-600 h-1.5 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </span>
+                </a>
+
+                <!-- Calendar -->
+                <a href="calendar.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="calendar">
+                    <i
+                        class="bi bi-calendar3 nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Calendar</span>
+                    <span class="ml-auto" id="todayEventCount">
+                        <span
+                            class="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            0
+                        </span>
+                    </span>
+                </a>
+
+                <!-- Notes -->
+                <a href="notes.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="notes">
+                    <i
+                        class="bi bi-journal-text nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Notes</span>
+                    <span class="ml-auto" id="notesCount">
+                        <span
+                            class="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            0
+                        </span>
+                    </span>
+                </a>
+
+                <!-- Pomodoro -->
+                <a href="pomodoro.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="pomodoro">
+                    <i
+                        class="bi bi-clock nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Pomodoro</span>
+                    <span class="ml-auto">
+                        <span class="inline-flex items-center justify-center w-5 h-5">
+                            <span class="flex h-2 w-2">
+                                <span
+                                    class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                        </span>
+                    </span>
+                </a>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-gray-200 dark:border-gray-700"></div>
+
+                <!-- Analytics -->
+                <a href="analytics.html"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-page="analytics">
+                    <i
+                        class="bi bi-bar-chart nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Analytics</span>
+                </a>
+
+                <!-- Resources -->
+                <a href="#"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i
+                        class="bi bi-book nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Resources</span>
+                    <i class="bi bi-box-arrow-up-right ml-auto text-xs text-gray-400"></i>
+                </a>
+
+                <!-- Community -->
+                <a href="#"
+                    class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i
+                        class="bi bi-people nav-icon mr-3 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                    <span class="text-gray-700 dark:text-gray-300">Community</span>
+                    <span class="ml-auto">
+                        <span
+                            class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 rounded-full">
+                            Soon
+                        </span>
+                    </span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Menu -->
+        <div class="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+            <a href="profile.html" class="flex-shrink-0 w-full group block">
+                <div class="flex items-center">
+                    <div>
+                        <img id="sidebarUserAvatar" class="inline-block h-9 w-9 rounded-full"
+                            src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff" alt="">
+                    </div>
+                    <div class="ml-3">
+                        <p id="sidebarUserName"
+                            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
+                            Loading...
+                        </p>
+                        <p id="sidebarUserEmail"
+                            class="text-xs font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">
+                            View profile
+                        </p>
+                    </div>
+                    <i
+                        class="bi bi-chevron-right ml-auto text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+</aside>
+
+<style>
+    .nav-item.active {
+        @apply bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300;
+    }
+
+    .nav-item.active .nav-icon {
+        @apply text-blue-600 dark:text-blue-400;
+    }
+</style>
+
+<script>
+    // Update active nav item based on current page
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+        const navItems = document.querySelectorAll('.nav-item');
+
+        navItems.forEach(item => {
+            const page = item.getAttribute('data-page');
+            if (page === currentPage) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>

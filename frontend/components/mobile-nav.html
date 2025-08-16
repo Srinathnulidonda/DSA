@@ -1,0 +1,80 @@
+<!-- Mobile Bottom Navigation Component -->
+<nav id="mobileBottomNav"
+    class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-30 safe-area-bottom">
+    <div class="grid grid-cols-5 h-16">
+        <!-- Dashboard -->
+        <a href="dashboard.html"
+            class="mobile-nav-item flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-page="dashboard">
+            <i class="bi bi-house text-xl mb-1"></i>
+            <span class="text-xs font-medium">Home</span>
+        </a>
+
+        <!-- Roadmap -->
+        <a href="roadmap.html"
+            class="mobile-nav-item flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-page="roadmap">
+            <i class="bi bi-map text-xl mb-1"></i>
+            <span class="text-xs font-medium">Roadmap</span>
+        </a>
+
+        <!-- Pomodoro (Center with special styling) -->
+        <a href="pomodoro.html"
+            class="mobile-nav-item flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 relative"
+            data-page="pomodoro">
+            <div class="absolute -top-6 w-14 h-14 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+                <i class="bi bi-play-fill text-white text-2xl"></i>
+            </div>
+            <span class="text-xs font-medium mt-5">Timer</span>
+        </a>
+
+        <!-- Progress -->
+        <a href="progress.html"
+            class="mobile-nav-item flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-page="progress">
+            <i class="bi bi-graph-up text-xl mb-1"></i>
+            <span class="text-xs font-medium">Progress</span>
+        </a>
+
+        <!-- Profile -->
+        <a href="profile.html"
+            class="mobile-nav-item flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-page="profile">
+            <i class="bi bi-person text-xl mb-1"></i>
+            <span class="text-xs font-medium">Profile</span>
+        </a>
+    </div>
+</nav>
+
+<style>
+    /* Safe area for iOS devices */
+    .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Active state for mobile nav */
+    .mobile-nav-item.active {
+        @apply text-blue-600 dark:text-blue-400;
+    }
+
+    /* Special styling for center button */
+    .mobile-nav-item[data-page="pomodoro"].active .absolute {
+        @apply bg-red-600;
+    }
+</style>
+
+<script>
+    // Update active nav item based on current page
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+        const navItems = document.querySelectorAll('.mobile-nav-item');
+
+        navItems.forEach(item => {
+            const page = item.getAttribute('data-page');
+            if (page === currentPage) {
+                item.classList.remove('text-gray-400');
+                item.classList.add('active');
+            }
+        });
+    });
+</script>

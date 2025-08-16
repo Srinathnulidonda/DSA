@@ -1,0 +1,129 @@
+<!-- Top Navigation Bar Component -->
+<nav id="topNavbar"
+    class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 fixed top-0 w-full z-40 lg:hidden">
+    <div class="px-4 sm:px-6">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <!-- Mobile menu button -->
+                <button id="mobileMenuToggle" type="button"
+                    class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                    <span class="sr-only">Open menu</span>
+                    <i class="bi bi-list text-xl"></i>
+                </button>
+
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center ml-4">
+                    <div class="flex items-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-code-slash text-white text-sm"></i>
+                        </div>
+                        <h1 class="ml-2 text-lg font-bold text-gray-900 dark:text-white">DSA</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Search button (mobile) -->
+                <button id="mobileSearchToggle"
+                    class="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 lg:hidden">
+                    <i class="bi bi-search text-lg"></i>
+                </button>
+
+                <!-- Notifications -->
+                <div class="relative">
+                    <button id="notificationToggleMobile"
+                        class="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 relative">
+                        <i class="bi bi-bell text-lg"></i>
+                        <span id="notificationBadgeMobile"
+                            class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">3</span>
+                    </button>
+                </div>
+
+                <!-- Theme toggle -->
+                <button id="themeToggleMobile" class="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                    <i class="bi bi-sun text-lg dark:hidden"></i>
+                    <i class="bi bi-moon text-lg hidden dark:block"></i>
+                </button>
+
+                <!-- Profile -->
+                <button id="profileToggleMobile" class="flex items-center">
+                    <img id="topbarUserAvatar" class="h-8 w-8 rounded-full"
+                        src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff" alt="">
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Search Overlay -->
+<div id="mobileSearchOverlay" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50" id="searchBackdrop"></div>
+    <div class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 p-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center space-x-3">
+            <button id="closeSearchOverlay" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-arrow-left text-xl"></i>
+            </button>
+            <div class="flex-1 relative">
+                <input type="text" id="mobileSearchInput" placeholder="Search topics, notes, resources..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    autofocus>
+                <i class="bi bi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="mobileSearchResults" class="mt-4 max-h-96 overflow-y-auto">
+            <!-- Results will be populated here -->
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobileMenuOverlay" class="fixed inset-0 z-50 lg:hidden hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50" id="menuBackdrop"></div>
+    <div class="fixed left-0 top-0 h-full w-72 bg-white dark:bg-gray-800 shadow-xl overflow-y-auto">
+        <!-- Include sidebar content here or load dynamically -->
+        <div id="mobileSidebarContent"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+
+        if (mobileMenuToggle && mobileMenuOverlay) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenuOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+
+            menuBackdrop.addEventListener('click', () => {
+                mobileMenuOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Mobile search toggle
+        const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+        const mobileSearchOverlay = document.getElementById('mobileSearchOverlay');
+        const closeSearchOverlay = document.getElementById('closeSearchOverlay');
+        const searchBackdrop = document.getElementById('searchBackdrop');
+
+        if (mobileSearchToggle && mobileSearchOverlay) {
+            mobileSearchToggle.addEventListener('click', () => {
+                mobileSearchOverlay.classList.remove('hidden');
+                document.getElementById('mobileSearchInput').focus();
+            });
+
+            [closeSearchOverlay, searchBackdrop].forEach(el => {
+                el.addEventListener('click', () => {
+                    mobileSearchOverlay.classList.add('hidden');
+                });
+            });
+        }
+    });
+</script>

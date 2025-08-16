@@ -1,0 +1,108 @@
+<!-- Reusable Modal Components -->
+<div id="modalComponents" class="hidden">
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div class="p-6">
+                <div
+                    class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+                    <i id="confirmIcon"
+                        class="bi bi-exclamation-triangle text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                </div>
+                <h3 id="confirmTitle" class="text-lg font-semibold text-gray-900 dark:text-white text-center mb-2">
+                    Confirm Action</h3>
+                <p id="confirmMessage" class="text-gray-600 dark:text-gray-400 text-center mb-6">Are you sure you want
+                    to perform this action?</p>
+
+                <div class="flex space-x-3">
+                    <button id="confirmCancel"
+                        class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button id="confirmAction"
+                        class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div class="p-8 text-center">
+                <div
+                    class="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="bi bi-check-circle text-green-600 dark:text-green-400 text-3xl"></i>
+                </div>
+                <h3 id="successTitle" class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Success!</h3>
+                <p id="successMessage" class="text-gray-600 dark:text-gray-400 mb-6">Your action was completed
+                    successfully.</p>
+                <button id="successClose"
+                    class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Share Progress</h3>
+            </div>
+
+            <div class="p-6">
+                <div class="space-y-4">
+                    <!-- Share Preview -->
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p id="shareText" class="text-sm text-gray-700 dark:text-gray-300">
+                            🎉 My DSA Learning Progress:<br>
+                            📚 Topics Completed: 42<br>
+                            ⏱️ Study Time: 84h<br>
+                            🔥 Current Streak: 14 days
+                        </p>
+                    </div>
+
+                    <!-- Share Options -->
+                    <div class="grid grid-cols-4 gap-3">
+                        <button
+                            class="flex flex-col items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            <i class="bi bi-twitter text-xl text-blue-400 mb-1"></i>
+                            <span class="text-xs">Twitter</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            <i class="bi bi-linkedin text-xl text-blue-700 mb-1"></i>
+                            <span class="text-xs">LinkedIn</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            <i class="bi bi-whatsapp text-xl text-green-500 mb-1"></i>
+                            <span class="text-xs">WhatsApp</span>
+                        </button>
+                        <button id="copyShareLink"
+                            class="flex flex-col items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            <i class="bi bi-link-45deg text-xl text-gray-600 dark:text-gray-400 mb-1"></i>
+                            <span class="text-xs">Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 mt-6">
+                    <button data-modal-close
+                        class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button id="shareAction"
+                        class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

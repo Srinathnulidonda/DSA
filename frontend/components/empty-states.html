@@ -1,0 +1,64 @@
+<!-- Empty States Component -->
+<div id="emptyStatesComponent" class="hidden">
+    <!-- No Data -->
+    <div class="empty-state-no-data text-center py-16">
+        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="bi bi-inbox text-gray-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Data Available</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">Start your learning journey to see data here</p>
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            Get Started
+        </button>
+    </div>
+
+    <!-- No Results -->
+    <div class="empty-state-no-results text-center py-16">
+        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="bi bi-search text-gray-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Results Found</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">Try adjusting your search or filters</p>
+        <button
+            class="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            Clear Filters
+        </button>
+    </div>
+
+    <!-- Error State -->
+    <div class="empty-state-error text-center py-16">
+        <div class="w-24 h-24 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="bi bi-exclamation-triangle text-red-600 dark:text-red-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Something Went Wrong</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">We encountered an error while loading your data</p>
+        <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            Try Again
+        </button>
+    </div>
+
+    <!-- Offline State -->
+    <div class="empty-state-offline text-center py-16">
+        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="bi bi-wifi-off text-gray-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Internet Connection</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">Please check your connection and try again</p>
+        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+            Retry
+        </button>
+    </div>
+
+    <!-- Coming Soon -->
+    <div class="empty-state-coming-soon text-center py-16">
+        <div
+            class="w-24 h-24 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="bi bi-rocket-takeoff text-purple-600 dark:text-purple-400 text-3xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Coming Soon</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">We're working on something awesome for you</p>
+        <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            Notify Me
+        </button>
+    </div>
+</div>

@@ -1,195 +1,353 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - DSA Mastery</title>
+    <title>Profile - DSA Learning</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mobile.css">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/theme.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
+<body class="font-inter bg-gray-50 dark:bg-gray-900">
 
-    <!-- Include Sidebar -->
-    <aside class="sidebar d-none d-lg-block position-fixed top-0 start-0 h-100 bg-white shadow-sm"
-        style="width: 250px; z-index: 1000;">
-        <!-- Same sidebar structure -->
-    </aside>
+    <!-- Top Navigation -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 fixed top-0 w-full z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="mobileMenuToggle"
+                        class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="bi bi-list text-xl"></i>
+                    </button>
+
+                    <div class="flex-shrink-0 flex items-center ml-4 md:ml-0">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">DSA Learning</h1>
+                    </div>
+
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="dashboard.html"
+                            class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="roadmap.html"
+                            class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Roadmap
+                        </a>
+                        <a href="progress.html"
+                            class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Progress
+                        </a>
+                        <a href="profile.html"
+                            class="border-blue-500 text-gray-900 dark:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Profile
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <button id="themeToggle" class="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <i class="bi bi-sun text-xl dark:hidden"></i>
+                        <i class="bi bi-moon text-xl hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
-    <main class="main-content" style="margin-left: 250px;">
-        <!-- Top Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-            <!-- Same navigation -->
-        </nav>
+    <main class="pt-16 pb-20 md:pb-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Profile Content -->
-        <div class="container-fluid p-4">
             <!-- Profile Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div
-                        class="card border-0 shadow-sm rounded-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                        <div class="card-body p-5">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <div class="d-flex align-items-center">
-                                        <div class="position-relative me-4">
-                                            <img src="https://i.pravatar.cc/150" alt="Profile"
-                                                class="rounded-circle border-4 border-white shadow"
-                                                style="width: 120px; height: 120px;">
-                                            <button
-                                                class="btn btn-sm btn-light rounded-circle position-absolute bottom-0 end-0"
-                                                onclick="changeAvatar()">
-                                                <i class="fas fa-camera"></i>
-                                            </button>
-                                        </div>
-                                        <div>
-                                            <h2 class="fw-bold mb-1">John Doe</h2>
-                                            <p class="mb-2 opacity-75">@johndoe</p>
-                                            <p class="mb-0"><i class="fas fa-envelope me-2"></i> john.doe@example.com
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 text-md-end mt-4 mt-md-0">
-                                    <button class="btn btn-light rounded-pill px-4" onclick="editProfile()">
-                                        <i class="fas fa-edit me-2"></i> Edit Profile
-                                    </button>
-                                </div>
-                            </div>
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
+                <!-- Cover Image -->
+                <div class="h-32 bg-gradient-to-r from-blue-600 to-purple-600 relative">
+                    <button id="changeCoverBtn"
+                        class="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-lg hover:bg-opacity-70 transition-all">
+                        <i class="bi bi-camera text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Profile Info -->
+                <div class="px-6 pb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
+                        <!-- Avatar -->
+                        <div class="relative -mt-16 mb-4 sm:mb-0">
+                            <img id="profileAvatar"
+                                src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff&size=128"
+                                alt="Profile"
+                                class="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800">
+                            <button id="changeAvatarBtn"
+                                class="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+                                <i class="bi bi-camera text-sm"></i>
+                            </button>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="flex-1">
+                            <h1 id="profileName" class="text-2xl font-bold text-gray-900 dark:text-white">Loading...
+                            </h1>
+                            <p id="profileEmail" class="text-gray-600 dark:text-gray-400">Loading...</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                                Joined <span id="joinDate">Loading...</span>
+                            </p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-4 sm:mt-0 flex space-x-3">
+                            <button id="editProfileBtn"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="bi bi-pencil mr-2"></i>Edit Profile
+                            </button>
+                            <button id="settingsBtn"
+                                class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                <i class="bi bi-gear"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Overview -->
-            <div class="row mb-4">
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-fire text-danger fs-2 mb-2"></i>
-                            <h3 class="fw-bold mb-1">30</h3>
-                            <p class="text-muted mb-0">Day Streak</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-trophy text-warning fs-2 mb-2"></i>
-                            <h3 class="fw-bold mb-1">15</h3>
-                            <p class="text-muted mb-0">Achievements</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-clock text-info fs-2 mb-2"></i>
-                            <h3 class="fw-bold mb-1">124h</h3>
-                            <p class="text-muted mb-0">Total Study Time</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-code text-success fs-2 mb-2"></i>
-                            <h3 class="fw-bold mb-1">156</h3>
-                            <p class="text-muted mb-0">Problems Solved</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Profile Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <!-- Profile Sections -->
-            <div class="row">
-                <!-- Basic Information -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold mb-4">Basic Information</h5>
-                            <div class="mb-3">
-                                <label class="text-muted small">Full Name</label>
-                                <p class="fw-semibold mb-0">John Doe</p>
+                <!-- Main Content -->
+                <div class="lg:col-span-2 space-y-8">
+
+                    <!-- Learning Stats -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Learning Statistics</h2>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i class="bi bi-check-circle text-green-600 dark:text-green-400 text-2xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalCompleted">0
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Completed</div>
                             </div>
-                            <div class="mb-3">
-                                <label class="text-muted small">Username</label>
-                                <p class="fw-semibold mb-0">@johndoe</p>
+
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i class="bi bi-clock text-blue-600 dark:text-blue-400 text-2xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalHours">0h</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Study Time</div>
                             </div>
-                            <div class="mb-3">
-                                <label class="text-muted small">Email</label>
-                                <p class="fw-semibold mb-0">john.doe@example.com</p>
+
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i class="bi bi-fire text-orange-600 dark:text-orange-400 text-2xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="currentStreak">0</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Day Streak</div>
                             </div>
-                            <div class="mb-3">
-                                <label class="text-muted small">Member Since</label>
-                                <p class="fw-semibold mb-0">January 1, 2024</p>
+
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                                    <i class="bi bi-trophy text-purple-600 dark:text-purple-400 text-2xl"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalAchievements">0
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Achievements</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
+                            <button class="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400">View
+                                All</button>
+                        </div>
+
+                        <div id="recentActivity" class="space-y-4">
+                            <!-- Activity items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Learning Preferences -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Learning Preferences</h2>
+
+                        <div class="space-y-6">
+                            <div>
+                                <label for="preferredLanguage"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred
+                                    Programming Language</label>
+                                <select id="preferredLanguage"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                                    <option value="python">Python</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="java">Java</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="c">C</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="dailyGoal"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Daily Study
+                                    Goal (minutes)</label>
+                                <input type="number" id="dailyGoal" min="15" max="480" value="120"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            </div>
+
+                            <div>
+                                <label for="difficulty"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred
+                                    Difficulty</label>
+                                <select id="difficulty"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+
+                            <button id="savePreferencesBtn"
+                                class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Save Preferences
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Learning Preferences -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold mb-4">Learning Preferences</h5>
-                            <div class="mb-3">
-                                <label class="text-muted small">Preferred Language</label>
-                                <p class="fw-semibold mb-0">Python</p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="text-muted small">Daily Goal</label>
-                                <p class="fw-semibold mb-0">2 hours</p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="text-muted small">Study Time</label>
-                                <p class="fw-semibold mb-0">Morning (6 AM - 9 AM)</p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="text-muted small">Difficulty Level</label>
-                                <p class="fw-semibold mb-0">Intermediate</p>
-                            </div>
+                <!-- Sidebar -->
+                <div class="space-y-8">
+
+                    <!-- Achievements -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Achievements</h3>
+
+                        <div id="achievementsList" class="space-y-3">
+                            <!-- Achievements will be loaded here -->
+                        </div>
+
+                        <button class="w-full mt-4 text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400">
+                            View All Achievements
+                        </button>
+                    </div>
+
+                    <!-- Study Streaks -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Study Streak</h3>
+
+                        <div class="text-center mb-4">
+                            <div class="text-3xl font-bold text-orange-500 mb-1" id="streakDays">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Days in a row</div>
+                        </div>
+
+                        <div class="grid grid-cols-7 gap-1 mb-4" id="streakCalendar">
+                            <!-- Streak calendar will be generated here -->
+                        </div>
+
+                        <div class="text-xs text-gray-500 dark:text-gray-500 text-center">
+                            Best streak: <span id="bestStreak" class="font-medium">0 days</span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Achievements -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold mb-4">Recent Achievements</h5>
-                            <div class="row">
-                                <div class="col-md-2 col-4 mb-3 text-center">
-                                    <img src="assets/images/badges/streak-30.svg" alt="30 Day Streak" class="mb-2"
-                                        style="width: 80px;">
-                                    <p class="small fw-semibold mb-0">Fire Starter</p>
+                    <!-- Quick Actions -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+
+                        <div class="space-y-3">
+                            <button
+                                class="w-full flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <i class="bi bi-download text-blue-600 dark:text-blue-400"></i>
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">Export Data</span>
                                 </div>
-                                <div class="col-md-2 col-4 mb-3 text-center">
-                                    <img src="assets/images/badges/week-complete.svg" alt="Week Complete" class="mb-2"
-                                        style="width: 80px;">
-                                    <p class="small fw-semibold mb-0">Week Master</p>
+                                <i class="bi bi-arrow-right text-gray-400"></i>
+                            </button>
+
+                            <button
+                                class="w-full flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <i class="bi bi-share text-green-600 dark:text-green-400"></i>
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">Share
+                                        Progress</span>
                                 </div>
-                                <div class="col-md-2 col-4 mb-3 text-center">
-                                    <img src="assets/images/badges/problem-solver.svg" alt="Problem Solver" class="mb-2"
-                                        style="width: 80px;">
-                                    <p class="small fw-semibold mb-0">Problem Solver</p>
+                                <i class="bi bi-arrow-right text-gray-400"></i>
+                            </button>
+
+                            <button id="deleteAccountBtn"
+                                class="w-full flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <i class="bi bi-trash text-red-600 dark:text-red-400"></i>
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">Delete
+                                        Account</span>
                                 </div>
+                                <i class="bi bi-arrow-right text-gray-400"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- App Settings -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">App Settings</h3>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+                                <button id="darkModeToggle"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-gray-600 transition-colors">
+                                    <span class="sr-only">Enable dark mode</span>
+                                    <span
+                                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform dark:translate-x-6"></span>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Email
+                                    Notifications</span>
+                                <button id="emailNotificationsToggle"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600 transition-colors">
+                                    <span class="sr-only">Enable notifications</span>
+                                    <span
+                                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6"></span>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Push
+                                    Notifications</span>
+                                <button id="pushNotificationsToggle"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600 transition-colors">
+                                    <span class="sr-only">Enable push notifications</span>
+                                    <span
+                                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6"></span>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Sound Effects</span>
+                                <button id="soundEffectsToggle"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600 transition-colors">
+                                    <span class="sr-only">Enable sound effects</span>
+                                    <span
+                                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -199,13 +357,122 @@
     </main>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav d-lg-none position-fixed bottom-0 start-0 end-0 bg-white shadow-lg">
-        <!-- Same structure -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-30">
+        <div class="grid grid-cols-5">
+            <a href="dashboard.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-house text-xl mb-1"></i>
+                <span class="text-xs font-medium">Home</span>
+            </a>
+            <a href="roadmap.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-map text-xl mb-1"></i>
+                <span class="text-xs font-medium">Roadmap</span>
+            </a>
+            <a href="pomodoro.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-clock text-xl mb-1"></i>
+                <span class="text-xs font-medium">Timer</span>
+            </a>
+            <a href="progress.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-graph-up text-xl mb-1"></i>
+                <span class="text-xs font-medium">Progress</span>
+            </a>
+            <a href="profile.html"
+                class="flex flex-col items-center justify-center py-2 text-blue-600 dark:text-blue-400">
+                <i class="bi bi-person text-xl mb-1"></i>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </div>
     </nav>
 
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Edit Profile</h3>
+            </div>
+
+            <form id="editProfileForm" class="p-6 space-y-4">
+                <div>
+                    <label for="editUsername"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                    <input type="text" id="editUsername" name="username" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+
+                <div>
+                    <label for="editEmail"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="editEmail" name="email" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" data-modal-close
+                        class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Change Password</h3>
+            </div>
+
+            <form id="changePasswordForm" class="p-6 space-y-4">
+                <div>
+                    <label for="currentPassword"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Password</label>
+                    <input type="password" id="currentPassword" name="currentPassword" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+
+                <div>
+                    <label for="newPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New
+                        Password</label>
+                    <input type="password" id="newPassword" name="newPassword" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+
+                <div>
+                    <label for="confirmNewPassword"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm New
+                        Password</label>
+                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" data-modal-close
+                        class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Avatar Upload Input -->
+    <input type="file" id="avatarUploadInput" accept="image/*" class="hidden">
+
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
     <script src="js/profile.js"></script>
 </body>

@@ -1,88 +1,297 @@
-// progress.js - Progress tracking functionality
+// Progress tracking functionality
 
-let progressCharts = {};
-let progressData = {};
-
-// Initialize progress page
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadProgressData();
-    initializeCharts();
-    setupEventListeners();
-    renderProgressTable();
-});
-
-// Load progress data
-async function loadProgressData() {
-    try {
-        window.DSAApp.showLoader();
-
-        const [progress, analytics, streaks] = await Promise.all([
-            window.API.getProgress(),
-            window.API.getAnalytics(30),
-            window.API.getStreaks()
-        ]);
-
-        progressData = {
-            progress: progress.data,
-            analytics: analytics.data,
-            streaks: streaks.data
-        };
-
-        updateProgressStats();
-        updateAchievements();
-
-    } catch (error) {
-        console.error('Failed to load progress data:', error);
-        window.DSAApp.showToast('Failed to load progress data', 'error');
-    } finally {
-        window.DSAApp.hideLoader();
+class ProgressManager {
+    constructor() {
+        this.progressData = null;
+        this.analyticsData = null;
+        this.currentView = 'weekly';
+        this.currentPeriod = 7; // days
+        this.charts = {};
+        this.init();
     }
-}
 
-// Update progress statistics
-function updateProgressStats() {
-    const { statistics } = progressData.progress;
+    async init() {
+        await this.loadProgressData();
+        await this.loadAnalyticsData();
+        this.setupEventListeners();
+        this.renderProgressOverview();
+        this.renderCharts();
+        this.renderTimeline();
+        this.renderAchievements();
+        this.renderGoals();
+    }
 
-    // Update stat cards
-    document.querySelector('#totalStudyTime').textContent = window.DSAApp.formatTime(statistics.total_time_minutes);
-    document.querySelector('#topicsCompleted').textContent = `${statistics.total_completed} / 98`;
-    document.querySelector('#completionPercentage').textContent = `${statistics.completion_percentage}%`;
+    async loadProgressData() {
+        try {
+            const response = await api.get(API_ENDPOINTS.progress);
+            this.progressData = response;
+        } catch (error) {
+            console.error('Failed to load progress data:', error);
+            notificationManager.error('Failed to load progress data');
+        }
+    }
 
-    // Update streak info
-    document.querySelector('#currentStreak').textContent = `${progressData.streaks.current_streak} Days`;
-    document.querySelector('#bestStreak').textContent = `Best: ${progressData.streaks.longest_streak} days`;
+    async loadAnalyticsData() {
+        try {
+            const response = await api.get(`${API_ENDPOINTS.analytics}?days=${this.currentPeriod}`);
+            this.analyticsData = response;
+        } catch (error) {
+            console.error('Failed to load analytics data:', error);
+            this.analyticsData = null;
+        }
+    }
 
-    // Calculate problems solved (mock data for demo)
-    const problemsSolved = Math.floor(statistics.total_completed * 3.7);
-    document.querySelector('#problemsSolved').textContent = problemsSolved;
-}
+    setupEventListeners() {
+        // View toggle buttons
+        const weeklyViewBtn = document.getElementById('weeklyViewBtn');
+        const monthlyViewBtn = document.getElementById('monthlyViewBtn');
+        const overallViewBtn = document.getElementById('overallViewBtn');
 
-// Initialize charts
-function initializeCharts() {
-    // Study Time Chart
-    const studyTimeCtx = document.getElementById('studyTimeChart')?.getContext('2d');
-    if (studyTimeCtx) {
-        progressCharts.studyTime = new Chart(studyTimeCtx, {
+        [weeklyViewBtn, monthlyViewBtn, overallViewBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    this.switchView(btn.id.replace('ViewBtn', '').toLowerCase());
+                });
+            }
+        });
+
+        // Timeline filter buttons
+        const timelineAllBtn = document.getElementById('timelineAllBtn');
+        const timelineWeekBtn = document.getElementById('timelineWeekBtn');
+        const timelineMonthBtn = document.getElementById('timelineMonthBtn');
+
+        [timelineAllBtn, timelineWeekBtn, timelineMonthBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    this.filterTimeline(btn.id.replace('timeline', '').replace('Btn', '').toLowerCase());
+                });
+            }
+        });
+
+        // Export button
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                this.exportProgress();
+            });
+        }
+
+        // Update goals button
+        const updateGoalsBtn = document.getElementById('updateGoalsBtn');
+        if (updateGoalsBtn) {
+            updateGoalsBtn.addEventListener('click', () => {
+                modalManager.open('goalUpdateModal');
+            });
+        }
+
+        // Goal update form
+        const goalUpdateForm = document.getElementById('goalUpdateForm');
+        if (goalUpdateForm) {
+            goalUpdateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.updateGoals();
+            });
+        }
+
+        // Topic view toggle
+        const topicViewToggle = document.getElementById('topicViewToggle');
+        if (topicViewToggle) {
+            topicViewToggle.addEventListener('click', () => {
+                this.toggleTopicView();
+            });
+        }
+    }
+
+    renderProgressOverview() {
+        if (!this.progressData) return;
+
+        const { statistics } = this.progressData;
+
+        // Update overview cards
+        this.updateElement('#completedTopics', statistics.total_completed || 0);
+        this.updateElement('#totalStudyTime', this.formatHours(statistics.total_time_minutes || 0));
+        this.updateElement('#currentStreak', statistics.current_streak || 0);
+        this.updateElement('#currentWeek', this.calculateCurrentWeek());
+
+        // Update completion rate
+        const completionRate = Math.round(((statistics.total_completed || 0) / 98) * 100);
+        this.updateElement('#completionRate', `${completionRate}% complete`);
+
+        // Update average daily time
+        const totalDays = Math.max(1, this.getDaysSinceStart());
+        const avgDaily = Math.round((statistics.total_time_minutes || 0) / totalDays);
+        this.updateElement('#averageDaily', `${avgDaily}m avg/day`);
+
+        // Update longest streak
+        this.updateElement('#longestStreak', `${statistics.longest_streak || 0} best`);
+
+        // Update week progress
+        const currentWeek = this.calculateCurrentWeek();
+        const weekProgress = this.getWeekProgress(currentWeek);
+        const weekCompletionRate = Math.round((weekProgress.completed / 7) * 100);
+        this.updateElement('#weekProgress', `${weekCompletionRate}% this week`);
+    }
+
+    renderCharts() {
+        this.renderWeeklyProgressChart();
+        this.renderTopicDistributionChart();
+    }
+
+    renderWeeklyProgressChart() {
+        const canvas = document.getElementById('weeklyProgressChart');
+        if (!canvas || !this.analyticsData) return;
+
+        const ctx = canvas.getContext('2d');
+
+        // Destroy existing chart
+        if (this.charts.weeklyProgress) {
+            this.charts.weeklyProgress.destroy();
+        }
+
+        // Prepare data based on current view
+        let labels, completedData, timeData;
+
+        if (this.currentView === 'weekly') {
+            // Last 7 days
+            labels = this.getLast7Days().map(date =>
+                new Date(date).toLocaleDateString('en-US', { weekday: 'short' })
+            );
+
+            const progressTimeline = this.analyticsData.progress_timeline || [];
+            completedData = this.getLast7Days().map(date => {
+                const dayData = progressTimeline.find(p => p.date === date);
+                return dayData ? dayData.completed : 0;
+            });
+
+            timeData = this.getLast7Days().map(date => {
+                const dayData = progressTimeline.find(p => p.date === date);
+                return dayData ? Math.round(dayData.time_spent / 60) : 0;
+            });
+        } else if (this.currentView === 'monthly') {
+            // Last 4 weeks
+            labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            const weeklyProgress = this.analyticsData.weekly_progress || [];
+            completedData = weeklyProgress.slice(-4).map(w => w.completed || 0);
+            timeData = weeklyProgress.slice(-4).map(w => Math.round((w.time_spent || 0) / 60));
+        } else {
+            // Overall - by week number
+            const weeklyProgress = this.analyticsData.weekly_progress || [];
+            labels = weeklyProgress.map(w => `Week ${w.week}`);
+            completedData = weeklyProgress.map(w => w.completed || 0);
+            timeData = weeklyProgress.map(w => Math.round((w.time_spent || 0) / 60));
+        }
+
+        this.charts.weeklyProgress = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [],
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Topics Completed',
+                        data: completedData,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 2,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Study Hours',
+                        data: timeData,
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        borderWidth: 2,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Topics'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Hours'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    }
+                }
+            }
+        });
+    }
+
+    renderTopicDistributionChart() {
+        const canvas = document.getElementById('topicDistributionChart');
+        if (!canvas || !this.progressData) return;
+
+        const ctx = canvas.getContext('2d');
+
+        // Destroy existing chart
+        if (this.charts.topicDistribution) {
+            this.charts.topicDistribution.destroy();
+        }
+
+        // Calculate topic distribution
+        const topicData = this.calculateTopicDistribution();
+
+        this.charts.topicDistribution = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: topicData.labels,
                 datasets: [{
-                    label: 'Study Time (minutes)',
-                    data: [],
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                    borderColor: 'rgb(59, 130, 246)',
-                    borderWidth: 1
+                    data: topicData.data,
+                    backgroundColor: [
+                        '#3B82F6', '#10B981', '#F59E0B', '#EF4444',
+                        '#8B5CF6', '#06B6D4', '#84CC16', '#F97316'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return value + ' min';
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const percentage = Math.round((context.parsed / topicData.total) * 100);
+                                return `${context.label}: ${context.parsed} topics (${percentage}%)`;
                             }
                         }
                     }
@@ -91,394 +300,424 @@ function initializeCharts() {
         });
     }
 
-    // Topic Distribution Chart
-    const topicCtx = document.getElementById('topicChart')?.getContext('2d');
-    if (topicCtx) {
-        progressCharts.topics = new Chart(topicCtx, {
-            type: 'doughnut',
-            data: {
-                labels: [],
-                datasets: [{
-                    data: [],
-                    backgroundColor: [
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(239, 68, 68, 0.8)',
-                        'rgba(139, 92, 246, 0.8)'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    }
+    calculateTopicDistribution() {
+        if (!this.progressData || !this.progressData.progress) {
+            return { labels: [], data: [], total: 0 };
+        }
 
-    // Update charts with data
-    updateCharts();
-}
+        const topicCounts = {};
+        let total = 0;
 
-// Update charts with data
-function updateCharts() {
-    const { progress_timeline, weekly_progress } = progressData.analytics;
-
-    // Update study time chart
-    if (progressCharts.studyTime && progress_timeline) {
-        progressCharts.studyTime.data.labels = progress_timeline.map(d =>
-            new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        );
-        progressCharts.studyTime.data.datasets[0].data = progress_timeline.map(d => d.time_spent);
-        progressCharts.studyTime.update();
-    }
-
-    // Update topic distribution
-    updateTopicDistribution();
-}
-
-// Update topic distribution chart
-function updateTopicDistribution() {
-    if (!progressCharts.topics) return;
-
-    // Calculate topic distribution from progress
-    const topicCounts = {};
-    const { progress } = progressData.progress;
-
-    Object.entries(progress).forEach(([key, value]) => {
-        if (value.completed) {
-            const weekNum = parseInt(key.match(/week(\d+)/)[1]);
-            const week = window.DSAApp.ROADMAP[weekNum - 1];
-            if (week) {
-                const topic = week.title.split(' ')[0]; // Simplified topic extraction
+        // Group by topic categories (simplified)
+        Object.values(this.progressData.progress).forEach(progress => {
+            if (progress.completed) {
+                const topic = this.categorizeProgress(progress);
                 topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+                total++;
             }
-        }
-    });
-
-    // Update chart
-    progressCharts.topics.data.labels = Object.keys(topicCounts);
-    progressCharts.topics.data.datasets[0].data = Object.values(topicCounts);
-    progressCharts.topics.update();
-}
-
-// Update achievements
-function updateAchievements() {
-    const achievementsContainer = document.querySelector('.achievements-grid');
-    if (!achievementsContainer) return;
-
-    // Define achievements
-    const achievements = [
-        {
-            id: 'streak-30',
-            title: 'Fire Starter',
-            description: '30 Day Streak',
-            icon: 'fire',
-            unlocked: progressData.streaks.longest_streak >= 30
-        },
-        {
-            id: 'week-master',
-            title: 'Week Master',
-            description: 'Complete 5 Weeks',
-            icon: 'calendar-check',
-            unlocked: progressData.progress.statistics.total_completed >= 35
-        },
-        {
-            id: 'problem-solver',
-            title: 'Problem Solver',
-            description: 'Solve 100 Problems',
-            icon: 'code',
-            unlocked: progressData.progress.statistics.total_completed >= 27
-        },
-        {
-            id: 'early-bird',
-            title: 'Early Bird',
-            description: 'Study before 6 AM',
-            icon: 'sun',
-            unlocked: false // Would check actual study times
-        }
-    ];
-
-    // Render achievements
-    achievementsContainer.innerHTML = achievements.map(achievement => `
-        <div class="col-md-3 col-6 mb-3">
-            <div class="achievement-card text-center p-3 rounded-3 bg-light ${achievement.unlocked ? '' : 'opacity-50'}">
-                <div class="achievement-icon mb-2">
-                    ${achievement.unlocked ?
-            `<i class="fas fa-${achievement.icon} fs-1 text-warning"></i>` :
-            `<i class="fas fa-lock fs-1 text-muted"></i>`
-        }
-                </div>
-                <h6 class="fw-bold mb-1">${achievement.unlocked ? achievement.title : '???'}</h6>
-                <small class="text-muted">${achievement.description}</small>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Render progress table
-function renderProgressTable() {
-    const tableBody = document.getElementById('progressTableBody');
-    if (!tableBody) return;
-
-    const { progress } = progressData.progress;
-    const rows = [];
-
-    // Convert progress to table rows
-    window.DSAApp.ROADMAP.forEach((week, weekIndex) => {
-        week.days.forEach((day, dayIndex) => {
-            const key = `week${weekIndex + 1}_day${dayIndex + 1}`;
-            const progressEntry = progress[key] || {};
-
-            rows.push({
-                week: weekIndex + 1,
-                day: dayIndex + 1,
-                topic: day.topic,
-                completed: progressEntry.completed || false,
-                timeSpent: progressEntry.time_spent || 0,
-                completionDate: progressEntry.completion_date,
-                activities: day.activities
-            });
         });
-    });
 
-    // Render table rows
-    tableBody.innerHTML = rows.map(row => `
-        <tr class="${row.completed ? 'table-success' : ''}">
-            <td>Week ${row.week}</td>
-            <td>${row.topic}</td>
-            <td>
-                ${row.completed ?
-            '<span class="badge bg-success">Completed</span>' :
-            '<span class="badge bg-secondary">Pending</span>'
+        const labels = Object.keys(topicCounts);
+        const data = Object.values(topicCounts);
+
+        return { labels, data, total };
+    }
+
+    categorizeProgress(progress) {
+        // This is a simplified categorization - you might want to enhance this
+        const topic = progress.topic || 'Other';
+
+        if (topic.toLowerCase().includes('array')) return 'Arrays & Strings';
+        if (topic.toLowerCase().includes('linked')) return 'Linked Lists';
+        if (topic.toLowerCase().includes('stack') || topic.toLowerCase().includes('queue')) return 'Stacks & Queues';
+        if (topic.toLowerCase().includes('tree')) return 'Trees';
+        if (topic.toLowerCase().includes('graph')) return 'Graphs';
+        if (topic.toLowerCase().includes('sort') || topic.toLowerCase().includes('search')) return 'Algorithms';
+        if (topic.toLowerCase().includes('dynamic')) return 'Dynamic Programming';
+
+        return 'Other';
+    }
+
+    renderTimeline() {
+        const timelineContainer = document.getElementById('progressTimeline');
+        if (!timelineContainer || !this.progressData) return;
+
+        const recentProgress = this.getRecentProgress();
+
+        if (recentProgress.length === 0) {
+            timelineContainer.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-clock-history text-gray-400 text-2xl"></i>
+                    </div>
+                    <p class="text-gray-500 dark:text-gray-400">No recent progress to display</p>
+                </div>
+            `;
+            return;
         }
-            </td>
-            <td>${window.DSAApp.formatTime(row.timeSpent)}</td>
-            <td>${row.completionDate ? new Date(row.completionDate).toLocaleDateString() : '-'}</td>
-            <td>
-                <button class="btn btn-sm btn-outline-primary" onclick="viewTopicDetails(${row.week}, ${row.day})">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
-}
 
-// View topic details
-window.viewTopicDetails = function (week, day) {
-    const weekData = window.DSAApp.ROADMAP[week - 1];
-    const dayData = weekData.days[day - 1];
-
-    // Create modal
-    const modalHTML = `
-        <div class="modal fade" id="topicDetailModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title fw-bold">${dayData.topic}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Week ${week}, Day ${day}</strong></p>
-                        <p>${dayData.activities}</p>
-                        <p><i class="fas fa-clock me-2"></i>Estimated time: ${dayData.time_estimate} minutes</p>
-                        
-                        ${dayData.resources.length > 0 ? `
-                            <h6 class="fw-bold mt-3">Resources:</h6>
-                            <div class="list-group">
-                                ${dayData.resources.map(resourceId => {
-        const resource = window.DSAApp.RESOURCES[resourceId];
-        return resource ? `
-                                        <a href="${resource.url}" target="_blank" class="list-group-item list-group-item-action">
-                                            <i class="fas fa-external-link-alt me-2"></i>${resource.title}
-                                        </a>
-                                    ` : '';
-    }).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="startStudying(${week}, ${day})">
-                            Start Studying
-                        </button>
+        timelineContainer.innerHTML = recentProgress.map(progress => `
+            <div class="flex items-start space-x-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${progress.completed
+                ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400'
+                : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+            }">
+                        <i class="bi ${progress.completed ? 'bi-check-circle-fill' : 'bi-play-circle'}"></i>
                     </div>
                 </div>
+                
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-medium text-gray-900 dark:text-white">
+                            Week ${progress.week} - ${progress.topic}
+                        </h4>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                            ${progress.completion_date ? dateUtils.formatRelative(progress.completion_date) : 'In progress'}
+                        </span>
+                    </div>
+                    
+                    <div class="mt-1 flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                        <span><i class="bi bi-clock mr-1"></i>${progress.time_spent || 0} minutes</span>
+                        <span><i class="bi bi-calendar-day mr-1"></i>Day ${progress.day}</span>
+                    </div>
+                    
+                    ${progress.notes ? `
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${progress.notes}</p>
+                    ` : ''}
+                </div>
             </div>
-        </div>
-    `;
-
-    // Remove existing modal
-    const existingModal = document.getElementById('topicDetailModal');
-    if (existingModal) existingModal.remove();
-
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    const modal = new bootstrap.Modal(document.getElementById('topicDetailModal'));
-    modal.show();
-};
-
-// Start studying
-window.startStudying = function (week, day) {
-    window.location.href = `/study.html?week=${week}&day=${day}`;
-};
-
-// Generate progress report
-window.generateReport = async function () {
-    try {
-        window.DSAApp.showLoader();
-        window.DSAApp.showToast('Generating progress report...', 'info');
-
-        // Prepare report data
-        const reportData = {
-            user: window.DSAApp.AppState.user,
-            progress: progressData.progress,
-            streaks: progressData.streaks,
-            generatedAt: new Date().toISOString()
-        };
-
-        // In a real app, this would call a backend API to generate PDF
-        // For demo, we'll create a printable view
-        createPrintableReport(reportData);
-
-    } catch (error) {
-        console.error('Failed to generate report:', error);
-        window.DSAApp.showToast('Failed to generate report', 'error');
-    } finally {
-        window.DSAApp.hideLoader();
+        `).join('');
     }
-};
 
-// Create printable report
-function createPrintableReport(data) {
-    const reportWindow = window.open('', '_blank');
+    getRecentProgress() {
+        if (!this.progressData || !this.progressData.progress) return [];
 
-    const reportHTML = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>DSA Progress Report - ${data.user.username}</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>
-                @media print {
-                    .no-print { display: none; }
-                }
-                body { font-family: Arial, sans-serif; }
-                .header { border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px; }
-            </style>
-        </head>
-        <body class="p-4">
-            <div class="header">
-                <h1>DSA Learning Progress Report</h1>
-                <p>Generated for: ${data.user.username} | Date: ${new Date().toLocaleDateString()}</p>
+        return Object.entries(this.progressData.progress)
+            .filter(([key, progress]) => progress.completion_date)
+            .map(([key, progress]) => ({
+                ...progress,
+                key
+            }))
+            .sort((a, b) => new Date(b.completion_date) - new Date(a.completion_date))
+            .slice(0, 10);
+    }
+
+    renderAchievements() {
+        const achievementsList = document.getElementById('achievementsList');
+        if (!achievementsList) return;
+
+        const achievements = this.generateAchievements();
+
+        if (achievements.length === 0) {
+            achievementsList.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="bi bi-trophy text-gray-400 text-2xl mb-2"></i>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Complete topics to unlock achievements!</p>
+                </div>
+            `;
+            return;
+        }
+
+        achievementsList.innerHTML = achievements.map(achievement => `
+            <div class="flex items-center space-x-3 p-3 bg-gradient-to-r ${achievement.gradient} rounded-lg">
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="bi ${achievement.icon} text-white text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-medium text-white">${achievement.title}</h4>
+                    <p class="text-xs text-white text-opacity-80">${achievement.description}</p>
+                </div>
             </div>
-            
-            <h2>Summary</h2>
-            <ul>
-                <li>Total Study Time: ${window.DSAApp.formatTime(data.progress.statistics.total_time_minutes)}</li>
-                <li>Topics Completed: ${data.progress.statistics.total_completed} / 98 (${data.progress.statistics.completion_percentage}%)</li>
-                <li>Current Streak: ${data.streaks.current_streak} days</li>
-                <li>Longest Streak: ${data.streaks.longest_streak} days</li>
-            </ul>
-            
-            <h2>Weekly Progress</h2>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Week</th>
-                        <th>Completion</th>
-                        <th>Time Spent</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${generateWeeklyReportRows()}
-                </tbody>
-            </table>
-            
-            <button class="btn btn-primary no-print" onclick="window.print()">Print Report</button>
-        </body>
-        </html>
-    `;
+        `).join('');
+    }
 
-    reportWindow.document.write(reportHTML);
-    reportWindow.document.close();
-}
+    generateAchievements() {
+        if (!this.progressData) return [];
 
-// Generate weekly report rows
-function generateWeeklyReportRows() {
-    const weeklyData = [];
+        const achievements = [];
+        const stats = this.progressData.statistics;
+        const totalCompleted = stats.total_completed || 0;
+        const currentStreak = stats.current_streak || 0;
+        const totalTime = stats.total_time_minutes || 0;
 
-    for (let week = 1; week <= 14; week++) {
+        // Completion milestones
+        if (totalCompleted >= 1) {
+            achievements.push({
+                title: 'First Steps',
+                description: 'Completed your first topic',
+                icon: 'bi-star',
+                gradient: 'from-blue-500 to-blue-600'
+            });
+        }
+
+        if (totalCompleted >= 10) {
+            achievements.push({
+                title: 'Getting Started',
+                description: 'Completed 10 topics',
+                icon: 'bi-award',
+                gradient: 'from-green-500 to-green-600'
+            });
+        }
+
+        if (totalCompleted >= 50) {
+            achievements.push({
+                title: 'Half Century',
+                description: 'Completed 50 topics',
+                icon: 'bi-trophy',
+                gradient: 'from-yellow-500 to-yellow-600'
+            });
+        }
+
+        // Streak achievements
+        if (currentStreak >= 7) {
+            achievements.push({
+                title: 'Week Warrior',
+                description: '7-day learning streak',
+                icon: 'bi-fire',
+                gradient: 'from-orange-500 to-red-500'
+            });
+        }
+
+        if (currentStreak >= 30) {
+            achievements.push({
+                title: 'Month Master',
+                description: '30-day learning streak',
+                icon: 'bi-lightning',
+                gradient: 'from-purple-500 to-pink-500'
+            });
+        }
+
+        // Time achievements
+        const totalHours = Math.floor(totalTime / 60);
+        if (totalHours >= 10) {
+            achievements.push({
+                title: 'Time Investor',
+                description: '10+ hours of study time',
+                icon: 'bi-clock',
+                gradient: 'from-indigo-500 to-purple-500'
+            });
+        }
+
+        return achievements.slice(0, 3); // Show only top 3
+    }
+
+    renderGoals() {
+        // This would be populated from user preferences or settings
+        const topicsGoal = 7; // Weekly goal
+        const timeGoal = 10; // Hours per week
+
+        // Calculate current week progress
+        const currentWeekProgress = this.getCurrentWeekProgress();
+
+        // Update goals display
+        this.updateElement('#topicsGoal', `${currentWeekProgress.topics}/${topicsGoal}`);
+        this.updateElement('#timeGoal', `${Math.round(currentWeekProgress.hours)}h/${timeGoal}h`);
+
+        // Update progress bars
+        const topicsProgress = Math.round((currentWeekProgress.topics / topicsGoal) * 100);
+        const timeProgress = Math.round((currentWeekProgress.hours / timeGoal) * 100);
+
+        const topicsGoalBar = document.getElementById('topicsGoalBar');
+        const timeGoalBar = document.getElementById('timeGoalBar');
+
+        if (topicsGoalBar) topicsGoalBar.style.width = `${Math.min(100, topicsProgress)}%`;
+        if (timeGoalBar) timeGoalBar.style.width = `${Math.min(100, timeProgress)}%`;
+    }
+
+    getCurrentWeekProgress() {
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const recentProgress = this.getRecentProgress();
+        const thisWeekProgress = recentProgress.filter(progress =>
+            new Date(progress.completion_date) >= startOfWeek
+        );
+
+        const topics = thisWeekProgress.filter(p => p.completed).length;
+        const hours = thisWeekProgress.reduce((sum, p) => sum + (p.time_spent || 0), 0) / 60;
+
+        return { topics, hours };
+    }
+
+    // Utility methods
+    updateElement(selector, value) {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    formatHours(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+    }
+
+    calculateCurrentWeek() {
+        // This would be calculated based on user's start date
+        // For now, using a simple calculation
+        const daysSinceStart = this.getDaysSinceStart();
+        return Math.min(14, Math.ceil(daysSinceStart / 7));
+    }
+
+    getDaysSinceStart() {
+        // Assume user started at registration
+        const startDate = new Date('2024-01-01'); // This should come from user data
+        const now = new Date();
+        return Math.ceil((now - startDate) / (1000 * 60 * 60 * 24));
+    }
+
+    getWeekProgress(week) {
+        if (!this.progressData || !this.progressData.progress) {
+            return { completed: 0, totalTime: 0 };
+        }
+
         let completed = 0;
-        let timeSpent = 0;
+        let totalTime = 0;
 
         for (let day = 1; day <= 7; day++) {
             const key = `week${week}_day${day}`;
-            const progress = progressData.progress.progress[key];
-            if (progress?.completed) {
+            const progress = this.progressData.progress[key];
+
+            if (progress && progress.completed) {
                 completed++;
-                timeSpent += progress.time_spent || 0;
+            }
+            if (progress && progress.time_spent) {
+                totalTime += progress.time_spent;
             }
         }
 
-        weeklyData.push(`
-            <tr>
-                <td>Week ${week}</td>
-                <td>${completed} / 7 days</td>
-                <td>${window.DSAApp.formatTime(timeSpent)}</td>
-            </tr>
-        `);
+        return { completed, totalTime };
     }
 
-    return weeklyData.join('');
-}
+    getLast7Days() {
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            days.push(date.toISOString().split('T')[0]);
+        }
+        return days;
+    }
 
-// Setup event listeners
-function setupEventListeners() {
-    // Time range buttons
-    document.querySelectorAll('.btn-group button').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            // Remove active class from all buttons
-            e.target.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
+    switchView(view) {
+        this.currentView = view;
 
-            // Update chart based on selected range
-            const range = e.target.textContent.toLowerCase();
-            await updateChartRange(range);
+        // Update button states
+        ['weekly', 'monthly', 'overall'].forEach(v => {
+            const btn = document.getElementById(`${v}ViewBtn`);
+            if (btn) {
+                if (v === view) {
+                    btn.className = 'px-3 py-1 text-sm font-medium bg-white dark:bg-gray-600 text-gray-900 dark:text-white rounded-md shadow-sm';
+                } else {
+                    btn.className = 'px-3 py-1 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-white dark:hover:bg-gray-600';
+                }
+            }
         });
-    });
 
-    // Search functionality
-    const searchInput = document.querySelector('input[placeholder="Search topics..."]');
-    if (searchInput) {
-        searchInput.addEventListener('input', filterProgressTable);
+        // Update period for data loading
+        if (view === 'weekly') {
+            this.currentPeriod = 7;
+        } else if (view === 'monthly') {
+            this.currentPeriod = 30;
+        } else {
+            this.currentPeriod = 90;
+        }
+
+        // Reload data and charts
+        this.loadAnalyticsData().then(() => {
+            this.renderCharts();
+        });
+    }
+
+    filterTimeline(filter) {
+        // Update button states
+        ['all', 'week', 'month'].forEach(f => {
+            const btn = document.getElementById(`timeline${f.charAt(0).toUpperCase() + f.slice(1)}Btn`);
+            if (btn) {
+                if (f === filter) {
+                    btn.className = 'px-3 py-1 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-md';
+                } else {
+                    btn.className = 'px-3 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md';
+                }
+            }
+        });
+
+        // Apply filter and re-render timeline
+        this.timelineFilter = filter;
+        this.renderTimeline();
+    }
+
+    async updateGoals() {
+        const topicsPerWeek = parseInt(document.getElementById('topicsPerWeek').value);
+        const hoursPerWeek = parseInt(document.getElementById('hoursPerWeek').value);
+
+        try {
+            // This would typically update user preferences
+            await api.put(API_ENDPOINTS.profile, {
+                preferences: {
+                    weekly_topics_goal: topicsPerWeek,
+                    weekly_hours_goal: hoursPerWeek
+                }
+            });
+
+            modalManager.close('goalUpdateModal');
+            notificationManager.success('Goals updated successfully!');
+
+            // Re-render goals section
+            this.renderGoals();
+
+        } catch (error) {
+            console.error('Failed to update goals:', error);
+            notificationManager.error('Failed to update goals');
+        }
+    }
+
+    toggleTopicView() {
+        // Toggle between detailed and summary view
+        const button = document.getElementById('topicViewToggle');
+        if (button.textContent.includes('View All')) {
+            button.textContent = 'View Summary';
+            // Show detailed topic breakdown
+        } else {
+            button.textContent = 'View All';
+            // Show summary view
+        }
+    }
+
+    exportProgress() {
+        try {
+            const data = {
+                overview: this.progressData.statistics,
+                progress: this.progressData.progress,
+                analytics: this.analyticsData,
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            notificationManager.success('Progress data exported successfully!');
+        } catch (error) {
+            console.error('Export failed:', error);
+            notificationManager.error('Failed to export progress data');
+        }
     }
 }
 
-// Update chart range
-async function updateChartRange(range) {
-    try {
-        const days = range === 'week' ? 7 : range === 'month' ? 30 : 365;
-        const analytics = await window.API.getAnalytics(days);
-
-        progressData.analytics = analytics.data;
-        updateCharts();
-    } catch (error) {
-        console.error('Failed to update chart range:', error);
+// Initialize progress manager when on progress page
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.pathname.includes('progress')) {
+        window.progressManager = new ProgressManager();
     }
-}
-
-// Filter progress table
-function filterProgressTable(event) {
-    const query = event.target.value.toLowerCase();
-    const rows = document.querySelectorAll('#progressTableBody tr');
-
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(query) ? '' : 'none';
-    });
-}
+});

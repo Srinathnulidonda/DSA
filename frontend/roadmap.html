@@ -1,193 +1,263 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Roadmap - DSA Mastery</title>
+    <title>14-Week Roadmap - DSA Learning</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mobile.css">
 
-    <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
+<body class="font-inter bg-gray-50 dark:bg-gray-900">
 
-    <!-- Include Sidebar from dashboard -->
-    <aside class="sidebar d-none d-lg-block position-fixed top-0 start-0 h-100 bg-white shadow-sm"
-        style="width: 250px; z-index: 1000;">
-        <!-- Same sidebar as dashboard.html -->
-    </aside>
+    <!-- Top Navigation (Same as dashboard) -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 fixed top-0 w-full z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Mobile menu button -->
+                    <button id="mobileMenuToggle"
+                        class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="bi bi-list text-xl"></i>
+                    </button>
+
+                    <!-- Logo -->
+                    <div class="flex-shrink-0 flex items-center ml-4 md:ml-0">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">DSA Learning</h1>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="dashboard.html"
+                            class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="roadmap.html"
+                            class="border-blue-500 text-gray-900 dark:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Roadmap
+                        </a>
+                        <a href="progress.html"
+                            class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Progress
+                        </a>
+                        <a href="calendar.html"
+                            class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Calendar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <i class="bi bi-sun text-xl dark:hidden"></i>
+                        <i class="bi bi-moon text-xl hidden dark:block"></i>
+                    </button>
+
+                    <!-- Profile -->
+                    <div class="relative">
+                        <button id="profileToggle"
+                            class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff"
+                                alt="Profile" class="w-8 h-8 rounded-full">
+                            <span id="userName"
+                                class="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">User</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
-    <main class="main-content" style="margin-left: 250px;">
-        <!-- Top Navigation (same as dashboard) -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-            <!-- Same navigation as dashboard.html -->
-        </nav>
+    <main class="pt-16 pb-20 md:pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Roadmap Content -->
-        <div class="container-fluid p-4">
             <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">14-Week DSA Roadmap</h1>
+                        <p class="mt-2 text-gray-600 dark:text-gray-400">Master Data Structures & Algorithms with this
+                            comprehensive learning path</p>
+                    </div>
+
+                    <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                        <button id="toggleCompletedBtn"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <i class="bi bi-eye mr-2"></i>Hide Completed
+                        </button>
+                        <button id="filterBtn"
+                            class="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800">
+                            <i class="bi bi-funnel mr-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Overview -->
+                <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Overall Progress</h2>
+                        <span id="overallProgress" class="text-2xl font-bold text-blue-600 dark:text-blue-400">0%</span>
+                    </div>
+
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+                        <div id="progressBar"
+                            class="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                            style="width: 0%"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                         <div>
-                            <h1 class="h3 fw-bold mb-1">14-Week DSA Roadmap</h1>
-                            <p class="text-muted mb-0">Your complete journey from basics to advanced</p>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-white" id="completedDays">0</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Days Completed</div>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary rounded-pill" onclick="filterByStatus('all')">
-                                <i class="fas fa-list me-2"></i> All Weeks
-                            </button>
-                            <button class="btn btn-outline-success rounded-pill" onclick="filterByStatus('completed')">
-                                <i class="fas fa-check me-2"></i> Completed
-                            </button>
-                            <button class="btn btn-outline-warning rounded-pill" onclick="filterByStatus('current')">
-                                <i class="fas fa-clock me-2"></i> Current
-                            </button>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalHours">0h</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Time</div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Progress Overview -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold mb-3">Overall Progress</h5>
-                            <div class="progress mb-3" style="height: 25px;">
-                                <div class="progress-bar bg-gradient-to-r from-blue-500 to-purple-600"
-                                    role="progressbar" style="width: 35%">
-                                    <span class="fw-semibold">35% Complete</span>
-                                </div>
-                            </div>
-                            <div class="row text-center">
-                                <div class="col">
-                                    <h6 class="fw-bold text-success mb-0">5</h6>
-                                    <small class="text-muted">Weeks Completed</small>
-                                </div>
-                                <div class="col">
-                                    <h6 class="fw-bold text-warning mb-0">1</h6>
-                                    <small class="text-muted">Week In Progress</small>
-                                </div>
-                                <div class="col">
-                                    <h6 class="fw-bold text-muted mb-0">8</h6>
-                                    <small class="text-muted">Weeks Remaining</small>
-                                </div>
-                                <div class="col">
-                                    <h6 class="fw-bold text-info mb-0">120+</h6>
-                                    <small class="text-muted">Hours Invested</small>
-                                </div>
-                            </div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-white" id="currentWeek">1</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Current Week</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-white" id="weekProgress">0%</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Week Progress</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Roadmap Timeline -->
-            <div class="roadmap-timeline" id="roadmapContainer">
-                <!-- Week cards will be dynamically loaded here -->
-            </div>
-
-            <!-- Week Detail Modal -->
-            <div class="modal fade" id="weekDetailModal" tabindex="-1">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title fw-bold" id="weekModalTitle">Week Details</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body" id="weekModalBody">
-                            <!-- Week details will be loaded here -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="startWeek()">Start Learning</button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Roadmap Content -->
+            <div class="space-y-8" id="roadmapContainer">
+                <!-- Weeks will be dynamically loaded here -->
             </div>
         </div>
     </main>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav d-lg-none position-fixed bottom-0 start-0 end-0 bg-white shadow-lg">
-        <!-- Same as dashboard -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-30">
+        <div class="grid grid-cols-5">
+            <a href="dashboard.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-house text-xl mb-1"></i>
+                <span class="text-xs font-medium">Home</span>
+            </a>
+            <a href="roadmap.html"
+                class="flex flex-col items-center justify-center py-2 text-blue-600 dark:text-blue-400">
+                <i class="bi bi-map text-xl mb-1"></i>
+                <span class="text-xs font-medium">Roadmap</span>
+            </a>
+            <a href="pomodoro.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-clock text-xl mb-1"></i>
+                <span class="text-xs font-medium">Timer</span>
+            </a>
+            <a href="progress.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-graph-up text-xl mb-1"></i>
+                <span class="text-xs font-medium">Progress</span>
+            </a>
+            <a href="profile.html"
+                class="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i class="bi bi-person text-xl mb-1"></i>
+                <span class="text-xs font-medium">Profile</span>
+            </a>
+        </div>
     </nav>
 
+    <!-- Day Detail Modal -->
+    <div id="dayDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" id="modalDayTitle">Day Details</h3>
+                <button id="closeDayModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6" id="modalDayContent">
+                <!-- Day content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Filter Roadmap</h3>
+                <button id="closeFilterModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="filterCompleted"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Completed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="filterInProgress"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">In Progress</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="filterPending"
+                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                checked>
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Pending</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Week Range</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="weekFrom" min="1" max="14" value="1"
+                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        <input type="number" id="weekTo" min="1" max="14" value="14"
+                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button id="applyFilter"
+                        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                        Apply Filter
+                    </button>
+                    <button id="clearFilter"
+                        class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
     <script src="js/roadmap.js"></script>
-
-    <style>
-        .roadmap-timeline {
-            position: relative;
-            padding-left: 30px;
-        }
-
-        .roadmap-timeline::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #e5e7eb;
-        }
-
-        .week-card {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 30px;
-        }
-
-        .week-card::before {
-            content: '';
-            position: absolute;
-            left: -15px;
-            top: 20px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: white;
-            border: 3px solid #e5e7eb;
-            z-index: 1;
-        }
-
-        .week-card.completed::before {
-            background: #10b981;
-            border-color: #10b981;
-        }
-
-        .week-card.current::before {
-            background: #f59e0b;
-            border-color: #f59e0b;
-            animation: pulse 2s infinite;
-        }
-
-        .week-card.locked::before {
-            background: #6b7280;
-            border-color: #6b7280;
-        }
-    </style>
 </body>
 
 </html>
