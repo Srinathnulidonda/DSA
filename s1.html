@@ -1,0 +1,3680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Learning Dashboard - Master Data Structures & Algorithms</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css' rel='stylesheet' />
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --dark-color: #1f2937;
+            --light-color: #f3f4f6;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Glass Morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 260px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: #f8fafc;
+            color: var(--primary-color);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, #f0f9ff 0%, transparent 100%);
+            color: var(--primary-color);
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        /* Cards */
+        .custom-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        .custom-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Progress Bar */
+        .progress-custom {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-custom {
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            transition: width 0.6s ease;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Week Cards */
+        .week-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .week-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .week-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .week-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        /* Day Items */
+        .day-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .day-item:hover {
+            background: #f1f5f9;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .day-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Resource Links */
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-right: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .resource-link:hover {
+            color: var(--secondary-color);
+            transform: translateX(2px);
+        }
+
+        /* Streak Counter */
+        .streak-container {
+            background: var(--gradient-success);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .streak-number {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Notes Editor */
+        .notes-editor {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .note-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        .note-timestamp {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        /* Calendar Styles */
+        #calendar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .fc-event {
+            background: var(--gradient-primary);
+            border: none;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Motivational Quote */
+        .quote-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quote-text {
+            font-size: 1.25rem;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-author {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .main-content.expanded {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block !important;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: white;
+                border: none;
+                padding: 0.5rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .streak-container {
+                padding: 1rem;
+            }
+
+            .streak-number {
+                font-size: 2rem;
+            }
+
+            .week-card {
+                padding: 1rem;
+            }
+
+            .day-item {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tooltip */
+        .tooltip-custom {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-custom .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1f2937;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .tooltip-custom:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Achievement Badge */
+        .achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gradient-success);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .project-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .project-status.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .project-status.in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .project-status.not-started {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .sidebar {
+            background: #1e293b;
+        }
+
+        body.dark-mode .custom-card,
+        body.dark-mode .week-card,
+        body.dark-mode .notes-editor,
+        body.dark-mode #calendar,
+        body.dark-mode .project-card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        body.dark-mode .day-item,
+        body.dark-mode .note-item {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark-mode .menu-item {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .menu-item:hover {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .week-title,
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3,
+        body.dark-mode h4,
+        body.dark-mode h5 {
+            color: #f1f5f9;
+        }
+
+        /* Pomodoro Timer */
+        .pomodoro-container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin: 1rem 0;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .timer-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .timer-btn.start {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .timer-btn.pause {
+            background: var(--gradient-secondary);
+            color: white;
+        }
+
+        .timer-btn.reset {
+            background: #6b7280;
+            color: white;
+        }
+
+        /* Progress Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        /* Export/Import Buttons */
+        .data-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .data-btn:hover {
+            background: #f8fafc;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Glossary Modal */
+        .glossary-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glossary-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .glossary-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .glossary-term {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .glossary-definition {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Notification Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        .toast-notification.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast-notification.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        /* Leaderboard */
+        .leaderboard-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: #f8fafc;
+        }
+
+        .leaderboard-rank {
+            font-size: 1.5rem;
+            font-weight: 700;
+            width: 50px;
+            color: #94a3b8;
+        }
+
+        .leaderboard-rank.gold {
+            color: #f59e0b;
+        }
+
+        .leaderboard-rank.silver {
+            color: #6b7280;
+        }
+
+        .leaderboard-rank.bronze {
+            color: #92400e;
+        }
+
+        .leaderboard-user {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .leaderboard-score {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Custom Scrollbar for Dark Mode */
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="gradient-text mb-0">DSA Dashboard</h4>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#roadmap" class="menu-item" onclick="showSection('roadmap')">
+                <i class="fas fa-road"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="#calendar" class="menu-item" onclick="showSection('calendar')">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="#projects" class="menu-item" onclick="showSection('projects')">
+                <i class="fas fa-project-diagram"></i>
+                <span>Projects</span>
+            </a>
+            <a href="#notes" class="menu-item" onclick="showSection('notes')">
+                <i class="fas fa-sticky-note"></i>
+                <span>Notes</span>
+            </a>
+            <a href="#resources" class="menu-item" onclick="showSection('resources')">
+                <i class="fas fa-book"></i>
+                <span>Resources</span>
+            </a>
+            <a href="#progress" class="menu-item" onclick="showSection('progress')">
+                <i class="fas fa-chart-line"></i>
+                <span>Progress</span>
+            </a>
+            <a href="#pomodoro" class="menu-item" onclick="showSection('pomodoro')">
+                <i class="fas fa-clock"></i>
+                <span>Pomodoro</span>
+            </a>
+            <a href="#glossary" class="menu-item" onclick="showGlossary()">
+                <i class="fas fa-book-open"></i>
+                <span>Glossary</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section">
+            <div class="container-fluid">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h2 mb-0">Welcome Back, Learner! 👋</h1>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="exportProgress()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="importProgress()">
+                            <i class="fas fa-upload"></i> Import
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Motivational Quote -->
+                <div class="quote-container fade-in">
+                    <div class="quote-text" id="dailyQuote">"The expert in anything was once a beginner."</div>
+                    <div class="quote-author" id="quoteAuthor">- Helen Hayes</div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="streakCount">0</div>
+                        <div class="stat-label">Day Streak 🔥</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completedTopics">0</div>
+                        <div class="stat-label">Topics Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalHours">0</div>
+                        <div class="stat-label">Hours Studied</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="overallProgress">0%</div>
+                        <div class="stat-label">Overall Progress</div>
+                    </div>
+                </div>
+
+                <!-- Today's Schedule -->
+                <div class="custom-card mb-4">
+                    <h3 class="mb-3">Today's Schedule</h3>
+                    <div id="todaySchedule">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Recent Achievements -->
+                <div class="custom-card">
+                    <h3 class="mb-3">Recent Achievements 🏆</h3>
+                    <div id="achievements">
+                        <div class="achievement-badge">
+                            <i class="fas fa-trophy"></i>
+                            <span>First Week Completed!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">14-Week DSA Roadmap</h1>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search topics, resources..."
+                        id="roadmapSearch">
+                </div>
+
+                <!-- Progress Overview -->
+                <div class="custom-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>Overall Progress</h5>
+                        <span id="progressPercentage">0%</span>
+                    </div>
+                    <div class="progress-custom">
+                        <div class="progress-bar-custom" id="overallProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Roadmap Content -->
+                <div id="roadmapContent">
+                    <!-- Dynamic roadmap content will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section id="calendar-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">Learning Calendar</h1>
+                <div id="calendar"></div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">Projects Portfolio</h1>
+
+                <div class="row" id="projectsGrid">
+                    <!-- Dynamic project cards will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section id="notes-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">My Notes</h1>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="notes-editor">
+                            <input type="text" class="form-control mb-3" placeholder="Note title..." id="noteTitle">
+                            <textarea class="form-control mb-3" rows="5" placeholder="Write your notes here..."
+                                id="noteContent"></textarea>
+                            <button class="btn-primary-custom" onclick="saveNote()">
+                                <i class="fas fa-save"></i> Save Note
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="mb-3">Saved Notes</h5>
+                        <div id="savedNotes">
+                            <!-- Dynamic notes will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">Learning Resources</h1>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="custom-card">
+                            <h4 class="mb-3">📚 Text Resources</h4>
+                            <div class="resource-list">
+                                <a href="https://www.w3schools.com/dsa/" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> W3Schools DSA
+                                </a>
+                                <a href="https://www.javatpoint.com/data-structure-tutorial" target="_blank"
+                                    class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> JavaTpoint
+                                </a>
+                                <a href="https://www.programiz.com/dsa" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Programiz
+                                </a>
+                                <a href="https://www.tutorialspoint.com/data_structures_algorithms/" target="_blank"
+                                    class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> TutorialsPoint
+                                </a>
+                                <a href="https://www.geeksforgeeks.org/data-structures/" target="_blank"
+                                    class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> GeeksforGeeks
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="custom-card">
+                            <h4 class="mb-3">🎥 Video Resources</h4>
+                            <div class="resource-list">
+                                <a href="https://www.youtube.com/@CSDojo" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> CS Dojo
+                                </a>
+                                <a href="https://www.youtube.com/@NeetCode" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> NeetCode
+                                </a>
+                                <a href="https://www.youtube.com/@abdul_bari" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Abdul Bari
+                                </a>
+                                <a href="https://www.youtube.com/@mycodeschool" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> mycodeschool
+                                </a>
+                                <a href="https://www.youtube.com/c/Freecodecamp" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> freeCodeCamp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="custom-card">
+                            <h4 class="mb-3">🎮 Interactive Learning</h4>
+                            <div class="resource-list">
+                                <a href="https://visualgo.net/en" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> VisuAlgo
+                                </a>
+                                <a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html" target="_blank"
+                                    class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Algorithm Visualizations
+                                </a>
+                                <a href="http://pythontutor.com" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Python Tutor
+                                </a>
+                                <a href="https://codingbat.com" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Coding Bat
+                                </a>
+                                <a href="https://www.hackerearth.com/practice/" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> HackerEarth
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="custom-card">
+                            <h4 class="mb-3">💻 Practice Platforms</h4>
+                            <div class="resource-list">
+                                <a href="https://leetcode.com" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> LeetCode
+                                </a>
+                                <a href="https://www.hackerrank.com" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> HackerRank
+                                </a>
+                                <a href="https://codeforces.com" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> Codeforces
+                                </a>
+                                <a href="https://www.codechef.com" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> CodeChef
+                                </a>
+                                <a href="https://atcoder.jp" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> AtCoder
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section id="progress-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">Progress Tracking</h1>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Weekly Progress Chart -->
+                        <div class="custom-card mb-4">
+                            <h4 class="mb-3">Weekly Progress</h4>
+                            <canvas id="progressChart" width="400" height="200"></canvas>
+                        </div>
+
+                        <!-- Topic-wise Progress -->
+                        <div class="custom-card">
+                            <h4 class="mb-3">Topic-wise Progress</h4>
+                            <div id="topicProgress">
+                                <!-- Dynamic progress bars will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Leaderboard -->
+                        <div class="leaderboard-container">
+                            <h4 class="mb-3">Leaderboard</h4>
+                            <div id="leaderboard">
+                                <div class="leaderboard-item">
+                                    <span class="leaderboard-rank gold">1</span>
+                                    <div class="leaderboard-user">
+                                        <div>You</div>
+                                        <small class="text-muted">Current User</small>
+                                    </div>
+                                    <span class="leaderboard-score">1250 pts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pomodoro Section -->
+        <section id="pomodoro-section" class="content-section" style="display: none;">
+            <div class="container-fluid">
+                <h1 class="h2 mb-4">Pomodoro Timer</h1>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="pomodoro-container">
+                            <h3 class="mb-4">Study Session</h3>
+                            <div class="timer-display" id="timerDisplay">25:00</div>
+
+                            <div class="timer-controls">
+                                <button class="timer-btn start" onclick="startTimer()">
+                                    <i class="fas fa-play"></i> Start
+                                </button>
+                                <button class="timer-btn pause" onclick="pauseTimer()">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="timer-btn reset" onclick="resetTimer()">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                            </div>
+
+                            <div class="mt-4">
+                                <label>Session Length (minutes):</label>
+                                <input type="number" id="sessionLength" value="25" min="1" max="60"
+                                    class="form-control w-25 mx-auto">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Glossary Modal -->
+    <div class="glossary-modal" id="glossaryModal">
+        <div class="glossary-content">
+            <button class="btn-close position-absolute top-0 end-0 m-3" onclick="closeGlossary()"></button>
+            <h3 class="mb-4">DSA Glossary</h3>
+            <div id="glossaryContent">
+                <!-- Dynamic glossary content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon" id="darkModeIcon"></i>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="handleImportFile(event)">
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+
+    <!-- Main JavaScript -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXmZvRrn6EPsVJHNw0R0vCpG_pKgJ5GdY",
+            authDomain: "dsa-learning-dashboard.firebaseapp.com",
+            databaseURL: "https://dsa-learning-dashboard-default-rtdb.firebaseio.com",
+            projectId: "dsa-learning-dashboard",
+            storageBucket: "dsa-learning-dashboard.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456789012345"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Global Variables
+        let currentUser = null;
+        let userProgress = {};
+        let streakCount = 0;
+        let calendar = null;
+        let pomodoroTimer = null;
+        let pomodoroMinutes = 25;
+        let pomodoroSeconds = 0;
+        let isPomodoroRunning = false;
+
+        // DSA Roadmap Data
+        const dsaRoadmap = [
+            {
+                week: 1,
+                title: "Foundation & Environment",
+                goal: "Set up development environment and basic programming concepts",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Environment Setup",
+                        activities: "Install Python/C++, Git, IDE setup",
+                        resources: [
+                            { name: "Python Setup - W3Schools", url: "https://www.w3schools.com/python/python_getstarted.asp" },
+                            { name: "C++ Setup - JavaTpoint", url: "https://www.javatpoint.com/cpp-tutorial" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Basic Syntax",
+                        activities: "Variables, data types, operators",
+                        resources: [
+                            { name: "Python Syntax - W3Schools", url: "https://www.w3schools.com/python/python_syntax.asp" },
+                            { name: "C++ Basics - Programiz", url: "https://www.programiz.com/cpp-programming" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Input/Output",
+                        activities: "File I/O, console I/O, formatting",
+                        resources: [
+                            { name: "Python I/O - W3Schools", url: "https://www.w3schools.com/python/python_user_input.asp" },
+                            { name: "C++ I/O - JavaTpoint", url: "https://www.javatpoint.com/cpp-basic-input-output" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Functions",
+                        activities: "Function definition, parameters, scope",
+                        resources: [
+                            { name: "Python Functions - W3Schools", url: "https://www.w3schools.com/python/python_functions.asp" },
+                            { name: "C++ Functions - TutorialsPoint", url: "https://www.tutorialspoint.com/cplusplus/cpp_functions.htm" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Arrays/Lists Basics",
+                        activities: "Creation, indexing, basic operations",
+                        resources: [
+                            { name: "Python Lists - W3Schools", url: "https://www.w3schools.com/python/python_lists.asp" },
+                            { name: "C++ Arrays - Programiz", url: "https://www.programiz.com/cpp-programming/arrays" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Scientific Calculator",
+                        activities: "Plan features, basic arithmetic",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Scientific Calculator",
+                        activities: "Advanced operations, error handling",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Scientific Calculator",
+                    description: "Build a calculator with basic and scientific operations",
+                    difficulty: "Beginner"
+                }
+            },
+            {
+                week: 2,
+                title: "Arrays & String Mastery",
+                goal: "Master array operations and string manipulation",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Array Operations",
+                        activities: "Iteration, searching, basic algorithms",
+                        resources: [
+                            { name: "Arrays - W3Schools", url: "https://www.w3schools.com/dsa/dsa_arrays.php" },
+                            { name: "Array Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/Array.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Two Pointers Technique",
+                        activities: "Two Sum, reverse array, palindrome",
+                        resources: [
+                            { name: "Two Pointers - Programiz", url: "https://www.programiz.com/dsa/two-pointers-technique" },
+                            { name: "NeetCode Video", url: "https://www.youtube.com/watch?v=jzZsG8n2R9A" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "String Processing",
+                        activities: "Manipulation, pattern matching basics",
+                        resources: [
+                            { name: "Strings - W3Schools", url: "https://www.w3schools.com/python/python_strings.asp" },
+                            { name: "String DSA - JavaTpoint", url: "https://www.javatpoint.com/string-in-data-structure" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Sliding Window",
+                        activities: "Maximum subarray, longest substring",
+                        resources: [
+                            { name: "Sliding Window - GeeksforGeeks", url: "https://www.geeksforgeeks.org/window-sliding-technique/" },
+                            { name: "TutorialsPoint", url: "https://www.tutorialspoint.com/sliding-window-technique" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Two Sum, Longest Substring, Valid Palindrome",
+                        resources: [
+                            { name: "W3Schools Practice", url: "https://www.w3schools.com/dsa/dsa_exercises.php" },
+                            { name: "LeetCode #1", url: "https://leetcode.com/problems/two-sum/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Text Analyzer",
+                        activities: "Word count, frequency analysis",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Text Analyzer",
+                        activities: "Pattern detection, statistics",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Text Analyzer",
+                    description: "Analyze text for patterns, frequency, and statistics",
+                    difficulty: "Beginner"
+                }
+            },
+            {
+                week: 3,
+                title: "Linked Lists Deep Dive",
+                goal: "Master linked list operations and applications",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Linked List Basics",
+                        activities: "Node structure, traversal",
+                        resources: [
+                            { name: "Linked Lists - W3Schools", url: "https://www.w3schools.com/dsa/dsa_data_linkedlists.php" },
+                            { name: "JavaTpoint Tutorial", url: "https://www.javatpoint.com/singly-linked-list" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Singly Linked Lists",
+                        activities: "Insert, delete, search operations",
+                        resources: [
+                            { name: "LL Operations - Programiz", url: "https://www.programiz.com/dsa/linked-list" },
+                            { name: "TutorialsPoint", url: "https://www.tutorialspoint.com/data_structures_algorithms/linked_list_algorithms.htm" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Reverse & Manipulation",
+                        activities: "Reverse list, merge, cycle detection",
+                        resources: [
+                            { name: "Reverse LL - GeeksforGeeks", url: "https://www.geeksforgeeks.org/reverse-a-linked-list/" },
+                            { name: "W3Schools Examples", url: "https://www.w3schools.com/dsa/dsa_linkedlists_reverse.php" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Doubly & Circular Lists",
+                        activities: "Advanced variations and use cases",
+                        resources: [
+                            { name: "Doubly LL - JavaTpoint", url: "https://www.javatpoint.com/doubly-linked-list" },
+                            { name: "Circular LL - Programiz", url: "https://www.programiz.com/dsa/circular-linked-list" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Reverse, Merge Two Lists, Cycle Detection",
+                        resources: [
+                            { name: "LL Problems - W3Schools", url: "https://www.w3schools.com/dsa/dsa_exercises_linkedlists.php" },
+                            { name: "LeetCode #206", url: "https://leetcode.com/problems/reverse-linked-list/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Music Playlist Manager",
+                        activities: "Song management using linked lists",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Music Playlist Manager",
+                        activities: "Shuffle, repeat, playlist operations",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Music Playlist Manager",
+                    description: "Manage playlists with linked list operations",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 4,
+                title: "Stacks & Queues Applications",
+                goal: "Understand LIFO/FIFO operations and real-world applications",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Stack Fundamentals",
+                        activities: "LIFO operations, implementation",
+                        resources: [
+                            { name: "Stacks - W3Schools", url: "https://www.w3schools.com/dsa/dsa_data_stacks.php" },
+                            { name: "JavaTpoint Tutorial", url: "https://www.javatpoint.com/data-structure-stack" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Stack Applications",
+                        activities: "Expression evaluation, parentheses matching",
+                        resources: [
+                            { name: "Stack Applications - Programiz", url: "https://www.programiz.com/dsa/stack" },
+                            { name: "TutorialsPoint Examples", url: "https://www.tutorialspoint.com/data_structures_algorithms/stack_algorithm.htm" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Queue Fundamentals",
+                        activities: "FIFO operations, circular queues",
+                        resources: [
+                            { name: "Queues - W3Schools", url: "https://www.w3schools.com/dsa/dsa_data_queues.php" },
+                            { name: "JavaTpoint Queue", url: "https://www.javatpoint.com/data-structure-queue" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Advanced Queues",
+                        activities: "Deque, priority queue introduction",
+                        resources: [
+                            { name: "Deque - GeeksforGeeks", url: "https://www.geeksforgeeks.org/deque-set-1-introduction-applications/" },
+                            { name: "Priority Queue - Programiz", url: "https://www.programiz.com/dsa/priority-queue" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Valid Parentheses, Min Stack",
+                        resources: [
+                            { name: "Stack Problems - W3Schools", url: "https://www.w3schools.com/dsa/dsa_exercises_stacks.php" },
+                            { name: "LeetCode #20", url: "https://leetcode.com/problems/valid-parentheses/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Code Editor",
+                        activities: "Undo/redo functionality using stacks",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Code Editor",
+                        activities: "Bracket matching, syntax validation",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Code Editor",
+                    description: "Build a code editor with undo/redo and bracket matching",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 5,
+                title: "Binary Trees Foundation",
+                goal: "Master tree traversals and basic tree operations",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Tree Basics",
+                        activities: "Terminology, node structure",
+                        resources: [
+                            { name: "Trees - W3Schools", url: "https://www.w3schools.com/dsa/dsa_data_trees.php" },
+                            { name: "Binary Trees - JavaTpoint", url: "https://www.javatpoint.com/binary-tree" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Tree Traversals (DFS)",
+                        activities: "Preorder, inorder, postorder",
+                        resources: [
+                            { name: "Tree Traversal - Programiz", url: "https://www.programiz.com/dsa/tree-traversal" },
+                            { name: "GeeksforGeeks Examples", url: "https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Level Order (BFS)",
+                        activities: "Breadth-first traversal using queues",
+                        resources: [
+                            { name: "Level Order - TutorialsPoint", url: "https://www.tutorialspoint.com/data_structures_algorithms/tree_traversal.htm" },
+                            { name: "W3Schools BFS", url: "https://www.w3schools.com/dsa/dsa_algo_graphs_bfs.php" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Tree Properties",
+                        activities: "Height, depth, diameter calculations",
+                        resources: [
+                            { name: "Tree Properties - JavaTpoint", url: "https://www.javatpoint.com/tree-data-structure" },
+                            { name: "Programiz Tree Operations", url: "https://www.programiz.com/dsa/binary-tree" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Max Depth, Same Tree, Symmetric Tree",
+                        resources: [
+                            { name: "Tree Problems - W3Schools", url: "https://www.w3schools.com/dsa/dsa_exercises_trees.php" },
+                            { name: "LeetCode #104", url: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Family Tree",
+                        activities: "Genealogy tree with traversals",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Family Tree",
+                        activities: "Relationship queries, tree visualization",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Family Tree",
+                    description: "Create a genealogy tree with relationship queries",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 6,
+                title: "Binary Search Trees",
+                goal: "Master BST operations and balanced tree concepts",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "BST Properties",
+                        activities: "BST invariant, insertion, search",
+                        resources: [
+                            { name: "BST Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/BST.html" },
+                            { name: "BST - Abdul Bari", url: "https://www.youtube.com/watch?v=pYT9F8_LFTM" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "BST Operations",
+                        activities: "Insert, delete, find operations",
+                        resources: [
+                            { name: "BST Operations", url: "https://www.geeksforgeeks.org/binary-search-tree-data-structure/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "BST Validation",
+                        activities: "Validate BST, range checking",
+                        resources: [
+                            { name: "Validate BST - NeetCode", url: "https://www.youtube.com/watch?v=s6ATEkipzow" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Balanced Trees",
+                        activities: "AVL introduction, rotation concepts",
+                        resources: [
+                            { name: "AVL Trees", url: "https://visualgo.net/en/bst" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Validate BST, Lowest Common Ancestor",
+                        resources: [
+                            { name: "LeetCode #98", url: "https://leetcode.com/problems/validate-binary-search-tree/" },
+                            { name: "LeetCode #235", url: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Student Database",
+                        activities: "BST-based student record system",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Student Database",
+                        activities: "Search, grade analysis, reporting",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Student Database",
+                    description: "Build a student record system using BST",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 7,
+                title: "Heaps & Priority Queues",
+                goal: "Master heap operations and priority-based algorithms",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Heap Fundamentals",
+                        activities: "Min/max heap properties, heapify",
+                        resources: [
+                            { name: "Heap Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/Heap.html" },
+                            { name: "Heap - Abdul Bari", url: "https://www.youtube.com/watch?v=HqPJF2L5h9U" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Heap Operations",
+                        activities: "Insert, extract, build heap",
+                        resources: [
+                            { name: "Heap Operations", url: "https://www.geeksforgeeks.org/binary-heap/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Priority Queue",
+                        activities: "Implementation using heaps",
+                        resources: [
+                            { name: "Priority Queue", url: "https://docs.python.org/3/library/heapq.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Heap Applications",
+                        activities: "Top K elements, median finding",
+                        resources: [
+                            { name: "Top K Problems", url: "https://leetcode.com/problems/kth-largest-element-in-an-array/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Kth Largest, Merge K Lists",
+                        resources: [
+                            { name: "LeetCode #215", url: "https://leetcode.com/problems/kth-largest-element-in-an-array/" },
+                            { name: "LeetCode #23", url: "https://leetcode.com/problems/merge-k-sorted-lists/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Task Scheduler",
+                        activities: "Priority-based task management",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Task Scheduler",
+                        activities: "Deadline handling, priority queues",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Task Scheduler",
+                    description: "Create a priority-based task management system",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 8,
+                title: "Hashing & Hash Tables",
+                goal: "Master hash-based data structures and fast lookups",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Hashing Basics",
+                        activities: "Hash functions, collision handling",
+                        resources: [
+                            { name: "Hash Table Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/OpenHash.html" },
+                            { name: "Hashing - CS Dojo", url: "https://www.youtube.com/watch?v=shs0KM3wKv8" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Hash Table Operations",
+                        activities: "Insert, search, delete with collisions",
+                        resources: [
+                            { name: "Hash Tables", url: "https://www.geeksforgeeks.org/hashing-data-structure/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Hash Applications",
+                        activities: "Frequency counting, duplicate detection",
+                        resources: [
+                            { name: "Python Dict", url: "https://docs.python.org/3/tutorial/datastructures.html#dictionaries" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Advanced Hashing",
+                        activities: "Rolling hash, perfect hashing",
+                        resources: [
+                            { name: "Rolling Hash", url: "https://www.geeksforgeeks.org/rolling-hash-to-find-lexicographically-smallest-substring/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Two Sum, Group Anagrams, Valid Anagram",
+                        resources: [
+                            { name: "LeetCode #1", url: "https://leetcode.com/problems/two-sum/" },
+                            { name: "LeetCode #49", url: "https://leetcode.com/problems/group-anagrams/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Spell Checker",
+                        activities: "Hash-based dictionary and suggestions",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Spell Checker",
+                        activities: "Edit distance, word suggestions",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Spell Checker",
+                    description: "Build a spell checker with word suggestions",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 9,
+                title: "Graph Fundamentals",
+                goal: "Master graph representations and basic algorithms",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Graph Basics",
+                        activities: "Representation, adjacency list/matrix",
+                        resources: [
+                            { name: "Graph Visualization", url: "https://visualgo.net/en/graphds" },
+                            { name: "Graph Theory - CS Dojo", url: "https://www.youtube.com/watch?v=gXgEDyodOJU" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "DFS Implementation",
+                        activities: "Depth-first search, applications",
+                        resources: [
+                            { name: "DFS Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/DFS.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "BFS Implementation",
+                        activities: "Breadth-first search, shortest path",
+                        resources: [
+                            { name: "BFS Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/BFS.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Graph Applications",
+                        activities: "Connected components, cycle detection",
+                        resources: [
+                            { name: "Graph Applications", url: "https://www.geeksforgeeks.org/applications-of-graph-data-structure/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Key Problems",
+                        activities: "Number of Islands, Clone Graph",
+                        resources: [
+                            { name: "LeetCode #200", url: "https://leetcode.com/problems/number-of-islands/" },
+                            { name: "LeetCode #133", url: "https://leetcode.com/problems/clone-graph/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Social Network",
+                        activities: "Friend connections using graphs",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Social Network",
+                        activities: "Friend suggestions, mutual connections",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Social Network",
+                    description: "Create a social network with friend suggestions",
+                    difficulty: "Advanced"
+                }
+            },
+            {
+                week: 10,
+                title: "Advanced Graph Algorithms",
+                goal: "Master shortest path and advanced graph algorithms",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Dijkstra's Algorithm",
+                        activities: "Shortest path in weighted graphs",
+                        resources: [
+                            { name: "Dijkstra Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/Dijkstra.html" },
+                            { name: "Dijkstra - Abdul Bari", url: "https://www.youtube.com/watch?v=XB4MIexjvY0" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Bellman-Ford",
+                        activities: "Negative weight handling",
+                        resources: [
+                            { name: "Bellman-Ford", url: "https://visualgo.net/en/sssp" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Floyd-Warshall",
+                        activities: "All-pairs shortest path",
+                        resources: [
+                            { name: "Floyd-Warshall", url: "https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "MST Algorithms",
+                        activities: "Kruskal's and Prim's algorithms",
+                        resources: [
+                            { name: "MST Visualization", url: "https://visualgo.net/en/mst" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Topological Sort",
+                        activities: "Ordering in DAGs",
+                        resources: [
+                            { name: "Topological Sort", url: "https://www.geeksforgeeks.org/topological-sorting/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: GPS Navigation",
+                        activities: "Shortest path finder",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: GPS Navigation",
+                        activities: "Route optimization, traffic handling",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "GPS Navigation",
+                    description: "Build a GPS navigation system with route optimization",
+                    difficulty: "Advanced"
+                }
+            },
+            {
+                week: 11,
+                title: "Sorting & Searching Mastery",
+                goal: "Master all major sorting algorithms and binary search variations",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Basic Sorting",
+                        activities: "Bubble, selection, insertion sort",
+                        resources: [
+                            { name: "Sorting Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Merge Sort",
+                        activities: "Divide and conquer approach",
+                        resources: [
+                            { name: "Merge Sort - mycodeschool", url: "https://www.youtube.com/watch?v=JSceec-wEyw" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Quick Sort",
+                        activities: "Partitioning and optimization",
+                        resources: [
+                            { name: "Quick Sort Visualization", url: "https://visualgo.net/en/sorting" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Binary Search",
+                        activities: "Search variations, bounds",
+                        resources: [
+                            { name: "Binary Search - NeetCode", url: "https://www.youtube.com/watch?v=s4DPM8ct1pI" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Advanced Searching",
+                        activities: "Ternary search, exponential search",
+                        resources: [
+                            { name: "Advanced Search", url: "https://www.geeksforgeeks.org/ternary-search/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Movie Database",
+                        activities: "Sorting and searching optimization",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Movie Database",
+                        activities: "Multi-criteria sorting, fast queries",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Movie Database",
+                    description: "Create a movie database with advanced search",
+                    difficulty: "Intermediate"
+                }
+            },
+            {
+                week: 12,
+                title: "Recursion & Backtracking",
+                goal: "Master recursive problem-solving and backtracking patterns",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Recursion Basics",
+                        activities: "Base cases, recursive thinking",
+                        resources: [
+                            { name: "Recursion - CS Dojo", url: "https://www.youtube.com/watch?v=KEEKn7Me-ms" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Recursive Patterns",
+                        activities: "Tree recursion, memoization",
+                        resources: [
+                            { name: "Recursion Patterns", url: "http://pythontutor.com" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Backtracking Intro",
+                        activities: "Template, decision trees",
+                        resources: [
+                            { name: "Backtracking - NeetCode", url: "https://www.youtube.com/watch?v=pfiQ_PS1g8E" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Classic Problems",
+                        activities: "N-Queens, Sudoku solver",
+                        resources: [
+                            { name: "N-Queens Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/RecQueens.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "More Backtracking",
+                        activities: "Subsets, permutations, combinations",
+                        resources: [
+                            { name: "LeetCode #78", url: "https://leetcode.com/problems/subsets/" },
+                            { name: "LeetCode #46", url: "https://leetcode.com/problems/permutations/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Sudoku Solver",
+                        activities: "Interactive puzzle solver",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Sudoku Solver",
+                        activities: "Validation, hints, difficulty levels",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Sudoku Solver",
+                    description: "Build an interactive Sudoku solver with hints",
+                    difficulty: "Advanced"
+                }
+            },
+            {
+                week: 13,
+                title: "Dynamic Programming",
+                goal: "Master DP patterns and optimization problems",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "DP Fundamentals",
+                        activities: "Memoization vs tabulation",
+                        resources: [
+                            { name: "DP - NeetCode", url: "https://www.youtube.com/watch?v=oBt53YbR9Kk" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Classic DP",
+                        activities: "Fibonacci, climbing stairs, coin change",
+                        resources: [
+                            { name: "DP Patterns", url: "https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "String DP",
+                        activities: "LCS, edit distance, palindromes",
+                        resources: [
+                            { name: "String DP", url: "https://www.geeksforgeeks.org/longest-common-subsequence-dp-4/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Knapsack Problems",
+                        activities: "0/1 and unbounded knapsack",
+                        resources: [
+                            { name: "Knapsack DP", url: "https://www.youtube.com/watch?v=8LusJS5-AGo" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "Advanced DP",
+                        activities: "LIS, maximum subarray, matrix chain",
+                        resources: [
+                            { name: "LeetCode #300", url: "https://leetcode.com/problems/longest-increasing-subsequence/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: Investment Calculator",
+                        activities: "DP-based financial optimization",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Project Complete: Investment Calculator",
+                        activities: "Portfolio optimization, risk analysis",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Investment Calculator",
+                    description: "Create a DP-based investment optimization tool",
+                    difficulty: "Advanced"
+                }
+            },
+            {
+                week: 14,
+                title: "Advanced Topics & System Design",
+                goal: "Integrate all concepts into a comprehensive system",
+                days: [
+                    {
+                        day: "Monday",
+                        topic: "Greedy Algorithms",
+                        activities: "Activity selection, Huffman coding",
+                        resources: [
+                            { name: "Greedy Algorithms", url: "https://www.geeksforgeeks.org/greedy-algorithms/" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Tuesday",
+                        topic: "Bit Manipulation",
+                        activities: "Bitwise operations, bit tricks",
+                        resources: [
+                            { name: "Bit Manipulation", url: "https://www.youtube.com/watch?v=NLKQEOgBAnw" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Wednesday",
+                        topic: "Trie Data Structure",
+                        activities: "Prefix trees, autocomplete",
+                        resources: [
+                            { name: "Trie Visualization", url: "https://www.cs.usfca.edu/~galles/visualization/Trie.html" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Thursday",
+                        topic: "Union-Find",
+                        activities: "Disjoint set operations",
+                        resources: [
+                            { name: "Union-Find", url: "https://visualgo.net/en/ufds" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Friday",
+                        topic: "System Design Prep",
+                        activities: "Scalability, data structure choices",
+                        resources: [
+                            { name: "System Design Primer", url: "https://github.com/donnemartin/system-design-primer" }
+                        ],
+                        time: "2h"
+                    },
+                    {
+                        day: "Saturday",
+                        topic: "Project Start: File Compressor",
+                        activities: "Huffman coding implementation",
+                        resources: [],
+                        time: "2h"
+                    },
+                    {
+                        day: "Sunday",
+                        topic: "Final Project: Mini Database",
+                        activities: "Complete system with all DSA concepts",
+                        resources: [],
+                        time: "2h"
+                    }
+                ],
+                project: {
+                    name: "Mini Database & File Compressor",
+                    description: "Build a comprehensive system using all DSA concepts",
+                    difficulty: "Expert"
+                }
+            }
+        ];
+
+        // Projects Data
+        const projectsData = [
+            {
+                week: 1,
+                name: "Scientific Calculator",
+                description: "Build a calculator with basic and scientific operations",
+                difficulty: "Beginner",
+                concepts: ["Arrays", "Functions", "Error Handling"],
+                status: "not-started"
+            },
+            {
+                week: 2,
+                name: "Text Analyzer",
+                description: "Analyze text for patterns, frequency, and statistics",
+                difficulty: "Beginner",
+                concepts: ["String Processing", "Hash Maps", "Algorithms"],
+                status: "not-started"
+            },
+            {
+                week: 3,
+                name: "Music Playlist Manager",
+                description: "Manage playlists with linked list operations",
+                difficulty: "Intermediate",
+                concepts: ["Linked Lists", "Doubly Linked Lists", "Circular Lists"],
+                status: "not-started"
+            },
+            {
+                week: 4,
+                name: "Code Editor",
+                description: "Build a code editor with undo/redo and bracket matching",
+                difficulty: "Intermediate",
+                concepts: ["Stacks", "String Processing", "Syntax Validation"],
+                status: "not-started"
+            },
+            {
+                week: 5,
+                name: "Family Tree",
+                description: "Create a genealogy tree with relationship queries",
+                difficulty: "Intermediate",
+                concepts: ["Binary Trees", "Tree Traversals", "BFS/DFS"],
+                status: "not-started"
+            },
+            {
+                week: 6,
+                name: "Student Database",
+                description: "Build a student record system using BST",
+                difficulty: "Intermediate",
+                concepts: ["Binary Search Trees", "CRUD Operations", "Balanced Trees"],
+                status: "not-started"
+            },
+            {
+                week: 7,
+                name: "Task Scheduler",
+                description: "Create a priority-based task management system",
+                difficulty: "Intermediate",
+                concepts: ["Heaps", "Priority Queues", "Scheduling Algorithms"],
+                status: "not-started"
+            },
+            {
+                week: 8,
+                name: "Spell Checker",
+                description: "Build a spell checker with word suggestions",
+                difficulty: "Intermediate",
+                concepts: ["Hash Tables", "Edit Distance", "Trie"],
+                status: "not-started"
+            },
+            {
+                week: 9,
+                name: "Social Network",
+                description: "Create a social network with friend suggestions",
+                difficulty: "Advanced",
+                concepts: ["Graphs", "BFS/DFS", "Graph Algorithms"],
+                status: "not-started"
+            },
+            {
+                week: 10,
+                name: "GPS Navigation",
+                description: "Build a GPS navigation system with route optimization",
+                difficulty: "Advanced",
+                concepts: ["Dijkstra's Algorithm", "Graph Algorithms", "Optimization"],
+                status: "not-started"
+            },
+            {
+                week: 11,
+                name: "Movie Database",
+                description: "Create a movie database with advanced search",
+                difficulty: "Intermediate",
+                concepts: ["Sorting Algorithms", "Binary Search", "Indexing"],
+                status: "not-started"
+            },
+            {
+                week: 12,
+                name: "Sudoku Solver",
+                description: "Build an interactive Sudoku solver with hints",
+                difficulty: "Advanced",
+                concepts: ["Backtracking", "Recursion", "Constraint Satisfaction"],
+                status: "not-started"
+            },
+            {
+                week: 13,
+                name: "Investment Calculator",
+                description: "Create a DP-based investment optimization tool",
+                difficulty: "Advanced",
+                concepts: ["Dynamic Programming", "Optimization", "Memoization"],
+                status: "not-started"
+            },
+            {
+                week: 14,
+                name: "Mini Database & File Compressor",
+                description: "Build a comprehensive system using all DSA concepts",
+                difficulty: "Expert",
+                concepts: ["All DSA Concepts", "System Design", "Integration"],
+                status: "not-started"
+            }
+        ];
+
+        // Glossary Data
+        const glossaryData = [
+            {
+                term: "Algorithm",
+                definition: "A step-by-step procedure for solving a problem or accomplishing a task."
+            },
+            {
+                term: "Big O Notation",
+                definition: "A mathematical notation that describes the limiting behavior of a function when the argument tends towards a particular value or infinity."
+            },
+            {
+                term: "Array",
+                definition: "A collection of elements stored at contiguous memory locations, accessed by indices."
+            },
+            {
+                term: "Linked List",
+                definition: "A linear data structure where elements are stored in nodes, and each node points to the next node."
+            },
+            {
+                term: "Stack",
+                definition: "A LIFO (Last In, First Out) data structure where elements are added and removed from the same end."
+            },
+            {
+                term: "Queue",
+                definition: "A FIFO (First In, First Out) data structure where elements are added at the rear and removed from the front."
+            },
+            {
+                term: "Binary Tree",
+                definition: "A tree data structure in which each node has at most two children, referred to as left and right child."
+            },
+            {
+                term: "Binary Search Tree (BST)",
+                definition: "A binary tree where the left subtree contains values less than the root, and the right subtree contains values greater than the root."
+            },
+            {
+                term: "Heap",
+                definition: "A complete binary tree that satisfies the heap property: parent nodes are either greater than (max heap) or less than (min heap) their children."
+            },
+            {
+                term: "Hash Table",
+                definition: "A data structure that implements an associative array, mapping keys to values using a hash function."
+            },
+            {
+                term: "Graph",
+                definition: "A non-linear data structure consisting of vertices (nodes) and edges that connect these vertices."
+            },
+            {
+                term: "Dynamic Programming",
+                definition: "An algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems and storing results to avoid redundant calculations."
+            },
+            {
+                term: "Recursion",
+                definition: "A programming technique where a function calls itself to solve a problem by breaking it down into smaller instances."
+            },
+            {
+                term: "Time Complexity",
+                definition: "A measure of the amount of time an algorithm takes to complete as a function of the input size."
+            },
+            {
+                term: "Space Complexity",
+                definition: "A measure of the amount of memory an algorithm uses as a function of the input size."
+            }
+        ];
+
+        // Motivational Quotes
+        const motivationalQuotes = [
+            { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+            { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair" },
+            { text: "Believe in yourself. You are braver than you think, more talented than you know, and capable of more than you imagine.", author: "Roy T. Bennett" },
+            { text: "I learned that courage was not the absence of fear, but the triumph over it.", author: "Nelson Mandela" },
+            { text: "The mind is everything. What you think you become.", author: "Buddha" }
+        ];
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Initialize user session
+            initializeUser();
+
+            // Load saved progress
+            loadProgress();
+
+            // Initialize UI components
+            initializeCalendar();
+            displayDailyQuote();
+            renderRoadmap();
+            renderProjects();
+            renderGlossary();
+            updateTodaySchedule();
+            updateStatistics();
+            initializeProgressChart();
+
+            // Set up event listeners
+            setupEventListeners();
+
+            // Check for achievements
+            checkAchievements();
+
+            // Show dashboard by default
+            showSection('dashboard');
+        }
+
+        function initializeUser() {
+            // For demo purposes, using a simple user ID
+            // In production, implement proper authentication
+            const userId = localStorage.getItem('userId') || generateUserId();
+            localStorage.setItem('userId', userId);
+            currentUser = userId;
+        }
+
+        function generateUserId() {
+            return 'user_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('dsaProgress');
+            if (savedProgress) {
+                userProgress = JSON.parse(savedProgress);
+            } else {
+                // Initialize empty progress
+                userProgress = {
+                    completedTopics: [],
+                    currentWeek: 1,
+                    currentDay: 0,
+                    streak: 0,
+                    lastActiveDate: new Date().toISOString().split('T')[0],
+                    totalHours: 0,
+                    notes: [],
+                    projectStatus: {}
+                };
+                saveProgress();
+            }
+
+            // Update streak
+            updateStreak();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('dsaProgress', JSON.stringify(userProgress));
+
+            // Save to Firebase if connected
+            if (currentUser && database) {
+                database.ref('users/' + currentUser + '/progress').set(userProgress);
+            }
+        }
+
+        function updateStreak() {
+            const today = new Date().toISOString().split('T')[0];
+            const lastActive = userProgress.lastActiveDate;
+
+            if (lastActive === today) {
+                // Already active today
+                return;
+            }
+
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+            if (lastActive === yesterdayStr) {
+                // Continuing streak
+                userProgress.streak++;
+            } else {
+                // Streak broken
+                userProgress.streak = 1;
+            }
+
+            userProgress.lastActiveDate = today;
+            saveProgress();
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + '-section').style.display = 'block';
+
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[onclick="showSection('${sectionName}')"]`).classList.add('active');
+
+            // Special handling for calendar
+            if (sectionName === 'calendar' && calendar) {
+                calendar.render();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('expanded');
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('darkModeIcon');
+
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeIcon').classList.remove('fa-moon');
+            document.getElementById('darkModeIcon').classList.add('fa-sun');
+        }
+
+        function displayDailyQuote() {
+            const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+            document.getElementById('dailyQuote').textContent = `"${randomQuote.text}"`;
+            document.getElementById('quoteAuthor').textContent = `- ${randomQuote.author}`;
+        }
+
+        function renderRoadmap() {
+            const roadmapContent = document.getElementById('roadmapContent');
+            roadmapContent.innerHTML = '';
+
+            dsaRoadmap.forEach((week, weekIndex) => {
+                const weekCard = document.createElement('div');
+                weekCard.className = 'week-card';
+                weekCard.innerHTML = `
+                    <div class="week-header" onclick="toggleWeek(${weekIndex})">
+                        <div>
+                            <div class="week-title">Week ${week.week}: ${week.title}</div>
+                            <small class="text-muted">${week.goal}</small>
+                        </div>
+                        <div class="week-progress">
+                            <span id="week-${weekIndex}-progress">0/7</span>
+                            <i class="fas fa-chevron-down ms-2"></i>
+                        </div>
+                    </div>
+                    <div class="week-content" id="week-${weekIndex}-content" style="display: none;">
+                        ${renderWeekDays(week, weekIndex)}
+                    </div>
+                `;
+                roadmapContent.appendChild(weekCard);
+            });
+
+            updateWeekProgress();
+        }
+
+        function renderWeekDays(week, weekIndex) {
+            let daysHtml = '';
+
+            week.days.forEach((day, dayIndex) => {
+                const dayId = `week-${weekIndex}-day-${dayIndex}`;
+                const isCompleted = userProgress.completedTopics.includes(dayId);
+
+                daysHtml += `
+                    <div class="day-item">
+                        <div class="day-header">
+                            <div>
+                                <strong>${day.day}</strong> - ${day.topic}
+                                <div class="text-muted small mt-1">${day.activities}</div>
+                            </div>
+                            <input type="checkbox" class="day-checkbox" id="${dayId}" 
+                                ${isCompleted ? 'checked' : ''} 
+                                onchange="toggleDayComplete('${dayId}', ${weekIndex})">
+                        </div>
+                        <div class="mt-2">
+                            ${day.resources.map(res => `
+                                <a href="${res.url}" target="_blank" class="resource-link">
+                                    <i class="fas fa-external-link-alt"></i> ${res.name}
+                                </a>
+                            `).join('')}
+                            <span class="text-muted small ms-3">
+                                <i class="fas fa-clock"></i> ${day.time}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (week.project) {
+                daysHtml += `
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <h6 class="mb-2">
+                            <i class="fas fa-project-diagram"></i> Week Project: ${week.project.name}
+                        </h6>
+                        <p class="mb-1 small">${week.project.description}</p>
+                        <span class="badge bg-secondary">${week.project.difficulty}</span>
+                    </div>
+                `;
+            }
+
+            return daysHtml;
+        }
+
+        function toggleWeek(weekIndex) {
+            const content = document.getElementById(`week-${weekIndex}-content`);
+            const isVisible = content.style.display !== 'none';
+
+            // Hide all week contents
+            document.querySelectorAll('.week-content').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Toggle current week
+            if (!isVisible) {
+                content.style.display = 'block';
+            }
+        }
+
+        function toggleDayComplete(dayId, weekIndex) {
+            const checkbox = document.getElementById(dayId);
+
+            if (checkbox.checked) {
+                if (!userProgress.completedTopics.includes(dayId)) {
+                    userProgress.completedTopics.push(dayId);
+                    showToast('Great job! Topic completed! 🎉', 'success');
+
+                    // Update hours studied (assuming 2 hours per topic)
+                    userProgress.totalHours += 2;
+                }
+            } else {
+                const index = userProgress.completedTopics.indexOf(dayId);
+                if (index > -1) {
+                    userProgress.completedTopics.splice(index, 1);
+                    userProgress.totalHours = Math.max(0, userProgress.totalHours - 2);
+                }
+            }
+
+            saveProgress();
+            updateWeekProgress();
+            updateStatistics();
+            checkAchievements();
+        }
+
+        function updateWeekProgress() {
+            dsaRoadmap.forEach((week, weekIndex) => {
+                let completed = 0;
+                week.days.forEach((day, dayIndex) => {
+                    const dayId = `week-${weekIndex}-day-${dayIndex}`;
+                    if (userProgress.completedTopics.includes(dayId)) {
+                        completed++;
+                    }
+                });
+
+                document.getElementById(`week-${weekIndex}-progress`).textContent = `${completed}/7`;
+            });
+
+            // Update overall progress
+            const totalTopics = dsaRoadmap.reduce((sum, week) => sum + week.days.length, 0);
+            const completedTopics = userProgress.completedTopics.length;
+            const progressPercentage = Math.round((completedTopics / totalTopics) * 100);
+
+            document.getElementById('progressPercentage').textContent = `${progressPercentage}%`;
+            document.getElementById('overallProgressBar').style.width = `${progressPercentage}%`;
+        }
+
+        function updateStatistics() {
+            document.getElementById('streakCount').textContent = userProgress.streak;
+            document.getElementById('completedTopics').textContent = userProgress.completedTopics.length;
+            document.getElementById('totalHours').textContent = userProgress.totalHours;
+
+            const totalTopics = dsaRoadmap.reduce((sum, week) => sum + week.days.length, 0);
+            const progressPercentage = Math.round((userProgress.completedTopics.length / totalTopics) * 100);
+            document.getElementById('overallProgress').textContent = `${progressPercentage}%`;
+        }
+
+        function updateTodaySchedule() {
+            const todaySchedule = document.getElementById('todaySchedule');
+            const today = new Date().getDay();
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const currentDayName = dayNames[today];
+
+            // Find today's topics across all weeks
+            let todayTopics = [];
+            dsaRoadmap.forEach((week, weekIndex) => {
+                const dayData = week.days.find(d => d.day === currentDayName);
+                if (dayData) {
+                    todayTopics.push({
+                        week: week.week,
+                        weekTitle: week.title,
+                        ...dayData,
+                        weekIndex: weekIndex,
+                        dayIndex: week.days.indexOf(dayData)
+                    });
+                }
+            });
+
+            if (todayTopics.length === 0) {
+                todaySchedule.innerHTML = '<p class="text-muted">No scheduled topics for today. Use this time to review or work on projects!</p>';
+                return;
+            }
+
+            let scheduleHtml = '';
+            todayTopics.forEach(topic => {
+                const dayId = `week-${topic.weekIndex}-day-${topic.dayIndex}`;
+                const isCompleted = userProgress.completedTopics.includes(dayId);
+
+                scheduleHtml += `
+                    <div class="day-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="mb-1">Week ${topic.week}: ${topic.topic}</h5>
+                                <p class="text-muted mb-2">${topic.activities}</p>
+                                <div>
+                                    ${topic.resources.map(res => `
+                                        <a href="${res.url}" target="_blank" class="resource-link">
+                                            <i class="fas fa-external-link-alt"></i> ${res.name}
+                                        </a>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <input type="checkbox" class="day-checkbox" id="today-${dayId}" 
+                                    ${isCompleted ? 'checked' : ''} 
+                                    onchange="toggleDayComplete('${dayId}', ${topic.weekIndex})">
+                                <div class="small text-muted mt-1">
+                                    <i class="fas fa-clock"></i> ${topic.time}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            todaySchedule.innerHTML = scheduleHtml;
+        }
+
+        function renderProjects() {
+            const projectsGrid = document.getElementById('projectsGrid');
+            projectsGrid.innerHTML = '';
+
+            projectsData.forEach((project, index) => {
+                const projectStatus = userProgress.projectStatus[project.name] || 'not-started';
+
+                const projectCard = document.createElement('div');
+                projectCard.className = 'col-md-6 col-lg-4 mb-4';
+                projectCard.innerHTML = `
+                    <div class="project-card" onclick="updateProjectStatus('${project.name}', ${index})">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5>Week ${project.week}: ${project.name}</h5>
+                            <span class="project-status ${projectStatus}">${formatStatus(projectStatus)}</span>
+                        </div>
+                        <p class="text-muted mb-3">${project.description}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-${getDifficultyColor(project.difficulty)} me-1">
+                                ${project.difficulty}
+                            </span>
+                        </div>
+                        <div class="small">
+                            <strong>Concepts:</strong> ${project.concepts.join(', ')}
+                        </div>
+                    </div>
+                `;
+                projectsGrid.appendChild(projectCard);
+            });
+        }
+
+        function formatStatus(status) {
+            return status.split('-').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        function getDifficultyColor(difficulty) {
+            const colors = {
+                'Beginner': 'success',
+                'Intermediate': 'warning',
+                'Advanced': 'danger',
+                'Expert': 'dark'
+            };
+            return colors[difficulty] || 'secondary';
+        }
+
+        function updateProjectStatus(projectName, index) {
+            const currentStatus = userProgress.projectStatus[projectName] || 'not-started';
+            const statuses = ['not-started', 'in-progress', 'completed'];
+            const currentIndex = statuses.indexOf(currentStatus);
+            const newStatus = statuses[(currentIndex + 1) % statuses.length];
+
+            userProgress.projectStatus[projectName] = newStatus;
+            saveProgress();
+            renderProjects();
+
+            if (newStatus === 'completed') {
+                showToast(`Project "${projectName}" completed! Amazing work! 🎉`, 'success');
+                checkAchievements();
+            }
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+
+            if (!title || !content) {
+                showToast('Please enter both title and content for your note.', 'error');
+                return;
+            }
+
+            const note = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                timestamp: new Date().toISOString(),
+                week: getCurrentWeek()
+            };
+
+            userProgress.notes.push(note);
+            saveProgress();
+
+            // Save to Firebase
+            if (currentUser && database) {
+                database.ref('users/' + currentUser + '/notes/' + note.id).set(note);
+            }
+
+            // Clear form
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+
+            displayNotes();
+            showToast('Note saved successfully!', 'success');
+        }
+
+        function displayNotes() {
+            const savedNotes = document.getElementById('savedNotes');
+            const notes = userProgress.notes || [];
+
+            if (notes.length === 0) {
+                savedNotes.innerHTML = '<p class="text-muted">No notes saved yet.</p>';
+                return;
+            }
+
+            savedNotes.innerHTML = notes.sort((a, b) =>
+                new Date(b.timestamp) - new Date(a.timestamp)
+            ).map(note => `
+                <div class="note-item">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="mb-1">${note.title}</h6>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteNote(${note.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <p class="mb-2">${note.content.substring(0, 150)}${note.content.length > 150 ? '...' : ''}</p>
+                    <div class="note-timestamp">
+                        ${new Date(note.timestamp).toLocaleDateString()} - Week ${note.week}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteNote(noteId) {
+            userProgress.notes = userProgress.notes.filter(note => note.id !== noteId);
+            saveProgress();
+
+            // Delete from Firebase
+            if (currentUser && database) {
+                database.ref('users/' + currentUser + '/notes/' + noteId).remove();
+            }
+
+            displayNotes();
+            showToast('Note deleted.', 'success');
+        }
+
+        function getCurrentWeek() {
+            const completedTopics = userProgress.completedTopics.length;
+            const topicsPerWeek = 7;
+            return Math.min(14, Math.floor(completedTopics / topicsPerWeek) + 1);
+        }
+
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek'
+                },
+                events: generateCalendarEvents(),
+                eventClick: function (info) {
+                    showToast(`Topic: ${info.event.title}`, 'info');
+                }
+            });
+        }
+
+        function generateCalendarEvents() {
+            const events = [];
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - startDate.getDay() + 1); // Start from Monday
+
+            dsaRoadmap.forEach((week, weekIndex) => {
+                week.days.forEach((day, dayIndex) => {
+                    const eventDate = new Date(startDate);
+                    eventDate.setDate(eventDate.getDate() + (weekIndex * 7) + dayIndex);
+
+                    const dayId = `week-${weekIndex}-day-${dayIndex}`;
+                    const isCompleted = userProgress.completedTopics.includes(dayId);
+
+                    events.push({
+                        title: day.topic,
+                        date: eventDate.toISOString().split('T')[0],
+                        backgroundColor: isCompleted ? '#10b981' : '#6366f1',
+                        borderColor: isCompleted ? '#10b981' : '#6366f1'
+                    });
+                });
+            });
+
+            return events;
+        }
+
+        function initializeProgressChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+
+            // Generate data for the last 7 days
+            const labels = [];
+            const data = [];
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+
+                // Simulate progress data (in production, track actual daily progress)
+                data.push(Math.floor(Math.random() * 5) + 1);
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Topics Completed',
+                        data: data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTopicProgress() {
+            const topicProgress = document.getElementById('topicProgress');
+            const topics = [
+                { name: 'Arrays & Strings', completed: 8, total: 10 },
+                { name: 'Linked Lists', completed: 5, total: 8 },
+                { name: 'Trees & Graphs', completed: 3, total: 12 },
+                { name: 'Dynamic Programming', completed: 2, total: 10 },
+                { name: 'Sorting & Searching', completed: 6, total: 8 }
+            ];
+
+            topicProgress.innerHTML = topics.map(topic => {
+                const percentage = Math.round((topic.completed / topic.total) * 100);
+                return `
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>${topic.name}</span>
+                            <span>${topic.completed}/${topic.total}</span>
+                        </div>
+                        <div class="progress-custom">
+                            <div class="progress-bar-custom" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Pomodoro Timer Functions
+        function startTimer() {
+            if (isPomodoroRunning) return;
+
+            isPomodoroRunning = true;
+            const sessionLength = parseInt(document.getElementById('sessionLength').value);
+            pomodoroMinutes = sessionLength;
+            pomodoroSeconds = 0;
+
+            pomodoroTimer = setInterval(updateTimer, 1000);
+            showToast('Timer started! Stay focused! 🎯', 'success');
+        }
+
+        function pauseTimer() {
+            isPomodoroRunning = false;
+            clearInterval(pomodoroTimer);
+            showToast('Timer paused.', 'info');
+        }
+
+        function resetTimer() {
+            isPomodoroRunning = false;
+            clearInterval(pomodoroTimer);
+
+            const sessionLength = parseInt(document.getElementById('sessionLength').value);
+            pomodoroMinutes = sessionLength;
+            pomodoroSeconds = 0;
+
+            updateTimerDisplay();
+            showToast('Timer reset.', 'info');
+        }
+
+        function updateTimer() {
+            if (pomodoroSeconds === 0) {
+                if (pomodoroMinutes === 0) {
+                    // Timer completed
+                    pauseTimer();
+                    showToast('Session completed! Take a break! 🎉', 'success');
+                    playNotificationSound();
+                    return;
+                }
+                pomodoroMinutes--;
+                pomodoroSeconds = 59;
+            } else {
+                pomodoroSeconds--;
+            }
+
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const display = document.getElementById('timerDisplay');
+            const minutes = pomodoroMinutes.toString().padStart(2, '0');
+            const seconds = pomodoroSeconds.toString().padStart(2, '0');
+            display.textContent = `${minutes}:${seconds}`;
+        }
+
+        function playNotificationSound() {
+            // Create a simple beep sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        function renderGlossary() {
+            const glossaryContent = document.getElementById('glossaryContent');
+
+            glossaryContent.innerHTML = glossaryData.map(item => `
+                <div class="glossary-item">
+                    <div class="glossary-term">${item.term}</div>
+                    <div class="glossary-definition">${item.definition}</div>
+                </div>
+            `).join('');
+        }
+
+        function showGlossary() {
+            document.getElementById('glossaryModal').style.display = 'flex';
+        }
+
+        function closeGlossary() {
+            document.getElementById('glossaryModal').style.display = 'none';
+        }
+
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type} fade-in`;
+
+            const icon = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'info': 'fa-info-circle'
+            }[type] || 'fa-info-circle';
+
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function exportProgress() {
+            const exportData = {
+                progress: userProgress,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+
+            showToast('Progress exported successfully!', 'success');
+        }
+
+        function importProgress() {
+            document.getElementById('importFile').click();
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const importData = JSON.parse(e.target.result);
+
+                    if (importData.progress) {
+                        userProgress = importData.progress;
+                        saveProgress();
+
+                        // Refresh UI
+                        renderRoadmap();
+                        renderProjects();
+                        displayNotes();
+                        updateStatistics();
+                        updateWeekProgress();
+
+                        showToast('Progress imported successfully!', 'success');
+                    } else {
+                        throw new Error('Invalid file format');
+                    }
+                } catch (error) {
+                    showToast('Error importing file. Please check the file format.', 'error');
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('roadmapSearch').addEventListener('input', function (e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterRoadmap(searchTerm);
+            });
+
+            // Session length change
+            document.getElementById('sessionLength').addEventListener('change', function () {
+                if (!isPomodoroRunning) {
+                    resetTimer();
+                }
+            });
+
+            // Close glossary when clicking outside
+            document.getElementById('glossaryModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeGlossary();
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                // Ctrl/Cmd + S to save note
+                if ((e.ctrlKey || e.metaKey) && e.key === 's' && document.getElementById('notes-section').style.display !== 'none') {
+                    e.preventDefault();
+                    saveNote();
+                }
+
+                // Escape to close glossary
+                if (e.key === 'Escape') {
+                    closeGlossary();
+                }
+            });
+        }
+
+        function filterRoadmap(searchTerm) {
+            const weekCards = document.querySelectorAll('.week-card');
+
+            weekCards.forEach((card, index) => {
+                const week = dsaRoadmap[index];
+                const weekText = JSON.stringify(week).toLowerCase();
+
+                if (weekText.includes(searchTerm)) {
+                    card.style.display = 'block';
+
+                    // Highlight matching content
+                    if (searchTerm) {
+                        highlightSearchTerm(card, searchTerm);
+                    }
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function highlightSearchTerm(element, term) {
+            // Simple highlight implementation
+            // In production, use a more robust highlighting library
+            const text = element.textContent;
+            const regex = new RegExp(term, 'gi');
+            // Implementation would highlight matching terms
+        }
+
+        function checkAchievements() {
+            const achievements = [];
+
+            // Check streak achievements
+            if (userProgress.streak >= 7) {
+                achievements.push({ icon: 'fa-fire', text: 'Week Warrior - 7 day streak!' });
+            }
+            if (userProgress.streak >= 30) {
+                achievements.push({ icon: 'fa-crown', text: 'Monthly Master - 30 day streak!' });
+            }
+
+            // Check completion achievements
+            const completedCount = userProgress.completedTopics.length;
+            if (completedCount >= 10) {
+                achievements.push({ icon: 'fa-star', text: 'Rising Star - 10 topics completed!' });
+            }
+            if (completedCount >= 50) {
+                achievements.push({ icon: 'fa-rocket', text: 'DSA Explorer - 50 topics completed!' });
+            }
+            if (completedCount >= 98) {
+                achievements.push({ icon: 'fa-trophy', text: 'DSA Master - All topics completed!' });
+            }
+
+            // Check project achievements
+            const completedProjects = Object.values(userProgress.projectStatus || {})
+                .filter(status => status === 'completed').length;
+            if (completedProjects >= 5) {
+                achievements.push({ icon: 'fa-code', text: 'Project Pro - 5 projects completed!' });
+            }
+            if (completedProjects >= 14) {
+                achievements.push({ icon: 'fa-medal', text: 'Project Champion - All projects completed!' });
+            }
+
+            // Display new achievements
+            const achievementsContainer = document.getElementById('achievements');
+            if (achievements.length > 0) {
+                achievementsContainer.innerHTML = achievements.map(achievement => `
+                    <div class="achievement-badge">
+                        <i class="fas ${achievement.icon}"></i>
+                        <span>${achievement.text}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Initialize topic progress when progress section is shown
+        document.addEventListener('DOMContentLoaded', function () {
+            const progressObserver = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.target.id === 'progress-section' &&
+                        mutation.target.style.display !== 'none') {
+                        renderTopicProgress();
+                    }
+                });
+            });
+
+            progressObserver.observe(document.getElementById('progress-section'), {
+                attributes: true,
+                attributeFilter: ['style']
+            });
+        });
+
+        // Auto-save notes while typing
+        let notesSaveTimeout;
+        document.getElementById('noteContent').addEventListener('input', function () {
+            clearTimeout(notesSaveTimeout);
+            notesSaveTimeout = setTimeout(() => {
+                const title = document.getElementById('noteTitle').value.trim();
+                const content = this.value.trim();
+
+                if (title && content) {
+                    // Save to localStorage as draft
+                    localStorage.setItem('noteDraft', JSON.stringify({ title, content }));
+                }
+            }, 1000);
+        });
+
+        // Load draft note on page load
+        window.addEventListener('load', function () {
+            const draft = localStorage.getItem('noteDraft');
+            if (draft) {
+                const { title, content } = JSON.parse(draft);
+                document.getElementById('noteTitle').value = title;
+                document.getElementById('noteContent').value = content;
+            }
+
+            // Load notes
+            displayNotes();
+        });
+
+        // Browser notification for reminders
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function sendBrowserNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: '/favicon.ico',
+                    badge: '/favicon.ico'
+                });
+            }
+        }
+
+        // Daily reminder
+        function scheduleDailyReminder() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(9, 0, 0, 0); // 9 AM tomorrow
+
+            const timeUntilReminder = tomorrow - now;
+
+            setTimeout(() => {
+                sendBrowserNotification(
+                    'DSA Learning Reminder',
+                    'Time to continue your learning journey! 📚'
+                );
+
+                // Schedule next reminder
+                scheduleDailyReminder();
+            }, timeUntilReminder);
+        }
+
+        // Initialize daily reminder
+        requestNotificationPermission();
+        scheduleDailyReminder();
+
+        // Performance optimization - Lazy load sections
+        const lazyLoadSections = () => {
+            const sections = document.querySelectorAll('.content-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Load section content
+                        entry.target.classList.add('loaded');
+                    }
+                });
+            });
+
+            sections.forEach(section => observer.observe(section));
+        };
+
+        // Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('Service Worker registered');
+            }).catch(err => {
+                console.log('Service Worker registration failed');
+            });
+        }
+
+        // Sync with Firebase when online
+        window.addEventListener('online', function () {
+            showToast('Back online! Syncing your progress...', 'info');
+            saveProgress();
+        });
+
+        window.addEventListener('offline', function () {
+            showToast('You are offline. Changes will be saved locally.', 'info');
+        });
+
+        // Mobile optimizations
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            // Optimize for mobile
+            document.querySelectorAll('.week-content').forEach(el => {
+                el.style.display = 'none'; // Collapse all weeks on mobile
+            });
+        }
+
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function (e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                // Swiped left - close sidebar on mobile
+                if (window.matchMedia('(max-width: 768px)').matches) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            }
+
+            if (touchEndX > touchStartX + 50) {
+                // Swiped right - open sidebar on mobile
+                if (window.matchMedia('(max-width: 768px)').matches) {
+                    document.getElementById('sidebar').classList.add('active');
+                }
+            }
+        }
+
+        // Analytics tracking (example)
+        function trackEvent(category, action, label) {
+            // In production, integrate with analytics service
+            console.log('Event tracked:', { category, action, label });
+        }
+
+        // Track user interactions
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('resource-link')) {
+                trackEvent('Resources', 'Click', e.target.textContent);
+            }
+        });
+
+        // Gamification - Level system
+        function calculateUserLevel() {
+            const xp = userProgress.completedTopics.length * 100 +
+                userProgress.totalHours * 50 +
+                Object.values(userProgress.projectStatus || {})
+                    .filter(s => s === 'completed').length * 500;
+
+            const level = Math.floor(Math.sqrt(xp / 100));
+            return { level, xp, nextLevelXp: Math.pow(level + 1, 2) * 100 };
+        }
+
+        // Update user level display
+        function updateUserLevel() {
+            const { level, xp, nextLevelXp } = calculateUserLevel();
+            const levelProgress = ((xp % nextLevelXp) / nextLevelXp) * 100;
+
+            // Update level display in UI
+            // This would be shown in the dashboard or profile section
+        }
+
+        // Code editor integration (for project development)
+        function initializeCodeEditor() {
+            // In production, integrate with CodeMirror or Monaco Editor
+            // This is a placeholder for editor functionality
+        }
+
+        // Learning path recommendations
+        function generateRecommendations() {
+            const completed = userProgress.completedTopics;
+            const recommendations = [];
+
+            // Analyze completed topics and suggest next topics
+            // This is a simplified recommendation system
+
+            return recommendations;
+        }
+
+        // Initialize everything
+        lazyLoadSections();
+        updateUserLevel();
+
+        // Final initialization complete
+        console.log('DSA Learning Dashboard initialized successfully!');
+    </script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+    <!-- Custom JS -->
+    <script src="js/api.js"></script>
+</body>
+
+</html>

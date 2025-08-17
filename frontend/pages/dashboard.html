@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DSA Learning Platform</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animation.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .streak-fire {
+            animation: flicker 1.5s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(-5deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .welcome-gradient {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-only {
+                display: block !important;
+            }
+
+            .desktop-only {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-only {
+                display: none !important;
+            }
+
+            .desktop-only {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Desktop Sidebar -->
+    <div id="sidebar" class="desktop-only"></div>
+
+    <!-- Mobile Top Bar -->
+    <div id="topbar" class="mobile-only"></div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container-fluid p-4">
+            <!-- Welcome Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm welcome-gradient">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h1 class="h3 fw-bold mb-2">
+                                        Welcome back, <span id="userName">User</span>! 👋
+                                    </h1>
+                                    <p class="text-muted mb-0">
+                                        <span id="motivationalQuote">Loading quote...</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-end d-none d-md-block">
+                                    <button class="btn btn-primary" onclick="window.location.href='roadmap.html'">
+                                        <i class="bi bi-map me-2"></i>Continue Learning
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                    <div class="stat-card">
+                        <div class="position-relative">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-white-50 mb-1 small">Current Streak</p>
+                                    <h2 class="h1 fw-bold mb-0">
+                                        <span id="currentStreak">0</span>
+                                        <i class="bi bi-fire ms-2 streak-fire text-warning"></i>
+                                    </h2>
+                                </div>
+                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                                    <i class="bi bi-calendar-check fs-4"></i>
+                                </div>
+                            </div>
+                            <p class="mb-0 small">
+                                Longest: <span id="longestStreak">0</span> days
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="position-relative">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-white-50 mb-1 small">Progress</p>
+                                    <h2 class="h1 fw-bold mb-0">
+                                        <span id="completionRate">0</span>%
+                                    </h2>
+                                </div>
+                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                                    <i class="bi bi-graph-up fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="progress bg-white bg-opacity-25" style="height: 6px;">
+                                <div id="progressBar" class="progress-bar bg-white" role="progressbar"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <div class="position-relative">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-white-50 mb-1 small">Study Time</p>
+                                    <h2 class="h1 fw-bold mb-0">
+                                        <span id="totalHours">0</span>h
+                                    </h2>
+                                </div>
+                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                                    <i class="bi bi-clock-history fs-4"></i>
+                                </div>
+                            </div>
+                            <p class="mb-0 small">
+                                This week: <span id="weekHours">0</span>h
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <div class="position-relative">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="text-white-50 mb-1 small">Completed</p>
+                                    <h2 class="h1 fw-bold mb-0">
+                                        <span id="completedTopics">0</span>
+                                    </h2>
+                                </div>
+                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                                    <i class="bi bi-check-circle fs-4"></i>
+                                </div>
+                            </div>
+                            <p class="mb-0 small">
+                                Total topics: 98
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-4">
+                <div class="col-12 col-lg-8 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold">Weekly Progress</h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active"
+                                        data-range="week">Week</button>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        data-range="month">Month</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="progressChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Top Topics</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topicsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Upcoming -->
+            <div class="row">
+                <div class="col-12 col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentActivityList" class="list-group list-group-flush">
+                                <!-- Activity items will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold">Upcoming Topics</h5>
+                                <a href="roadmap.html" class="text-decoration-none small">View all</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="upcomingTopicsList">
+                                <!-- Upcoming topics will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div id="mobileNav" class="mobile-only"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="achievementToast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="bi bi-trophy-fill text-warning me-2"></i>
+                <strong class="me-auto">Achievement Unlocked!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                <span id="achievementMessage"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://dsa-8ko1.onrender.com/api';
+        let authToken = null;
+        let currentUser = null;
+        let progressChart = null;
+        let topicsChart = null;
+
+        // Motivational quotes
+        const quotes = [
+            "Every expert was once a beginner. Keep coding!",
+            "The best time to plant a tree was 20 years ago. The second best time is now.",
+            "Success is the sum of small efforts repeated day in and day out.",
+            "Don't watch the clock; do what it does. Keep going.",
+            "The only way to do great work is to love what you do.",
+            "Code is like humor. When you have to explain it, it's bad.",
+            "First, solve the problem. Then, write the code.",
+            "Programming isn't about what you know; it's about what you can figure out."
+        ];
+
+        // Initialize dashboard
+        async function initDashboard() {
+            authToken = localStorage.getItem('access_token');
+            currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (!authToken) {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // Load components
+            await loadComponents();
+
+            // Set user name
+            document.getElementById('userName').textContent = currentUser.username || 'User';
+
+            // Set motivational quote
+            setMotivationalQuote();
+
+            // Load dashboard data
+            await loadDashboardData();
+
+            // Initialize charts
+            initializeCharts();
+
+            // Set up real-time updates
+            setupRealTimeUpdates();
+        }
+
+        // Load reusable components
+        async function loadComponents() {
+            // Load sidebar
+            const sidebarResponse = await fetch('../components/sidebar.html');
+            const sidebarHtml = await sidebarResponse.text();
+            document.getElementById('sidebar').innerHTML = sidebarHtml;
+
+            // Load topbar
+            const topbarResponse = await fetch('../components/topbar.html');
+            const topbarHtml = await topbarResponse.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // Load mobile nav
+            const mobileNavResponse = await fetch('../components/mobile-nav.html');
+            const mobileNavHtml = await mobileNavResponse.text();
+            document.getElementById('mobileNav').innerHTML = mobileNavHtml;
+
+            // Set active states
+            setActiveNavItem('dashboard');
+        }
+
+        // Set active navigation item
+        function setActiveNavItem(page) {
+            // Desktop sidebar
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Mobile nav
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === page) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Set motivational quote
+        function setMotivationalQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('motivationalQuote').textContent = quote;
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.clear();
+                        window.location.href = '../auth/login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load dashboard data');
+                }
+
+                const data = await response.json();
+                updateDashboardUI(data);
+
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                showToast('Failed to load dashboard data', 'error');
+            }
+        }
+
+        // Update dashboard UI
+        function updateDashboardUI(data) {
+            // Update stats
+            document.getElementById('currentStreak').textContent = data.streak.current;
+            document.getElementById('longestStreak').textContent = data.streak.longest;
+            document.getElementById('completionRate').textContent = data.statistics.completion_rate;
+            document.getElementById('progressBar').style.width = `${data.statistics.completion_rate}%`;
+            document.getElementById('totalHours').textContent = Math.round(data.statistics.total_time_minutes / 60);
+            document.getElementById('weekHours').textContent = Math.round(data.statistics.week_time_minutes / 60);
+            document.getElementById('completedTopics').textContent = data.statistics.total_completed;
+
+            // Update recent activity
+            updateRecentActivity(data.recent_activity);
+
+            // Update upcoming topics
+            updateUpcomingTopics();
+
+            // Check for achievements
+            checkAchievements(data);
+        }
+
+        // Update recent activity
+        function updateRecentActivity(activities) {
+            const container = document.getElementById('recentActivityList');
+            container.innerHTML = '';
+
+            if (activities.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-3">No recent activity</p>';
+                return;
+            }
+
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item border-0 px-0';
+                item.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <span class="activity-dot bg-success"></span>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-medium">${activity.topic}</h6>
+                            <small class="text-muted">Week ${activity.week}, Day ${activity.day}</small>
+                        </div>
+                        <small class="text-muted">${formatTimeAgo(activity.completed_at)}</small>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Update upcoming topics
+        async function updateUpcomingTopics() {
+            try {
+                const roadmapResponse = await fetch(`${API_BASE}/roadmap`);
+                const roadmapData = await roadmapResponse.json();
+
+                const progressResponse = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const progressData = await progressResponse.json();
+
+                const container = document.getElementById('upcomingTopicsList');
+                container.innerHTML = '';
+
+                let upcomingCount = 0;
+                const maxUpcoming = 5;
+
+                for (const week of roadmapData.roadmap) {
+                    for (const day of week.days) {
+                        const progressKey = `week${week.week}_day${day.day}`;
+                        if (!progressData.progress[progressKey]?.completed) {
+                            const item = document.createElement('div');
+                            item.className = 'mb-3';
+                            item.innerHTML = `
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                        <i class="bi bi-book text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">${day.topic}</h6>
+                                        <small class="text-muted">Week ${week.week}, Day ${day.day}</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="goToTopic(${week.week}, ${day.day})">
+                                        Start
+                                    </button>
+                                </div>
+                            `;
+                            container.appendChild(item);
+
+                            upcomingCount++;
+                            if (upcomingCount >= maxUpcoming) return;
+                        }
+                    }
+                }
+
+                if (upcomingCount === 0) {
+                    container.innerHTML = '<p class="text-muted text-center py-3">All topics completed! 🎉</p>';
+                }
+
+            } catch (error) {
+                console.error('Error loading upcoming topics:', error);
+            }
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Progress Chart
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Study Time (minutes)',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Topics Chart
+            const topicsCtx = document.getElementById('topicsChart').getContext('2d');
+            topicsChart = new Chart(topicsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Arrays', 'Linked Lists', 'Trees', 'Graphs', 'Dynamic Programming'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#4facfe',
+                            '#fa709a'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Load analytics data
+            loadAnalyticsData();
+        }
+
+        // Load analytics data
+        async function loadAnalyticsData() {
+            try {
+                const response = await fetch(`${API_BASE}/analytics/dashboard?days=7`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateChartsWithData(data);
+                }
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        // Update charts with data
+        function updateChartsWithData(data) {
+            // Update progress chart
+            if (data.progress_timeline && progressChart) {
+                const dailyData = new Array(7).fill(0);
+                const today = new Date();
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - today.getDay() + 1); // Monday
+
+                data.progress_timeline.forEach(item => {
+                    const itemDate = new Date(item.date);
+                    const dayIndex = Math.floor((itemDate - weekStart) / (1000 * 60 * 60 * 24));
+                    if (dayIndex >= 0 && dayIndex < 7) {
+                        dailyData[dayIndex] = item.time_spent || 0;
+                    }
+                });
+
+                progressChart.data.datasets[0].data = dailyData;
+                progressChart.update();
+            }
+
+            // Update topics chart with dashboard top topics
+            updateTopicsChart();
+        }
+
+        // Update topics chart
+        async function updateTopicsChart() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.top_topics && topicsChart) {
+                        const labels = data.top_topics.map(t => t.topic);
+                        const values = data.top_topics.map(t => t.time);
+
+                        topicsChart.data.labels = labels;
+                        topicsChart.data.datasets[0].data = values;
+                        topicsChart.update();
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating topics chart:', error);
+            }
+        }
+
+        // Check achievements
+        function checkAchievements(data) {
+            const achievements = [];
+
+            // Check streak achievements
+            if (data.streak.current === 7) {
+                achievements.push('Week Warrior - 7 day streak!');
+            } else if (data.streak.current === 30) {
+                achievements.push('Monthly Master - 30 day streak!');
+            }
+
+            // Check completion achievements
+            if (data.statistics.total_completed === 10) {
+                achievements.push('Getting Started - 10 topics completed!');
+            } else if (data.statistics.total_completed === 50) {
+                achievements.push('Halfway Hero - 50 topics completed!');
+            } else if (data.statistics.total_completed === 98) {
+                achievements.push('DSA Master - All topics completed!');
+            }
+
+            // Show achievements
+            achievements.forEach((achievement, index) => {
+                setTimeout(() => {
+                    showAchievement(achievement);
+                }, index * 3000);
+            });
+        }
+
+        // Show achievement
+        function showAchievement(message) {
+            document.getElementById('achievementMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('achievementToast'));
+            toast.show();
+
+            // Confetti effect
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Setup real-time updates
+        function setupRealTimeUpdates() {
+            // Update dashboard every 30 seconds
+            setInterval(loadDashboardData, 30000);
+
+            // Update time-based elements
+            setInterval(() => {
+                document.querySelectorAll('[data-time]').forEach(el => {
+                    const time = el.dataset.time;
+                    el.textContent = formatTimeAgo(time);
+                });
+            }, 60000);
+        }
+
+        // Navigate to topic
+        function goToTopic(week, day) {
+            window.location.href = `roadmap.html#week${week}_day${day}`;
+        }
+
+        // Format time ago
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toastHtml = `
+                <div class="toast align-items-center text-bg-${type} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            const toastContainer = document.querySelector('.toast-container');
+            const toastElement = document.createElement('div');
+            toastElement.innerHTML = toastHtml;
+            toastContainer.appendChild(toastElement.firstElementChild);
+
+            const toast = new bootstrap.Toast(toastElement.firstElementChild);
+            toast.show();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<nav class="mobile-nav fixed-bottom bg-white border-top">
+    <div class="container-fluid">
+        <div class="row text-center">
+            <div class="col mobile-nav-item" data-page="dashboard">
+                <a href="../pages/dashboard.html" class="d-block py-2 text-decoration-none">
+                    <i class="bi bi-speedometer2 d-block fs-5"></i>
+                    <small>Dashboard</small>
+                </a>
+            </div>
+            <div class="col mobile-nav-item" data-page="roadmap">
+                <a href="../pages/roadmap.html" class="d-block py-2 text-decoration-none">
+                    <i class="bi bi-map d-block fs-5"></i>
+                    <small>Roadmap</small>
+                </a>
+            </div>
+            <div class="col mobile-nav-item" data-page="pomodoro">
+                <a href="../pages/pomodoro.html" class="d-block py-2 text-decoration-none">
+                    <i class="bi bi-clock d-block fs-5"></i>
+                    <small>Timer</small>
+                </a>
+            </div>
+            <div class="col mobile-nav-item" data-page="notes">
+                <a href="../pages/notes.html" class="d-block py-2 text-decoration-none">
+                    <i class="bi bi-journal-text d-block fs-5"></i>
+                    <small>Notes</small>
+                </a>
+            </div>
+            <div class="col mobile-nav-item" data-page="profile">
+                <a href="../pages/profile.html" class="d-block py-2 text-decoration-none">
+                    <i class="bi bi-person d-block fs-5"></i>
+                    <small>Profile</small>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .mobile-nav {
+        display: none;
+        z-index: 1040;
+        background: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-nav-item {
+        position: relative;
+    }
+
+    .mobile-nav-item a {
+        color: #6b7280;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-nav-item.active a {
+        color: #4f46e5;
+    }
+
+    .mobile-nav-item.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: #4f46e5;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .mobile-nav-item small {
+        font-size: 0.7rem;
+    }
+
+    @media (max-width: 768px) {
+        .mobile-nav {
+            display: block;
+        }
+
+        .main-content {
+            padding-bottom: 70px !important;
+        }
+    }
+</style>
+
+<script>
+    // Set active mobile nav item based on current page
+    function setActiveMobileNav() {
+        const currentPath = window.location.pathname;
+        const pageName = currentPath.split('/').pop().replace('.html', '');
+
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            if (item.dataset.page === pageName) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    // Initialize
+    setActiveMobileNav();
+</script>

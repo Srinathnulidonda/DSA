@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Learning Platform - Testing Interface</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .section-hidden {
+            display: none;
+        }
+
+        .section-active {
+            display: block;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .streak-badge {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+        }
+
+        .study-card {
+            transition: all 0.3s ease;
+        }
+
+        .study-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .content-area {
+            min-height: 100vh;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+        }
+
+        .ai-chat-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .ai-message {
+            margin-bottom: 1rem;
+        }
+
+        .ai-message.user {
+            text-align: right;
+        }
+
+        .ai-message.assistant {
+            text-align: left;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%;
+        }
+
+        .user .message-bubble {
+            background: #007bff;
+            color: white;
+        }
+
+        .assistant .message-bubble {
+            background: #f8f9fa;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"><i class="fas fa-code"></i> DSA Learning Platform</a>
+
+            <div class="navbar-nav ms-auto">
+                <div id="auth-buttons" class="d-flex">
+                    <button class="btn btn-outline-light me-2" onclick="showSection('login')">Login</button>
+                    <button class="btn btn-light" onclick="showSection('register')">Register</button>
+                </div>
+
+                <div id="user-menu" class="d-none dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <img id="user-avatar" src="https://via.placeholder.com/32" class="rounded-circle me-2"
+                            width="32" height="32">
+                        <span id="user-name">User</span>
+                        <span id="notification-count" class="notification-badge">0</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="showSection('profile')"><i
+                                    class="fas fa-user"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showSection('preferences')"><i
+                                    class="fas fa-cog"></i> Preferences</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showSection('notifications')"><i
+                                    class="fas fa-bell"></i> Notifications</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i>
+                                Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid" style="margin-top: 76px;">
+        <div class="row">
+            <!-- Sidebar -->
+            <div id="sidebar" class="col-md-3 col-lg-2 sidebar text-white p-0 d-none">
+                <div class="p-4">
+                    <h6 class="text-white-50 mb-3">NAVIGATION</h6>
+                    <nav class="nav flex-column">
+                        <a class="nav-link text-white" href="#" onclick="showSection('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('roadmap')">
+                            <i class="fas fa-map"></i> Roadmap
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('progress')">
+                            <i class="fas fa-chart-line"></i> Progress
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('calendar')">
+                            <i class="fas fa-calendar"></i> Calendar
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('notes')">
+                            <i class="fas fa-sticky-note"></i> Notes
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('pomodoro')">
+                            <i class="fas fa-clock"></i> Pomodoro
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('ai-assistant')">
+                            <i class="fas fa-robot"></i> AI Assistant
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('resources')">
+                            <i class="fas fa-book"></i> Resources
+                        </a>
+                        <a class="nav-link text-white" href="#" onclick="showSection('search')">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-md-9 col-lg-10 offset-md-3 offset-lg-2 content-area p-4" id="main-content">
+
+                <!-- Authentication Sections -->
+                <div id="login-section" class="section-active">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-body p-5">
+                                    <h2 class="text-center mb-4">Login</h2>
+                                    <form id="login-form">
+                                        <div class="mb-3">
+                                            <label for="login-email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="login-email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="login-password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="login-password" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                                    </form>
+                                    <div class="text-center">
+                                        <a href="#" onclick="showSection('forgot-password')"
+                                            class="text-decoration-none">Forgot Password?</a> |
+                                        <a href="#" onclick="showSection('register')"
+                                            class="text-decoration-none">Register</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="register-section" class="section-hidden">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-body p-5">
+                                    <h2 class="text-center mb-4">Register</h2>
+                                    <form id="register-form">
+                                        <div class="mb-3">
+                                            <label for="register-name" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="register-name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="register-email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="register-email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="register-password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="register-password" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="register-confirm-password" class="form-label">Confirm
+                                                Password</label>
+                                            <input type="password" class="form-control" id="register-confirm-password"
+                                                required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100 mb-3">Register</button>
+                                    </form>
+                                    <div class="text-center">
+                                        <a href="#" onclick="showSection('login')" class="text-decoration-none">Already
+                                            have an account? Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="forgot-password-section" class="section-hidden">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-body p-5">
+                                    <h2 class="text-center mb-4">Forgot Password</h2>
+                                    <form id="forgot-password-form">
+                                        <div class="mb-3">
+                                            <label for="forgot-email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="forgot-email" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100 mb-3">Send Reset
+                                            Link</button>
+                                    </form>
+                                    <div class="text-center">
+                                        <a href="#" onclick="showSection('login')" class="text-decoration-none">Back to
+                                            Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Dashboard</h1>
+                        <button class="btn btn-primary" onclick="loadDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card study-card text-center">
+                                <div class="card-body">
+                                    <div class="streak-badge text-white rounded-pill p-2 mb-2">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <h3 id="current-streak">0</h3>
+                                    <p class="text-muted">Current Streak</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card study-card text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-trophy text-warning mb-2" style="font-size: 2rem;"></i>
+                                    <h3 id="longest-streak">0</h3>
+                                    <p class="text-muted">Longest Streak</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card study-card text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-clock text-info mb-2" style="font-size: 2rem;"></i>
+                                    <h3 id="total-study-time">0</h3>
+                                    <p class="text-muted">Total Hours</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card study-card text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-chart-line text-success mb-2" style="font-size: 2rem;"></i>
+                                    <h3 id="completion-percentage">0%</h3>
+                                    <p class="text-muted">Completed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Recent Activity -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Weekly Progress</h5>
+                                </div>
+                                <div class="card-body" id="weekly-progress">
+                                    <!-- Progress will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Recent Activity</h5>
+                                </div>
+                                <div class="card-body" id="recent-activity">
+                                    <!-- Recent activity will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div id="progress-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Progress Tracking</h1>
+                        <button class="btn btn-primary" onclick="loadProgress()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label for="progress-week" class="form-label">Week</label>
+                            <select class="form-select" id="progress-week">
+                                <option value="">Select Week</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="progress-day" class="form-label">Day</label>
+                            <select class="form-select" id="progress-day">
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="time-spent" class="form-label">Time Spent (minutes)</label>
+                            <input type="number" class="form-control" id="time-spent" min="0">
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <label for="progress-notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="progress-notes" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="progress-completed">
+                                <label class="form-check-label" for="progress-completed">
+                                    Mark as Completed
+                                </label>
+                            </div>
+                            <button class="btn btn-success mt-2" onclick="updateProgress()">
+                                <i class="fas fa-save"></i> Save Progress
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="progress-display">
+                        <!-- Progress display will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div id="notes-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Notes</h1>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="showNoteModal()">
+                                <i class="fas fa-plus"></i> New Note
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="loadNotes()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="notes-search" placeholder="Search notes..."
+                                onkeyup="searchNotes()">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="notes-week-filter" onchange="filterNotes()">
+                                <option value="">All Weeks</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="notes-sort" onchange="sortNotes()">
+                                <option value="updated_at">Last Updated</option>
+                                <option value="created_at">Date Created</option>
+                                <option value="title">Title</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="notes-container" class="row">
+                        <!-- Notes will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Pomodoro Section -->
+                <div id="pomodoro-section" class="section-hidden">
+                    <div class="text-center">
+                        <h1 class="mb-4">Pomodoro Timer</h1>
+
+                        <div class="card mx-auto" style="max-width: 500px;">
+                            <div class="card-body p-5">
+                                <div class="timer-display text-primary mb-4" id="timer-display">25:00</div>
+
+                                <div class="mb-4">
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-primary" id="timer-progress" role="progressbar"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-4">
+                                        <label for="study-duration" class="form-label">Study (min)</label>
+                                        <input type="number" class="form-control text-center" id="study-duration"
+                                            value="25" min="1" max="60">
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="break-duration" class="form-label">Break (min)</label>
+                                        <input type="number" class="form-control text-center" id="break-duration"
+                                            value="5" min="1" max="30">
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="long-break" class="form-label">Long Break (min)</label>
+                                        <input type="number" class="form-control text-center" id="long-break" value="15"
+                                            min="5" max="60">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <input type="text" class="form-control" id="session-topic"
+                                        placeholder="What are you studying?">
+                                </div>
+
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-success" id="start-timer" onclick="startPomodoro()">
+                                        <i class="fas fa-play"></i> Start
+                                    </button>
+                                    <button class="btn btn-warning" id="pause-timer" onclick="pausePomodoro()" disabled>
+                                        <i class="fas fa-pause"></i> Pause
+                                    </button>
+                                    <button class="btn btn-danger" id="stop-timer" onclick="stopPomodoro()" disabled>
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>
+                                </div>
+
+                                <div class="mt-4">
+                                    <small class="text-muted">Session: <span id="session-count">1</span> | Type: <span
+                                            id="session-type">Study</span></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button class="btn btn-outline-primary" onclick="loadPomodoroHistory()">
+                                <i class="fas fa-history"></i> View History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Assistant Section -->
+                <div id="ai-assistant-section" class="section-hidden">
+                    <h1 class="mb-4">AI Assistant</h1>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Chat with AI Tutor</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="ai-chat-container" id="ai-chat-container">
+                                        <div class="ai-message assistant">
+                                            <div class="message-bubble">
+                                                Hello! I'm your DSA tutor. Ask me anything about data structures,
+                                                algorithms, or your learning progress!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="ai-question"
+                                            placeholder="Ask a question..." onkeypress="handleAIKeyPress(event)">
+                                        <button class="btn btn-primary" onclick="askAI()">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6>Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="generateStudyPlan()">
+                                            <i class="fas fa-calendar-alt"></i> Generate Study Plan
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm" onclick="generateQuiz()">
+                                            <i class="fas fa-question-circle"></i> Generate Quiz
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm" onclick="getSummary()">
+                                            <i class="fas fa-file-alt"></i> Summarize Content
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Suggested Topics</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-1">
+                                        <button class="btn btn-link btn-sm text-start"
+                                            onclick="askPredefined('Explain arrays and their operations')">Arrays &
+                                            Operations</button>
+                                        <button class="btn btn-link btn-sm text-start"
+                                            onclick="askPredefined('How do linked lists work?')">Linked Lists</button>
+                                        <button class="btn btn-link btn-sm text-start"
+                                            onclick="askPredefined('Explain binary search trees')">Binary Search
+                                            Trees</button>
+                                        <button class="btn btn-link btn-sm text-start"
+                                            onclick="askPredefined('What is dynamic programming?')">Dynamic
+                                            Programming</button>
+                                        <button class="btn btn-link btn-sm text-start"
+                                            onclick="askPredefined('Graph algorithms overview')">Graph
+                                            Algorithms</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources Section -->
+                <div id="resources-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Resources</h1>
+                        <button class="btn btn-primary" onclick="loadResources()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <select class="form-select" id="resource-type-filter" onchange="filterResources()">
+                                <option value="">All Types</option>
+                                <option value="text">Text</option>
+                                <option value="video">Video</option>
+                                <option value="interactive">Interactive</option>
+                                <option value="practice">Practice</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="resource-search"
+                                placeholder="Search resources..." onkeyup="searchResources()">
+                        </div>
+                    </div>
+
+                    <div id="resources-container" class="row">
+                        <!-- Resources will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Search Section -->
+                <div id="search-section" class="section-hidden">
+                    <h1 class="mb-4">Search</h1>
+
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="global-search"
+                                    placeholder="Search across all content...">
+                                <button class="btn btn-primary" onclick="performGlobalSearch()">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="search-type">
+                                <option value="all">All Content</option>
+                                <option value="resources">Resources</option>
+                                <option value="roadmap">Roadmap</option>
+                                <option value="notes">Notes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="search-results">
+                        <!-- Search results will be displayed here -->
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profile-section" class="section-hidden">
+                    <h1 class="mb-4">Profile Settings</h1>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Personal Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="profile-form">
+                                        <div class="text-center mb-4">
+                                            <img id="profile-avatar" src="https://via.placeholder.com/100"
+                                                class="rounded-circle" width="100" height="100">
+                                            <div class="mt-2">
+                                                <input type="file" class="form-control" id="avatar-upload"
+                                                    accept="image/*" onchange="uploadAvatar()">
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="profile-name" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="profile-name">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="profile-email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="profile-email">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Change Password</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="password-form">
+                                        <div class="mb-3">
+                                            <label for="current-password" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="current-password">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="new-password" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="new-password">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="confirm-new-password" class="form-label">Confirm New
+                                                Password</label>
+                                            <input type="password" class="form-control" id="confirm-new-password">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-warning">Change Password</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roadmap Section -->
+                <div id="roadmap-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Learning Roadmap</h1>
+                        <button class="btn btn-primary" onclick="loadRoadmap()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <select class="form-select" id="roadmap-week-selector" onchange="loadWeekDetails()">
+                            <option value="">Select a week to view details</option>
+                        </select>
+                    </div>
+
+                    <div id="roadmap-overview" class="row">
+                        <!-- Roadmap overview will be loaded here -->
+                    </div>
+
+                    <div id="week-details" class="mt-4">
+                        <!-- Week details will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Calendar Section -->
+                <div id="calendar-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Study Calendar</h1>
+                        <button class="btn btn-primary" onclick="loadCalendar()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <select class="form-select" id="calendar-week-selector" onchange="loadCalendarWeek()">
+                            <option value="">Select a week</option>
+                        </select>
+                    </div>
+
+                    <div id="calendar-display">
+                        <!-- Calendar will be displayed here -->
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div id="notifications-section" class="section-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Notifications</h1>
+                        <button class="btn btn-primary" onclick="loadNotifications()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div id="notifications-container">
+                        <!-- Notifications will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div id="preferences-section" class="section-hidden">
+                    <h1 class="mb-4">Preferences</h1>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="preferences-form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="theme-select" class="form-label">Theme</label>
+                                            <select class="form-select" id="theme-select">
+                                                <option value="light">Light</option>
+                                                <option value="dark">Dark</option>
+                                                <option value="auto">Auto</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="language-select" class="form-label">Language</label>
+                                            <select class="form-select" id="language-select">
+                                                <option value="en">English</option>
+                                                <option value="es">Spanish</option>
+                                                <option value="fr">French</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="notifications-enabled">
+                                                <label class="form-check-label" for="notifications-enabled">
+                                                    Enable Notifications
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="email-notifications">
+                                                <label class="form-check-label" for="email-notifications">
+                                                    Email Notifications
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="accessibility-mode">
+                                                <label class="form-check-label" for="accessibility-mode">
+                                                    Accessibility Mode
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Save Preferences</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Note Modal -->
+    <div class="modal fade" id="noteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noteModalTitle">Create Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="note-form">
+                        <input type="hidden" id="note-id">
+                        <div class="mb-3">
+                            <label for="note-title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="note-title" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="note-week" class="form-label">Week</label>
+                                <select class="form-select" id="note-week">
+                                    <option value="">Select Week</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="note-day" class="form-label">Day</label>
+                                <select class="form-select" id="note-day">
+                                    <option value="">Select Day</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                    <option value="Sunday">Sunday</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="note-content" class="form-label">Content</label>
+                            <textarea class="form-control" id="note-content" rows="10"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="note-tags" class="form-label">Tags (comma-separated)</label>
+                            <input type="text" class="form-control" id="note-tags"
+                                placeholder="arrays, sorting, algorithms">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveNote()">Save Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="modal fade" id="quizModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">AI Generated Quiz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="quiz-topic" class="form-label">Topic</label>
+                            <input type="text" class="form-control" id="quiz-topic" value="arrays">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="quiz-difficulty" class="form-label">Difficulty</label>
+                            <select class="form-select" id="quiz-difficulty">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="quiz-count" class="form-label">Questions</label>
+                            <select class="form-select" id="quiz-count">
+                                <option value="3">3</option>
+                                <option value="5" selected>5</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center mb-3">
+                        <button class="btn btn-primary" onclick="generateAIQuiz()">Generate Quiz</button>
+                    </div>
+                    <div id="quiz-content">
+                        <!-- Quiz content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toast-body">
+                Message content
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Global Variables
+        const API_BASE_URL = 'https://dsa-8ko1.onrender.com'; // Change this to your backend URL
+        let currentUser = null;
+        let authToken = localStorage.getItem('authToken');
+        let refreshToken = localStorage.getItem('refreshToken');
+        let pomodoroTimer = null;
+        let pomodoroState = {
+            isRunning: false,
+            isPaused: false,
+            currentSession: null,
+            timeLeft: 0,
+            totalTime: 0,
+            sessionCount: 1,
+            sessionType: 'study'
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function () {
+            if (authToken) {
+                loadUserProfile();
+                showAuthenticatedApp();
+            } else {
+                showSection('login');
+            }
+            populateWeekSelectors();
+        });
+
+        // Utility Functions
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toast-title');
+            const toastBody = document.getElementById('toast-body');
+
+            toastTitle.textContent = title;
+            toastBody.textContent = message;
+
+            // Remove existing classes and add new one
+            toast.className = `toast show bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} text-white`;
+
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        function makeAPICall(endpoint, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+                }
+            };
+
+            const finalOptions = {
+                ...defaultOptions,
+                ...options,
+                headers: {
+                    ...defaultOptions.headers,
+                    ...options.headers
+                }
+            };
+
+            return fetch(`${API_BASE_URL}${endpoint}`, finalOptions)
+                .then(response => {
+                    if (response.status === 401 && refreshToken) {
+                        return refreshAuthToken().then(() => {
+                            // Retry with new token
+                            finalOptions.headers['Authorization'] = `Bearer ${authToken}`;
+                            return fetch(`${API_BASE_URL}${endpoint}`, finalOptions);
+                        });
+                    }
+                    return response;
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                });
+        }
+
+        function refreshAuthToken() {
+            return fetch(`${API_BASE_URL}/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${refreshToken}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    authToken = data.access_token;
+                    localStorage.setItem('authToken', authToken);
+                })
+                .catch(error => {
+                    console.error('Token refresh failed:', error);
+                    logout();
+                });
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(section => {
+                section.classList.remove('section-active');
+                section.classList.add('section-hidden');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.classList.remove('section-hidden');
+                targetSection.classList.add('section-active');
+            }
+
+            // Update main content column classes based on authentication
+            const mainContent = document.getElementById('main-content');
+            const sidebar = document.getElementById('sidebar');
+
+            if (authToken && !['login', 'register', 'forgot-password'].includes(sectionName)) {
+                mainContent.className = 'col-md-9 col-lg-10 offset-md-3 offset-lg-2 content-area p-4';
+                sidebar.classList.remove('d-none');
+            } else {
+                mainContent.className = 'col-12 content-area p-4';
+                sidebar.classList.add('d-none');
+            }
+        }
+
+        function showAuthenticatedApp() {
+            document.getElementById('auth-buttons').classList.add('d-none');
+            document.getElementById('user-menu').classList.remove('d-none');
+            document.getElementById('sidebar').classList.remove('d-none');
+            showSection('dashboard');
+            loadDashboard();
+        }
+
+        function populateWeekSelectors() {
+            const selectors = ['progress-week', 'notes-week-filter', 'note-week', 'roadmap-week-selector', 'calendar-week-selector'];
+
+            selectors.forEach(selectorId => {
+                const selector = document.getElementById(selectorId);
+                if (selector) {
+                    // Clear existing options except first one
+                    while (selector.children.length > 1) {
+                        selector.removeChild(selector.lastChild);
+                    }
+
+                    // Add week options
+                    for (let i = 1; i <= 14; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = `Week ${i}`;
+                        selector.appendChild(option);
+                    }
+                }
+            });
+        }
+
+        // Authentication Functions
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            makeAPICall('/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            })
+                .then(data => {
+                    authToken = data.access_token;
+                    refreshToken = data.refresh_token;
+                    currentUser = data.user;
+
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+
+                    showAuthenticatedApp();
+                    loadUserProfile();
+                    showToast('Success', 'Logged in successfully!', 'success');
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Login failed', 'error');
+                });
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showToast('Error', 'Passwords do not match', 'error');
+                return;
+            }
+
+            makeAPICall('/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({ name, email, password })
+            })
+                .then(data => {
+                    authToken = data.access_token;
+                    refreshToken = data.refresh_token;
+                    currentUser = data.user;
+
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+
+                    showAuthenticatedApp();
+                    loadUserProfile();
+                    showToast('Success', 'Account created successfully!', 'success');
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Registration failed', 'error');
+                });
+        });
+
+        document.getElementById('forgot-password-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('forgot-email').value;
+
+            makeAPICall('/auth/forgot-password', {
+                method: 'POST',
+                body: JSON.stringify({ email })
+            })
+                .then(data => {
+                    showToast('Success', 'Reset link sent to your email!', 'success');
+                    showSection('login');
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Failed to send reset link', 'error');
+                });
+        });
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            authToken = null;
+            refreshToken = null;
+            currentUser = null;
+
+            document.getElementById('auth-buttons').classList.remove('d-none');
+            document.getElementById('user-menu').classList.add('d-none');
+            document.getElementById('sidebar').classList.add('d-none');
+
+            showSection('login');
+            showToast('Info', 'Logged out successfully', 'info');
+        }
+
+        // Profile Functions
+        function loadUserProfile() {
+            makeAPICall('/profile')
+                .then(data => {
+                    currentUser = data.user;
+
+                    // Update UI elements
+                    document.getElementById('user-name').textContent = data.user.name;
+                    if (data.user.avatar_url) {
+                        document.getElementById('user-avatar').src = data.user.avatar_url;
+                        document.getElementById('profile-avatar').src = data.user.avatar_url;
+                    }
+
+                    // Update profile form
+                    document.getElementById('profile-name').value = data.user.name;
+                    document.getElementById('profile-email').value = data.user.email;
+
+                    // Update preferences
+                    const prefs = data.preferences;
+                    document.getElementById('theme-select').value = prefs.theme || 'light';
+                    document.getElementById('language-select').value = prefs.language || 'en';
+                    document.getElementById('notifications-enabled').checked = prefs.notifications_enabled !== false;
+                    document.getElementById('email-notifications').checked = prefs.email_notifications !== false;
+                    document.getElementById('accessibility-mode').checked = prefs.accessibility_mode === true;
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load profile', 'error');
+                });
+        }
+
+        document.getElementById('profile-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
+
+            makeAPICall('/profile', {
+                method: 'PUT',
+                body: JSON.stringify({ name, email })
+            })
+                .then(data => {
+                    currentUser = data.user;
+                    document.getElementById('user-name').textContent = data.user.name;
+                    showToast('Success', 'Profile updated successfully!', 'success');
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Failed to update profile', 'error');
+                });
+        });
+
+        function uploadAvatar() {
+            const fileInput = document.getElementById('avatar-upload');
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            fetch(`${API_BASE_URL}/profile/avatar`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.avatar_url) {
+                        document.getElementById('user-avatar').src = data.avatar_url;
+                        document.getElementById('profile-avatar').src = data.avatar_url;
+                        showToast('Success', 'Avatar updated successfully!', 'success');
+                    } else {
+                        showToast('Error', data.error || 'Failed to upload avatar', 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to upload avatar', 'error');
+                });
+        }
+
+        document.getElementById('preferences-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const preferences = {
+                theme: document.getElementById('theme-select').value,
+                language: document.getElementById('language-select').value,
+                notifications_enabled: document.getElementById('notifications-enabled').checked,
+                email_notifications: document.getElementById('email-notifications').checked,
+                accessibility_mode: document.getElementById('accessibility-mode').checked
+            };
+
+            makeAPICall('/preferences', {
+                method: 'PUT',
+                body: JSON.stringify(preferences)
+            })
+                .then(data => {
+                    showToast('Success', 'Preferences updated successfully!', 'success');
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Failed to update preferences', 'error');
+                });
+        });
+
+        // Dashboard Functions
+        function loadDashboard() {
+            makeAPICall('/dashboard')
+                .then(data => {
+                    // Update stats
+                    document.getElementById('current-streak').textContent = data.stats.current_streak;
+                    document.getElementById('longest-streak').textContent = data.stats.longest_streak;
+                    document.getElementById('total-study-time').textContent = Math.round(data.stats.total_study_time / 60) + 'h';
+                    document.getElementById('completion-percentage').textContent = Math.round(data.stats.completion_percentage) + '%';
+
+                    // Update weekly progress
+                    const weeklyProgressContainer = document.getElementById('weekly-progress');
+                    weeklyProgressContainer.innerHTML = '';
+
+                    Object.entries(data.weekly_progress).forEach(([week, progress]) => {
+                        const progressBar = document.createElement('div');
+                        progressBar.className = 'mb-2';
+                        progressBar.innerHTML = `
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Week ${week}: ${progress.title}</span>
+                            <span>${progress.completed}/${progress.total}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${progress.percentage}%"></div>
+                        </div>
+                    `;
+                        weeklyProgressContainer.appendChild(progressBar);
+                    });
+
+                    // Update recent activity
+                    const recentActivityContainer = document.getElementById('recent-activity');
+                    recentActivityContainer.innerHTML = '';
+
+                    data.recent_sessions.forEach(session => {
+                        const activityItem = document.createElement('div');
+                        activityItem.className = 'border-bottom pb-2 mb-2';
+                        activityItem.innerHTML = `
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold">${session.topic || 'Study Session'}</span>
+                            <span class="text-muted">${session.duration}m</span>
+                        </div>
+                        <small class="text-muted">${new Date(session.start_time).toLocaleDateString()}</small>
+                    `;
+                        recentActivityContainer.appendChild(activityItem);
+                    });
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load dashboard', 'error');
+                });
+        }
+
+        // Progress Functions
+        function loadProgress() {
+            makeAPICall('/progress')
+                .then(data => {
+                    const progressDisplay = document.getElementById('progress-display');
+                    progressDisplay.innerHTML = '';
+
+                    Object.entries(data.progress).forEach(([week, weekData]) => {
+                        const weekCard = document.createElement('div');
+                        weekCard.className = 'card mb-3';
+
+                        let weekContent = `
+                        <div class="card-header">
+                            <h5>Week ${week}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                    `;
+
+                        Object.entries(weekData).forEach(([day, dayData]) => {
+                            const completedClass = dayData.completed ? 'bg-success text-white' : 'bg-light';
+                            weekContent += `
+                            <div class="col-md-4 mb-2">
+                                <div class="card ${completedClass}">
+                                    <div class="card-body text-center p-2">
+                                        <h6>${day}</h6>
+                                        <small>${dayData.time_spent}m</small>
+                                        ${dayData.completed ? '<i class="fas fa-check"></i>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        });
+
+                        weekContent += `
+                            </div>
+                        </div>
+                    `;
+
+                        weekCard.innerHTML = weekContent;
+                        progressDisplay.appendChild(weekCard);
+                    });
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load progress', 'error');
+                });
+        }
+
+        function updateProgress() {
+            const week = parseInt(document.getElementById('progress-week').value);
+            const day = document.getElementById('progress-day').value;
+            const timeSpent = parseInt(document.getElementById('time-spent').value) || 0;
+            const notes = document.getElementById('progress-notes').value;
+            const completed = document.getElementById('progress-completed').checked;
+
+            if (!week || !day) {
+                showToast('Error', 'Please select week and day', 'error');
+                return;
+            }
+
+            makeAPICall('/progress', {
+                method: 'POST',
+                body: JSON.stringify({
+                    week,
+                    day,
+                    time_spent: timeSpent,
+                    notes,
+                    completed
+                })
+            })
+                .then(data => {
+                    showToast('Success', 'Progress updated successfully!', 'success');
+                    loadProgress();
+                    loadDashboard(); // Refresh dashboard stats
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Failed to update progress', 'error');
+                });
+        }
+
+        // Notes Functions
+        function loadNotes() {
+            const search = document.getElementById('notes-search').value;
+            const week = document.getElementById('notes-week-filter').value;
+
+            let url = '/notes?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (week) url += `week=${week}&`;
+
+            makeAPICall(url)
+                .then(data => {
+                    const notesContainer = document.getElementById('notes-container');
+                    notesContainer.innerHTML = '';
+
+                    data.notes.forEach(note => {
+                        const noteCard = document.createElement('div');
+                        noteCard.className = 'col-md-6 col-lg-4 mb-3';
+                        noteCard.innerHTML = `
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">${note.title}</h6>
+                                <p class="card-text text-muted small">${note.content.substring(0, 100)}${note.content.length > 100 ? '...' : ''}</p>
+                                <div class="mb-2">
+                                    ${note.tags.map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('')}
+                                </div>
+                                <small class="text-muted">
+                                    ${note.week ? `Week ${note.week}` : ''} 
+                                    ${note.day ? `- ${note.day}` : ''}
+                                    <br>Updated: ${new Date(note.updated_at).toLocaleDateString()}
+                                </small>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editNote('${note.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteNote('${note.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                        notesContainer.appendChild(noteCard);
+                    });
+
+                    if (data.notes.length === 0) {
+                        notesContainer.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No notes found</p></div>';
+                    }
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load notes', 'error');
+                });
+        }
+
+        function showNoteModal(noteId = null) {
+            const modal = new bootstrap.Modal(document.getElementById('noteModal'));
+            const modalTitle = document.getElementById('noteModalTitle');
+
+            if (noteId) {
+                modalTitle.textContent = 'Edit Note';
+                document.getElementById('note-id').value = noteId;
+                // Load note data for editing
+                loadNoteForEdit(noteId);
+            } else {
+                modalTitle.textContent = 'Create Note';
+                document.getElementById('note-form').reset();
+                document.getElementById('note-id').value = '';
+            }
+
+            modal.show();
+        }
+
+        function loadNoteForEdit(noteId) {
+            makeAPICall(`/notes?search=${noteId}`)
+                .then(data => {
+                    const note = data.notes.find(n => n.id === noteId);
+                    if (note) {
+                        document.getElementById('note-title').value = note.title;
+                        document.getElementById('note-content').value = note.content;
+                        document.getElementById('note-tags').value = note.tags.join(', ');
+                        document.getElementById('note-week').value = note.week || '';
+                        document.getElementById('note-day').value = note.day || '';
+                    }
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load note', 'error');
+                });
+        }
+
+        function saveNote() {
+            const noteId = document.getElementById('note-id').value;
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+            const tags = document.getElementById('note-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const week = document.getElementById('note-week').value;
+            const day = document.getElementById('note-day').value;
+
+            if (!title) {
+                showToast('Error', 'Please enter a title', 'error');
+                return;
+            }
+
+            const noteData = {
+                title,
+                content,
+                tags,
+                week: week ? parseInt(week) : null,
+                day: day || null
+            };
+
+            const url = noteId ? `/notes/${noteId}` : '/notes';
+            const method = noteId ? 'PUT' : 'POST';
+
+            makeAPICall(url, {
+                method,
+                body: JSON.stringify(noteData)
+            })
+                .then(data => {
+                    showToast('Success', noteId ? 'Note updated successfully!' : 'Note created successfully!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('noteModal')).hide();
+                    loadNotes();
+                })
+                .catch(error => {
+                    showToast('Error', error.error || 'Failed to save note', 'error');
+                });
+        }
+
+        function editNote(noteId) {
+            showNoteModal(noteId);
+        }
+
+        function deleteNote(noteId) {
+            if (confirm('Are you sure you want to delete this note?')) {
+                makeAPICall(`/notes/${noteId}`, {
+                    method: 'DELETE'
+                })
+                    .then(data => {
+                        showToast('Success', 'Note deleted successfully!', 'success');
+                        loadNotes();
+                    })
+                    .catch(error => {
+                        showToast('Error', error.error || 'Failed to delete note', 'error');
+                    });
+            }
+        }
+
+        function searchNotes() {
+            loadNotes();
+        }
+
+        function filterNotes() {
+            loadNotes();
+        }
+
+        function sortNotes() {
+            loadNotes();
+        }
+
+        // Pomodoro Functions
+        function startPomodoro() {
+            const studyDuration = parseInt(document.getElementById('study-duration').value) * 60;
+            const topic = document.getElementById('session-topic').value;
+
+            makeAPICall('/pomodoro', {
+                method: 'POST',
+                body: JSON.stringify({
+                    duration: Math.floor(studyDuration / 60),
+                    topic,
+                    session_type: pomodoroState.sessionType
+                })
+            })
+                .then(data => {
+                    pomodoroState.currentSession = data.session_id;
+                    pomodoroState.timeLeft = studyDuration;
+                    pomodoroState.totalTime = studyDuration;
+                    pomodoroState.isRunning = true;
+                    pomodoroState.isPaused = false;
+
+                    updatePomodoroUI();
+                    startPomodoroTimer();
+                    showToast('Success', 'Pomodoro session started!', 'success');
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to start pomodoro session', 'error');
+                });
+        }
+
+        function startPomodoroTimer() {
+            pomodoroTimer = setInterval(() => {
+                if (pomodoroState.isRunning && !pomodoroState.isPaused) {
+                    pomodoroState.timeLeft--;
+                    updateTimerDisplay();
+
+                    if (pomodoroState.timeLeft <= 0) {
+                        completePomodoroSession();
+                    }
+                }
+            }, 1000);
+        }
+
+        function pausePomodoro() {
+            pomodoroState.isPaused = !pomodoroState.isPaused;
+            updatePomodoroUI();
+        }
+
+        function stopPomodoro() {
+            if (confirm('Are you sure you want to stop the current session?')) {
+                clearInterval(pomodoroTimer);
+                resetPomodoroState();
+                updatePomodoroUI();
+                updateTimerDisplay();
+            }
+        }
+
+        function completePomodoroSession() {
+            clearInterval(pomodoroTimer);
+
+            if (pomodoroState.currentSession) {
+                makeAPICall(`/pomodoro/${pomodoroState.currentSession}/complete`, {
+                    method: 'POST'
+                })
+                    .then(data => {
+                        showToast('Success', 'Pomodoro session completed!', 'success');
+
+                        // Switch session type
+                        if (pomodoroState.sessionType === 'study') {
+                            pomodoroState.sessionCount++;
+                            if (pomodoroState.sessionCount % 4 === 0) {
+                                pomodoroState.sessionType = 'long-break';
+                                pomodoroState.timeLeft = parseInt(document.getElementById('long-break').value) * 60;
+                            } else {
+                                pomodoroState.sessionType = 'break';
+                                pomodoroState.timeLeft = parseInt(document.getElementById('break-duration').value) * 60;
+                            }
+                        } else {
+                            pomodoroState.sessionType = 'study';
+                            pomodoroState.timeLeft = parseInt(document.getElementById('study-duration').value) * 60;
+                        }
+
+                        pomodoroState.totalTime = pomodoroState.timeLeft;
+                        pomodoroState.isRunning = false;
+                        pomodoroState.currentSession = null;
+                        updatePomodoroUI();
+                        updateTimerDisplay();
+                    })
+                    .catch(error => {
+                        showToast('Error', 'Failed to complete session', 'error');
+                    });
+            }
+        }
+
+        function resetPomodoroState() {
+            pomodoroState = {
+                isRunning: false,
+                isPaused: false,
+                currentSession: null,
+                timeLeft: parseInt(document.getElementById('study-duration').value) * 60,
+                totalTime: parseInt(document.getElementById('study-duration').value) * 60,
+                sessionCount: 1,
+                sessionType: 'study'
+            };
+        }
+
+        function updatePomodoroUI() {
+            const startBtn = document.getElementById('start-timer');
+            const pauseBtn = document.getElementById('pause-timer');
+            const stopBtn = document.getElementById('stop-timer');
+
+            startBtn.disabled = pomodoroState.isRunning;
+            pauseBtn.disabled = !pomodoroState.isRunning;
+            stopBtn.disabled = !pomodoroState.isRunning;
+
+            pauseBtn.innerHTML = pomodoroState.isPaused ? '<i class="fas fa-play"></i> Resume' : '<i class="fas fa-pause"></i> Pause';
+
+            document.getElementById('session-count').textContent = pomodoroState.sessionCount;
+            document.getElementById('session-type').textContent = pomodoroState.sessionType.charAt(0).toUpperCase() + pomodoroState.sessionType.slice(1);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(pomodoroState.timeLeft / 60);
+            const seconds = pomodoroState.timeLeft % 60;
+            document.getElementById('timer-display').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            const progress = ((pomodoroState.totalTime - pomodoroState.timeLeft) / pomodoroState.totalTime) * 100;
+            document.getElementById('timer-progress').style.width = `${progress}%`;
+        }
+
+        function loadPomodoroHistory() {
+            makeAPICall('/pomodoro/history')
+                .then(data => {
+                    console.log('Pomodoro history:', data);
+                    showToast('Info', `Loaded ${data.sessions.length} recent sessions`, 'info');
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load pomodoro history', 'error');
+                });
+        }
+
+        // AI Assistant Functions
+        function askAI() {
+            const question = document.getElementById('ai-question').value.trim();
+            if (!question) return;
+
+            addMessageToChat('user', question);
+            document.getElementById('ai-question').value = '';
+
+            makeAPICall('/ai/ask', {
+                method: 'POST',
+                body: JSON.stringify({ question })
+            })
+                .then(data => {
+                    addMessageToChat('assistant', data.answer);
+                    if (data.citations && data.citations.length > 0) {
+                        addCitationsToChat(data.citations);
+                    }
+                })
+                .catch(error => {
+                    addMessageToChat('assistant', 'Sorry, I encountered an error. Please try again.');
+                    showToast('Error', 'Failed to get AI response', 'error');
+                });
+        }
+
+        function addMessageToChat(sender, message) {
+            const chatContainer = document.getElementById('ai-chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ${sender}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${message}</div>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addCitationsToChat(citations) {
+            const chatContainer = document.getElementById('ai-chat-container');
+            const citationsDiv = document.createElement('div');
+            citationsDiv.className = 'ai-message assistant';
+
+            let citationsHtml = '<div class="message-bubble"><small><strong>References:</strong><br>';
+            citations.forEach(citation => {
+                citationsHtml += `• <a href="${citation.url}" target="_blank">${citation.title}</a><br>`;
+            });
+            citationsHtml += '</small></div>';
+
+            citationsDiv.innerHTML = citationsHtml;
+            chatContainer.appendChild(citationsDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function handleAIKeyPress(event) {
+            if (event.key === 'Enter') {
+                askAI();
+            }
+        }
+
+        function askPredefined(question) {
+            document.getElementById('ai-question').value = question;
+            askAI();
+        }
+
+        function generateStudyPlan() {
+            makeAPICall('/ai/study-plan', {
+                method: 'POST',
+                body: JSON.stringify({
+                    available_time: 60,
+                    focus_areas: ['arrays', 'algorithms'],
+                    difficulty: 'medium'
+                })
+            })
+                .then(data => {
+                    addMessageToChat('assistant', data.study_plan);
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to generate study plan', 'error');
+                });
+        }
+
+        function generateQuiz() {
+            const modal = new bootstrap.Modal(document.getElementById('quizModal'));
+            modal.show();
+        }
+
+        function generateAIQuiz() {
+            const topic = document.getElementById('quiz-topic').value;
+            const difficulty = document.getElementById('quiz-difficulty').value;
+            const questionCount = parseInt(document.getElementById('quiz-count').value);
+
+            makeAPICall('/ai/quiz', {
+                method: 'POST',
+                body: JSON.stringify({
+                    topic,
+                    difficulty,
+                    question_count: questionCount
+                })
+            })
+                .then(data => {
+                    document.getElementById('quiz-content').innerHTML = `<pre class="bg-light p-3 rounded">${data.quiz}</pre>`;
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to generate quiz', 'error');
+                });
+        }
+
+        function getSummary() {
+            // This would typically be called with specific content
+            showToast('Info', 'Select content to summarize from notes or resources', 'info');
+        }
+
+        // Resources Functions
+        function loadResources() {
+            const resourceType = document.getElementById('resource-type-filter').value;
+            let url = '/resources';
+            if (resourceType) {
+                url += `?type=${resourceType}`;
+            }
+
+            makeAPICall(url)
+                .then(data => {
+                    const resourcesContainer = document.getElementById('resources-container');
+                    resourcesContainer.innerHTML = '';
+
+                    data.resources.forEach(resource => {
+                        const resourceCard = document.createElement('div');
+                        resourceCard.className = 'col-md-6 col-lg-4 mb-3';
+
+                        const typeIcon = {
+                            'text': 'fas fa-file-text',
+                            'video': 'fas fa-play-circle',
+                            'interactive': 'fas fa-mouse-pointer',
+                            'practice': 'fas fa-code'
+                        }[resource.type] || 'fas fa-link';
+
+                        const typeColor = {
+                            'text': 'primary',
+                            'video': 'danger',
+                            'interactive': 'success',
+                            'practice': 'warning'
+                        }[resource.type] || 'secondary';
+
+                        resourceCard.innerHTML = `
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title">${resource.title}</h6>
+                                    <span class="badge bg-${typeColor}">
+                                        <i class="${typeIcon}"></i> ${resource.type}
+                                    </span>
+                                </div>
+                                <a href="${resource.url}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i> Open Resource
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                        resourcesContainer.appendChild(resourceCard);
+                    });
+
+                    if (data.resources.length === 0) {
+                        resourcesContainer.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No resources found</p></div>';
+                    }
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load resources', 'error');
+                });
+        }
+
+        function filterResources() {
+            loadResources();
+        }
+
+        function searchResources() {
+            loadResources();
+        }
+
+        // Search Functions
+        function performGlobalSearch() {
+            const query = document.getElementById('global-search').value.trim();
+            const searchType = document.getElementById('search-type').value;
+
+            if (!query) {
+                showToast('Error', 'Please enter a search query', 'error');
+                return;
+            }
+
+            let url = `/search?q=${encodeURIComponent(query)}`;
+            if (searchType !== 'all') {
+                url += `&type=${searchType}`;
+            }
+
+            makeAPICall(url)
+                .then(data => {
+                    displaySearchResults(data);
+                })
+                .catch(error => {
+                    showToast('Error', 'Search failed', 'error');
+                });
+        }
+
+        function displaySearchResults(data) {
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+
+            if (data.resources && data.resources.length > 0) {
+                const resourcesSection = document.createElement('div');
+                resourcesSection.innerHTML = `
+                    <h4>Resources (${data.resources.length})</h4>
+                    <div class="row mb-4">
+                        ${data.resources.map(resource => `
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>${resource.title}</h6>
+                                        <span class="badge bg-secondary">${resource.type}</span>
+                                        <a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">Open</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                resultsContainer.appendChild(resourcesSection);
+            }
+
+            if (data.roadmap && data.roadmap.length > 0) {
+                const roadmapSection = document.createElement('div');
+                roadmapSection.innerHTML = `
+                    <h4>Roadmap (${data.roadmap.length})</h4>
+                    <div class="row mb-4">
+                        ${data.roadmap.map(week => `
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Week ${week.week}: ${week.title}</h6>
+                                        <p class="text-muted small">${week.goal}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                resultsContainer.appendChild(roadmapSection);
+            }
+
+            if (data.notes && data.notes.length > 0) {
+                const notesSection = document.createElement('div');
+                notesSection.innerHTML = `
+                    <h4>Notes (${data.notes.length})</h4>
+                    <div class="row mb-4">
+                        ${data.notes.map(note => `
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>${note.title}</h6>
+                                        <p class="text-muted small">${note.content}</p>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editNote('${note.id}')">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                resultsContainer.appendChild(notesSection);
+            }
+
+            if (resultsContainer.innerHTML === '') {
+                resultsContainer.innerHTML = '<div class="text-center"><p class="text-muted">No results found</p></div>';
+            }
+        }
+
+        // Roadmap Functions
+        function loadRoadmap() {
+            makeAPICall('/roadmap')
+                .then(data => {
+                    const roadmapOverview = document.getElementById('roadmap-overview');
+                    roadmapOverview.innerHTML = '';
+
+                    data.roadmap.forEach(week => {
+                        const weekCard = document.createElement('div');
+                        weekCard.className = 'col-md-6 col-lg-4 mb-3';
+                        weekCard.innerHTML = `
+                        <div class="card h-100 study-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Week ${week.week}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${week.title}</h6>
+                                <p class="card-text">${week.goal}</p>
+                                <div class="mt-3">
+                                    <strong>Project:</strong> ${week.project.title}<br>
+                                    <small class="text-muted">${week.project.description}</small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadWeekDetail(${week.week})">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                        roadmapOverview.appendChild(weekCard);
+                    });
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load roadmap', 'error');
+                });
+        }
+
+        function loadWeekDetails() {
+            const selectedWeek = document.getElementById('roadmap-week-selector').value;
+            if (!selectedWeek) return;
+
+            loadWeekDetail(parseInt(selectedWeek));
+        }
+
+        function loadWeekDetail(weekNumber) {
+            makeAPICall(`/roadmap?week=${weekNumber}`)
+                .then(week => {
+                    const weekDetails = document.getElementById('week-details');
+                    weekDetails.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Week ${week.week}: ${week.title}</h4>
+                            <p class="mb-0">${week.goal}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5>Daily Schedule</h5>
+                                    <div class="row">
+                                        ${week.days.map(day => `
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h6>${day.day}</h6>
+                                                        <p><strong>Topic:</strong> ${day.topic}</p>
+                                                        <p><strong>Activities:</strong> ${day.activities}</p>
+                                                        <p><strong>Time:</strong> ${day.time_estimate} minutes</p>
+                                                        <div>
+                                                            <strong>Resources:</strong>
+                                                            ${day.resources.map(resource => `<span class="badge bg-info me-1">${resource}</span>`).join('')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5>Week Project</h5>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6>${week.project.title}</h6>
+                                            <p>${week.project.description}</p>
+                                            <div>
+                                                <strong>Skills:</strong><br>
+                                                ${week.project.skills.map(skill => `<span class="badge bg-success me-1">${skill}</span>`).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                    document.getElementById('roadmap-week-selector').value = weekNumber;
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load week details', 'error');
+                });
+        }
+
+        // Calendar Functions
+        function loadCalendar() {
+            makeAPICall('/calendar')
+                .then(data => {
+                    const calendarDisplay = document.getElementById('calendar-display');
+                    calendarDisplay.innerHTML = '';
+
+                    Object.entries(data.calendar).forEach(([week, weekData]) => {
+                        const weekCard = document.createElement('div');
+                        weekCard.className = 'col-md-6 col-lg-4 mb-3';
+                        weekCard.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Week ${week}: ${weekData.title}</h6>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar" style="width: ${weekData.completion_percentage}%"></div>
+                                </div>
+                                <small class="text-muted">${weekData.completed_days}/${weekData.total_days} days completed</small>
+                            </div>
+                        </div>
+                    `;
+                        calendarDisplay.appendChild(weekCard);
+                    });
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load calendar', 'error');
+                });
+        }
+
+        function loadCalendarWeek() {
+            const selectedWeek = document.getElementById('calendar-week-selector').value;
+            if (!selectedWeek) return;
+
+            makeAPICall(`/calendar?week=${selectedWeek}`)
+                .then(data => {
+                    const calendarDisplay = document.getElementById('calendar-display');
+                    calendarDisplay.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Week ${data.week.week}: ${data.week.title}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                ${data.week.days.map(day => {
+                        const dayProgress = data.progress[day.day];
+                        const completedClass = dayProgress.completed ? 'border-success' : 'border-light';
+                        return `
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card ${completedClass}">
+                                                <div class="card-body text-center">
+                                                    <h6>${day.day}</h6>
+                                                    <p class="small">${day.topic}</p>
+                                                    <p class="small text-muted">${day.time_estimate} min</p>
+                                                    ${dayProgress.completed ? '<i class="fas fa-check text-success"></i>' : '<i class="far fa-circle text-muted"></i>'}
+                                                    <br>
+                                                    <small>${dayProgress.time_spent} min spent</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                    }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load calendar week', 'error');
+                });
+        }
+
+        // Notifications Functions
+        function loadNotifications() {
+            makeAPICall('/notifications')
+                .then(data => {
+                    const notificationsContainer = document.getElementById('notifications-container');
+                    notificationsContainer.innerHTML = '';
+
+                    data.notifications.forEach(notification => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = `card mb-2 ${notification.is_read ? 'bg-light' : 'bg-white border-primary'}`;
+                        notificationItem.innerHTML = `
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">${notification.title}</h6>
+                                    <p class="mb-1">${notification.message}</p>
+                                    <small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
+                                </div>
+                                <div>
+                                    ${!notification.is_read ? `<button class="btn btn-sm btn-outline-primary" onclick="markNotificationRead('${notification.id}')">Mark Read</button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                        notificationsContainer.appendChild(notificationItem);
+                    });
+
+                    if (data.notifications.length === 0) {
+                        notificationsContainer.innerHTML = '<div class="text-center"><p class="text-muted">No notifications</p></div>';
+                    }
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to load notifications', 'error');
+                });
+        }
+
+        function markNotificationRead(notificationId) {
+            makeAPICall(`/notifications/${notificationId}/read`, {
+                method: 'POST'
+            })
+                .then(data => {
+                    loadNotifications();
+                    updateNotificationCount();
+                })
+                .catch(error => {
+                    showToast('Error', 'Failed to mark notification as read', 'error');
+                });
+        }
+
+        function updateNotificationCount() {
+            makeAPICall('/notifications')
+                .then(data => {
+                    const unreadCount = data.notifications.filter(n => !n.is_read).length;
+                    const countElement = document.getElementById('notification-count');
+                    countElement.textContent = unreadCount;
+                    countElement.style.display = unreadCount > 0 ? 'inline' : 'none';
+                })
+                .catch(error => {
+                    console.error('Failed to update notification count:', error);
+                });
+        }
+
+        // Initialize timer display
+        resetPomodoroState();
+        updateTimerDisplay();
+
+        // Load initial data when sections are shown
+        document.addEventListener('DOMContentLoaded', function () {
+            // Auto-load data when authenticated
+            if (authToken) {
+                loadDashboard();
+                updateNotificationCount();
+            }
+        });
+    </script>
+</body>
+
+</html>

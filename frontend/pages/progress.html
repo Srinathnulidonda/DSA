@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracker - DSA Learning Platform</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animation.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        .achievement-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+
+        .achievement-card.unlocked::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .milestone-item {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .milestone-item::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+
+        .milestone-item.completed::before {
+            background: linear-gradient(to bottom, #10b981 0%, #e5e7eb 100%);
+        }
+
+        .milestone-dot {
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            border: 2px solid white;
+            z-index: 1;
+        }
+
+        .milestone-item.completed .milestone-dot {
+            background: #10b981;
+        }
+
+        .heatmap-cell {
+            width: 15px;
+            height: 15px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.5);
+            border: 1px solid #333;
+        }
+
+        .level-0 {
+            background: #ebedf0;
+        }
+
+        .level-1 {
+            background: #9be9a8;
+        }
+
+        .level-2 {
+            background: #40c463;
+        }
+
+        .level-3 {
+            background: #30a14e;
+        }
+
+        .level-4 {
+            background: #216e39;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Desktop Sidebar -->
+    <div id="sidebar" class="desktop-only"></div>
+
+    <!-- Mobile Top Bar -->
+    <div id="topbar" class="mobile-only"></div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container-fluid p-4">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="h3 fw-bold mb-2">Progress Overview</h1>
+                    <p class="text-muted mb-0">Track your learning journey and achievements</p>
+                </div>
+            </div>
+
+            <!-- Progress Stats -->
+            <div class="row mb-4">
+                <div class="col-12 col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-graph-up fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Overall Progress</h6>
+                                    <h3 class="fw-bold mb-0"><span id="overallProgress">0</span>%</h3>
+                                </div>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div id="overallProgressBar" class="progress-bar bg-primary" role="progressbar"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-check-circle fs-4 text-success"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Topics Completed</h6>
+                                    <h3 class="fw-bold mb-0"><span id="topicsCompleted">0</span>/98</h3>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                <span id="topicsThisWeek">0</span> completed this week
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-clock-history fs-4 text-warning"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Study Time</h6>
+                                    <h3 class="fw-bold mb-0"><span id="totalHours">0</span>h</h3>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                Avg <span id="avgDaily">0</span>h per day
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-trophy fs-4 text-info"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Achievements</h6>
+                                    <h3 class="fw-bold mb-0"><span id="achievementsUnlocked">0</span>/15</h3>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                <span id="recentAchievement">Keep going!</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Heatmap -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Activity Heatmap</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="activityHeatmap" class="overflow-auto">
+                                <!-- Heatmap will be generated here -->
+                            </div>
+                            <div class="d-flex align-items-center justify-content-end mt-3 gap-2">
+                                <small class="text-muted me-2">Less</small>
+                                <div class="d-flex gap-1">
+                                    <div class="heatmap-cell level-0"></div>
+                                    <div class="heatmap-cell level-1"></div>
+                                    <div class="heatmap-cell level-2"></div>
+                                    <div class="heatmap-cell level-3"></div>
+                                    <div class="heatmap-cell level-4"></div>
+                                </div>
+                                <small class="text-muted ms-2">More</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Charts -->
+            <div class="row mb-4">
+                <div class="col-12 col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Weekly Progress</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="weeklyProgressChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Topic Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topicCategoriesChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestones -->
+            <div class="row mb-4">
+                <div class="col-12 col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Learning Milestones</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="milestonesList">
+                                <!-- Milestones will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">Achievements</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3" id="achievementsList">
+                                <!-- Achievements will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Progress -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold">Week-by-Week Progress</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="exportProgress()">
+                                    <i class="bi bi-download me-1"></i>Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Week</th>
+                                            <th>Title</th>
+                                            <th>Progress</th>
+                                            <th>Time Spent</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="weeklyProgressTable">
+                                        <!-- Weekly progress will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div id="mobileNav" class="mobile-only"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://dsa-8ko1.onrender.com/api';
+        let authToken = null;
+        let progressData = null;
+        let roadmapData = null;
+        let analyticsData = null;
+
+        // Initialize progress page
+        async function initProgress() {
+            authToken = localStorage.getItem('access_token');
+
+            if (!authToken) {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // Load components
+            await loadComponents();
+
+            // Load all data
+            await loadAllData();
+
+            // Initialize visualizations
+            initializeCharts();
+            generateActivityHeatmap();
+            loadMilestones();
+            loadAchievements();
+            updateWeeklyProgressTable();
+        }
+
+        // Load reusable components
+        async function loadComponents() {
+            // Load sidebar
+            const sidebarResponse = await fetch('../components/sidebar.html');
+            const sidebarHtml = await sidebarResponse.text();
+            document.getElementById('sidebar').innerHTML = sidebarHtml;
+
+            // Load topbar
+            const topbarResponse = await fetch('../components/topbar.html');
+            const topbarHtml = await topbarResponse.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // Load mobile nav
+            const mobileNavResponse = await fetch('../components/mobile-nav.html');
+            const mobileNavHtml = await mobileNavResponse.text();
+            document.getElementById('mobileNav').innerHTML = mobileNavHtml;
+
+            // Set active states
+            setActiveNavItem('progress');
+        }
+
+        // Set active navigation item
+        function setActiveNavItem(page) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === page) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Load all data
+        async function loadAllData() {
+            try {
+                // Load progress data
+                const progressResponse = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                progressData = await progressResponse.json();
+
+                // Load roadmap data
+                const roadmapResponse = await fetch(`${API_BASE}/roadmap`);
+                const roadmapResult = await roadmapResponse.json();
+                roadmapData = roadmapResult.roadmap;
+
+                // Load analytics data
+                const analyticsResponse = await fetch(`${API_BASE}/analytics/dashboard?days=30`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                analyticsData = await analyticsResponse.json();
+
+                // Update stats
+                updateProgressStats();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showToast('Failed to load progress data', 'error');
+            }
+        }
+
+        // Update progress stats
+        function updateProgressStats() {
+            const stats = progressData.statistics;
+
+            // Overall progress
+            document.getElementById('overallProgress').textContent = stats.completion_percentage;
+            document.getElementById('overallProgressBar').style.width = `${stats.completion_percentage}%`;
+
+            // Topics completed
+            document.getElementById('topicsCompleted').textContent = stats.total_completed;
+
+            // Calculate topics this week
+            const thisWeekCompleted = analyticsData.progress_timeline
+                .filter(p => {
+                    const date = new Date(p.date);
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return date >= weekAgo;
+                })
+                .reduce((sum, p) => sum + p.completed, 0);
+            document.getElementById('topicsThisWeek').textContent = thisWeekCompleted;
+
+            // Study time
+            const totalHours = Math.round(stats.total_time_minutes / 60);
+            document.getElementById('totalHours').textContent = totalHours;
+
+            // Calculate average daily
+            const daysSinceStart = Object.keys(progressData.progress).length || 1;
+            const avgDaily = (totalHours / daysSinceStart).toFixed(1);
+            document.getElementById('avgDaily').textContent = avgDaily;
+
+            // Achievements (mock data for now)
+            const achievements = calculateAchievements();
+            document.getElementById('achievementsUnlocked').textContent = achievements.unlocked;
+            if (achievements.recent) {
+                document.getElementById('recentAchievement').textContent = achievements.recent;
+            }
+        }
+
+        // Calculate achievements
+        function calculateAchievements() {
+            let unlocked = 0;
+            let recent = null;
+
+            const completed = progressData.statistics.total_completed;
+
+            if (completed >= 1) { unlocked++; recent = "First Step"; }
+            if (completed >= 10) { unlocked++; recent = "Getting Started"; }
+            if (completed >= 25) { unlocked++; recent = "Quarter Way"; }
+            if (completed >= 50) { unlocked++; recent = "Halfway Hero"; }
+            if (completed >= 75) { unlocked++; recent = "Almost There"; }
+            if (completed >= 98) { unlocked++; recent = "DSA Master"; }
+
+            // Streak achievements
+            const streakResponse = fetch(`${API_BASE}/streaks`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            }).then(r => r.json()).then(data => {
+                if (data.current_streak >= 7) unlocked++;
+                if (data.current_streak >= 30) unlocked++;
+                if (data.longest_streak >= 50) unlocked++;
+            });
+
+            return { unlocked, recent };
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Weekly Progress Chart
+            const weeklyCtx = document.getElementById('weeklyProgressChart').getContext('2d');
+
+            const weeklyData = analyticsData.weekly_progress || [];
+
+            new Chart(weeklyCtx, {
+                type: 'bar',
+                data: {
+                    labels: weeklyData.map(w => `Week ${w.week}`),
+                    datasets: [{
+                        label: 'Topics Completed',
+                        data: weeklyData.map(w => w.completed),
+                        backgroundColor: '#667eea',
+                        borderRadius: 6
+                    }, {
+                        label: 'Time Spent (hours)',
+                        data: weeklyData.map(w => Math.round(w.time_spent / 60)),
+                        backgroundColor: '#764ba2',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Topic Categories Chart
+            const categoriesCtx = document.getElementById('topicCategoriesChart').getContext('2d');
+
+            // Group topics by category
+            const categories = {};
+            roadmapData.forEach(week => {
+                const category = getCategoryFromWeek(week.week);
+                categories[category] = (categories[category] || 0) +
+                    week.days.filter(day => {
+                        const key = `week${week.week}_day${day.day}`;
+                        return progressData.progress[key]?.completed;
+                    }).length;
+            });
+
+            new Chart(categoriesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(categories),
+                    datasets: [{
+                        data: Object.values(categories),
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#4facfe',
+                            '#fa709a',
+                            '#fee140'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Get category from week number
+        function getCategoryFromWeek(weekNum) {
+            if (weekNum <= 2) return 'Fundamentals';
+            if (weekNum <= 4) return 'Linear Structures';
+            if (weekNum <= 6) return 'Trees';
+            if (weekNum <= 8) return 'Advanced DS';
+            if (weekNum <= 10) return 'Graphs';
+            if (weekNum <= 12) return 'Algorithms';
+            return 'Advanced Topics';
+        }
+
+        // Generate activity heatmap
+        function generateActivityHeatmap() {
+            const container = document.getElementById('activityHeatmap');
+            const today = new Date();
+            const startDate = new Date(today);
+            startDate.setDate(today.getDate() - 364); // Show last year
+
+            // Create activity map from progress data
+            const activityMap = {};
+            Object.entries(progressData.progress).forEach(([key, progress]) => {
+                if (progress.completed && progress.completion_date) {
+                    const date = new Date(progress.completion_date).toISOString().split('T')[0];
+                    activityMap[date] = (activityMap[date] || 0) + 1;
+                }
+            });
+
+            // Generate heatmap grid
+            const weeks = [];
+            let currentWeek = [];
+            let currentDate = new Date(startDate);
+
+            // Fill initial empty cells
+            for (let i = 0; i < currentDate.getDay(); i++) {
+                currentWeek.push(null);
+            }
+
+            while (currentDate <= today) {
+                const dateStr = currentDate.toISOString().split('T')[0];
+                const activity = activityMap[dateStr] || 0;
+
+                currentWeek.push({
+                    date: dateStr,
+                    activity: activity,
+                    level: getActivityLevel(activity)
+                });
+
+                if (currentWeek.length === 7) {
+                    weeks.push(currentWeek);
+                    currentWeek = [];
+                }
+
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            // Add remaining days
+            if (currentWeek.length > 0) {
+                while (currentWeek.length < 7) {
+                    currentWeek.push(null);
+                }
+                weeks.push(currentWeek);
+            }
+
+            // Render heatmap
+            const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            let heatmapHtml = '<div class="d-flex">';
+
+            // Day labels
+            heatmapHtml += '<div class="me-2">';
+            dayLabels.forEach((day, index) => {
+                if (index % 2 === 1) {
+                    heatmapHtml += `<div style="height: 15px; font-size: 10px; line-height: 15px;">${day}</div>`;
+                } else {
+                    heatmapHtml += '<div style="height: 15px;"></div>';
+                }
+            });
+            heatmapHtml += '</div>';
+
+            // Weeks
+            heatmapHtml += '<div class="d-flex gap-1">';
+            weeks.forEach((week, weekIndex) => {
+                heatmapHtml += '<div class="d-flex flex-column gap-1">';
+                week.forEach(day => {
+                    if (day) {
+                        heatmapHtml += `<div class="heatmap-cell level-${day.level}" 
+                                            data-bs-toggle="tooltip" 
+                                            title="${day.activity} activities on ${new Date(day.date).toDateString()}"></div>`;
+                    } else {
+                        heatmapHtml += '<div style="width: 15px; height: 15px;"></div>';
+                    }
+                });
+                heatmapHtml += '</div>';
+            });
+            heatmapHtml += '</div>';
+
+            heatmapHtml += '</div>';
+
+            container.innerHTML = heatmapHtml;
+
+            // Initialize tooltips
+            const tooltips = container.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(el => new bootstrap.Tooltip(el));
+        }
+
+        // Get activity level for heatmap
+        function getActivityLevel(count) {
+            if (count === 0) return 0;
+            if (count === 1) return 1;
+            if (count === 2) return 2;
+            if (count <= 4) return 3;
+            return 4;
+        }
+
+        // Load milestones
+        function loadMilestones() {
+            const container = document.getElementById('milestonesList');
+
+            const milestones = [
+                { week: 1, title: 'Started Learning Journey', completed: progressData.statistics.total_completed > 0 },
+                { week: 2, title: 'Completed Arrays & Strings', completed: isWeekCompleted(2) },
+                { week: 4, title: 'Mastered Stacks & Queues', completed: isWeekCompleted(4) },
+                { week: 6, title: 'Binary Trees Complete', completed: isWeekCompleted(6) },
+                { week: 8, title: 'Advanced Data Structures', completed: isWeekCompleted(8) },
+                { week: 10, title: 'Graph Algorithms Master', completed: isWeekCompleted(10) },
+                { week: 12, title: 'Recursion & Backtracking', completed: isWeekCompleted(12) },
+                { week: 14, title: 'DSA Master!', completed: progressData.statistics.total_completed >= 98 }
+            ];
+
+            container.innerHTML = milestones.map(milestone => `
+                <div class="milestone-item ${milestone.completed ? 'completed' : ''} mb-3">
+                    <div class="milestone-dot"></div>
+                    <div>
+                        <h6 class="mb-1 ${milestone.completed ? 'text-success' : 'text-muted'}">
+                            ${milestone.title}
+                            ${milestone.completed ? '<i class="bi bi-check-circle-fill ms-2"></i>' : ''}
+                        </h6>
+                        <small class="text-muted">Week ${milestone.week}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Check if week is completed
+        function isWeekCompleted(weekNum) {
+            const week = roadmapData.find(w => w.week === weekNum);
+            if (!week) return false;
+
+            return week.days.every(day => {
+                const key = `week${weekNum}_day${day.day}`;
+                return progressData.progress[key]?.completed;
+            });
+        }
+
+        // Load achievements
+        function loadAchievements() {
+            const container = document.getElementById('achievementsList');
+
+            const achievements = [
+                { id: 1, title: 'First Step', icon: 'bi-flag', description: 'Complete your first topic', unlocked: progressData.statistics.total_completed >= 1 },
+                { id: 2, title: 'Week Warrior', icon: 'bi-calendar-week', description: '7-day streak', unlocked: false },
+                { id: 3, title: 'Speed Learner', icon: 'bi-lightning', description: 'Complete 5 topics in one day', unlocked: false },
+                { id: 4, title: 'Halfway Hero', icon: 'bi-trophy', description: 'Complete 50% of the roadmap', unlocked: progressData.statistics.completion_percentage >= 50 },
+                { id: 5, title: 'Problem Solver', icon: 'bi-puzzle', description: 'Solve 100 practice problems', unlocked: false },
+                { id: 6, title: 'DSA Master', icon: 'bi-mortarboard', description: 'Complete the entire roadmap', unlocked: progressData.statistics.total_completed >= 98 }
+            ];
+
+            container.innerHTML = achievements.map(achievement => `
+                <div class="col-6 col-md-4">
+                    <div class="achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'} 
+                                text-center p-3 rounded bg-light">
+                        <i class="bi ${achievement.icon} fs-1 ${achievement.unlocked ? 'text-warning' : 'text-muted'}"></i>
+                        <h6 class="mt-2 mb-1">${achievement.title}</h6>
+                        <small class="text-muted">${achievement.description}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update weekly progress table
+        function updateWeeklyProgressTable() {
+            const tbody = document.getElementById('weeklyProgressTable');
+
+            const rows = roadmapData.map(week => {
+                const weekProgress = calculateWeekProgress(week);
+                const timeSpent = getWeekTimeSpent(week);
+                const status = getWeekStatus(week);
+
+                return `
+                    <tr>
+                        <td class="fw-medium">Week ${week.week}</td>
+                        <td>${week.title}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                    <div class="progress-bar ${status === 'completed' ? 'bg-success' : 'bg-primary'}" 
+                                         role="progressbar" style="width: ${weekProgress}%"></div>
+                                </div>
+                                <small>${Math.round(weekProgress)}%</small>
+                            </div>
+                        </td>
+                        <td>${Math.round(timeSpent / 60)}h ${timeSpent % 60}m</td>
+                        <td>
+                            <span class="badge bg-${getStatusColor(status)}">${status}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rows.join('');
+        }
+
+        // Calculate week progress
+        function calculateWeekProgress(week) {
+            let completed = 0;
+            week.days.forEach(day => {
+                const key = `week${week.week}_day${day.day}`;
+                if (progressData.progress[key]?.completed) {
+                    completed++;
+                }
+            });
+            return (completed / week.days.length) * 100;
+        }
+
+        // Get week time spent
+        function getWeekTimeSpent(week) {
+            let totalTime = 0;
+            week.days.forEach(day => {
+                const key = `week${week.week}_day${day.day}`;
+                totalTime += progressData.progress[key]?.time_spent || 0;
+            });
+            return totalTime;
+        }
+
+        // Get week status
+        function getWeekStatus(week) {
+            const progress = calculateWeekProgress(week);
+            if (progress === 100) return 'completed';
+            if (progress > 0) return 'in-progress';
+            return 'upcoming';
+        }
+
+        // Get status color
+        function getStatusColor(status) {
+            const colors = {
+                'completed': 'success',
+                'in-progress': 'primary',
+                'upcoming': 'secondary'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        // Export progress
+        async function exportProgress() {
+            try {
+                // Prepare export data
+                const exportData = {
+                    user: JSON.parse(localStorage.getItem('user')),
+                    exportDate: new Date().toISOString(),
+                    summary: {
+                        totalCompleted: progressData.statistics.total_completed,
+                        completionPercentage: progressData.statistics.completion_percentage,
+                        totalTimeMinutes: progressData.statistics.total_time_minutes,
+                        totalTimeHours: Math.round(progressData.statistics.total_time_minutes / 60)
+                    },
+                    weeklyProgress: roadmapData.map(week => ({
+                        week: week.week,
+                        title: week.title,
+                        progress: calculateWeekProgress(week),
+                        timeSpent: getWeekTimeSpent(week),
+                        topics: week.days.map(day => {
+                            const key = `week${week.week}_day${day.day}`;
+                            const progress = progressData.progress[key];
+                            return {
+                                day: day.day,
+                                topic: day.topic,
+                                completed: progress?.completed || false,
+                                timeSpent: progress?.time_spent || 0,
+                                completionDate: progress?.completion_date
+                            };
+                        })
+                    }))
+                };
+
+                // Create and download JSON file
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                showToast('Progress exported successfully', 'success');
+
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Failed to export progress', 'error');
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toastHtml = `
+                <div class="toast align-items-center text-bg-${type} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            const toastContainer = document.querySelector('.toast-container');
+            const toastElement = document.createElement('div');
+            toastElement.innerHTML = toastHtml;
+            toastContainer.appendChild(toastElement.firstElementChild);
+
+            const toast = new bootstrap.Toast(toastElement.firstElementChild);
+            toast.show();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initProgress);
+    </script>
+</body>
+
+</html>
