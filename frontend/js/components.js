@@ -4,9 +4,8 @@ async function loadComponents() {
     // Load sidebar
     const sidebarContainer = document.getElementById('sidebarContainer');
     if (sidebarContainer) {
-        const sidebarResponse = await fetch('/components/sidebar.html');
+        const sidebarResponse = await fetch('../components/sidebar.html');
         sidebarContainer.innerHTML = await sidebarResponse.text();
-
         // Execute sidebar scripts
         const scripts = sidebarContainer.querySelectorAll('script');
         scripts.forEach(script => {
@@ -19,7 +18,7 @@ async function loadComponents() {
     // Load topbar
     const topbarContainer = document.getElementById('topbarContainer');
     if (topbarContainer) {
-        const topbarResponse = await fetch('/components/topbar.html');
+        const topbarResponse = await fetch('../components/topbar.html');
         topbarContainer.innerHTML = await topbarResponse.text();
 
         // Execute topbar scripts
@@ -34,7 +33,7 @@ async function loadComponents() {
     // Load mobile nav
     const mobileNavContainer = document.getElementById('mobileNavContainer');
     if (mobileNavContainer) {
-        const mobileNavResponse = await fetch('/components/mobile-nav.html');
+        const mobileNavResponse = await fetch('../components/mobile-nav.html');
         mobileNavContainer.innerHTML = await mobileNavResponse.text();
 
         // Execute mobile nav scripts
