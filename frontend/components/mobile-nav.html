@@ -1,0 +1,655 @@
+<!-- Mobile Navigation Component -->
+<nav class="mobile-nav d-lg-none">
+    <a href="dashboard.html" class="mobile-nav-item" data-page="dashboard">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+    <a href="roadmap.html" class="mobile-nav-item" data-page="roadmap">
+        <i class="fas fa-road"></i>
+        <span>Roadmap</span>
+        <div class="mobile-nav-indicator" id="mobileRoadmapIndicator"></div>
+    </a>
+    <a href="#" class="mobile-nav-item mobile-nav-center" id="mobileQuickAction">
+        <div class="mobile-nav-fab">
+            <i class="fas fa-plus"></i>
+        </div>
+    </a>
+    <a href="notes.html" class="mobile-nav-item" data-page="notes">
+        <i class="fas fa-sticky-note"></i>
+        <span>Notes</span>
+        <span class="mobile-nav-badge" id="mobileNotesBadge">3</span>
+    </a>
+    <a href="profile.html" class="mobile-nav-item" data-page="profile">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+</nav>
+
+<!-- Quick Action Menu -->
+<div class="mobile-quick-menu" id="mobileQuickMenu">
+    <div class="quick-menu-backdrop" id="quickMenuBackdrop"></div>
+    <div class="quick-menu-content">
+        <button class="quick-menu-item" data-action="timer">
+            <div class="quick-menu-icon bg-primary">
+                <i class="fas fa-clock"></i>
+            </div>
+            <span>Start Timer</span>
+        </button>
+        <button class="quick-menu-item" data-action="note">
+            <div class="quick-menu-icon bg-success">
+                <i class="fas fa-sticky-note"></i>
+            </div>
+            <span>Quick Note</span>
+        </button>
+        <button class="quick-menu-item" data-action="ai">
+            <div class="quick-menu-icon bg-info">
+                <i class="fas fa-robot"></i>
+            </div>
+            <span>Ask AI</span>
+        </button>
+        <button class="quick-menu-item" data-action="progress">
+            <div class="quick-menu-icon bg-warning">
+                <i class="fas fa-check"></i>
+            </div>
+            <span>Log Progress</span>
+        </button>
+    </div>
+</div>
+
+<!-- Mobile Nav Styles -->
+<style>
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--mobile-nav-height, 60px);
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1030;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .mobile-nav-item {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem;
+        color: #64748b;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+    .mobile-nav-item:hover,
+    .mobile-nav-item.active {
+        color: #6366f1;
+    }
+
+    .mobile-nav-item i {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-nav-item.active i {
+        transform: scale(1.1);
+    }
+
+    .mobile-nav-item span {
+        font-size: 0.75rem;
+    }
+
+    .mobile-nav-center {
+        flex: 0.8;
+    }
+
+    .mobile-nav-fab {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        transform: translateY(-8px);
+        transition: all 0.3s ease;
+    }
+
+    .mobile-nav-fab:active {
+        transform: translateY(-8px) scale(0.95);
+    }
+
+    .mobile-nav-fab i {
+        font-size: 1.5rem;
+        margin: 0;
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-nav-fab.active i {
+        transform: rotate(45deg);
+    }
+
+    .mobile-nav-badge {
+        position: absolute;
+        top: 4px;
+        right: 20%;
+        background-color: #ef4444;
+        color: white;
+        font-size: 0.625rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    .mobile-nav-indicator {
+        position: absolute;
+        top: 8px;
+        right: 25%;
+        width: 6px;
+        height: 6px;
+        background-color: #10b981;
+        border-radius: 50%;
+        display: none;
+    }
+
+    .mobile-nav-indicator.active {
+        display: block;
+        animation: pulse 2s infinite;
+    }
+
+    /* Quick Action Menu */
+    .mobile-quick-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1040;
+        pointer-events: none;
+    }
+
+    .quick-menu-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .quick-menu-content {
+        position: absolute;
+        bottom: calc(var(--mobile-nav-height, 60px) + 20px);
+        left: 50%;
+        transform: translateX(-50%);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+        transition: all 0.3s ease;
+    }
+
+    .mobile-quick-menu.show {
+        pointer-events: all;
+    }
+
+    .mobile-quick-menu.show .quick-menu-backdrop {
+        opacity: 1;
+    }
+
+    .mobile-quick-menu.show .quick-menu-content {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .quick-menu-item {
+        background: white;
+        border: none;
+        border-radius: 1rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .quick-menu-item:active {
+        transform: scale(0.95);
+    }
+
+    .quick-menu-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .quick-menu-item span {
+        font-size: 0.875rem;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.2);
+            opacity: 0.7;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Safe area adjustments for notched devices */
+    @supports (padding: max(0px)) {
+        .mobile-nav {
+            padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+        }
+    }
+
+    /* Dark mode support */
+    [data-theme="dark"] .mobile-nav {
+        background-color: #1e293b;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .mobile-nav-item {
+        color: #94a3b8;
+    }
+
+    [data-theme="dark"] .mobile-nav-item:hover,
+    [data-theme="dark"] .mobile-nav-item.active {
+        color: #818cf8;
+    }
+
+    [data-theme="dark"] .quick-menu-item {
+        background-color: #334155;
+    }
+
+    [data-theme="dark"] .quick-menu-item span {
+        color: #e2e8f0;
+    }
+</style>
+
+<!-- Mobile Nav Script -->
+<script>
+    // Initialize mobile navigation
+    function initializeMobileNav() {
+        // Set active nav item based on current page
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+        const activeItem = document.querySelector(`[data-page="${currentPage}"]`);
+
+        if (activeItem) {
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            activeItem.classList.add('active');
+        }
+
+        // Quick action menu toggle
+        const quickActionBtn = document.getElementById('mobileQuickAction');
+        const quickMenu = document.getElementById('mobileQuickMenu');
+        const quickMenuBackdrop = document.getElementById('quickMenuBackdrop');
+        const fabIcon = quickActionBtn.querySelector('.mobile-nav-fab');
+
+        quickActionBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            quickMenu.classList.toggle('show');
+            fabIcon.classList.toggle('active');
+        });
+
+        quickMenuBackdrop.addEventListener('click', () => {
+            quickMenu.classList.remove('show');
+            fabIcon.classList.remove('active');
+        });
+
+        // Quick action handlers
+        document.querySelectorAll('.quick-menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const action = e.currentTarget.dataset.action;
+                handleQuickAction(action);
+                quickMenu.classList.remove('show');
+                fabIcon.classList.remove('active');
+            });
+        });
+
+        // Update badges and indicators
+        updateMobileIndicators();
+
+        // Add swipe down to refresh on mobile
+        if ('ontouchstart' in window) {
+            initializePullToRefresh();
+        }
+
+        // Handle orientation changes
+        window.addEventListener('orientationchange', handleOrientationChange);
+
+        // Update active state on navigation
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                if (this.id !== 'mobileQuickAction') {
+                    document.querySelectorAll('.mobile-nav-item').forEach(navItem => {
+                        navItem.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // Handle quick actions
+    function handleQuickAction(action) {
+        switch (action) {
+            case 'timer':
+                // Navigate to pomodoro or show quick timer
+                if (window.location.pathname.includes('pomodoro.html')) {
+                    // Start timer directly
+                    document.getElementById('startBtn')?.click();
+                } else {
+                    window.location.href = 'pomodoro.html';
+                }
+                break;
+
+            case 'note':
+                // Show quick note modal or navigate to notes
+                if (typeof bootstrap !== 'undefined' && document.getElementById('noteModal')) {
+                    const noteModal = new bootstrap.Modal(document.getElementById('noteModal'));
+                    noteModal.show();
+                } else {
+                    window.location.href = 'notes.html';
+                }
+                break;
+
+            case 'ai':
+                // Show AI assistant modal
+                if (typeof bootstrap !== 'undefined' && document.getElementById('aiAssistantModal')) {
+                    const aiModal = new bootstrap.Modal(document.getElementById('aiAssistantModal'));
+                    aiModal.show();
+                } else {
+                    showQuickToast('AI Assistant coming soon!', 'info');
+                }
+                break;
+
+            case 'progress':
+                // Quick progress log
+                showQuickProgressLog();
+                break;
+
+            default:
+                console.log('Unknown action:', action);
+        }
+    }
+
+    // Update mobile indicators
+    async function updateMobileIndicators() {
+        try {
+            // Update notes badge
+            const noteCount = localStorage.getItem('noteCount') || '0';
+            const notesBadge = document.getElementById('mobileNotesBadge');
+            if (notesBadge) {
+                if (parseInt(noteCount) > 0) {
+                    notesBadge.textContent = noteCount;
+                    notesBadge.style.display = 'inline-block';
+                } else {
+                    notesBadge.style.display = 'none';
+                }
+            }
+
+            // Update roadmap indicator (if there's new content)
+            const hasNewContent = localStorage.getItem('hasNewRoadmapContent') === 'true';
+            const roadmapIndicator = document.getElementById('mobileRoadmapIndicator');
+            if (roadmapIndicator && hasNewContent) {
+                roadmapIndicator.classList.add('active');
+            }
+
+        } catch (error) {
+            console.error('Failed to update mobile indicators:', error);
+        }
+    }
+
+    // Pull to refresh functionality
+    function initializePullToRefresh() {
+        let startY = 0;
+        let currentY = 0;
+        let refreshing = false;
+
+        const refreshThreshold = 100;
+        const mainContent = document.querySelector('.main-content');
+
+        if (!mainContent) return;
+
+        mainContent.addEventListener('touchstart', (e) => {
+            if (window.scrollY === 0 && !refreshing) {
+                startY = e.touches[0].pageY;
+            }
+        }, { passive: true });
+
+        mainContent.addEventListener('touchmove', (e) => {
+            if (!startY || refreshing) return;
+
+            currentY = e.touches[0].pageY;
+            const diff = currentY - startY;
+
+            if (diff > 0 && window.scrollY === 0) {
+                e.preventDefault();
+
+                if (diff > refreshThreshold && !refreshing) {
+                    refreshing = true;
+                    triggerRefresh();
+                }
+            }
+        }, { passive: false });
+
+        mainContent.addEventListener('touchend', () => {
+            startY = 0;
+            currentY = 0;
+        });
+    }
+
+    // Trigger page refresh
+    function triggerRefresh() {
+        showQuickToast('Refreshing...', 'info');
+
+        // Simulate refresh delay
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+
+    // Quick progress log
+    function showQuickProgressLog() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Quick Progress Log',
+                html: `
+                <div class="text-start">
+                    <div class="mb-3">
+                        <label class="form-label">What did you complete?</label>
+                        <select class="form-select" id="quickProgressWeek">
+                            <option value="">Select week...</option>
+                            ${generateWeekOptions()}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Time spent (minutes)</label>
+                        <input type="number" class="form-control" id="quickProgressTime" value="30" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes (optional)</label>
+                        <textarea class="form-control" id="quickProgressNotes" rows="2"></textarea>
+                    </div>
+                </div>
+            `,
+                showCancelButton: true,
+                confirmButtonText: 'Log Progress',
+                preConfirm: () => {
+                    const week = document.getElementById('quickProgressWeek').value;
+                    const time = document.getElementById('quickProgressTime').value;
+                    const notes = document.getElementById('quickProgressNotes').value;
+
+                    if (!week) {
+                        Swal.showValidationMessage('Please select a week');
+                        return false;
+                    }
+
+                    return { week, time, notes };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Log progress (would call API)
+                    showQuickToast('Progress logged successfully!', 'success');
+                }
+            });
+        } else {
+            showQuickToast('Navigate to Progress page to log your progress', 'info');
+        }
+    }
+
+    // Generate week options for quick progress
+    function generateWeekOptions() {
+        let options = '';
+        for (let i = 1; i <= 14; i++) {
+            options += `<option value="${i}">Week ${i}</option>`;
+        }
+        return options;
+    }
+
+    // Quick toast notification
+    function showQuickToast(message, type = 'info') {
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        toast.innerHTML = `
+        <i class="fas fa-${getToastIcon(type)} me-2"></i>
+        ${message}
+    `;
+
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Remove after delay
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function getToastIcon(type) {
+        const icons = {
+            success: 'check-circle',
+            error: 'exclamation-circle',
+            warning: 'exclamation-triangle',
+            info: 'info-circle'
+        };
+        return icons[type] || 'info-circle';
+    }
+
+    // Handle orientation changes
+    function handleOrientationChange() {
+        // Add class to body for orientation-specific styles
+        const orientation = window.orientation || 0;
+        document.body.classList.toggle('landscape', Math.abs(orientation) === 90);
+    }
+
+    // Toast notification styles
+    const toastStyles = document.createElement('style');
+    toastStyles.textContent = `
+.toast-notification {
+    position: fixed;
+    bottom: calc(var(--mobile-nav-height, 60px) + 20px);
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast-notification.success {
+    background: #10b981;
+    color: white;
+}
+
+.toast-notification.error {
+    background: #ef4444;
+    color: white;
+}
+
+.toast-notification.warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.toast-notification.info {
+    background: #3b82f6;
+    color: white;
+}
+
+/* Landscape adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+    .mobile-nav {
+        height: 50px;
+    }
+    
+    .mobile-nav-item span {
+        display: none;
+    }
+    
+    .mobile-nav-fab {
+        width: 48px;
+        height: 48px;
+    }
+}
+`;
+
+    document.head.appendChild(toastStyles);
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeMobileNav);
+    } else {
+        initializeMobileNav();
+    }
+
+    // Update indicators periodically
+    setInterval(updateMobileIndicators, 30000); // Every 30 seconds
+</script>

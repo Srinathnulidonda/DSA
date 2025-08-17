@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - DSA Learning Platform</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animation.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" id="topNav">
+        <div class="container-fluid">
+            <button class="btn btn-link text-dark d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                <i class="fas fa-code"></i> DSA Master
+            </a>
+
+            <div class="ms-auto d-flex align-items-center">
+                <div class="dropdown">
+                    <button class="btn btn-link text-dark d-flex align-items-center" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile"
+                            class="rounded-circle me-2" width="32" height="32" id="userAvatar">
+                        <span class="d-none d-md-inline" id="userName">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" id="logoutBtn"><i
+                                    class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-white shadow-sm" id="sidebar">
+            <div class="sidebar-content">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="roadmap.html">
+                            <i class="fas fa-road"></i>
+                            <span>Roadmap</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">
+                            <i class="fas fa-calendar"></i>
+                            <span>Calendar</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="progress.html">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Progress</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="notes.html">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Notes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pomodoro.html">
+                            <i class="fas fa-clock"></i>
+                            <span>Pomodoro</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container-fluid p-4">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="h3 mb-0">My Profile</h1>
+                        <p class="text-muted mb-0">Manage your account settings and preferences</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Profile Information -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="position-relative d-inline-block mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff"
+                                        alt="Profile" class="rounded-circle" width="120" height="120"
+                                        id="profileAvatar">
+                                    <button
+                                        class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0"
+                                        onclick="document.getElementById('avatarInput').click()">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                    <input type="file" id="avatarInput" accept="image/*" class="d-none">
+                                </div>
+
+                                <h4 class="mb-1" id="profileName">Loading...</h4>
+                                <p class="text-muted mb-3" id="profileEmail">loading@example.com</p>
+
+                                <div class="d-flex justify-content-center gap-3 mb-4">
+                                    <div class="text-center">
+                                        <h5 class="mb-0 text-primary" id="profileStreak">0</h5>
+                                        <small class="text-muted">Day Streak</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <h5 class="mb-0 text-success" id="profileHours">0</h5>
+                                        <small class="text-muted">Total Hours</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <h5 class="mb-0 text-info" id="profileProgress">0%</h5>
+                                        <small class="text-muted">Complete</small>
+                                    </div>
+                                </div>
+
+                                <p class="text-muted small mb-0">
+                                    Member since <span id="memberSince">-</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Sessions -->
+                        <div class="card border-0 shadow-sm mt-3">
+                            <div class="card-header bg-white border-0 py-3">
+                                <h5 class="mb-0">Active Sessions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="activeSessions">
+                                    <div class="text-center py-3 text-muted">
+                                        <i class="fas fa-laptop"></i>
+                                        <p class="mb-0">Loading sessions...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tabs -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0">
+                                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#accountTab">
+                                            <i class="fas fa-user me-2"></i>Account
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#preferencesTab">
+                                            <i class="fas fa-cog me-2"></i>Preferences
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#securityTab">
+                                            <i class="fas fa-shield-alt me-2"></i>Security
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#aiTab">
+                                            <i class="fas fa-robot me-2"></i>AI Assistant
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <!-- Account Tab -->
+                                    <div class="tab-pane fade show active" id="accountTab">
+                                        <form id="accountForm">
+                                            <div class="mb-3">
+                                                <label for="fullName" class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" id="fullName" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email Address</label>
+                                                <input type="email" class="form-control" id="email" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="bio" class="form-label">Bio (Optional)</label>
+                                                <textarea class="form-control" id="bio" rows="3"
+                                                    placeholder="Tell us about yourself..."></textarea>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary" id="saveAccountBtn">
+                                                <span class="btn-text">Save Changes</span>
+                                                <span class="spinner-border spinner-border-sm ms-2 d-none"
+                                                    role="status"></span>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Preferences Tab -->
+                                    <div class="tab-pane fade" id="preferencesTab">
+                                        <form id="preferencesForm">
+                                            <h6 class="mb-3">Appearance</h6>
+                                            <div class="mb-4">
+                                                <label class="form-label">Theme</label>
+                                                <div class="row g-3">
+                                                    <div class="col-md-4">
+                                                        <input type="radio" class="btn-check" name="theme"
+                                                            id="themeLight" value="light" checked>
+                                                        <label class="btn btn-outline-secondary w-100" for="themeLight">
+                                                            <i class="fas fa-sun me-2"></i>Light
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="radio" class="btn-check" name="theme"
+                                                            id="themeDark" value="dark">
+                                                        <label class="btn btn-outline-secondary w-100" for="themeDark">
+                                                            <i class="fas fa-moon me-2"></i>Dark
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="radio" class="btn-check" name="theme"
+                                                            id="themeAuto" value="auto">
+                                                        <label class="btn btn-outline-secondary w-100" for="themeAuto">
+                                                            <i class="fas fa-adjust me-2"></i>Auto
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <h6 class="mb-3">Notifications</h6>
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="emailNotifications" checked>
+                                                    <label class="form-check-label" for="emailNotifications">
+                                                        Email notifications for important updates
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="streakReminders"
+                                                        checked>
+                                                    <label class="form-check-label" for="streakReminders">
+                                                        Daily streak reminders
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="weeklyReports"
+                                                        checked>
+                                                    <label class="form-check-label" for="weeklyReports">
+                                                        Weekly progress reports
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <h6 class="mb-3">Learning Preferences</h6>
+                                            <div class="mb-3">
+                                                <label for="dailyGoal" class="form-label">Daily Study Goal
+                                                    (minutes)</label>
+                                                <input type="number" class="form-control" id="dailyGoal" min="15"
+                                                    max="480" value="60">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="preferredTime" class="form-label">Preferred Study
+                                                    Time</label>
+                                                <select class="form-select" id="preferredTime">
+                                                    <option value="morning">Morning (6 AM - 12 PM)</option>
+                                                    <option value="afternoon">Afternoon (12 PM - 6 PM)</option>
+                                                    <option value="evening">Evening (6 PM - 12 AM)</option>
+                                                    <option value="night">Night (12 AM - 6 AM)</option>
+                                                </select>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary" id="savePreferencesBtn">
+                                                <span class="btn-text">Save Preferences</span>
+                                                <span class="spinner-border spinner-border-sm ms-2 d-none"
+                                                    role="status"></span>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Security Tab -->
+                                    <div class="tab-pane fade" id="securityTab">
+                                        <div class="mb-4">
+                                            <h6 class="mb-3">Change Password</h6>
+                                            <form id="passwordForm">
+                                                <div class="mb-3">
+                                                    <label for="currentPassword" class="form-label">Current
+                                                        Password</label>
+                                                    <input type="password" class="form-control" id="currentPassword"
+                                                        required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="newPassword" class="form-label">New Password</label>
+                                                    <input type="password" class="form-control" id="newPassword"
+                                                        required>
+                                                    <div class="progress mt-2" style="height: 5px;">
+                                                        <div class="progress-bar" role="progressbar"
+                                                            id="passwordStrength"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="confirmNewPassword" class="form-label">Confirm New
+                                                        Password</label>
+                                                    <input type="password" class="form-control" id="confirmNewPassword"
+                                                        required>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+                                                    <span class="btn-text">Change Password</span>
+                                                    <span class="spinner-border spinner-border-sm ms-2 d-none"
+                                                        role="status"></span>
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="mb-4">
+                                            <h6 class="mb-3">Two-Factor Authentication</h6>
+                                            <p class="text-muted">Add an extra layer of security to your account.</p>
+                                            <button class="btn btn-outline-primary" disabled>
+                                                <i class="fas fa-mobile-alt me-2"></i>Coming Soon
+                                            </button>
+                                        </div>
+
+                                        <hr>
+
+                                        <div>
+                                            <h6 class="mb-3 text-danger">Danger Zone</h6>
+                                            <p class="text-muted">Once you delete your account, there is no going back.
+                                            </p>
+                                            <button class="btn btn-outline-danger" id="deleteAccountBtn">
+                                                <i class="fas fa-trash me-2"></i>Delete Account
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- AI Tab -->
+                                    <div class="tab-pane fade" id="aiTab">
+                                        <div class="mb-4">
+                                            <h6 class="mb-3">AI Assistant History</h6>
+                                            <div id="aiHistory" style="max-height: 400px; overflow-y: auto;">
+                                                <div class="text-center py-4 text-muted">
+                                                    <i class="fas fa-comments fs-3 mb-2"></i>
+                                                    <p>No conversations yet</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div>
+                                            <h6 class="mb-3">AI Preferences</h6>
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="aiSuggestions"
+                                                        checked>
+                                                    <label class="form-check-label" for="aiSuggestions">
+                                                        Enable AI study suggestions
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="aiDifficulty" class="form-label">AI Response
+                                                    Difficulty</label>
+                                                <select class="form-select" id="aiDifficulty">
+                                                    <option value="beginner">Beginner - Simple explanations</option>
+                                                    <option value="intermediate" selected>Intermediate - Balanced
+                                                    </option>
+                                                    <option value="advanced">Advanced - Technical details</option>
+                                                </select>
+                                            </div>
+
+                                            <button class="btn btn-primary" id="saveAIPrefsBtn">
+                                                Save AI Preferences
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav d-lg-none">
+        <a href="dashboard.html" class="mobile-nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="roadmap.html" class="mobile-nav-item">
+            <i class="fas fa-road"></i>
+            <span>Roadmap</span>
+        </a>
+        <a href="pomodoro.html" class="mobile-nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Timer</span>
+        </a>
+        <a href="notes.html" class="mobile-nav-item">
+            <i class="fas fa-sticky-note"></i>
+            <span>Notes</span>
+        </a>
+        <a href="profile.html" class="mobile-nav-item active">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+
+    <script>
+        let userData = {};
+        let userPreferences = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadProfile();
+            await loadSessions();
+            await loadAIHistory();
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/profile`);
+                if (!response.ok) throw new Error('Failed to load profile');
+
+                const data = await response.json();
+                userData = data.user;
+                userPreferences = data.preferences;
+
+                // Update profile display
+                document.getElementById('profileName').textContent = userData.name;
+                document.getElementById('profileEmail').textContent = userData.email;
+                document.getElementById('userName').textContent = userData.name;
+
+                // Update avatar
+                if (userData.avatar_url) {
+                    document.getElementById('profileAvatar').src = userData.avatar_url;
+                    document.getElementById('userAvatar').src = userData.avatar_url;
+                } else {
+                    const initials = userData.name.split(' ').map(n => n[0]).join('');
+                    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=6366f1&color=fff`;
+                    document.getElementById('profileAvatar').src = avatarUrl;
+                    document.getElementById('userAvatar').src = avatarUrl;
+                }
+
+                // Update stats
+                document.getElementById('profileStreak').textContent = userData.current_streak;
+                document.getElementById('profileHours').textContent = Math.floor(userData.total_study_time / 60);
+
+                // Update member since
+                const memberDate = new Date(userData.created_at);
+                document.getElementById('memberSince').textContent = memberDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long'
+                });
+
+                // Load progress for completion percentage
+                const progressResponse = await fetchWithAuth(`${API_BASE}/progress`);
+                if (progressResponse.ok) {
+                    const progressData = await progressResponse.json();
+                    // Calculate completion percentage
+                    let completed = 0;
+                    let total = 0;
+                    for (const week in progressData.progress) {
+                        for (const day in progressData.progress[week]) {
+                            total++;
+                            if (progressData.progress[week][day].completed) completed++;
+                        }
+                    }
+                    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                    document.getElementById('profileProgress').textContent = `${percentage}%`;
+                }
+
+                // Update form fields
+                document.getElementById('fullName').value = userData.name;
+                document.getElementById('email').value = userData.email;
+                document.getElementById('bio').value = userData.bio || '';
+
+                // Update preferences
+                if (userPreferences.theme) {
+                    document.querySelector(`input[name="theme"][value="${userPreferences.theme}"]`).checked = true;
+                }
+                document.getElementById('emailNotifications').checked = userPreferences.email_notifications;
+                document.getElementById('streakReminders').checked = userPreferences.notifications_enabled;
+                document.getElementById('weeklyReports').checked = userPreferences.email_notifications;
+
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+                showToast('Failed to load profile data', 'error');
+            }
+        }
+
+        async function loadSessions() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/sessions`);
+                if (!response.ok) throw new Error('Failed to load sessions');
+
+                const data = await response.json();
+                const container = document.getElementById('activeSessions');
+
+                if (data.sessions.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-3 text-muted">
+                            <i class="fas fa-laptop"></i>
+                            <p class="mb-0">No active sessions</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = data.sessions.map(session => `
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <i class="fas fa-${getDeviceIcon(session.device_info)} me-2"></i>
+                                <small>${getDeviceName(session.device_info)}</small>
+                                <br>
+                                <small class="text-muted">${session.ip_address}</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" 
+                                    onclick="revokeSession('${session.id}')">
+                                Revoke
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load sessions:', error);
+            }
+        }
+
+        async function loadAIHistory() {
+            // This would load AI conversation history
+            // For now, showing placeholder
+            const container = document.getElementById('aiHistory');
+            container.innerHTML = `
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-comments fs-3 mb-2"></i>
+                    <p>AI conversation history coming soon</p>
+                </div>
+            `;
+        }
+
+        // Avatar upload
+        document.getElementById('avatarInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/profile/avatar`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('profileAvatar').src = data.avatar_url;
+                    document.getElementById('userAvatar').src = data.avatar_url;
+                    showToast('Avatar updated successfully', 'success');
+                } else {
+                    throw new Error('Failed to upload avatar');
+                }
+            } catch (error) {
+                console.error('Avatar upload error:', error);
+                showToast('Failed to upload avatar', 'error');
+            }
+        });
+
+        // Account form submission
+        document.getElementById('accountForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('saveAccountBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const spinner = btn.querySelector('.spinner-border');
+
+            btn.disabled = true;
+            btnText.textContent = 'Saving...';
+            spinner.classList.remove('d-none');
+
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/profile`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        bio: document.getElementById('bio').value
+                    })
+                });
+
+                if (response.ok) {
+                    showToast('Profile updated successfully', 'success');
+                    await loadProfile();
+                } else {
+                    throw new Error('Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Profile update error:', error);
+                showToast('Failed to update profile', 'error');
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Save Changes';
+                spinner.classList.add('d-none');
+            }
+        });
+
+        // Preferences form submission
+        document.getElementById('preferencesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('savePreferencesBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const spinner = btn.querySelector('.spinner-border');
+
+            btn.disabled = true;
+            btnText.textContent = 'Saving...';
+            spinner.classList.remove('d-none');
+
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/preferences`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        theme: document.querySelector('input[name="theme"]:checked').value,
+                        email_notifications: document.getElementById('emailNotifications').checked,
+                        notifications_enabled: document.getElementById('streakReminders').checked
+                    })
+                });
+
+                if (response.ok) {
+                    showToast('Preferences updated successfully', 'success');
+                } else {
+                    throw new Error('Failed to update preferences');
+                }
+            } catch (error) {
+                console.error('Preferences update error:', error);
+                showToast('Failed to update preferences', 'error');
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Save Preferences';
+                spinner.classList.add('d-none');
+            }
+        });
+
+        // Password strength checker
+        document.getElementById('newPassword').addEventListener('input', function () {
+            const password = this.value;
+            const strengthBar = document.getElementById('passwordStrength');
+
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            const strengthPercentage = (strength / 5) * 100;
+            strengthBar.style.width = strengthPercentage + '%';
+
+            strengthBar.className = 'progress-bar';
+            if (strength <= 2) {
+                strengthBar.classList.add('bg-danger');
+            } else if (strength <= 3) {
+                strengthBar.classList.add('bg-warning');
+            } else {
+                strengthBar.classList.add('bg-success');
+            }
+        });
+
+        // Delete account
+        document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+            const result = await Swal.fire({
+                title: 'Delete Account?',
+                html: `
+                    <p>This action cannot be undone. All your data will be permanently deleted.</p>
+                    <p class="text-danger">Type <strong>DELETE</strong> to confirm:</p>
+                    <input type="text" id="deleteConfirm" class="form-control" placeholder="Type DELETE">
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Delete My Account',
+                preConfirm: () => {
+                    const confirmText = document.getElementById('deleteConfirm').value;
+                    if (confirmText !== 'DELETE') {
+                        Swal.showValidationMessage('Please type DELETE to confirm');
+                        return false;
+                    }
+                    return true;
+                }
+            });
+
+            if (result.isConfirmed) {
+                // Would implement account deletion
+                showToast('Account deletion not implemented in demo', 'info');
+            }
+        });
+
+        // Helper functions
+        function getDeviceIcon(userAgent) {
+            if (/mobile/i.test(userAgent)) return 'mobile-alt';
+            if (/tablet/i.test(userAgent)) return 'tablet-alt';
+            return 'laptop';
+        }
+
+        function getDeviceName(userAgent) {
+            if (/chrome/i.test(userAgent)) return 'Chrome';
+            if (/firefox/i.test(userAgent)) return 'Firefox';
+            if (/safari/i.test(userAgent)) return 'Safari';
+            if (/edge/i.test(userAgent)) return 'Edge';
+            return 'Web Browser';
+        }
+
+        async function revokeSession(sessionId) {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/sessions/${sessionId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast('Session revoked', 'success');
+                    await loadSessions();
+                }
+            } catch (error) {
+                console.error('Failed to revoke session:', error);
+                showToast('Failed to revoke session', 'error');
+            }
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = '../auth/login.html';
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,722 @@
+<!-- Topbar Component -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" id="topNav">
+    <div class="container-fluid">
+        <!-- Mobile Menu Toggle -->
+        <button class="btn btn-link text-dark d-lg-none" id="sidebarToggle" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="dashboard.html">
+            <i class="fas fa-code me-2"></i>
+            <span class="d-none d-sm-inline">DSA Master</span>
+            <span class="d-sm-none">DSA</span>
+        </a>
+
+        <!-- Center Section (Search on desktop) -->
+        <div class="navbar-center d-none d-md-flex flex-grow-1 mx-4">
+            <div class="search-box position-relative w-100" style="max-width: 400px;">
+                <input type="text" class="form-control ps-4" placeholder="Search topics, resources..."
+                    id="globalSearch">
+                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <div class="search-results position-absolute w-100 bg-white shadow-lg rounded-3 mt-2 d-none"
+                    id="searchResults">
+                    <!-- Search results will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="ms-auto d-flex align-items-center gap-2 gap-md-3">
+            <!-- Mobile Search Toggle -->
+            <button class="btn btn-link text-dark d-md-none" id="mobileSearchToggle">
+                <i class="fas fa-search"></i>
+            </button>
+
+            <!-- Quick Actions -->
+            <div class="d-none d-sm-flex gap-2">
+                <!-- AI Assistant -->
+                <button class="btn btn-link text-dark position-relative" data-bs-toggle="modal"
+                    data-bs-target="#aiAssistantModal" data-bs-tooltip="tooltip" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-info rounded-circle">
+                        <span class="visually-hidden">New feature</span>
+                    </span>
+                </button>
+
+                <!-- Study Timer -->
+                <button class="btn btn-link text-dark position-relative" id="quickTimerBtn" data-bs-tooltip="tooltip"
+                    title="Quick Timer">
+                    <i class="fas fa-stopwatch"></i>
+                    <span
+                        class="timer-badge d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                        <span id="quickTimerDisplay">00:00</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Notifications -->
+            <div class="dropdown">
+                <button class="btn btn-link text-dark position-relative" data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside" aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        id="notificationBadge">
+                        <span id="notificationCount">0</span>
+                        <span class="visually-hidden">unread notifications</span>
+                    </span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end notification-dropdown">
+                    <div class="dropdown-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Notifications</h6>
+                        <button class="btn btn-link btn-sm text-primary p-0" id="markAllRead">Mark all read</button>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div id="notificationList" class="notification-list">
+                        <!-- Notifications will be populated here -->
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-bell-slash fs-3 mb-2"></i>
+                            <p class="mb-0">No new notifications</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-footer text-center">
+                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#allNotificationsModal">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="dropdown">
+                <button class="btn btn-link text-dark d-flex align-items-center p-1 p-md-2" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile"
+                        class="rounded-circle me-2" width="32" height="32" id="userAvatar">
+                    <span class="d-none d-md-inline" id="userName">User</span>
+                    <i class="fas fa-chevron-down ms-1 small"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-header">
+                        <div class="d-flex align-items-center">
+                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile"
+                                class="rounded-circle me-3" width="40" height="40" id="dropdownUserAvatar">
+                            <div>
+                                <h6 class="mb-0" id="dropdownUserName">User Name</h6>
+                                <small class="text-muted" id="dropdownUserEmail">user@example.com</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="profile.html">
+                            <i class="fas fa-user me-2"></i>My Profile
+                        </a></li>
+                    <li><a class="dropdown-item" href="dashboard.html">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a></li>
+                    <li><a class="dropdown-item" href="analytics.html">
+                            <i class="fas fa-chart-line me-2"></i>Analytics
+                        </a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                            <i class="fas fa-cog me-2"></i>Settings
+                        </a></li>
+                    <li><a class="dropdown-item" href="#" id="themeToggle">
+                            <i class="fas fa-moon me-2"></i>Dark Mode
+                        </a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="#" id="topbarLogoutBtn">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="mobile-search-bar d-md-none" id="mobileSearchBar">
+        <div class="container-fluid py-2">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search..." id="mobileSearchInput">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-outline-secondary" type="button" id="closeMobileSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Quick Timer Modal -->
+<div class="modal fade" id="quickTimerModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quick Timer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h2 class="display-4 mb-3" id="modalTimerDisplay">25:00</h2>
+                <div class="btn-group mb-3">
+                    <button class="btn btn-outline-primary" data-time="25">25 min</button>
+                    <button class="btn btn-outline-primary" data-time="10">10 min</button>
+                    <button class="btn btn-outline-primary" data-time="5">5 min</button>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" id="startQuickTimer">
+                        <i class="fas fa-play me-2"></i>Start
+                    </button>
+                    <button class="btn btn-danger d-none" id="stopQuickTimer">
+                        <i class="fas fa-stop me-2"></i>Stop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Topbar Styles -->
+<style>
+    #topNav {
+        height: var(--topbar-height, 60px);
+        z-index: 1030;
+    }
+
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+
+    .navbar-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .search-box input {
+        border-radius: 2rem;
+        padding-left: 2.5rem;
+        background-color: #f8f9fa;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        background-color: white;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+    }
+
+    .search-results {
+        top: 100%;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1050;
+    }
+
+    .notification-dropdown {
+        width: 350px;
+        max-height: 450px;
+    }
+
+    .notification-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.2s;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #f0f9ff;
+        border-left: 3px solid #3b82f6;
+    }
+
+    .mobile-search-bar {
+        position: fixed;
+        top: var(--topbar-height, 60px);
+        left: 0;
+        right: 0;
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        transform: translateY(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1020;
+    }
+
+    .mobile-search-bar.show {
+        transform: translateY(0);
+    }
+
+    .timer-badge {
+        font-size: 0.625rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* Dark mode support */
+    [data-theme="dark"] #topNav {
+        background-color: #1e293b !important;
+    }
+
+    [data-theme="dark"] .navbar-brand,
+    [data-theme="dark"] .btn-link {
+        color: #f1f5f9 !important;
+    }
+
+    [data-theme="dark"] .search-box input {
+        background-color: #334155;
+        color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .dropdown-menu {
+        background-color: #334155;
+        color: #f1f5f9;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .navbar-brand span {
+            font-size: 1rem;
+        }
+
+        .notification-dropdown {
+            width: 300px;
+        }
+    }
+</style>
+
+<!-- Topbar Script -->
+<script>
+    // Initialize topbar component
+    function initializeTopbar() {
+        // Load user info
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.name) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('dropdownUserName').textContent = user.name;
+            document.getElementById('dropdownUserEmail').textContent = user.email;
+
+            if (user.avatar_url) {
+                document.getElementById('userAvatar').src = user.avatar_url;
+                document.getElementById('dropdownUserAvatar').src = user.avatar_url;
+            } else {
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`;
+                document.getElementById('userAvatar').src = avatarUrl;
+                document.getElementById('dropdownUserAvatar').src = avatarUrl;
+            }
+        }
+
+        // Mobile search toggle
+        const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+        const mobileSearchBar = document.getElementById('mobileSearchBar');
+        const closeMobileSearch = document.getElementById('closeMobileSearch');
+
+        if (mobileSearchToggle && mobileSearchBar) {
+            mobileSearchToggle.addEventListener('click', () => {
+                mobileSearchBar.classList.add('show');
+                document.getElementById('mobileSearchInput').focus();
+            });
+
+            closeMobileSearch.addEventListener('click', () => {
+                mobileSearchBar.classList.remove('show');
+            });
+        }
+
+        // Global search functionality
+        const globalSearch = document.getElementById('globalSearch');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        if (globalSearch) {
+            globalSearch.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+
+                if (query.length < 2) {
+                    searchResults.classList.add('d-none');
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+
+            // Close search results on outside click
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-box')) {
+                    searchResults.classList.add('d-none');
+                }
+            });
+        }
+
+        // Quick timer functionality
+        const quickTimerBtn = document.getElementById('quickTimerBtn');
+        const timerModal = new bootstrap.Modal(document.getElementById('quickTimerModal'));
+        let quickTimer = null;
+
+        quickTimerBtn.addEventListener('click', () => {
+            timerModal.show();
+        });
+
+        // Timer preset buttons
+        document.querySelectorAll('[data-time]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const minutes = parseInt(e.target.dataset.time);
+                document.getElementById('modalTimerDisplay').textContent = `${minutes}:00`;
+            });
+        });
+
+        // Start quick timer
+        document.getElementById('startQuickTimer').addEventListener('click', () => {
+            startQuickTimer();
+        });
+
+        // Stop quick timer
+        document.getElementById('stopQuickTimer').addEventListener('click', () => {
+            stopQuickTimer();
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun me-2"></i>Light Mode';
+        }
+
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+
+            themeToggle.innerHTML = theme === 'dark' ?
+                '<i class="fas fa-sun me-2"></i>Light Mode' :
+                '<i class="fas fa-moon me-2"></i>Dark Mode';
+        });
+
+        // Logout functionality
+        document.getElementById('topbarLogoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Logout?',
+                    text: 'Are you sure you want to logout?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, logout',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.clear();
+                        window.location.href = '../auth/login.html';
+                    }
+                });
+            } else {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.clear();
+                    window.location.href = '../auth/login.html';
+                }
+            }
+        });
+
+        // Load notifications
+        loadNotifications();
+
+        // Mark all notifications as read
+        document.getElementById('markAllRead').addEventListener('click', () => {
+            markAllNotificationsRead();
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-tooltip="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+
+    // Search functionality
+    async function performSearch(query) {
+        const searchResults = document.getElementById('searchResults');
+
+        // Show loading state
+        searchResults.innerHTML = `
+        <div class="p-3 text-center">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Searching...</span>
+            </div>
+        </div>
+    `;
+        searchResults.classList.remove('d-none');
+
+        try {
+            // Simulate API call - replace with actual API endpoint
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Mock search results
+            const results = {
+                topics: [
+                    { title: 'Arrays', week: 2, url: 'roadmap.html?week=2' },
+                    { title: 'Binary Trees', week: 5, url: 'roadmap.html?week=5' }
+                ],
+                resources: [
+                    { title: 'Array Visualization', type: 'interactive', url: '#' },
+                    { title: 'Tree Traversal Guide', type: 'text', url: '#' }
+                ],
+                notes: [
+                    { title: 'Array Operations Notes', id: '123', date: '2024-01-15' }
+                ]
+            };
+
+            // Render results
+            let html = '';
+
+            if (results.topics.length > 0) {
+                html += '<div class="search-section"><h6 class="px-3 py-2 mb-0 text-muted">Topics</h6>';
+                results.topics.forEach(topic => {
+                    html += `
+                    <a href="${topic.url}" class="search-item d-block px-3 py-2 text-decoration-none">
+                        <i class="fas fa-book text-primary me-2"></i>
+                        ${topic.title} <small class="text-muted">- Week ${topic.week}</small>
+                    </a>
+                `;
+                });
+                html += '</div>';
+            }
+
+            if (results.resources.length > 0) {
+                html += '<div class="search-section"><h6 class="px-3 py-2 mb-0 text-muted">Resources</h6>';
+                results.resources.forEach(resource => {
+                    html += `
+                    <a href="${resource.url}" class="search-item d-block px-3 py-2 text-decoration-none">
+                        <i class="fas fa-link text-success me-2"></i>
+                        ${resource.title} <span class="badge bg-secondary ms-2">${resource.type}</span>
+                    </a>
+                `;
+                });
+                html += '</div>';
+            }
+
+            if (results.notes.length > 0) {
+                html += '<div class="search-section"><h6 class="px-3 py-2 mb-0 text-muted">Notes</h6>';
+                results.notes.forEach(note => {
+                    html += `
+                    <a href="notes.html?id=${note.id}" class="search-item d-block px-3 py-2 text-decoration-none">
+                        <i class="fas fa-sticky-note text-warning me-2"></i>
+                        ${note.title} <small class="text-muted">- ${note.date}</small>
+                    </a>
+                `;
+                });
+                html += '</div>';
+            }
+
+            if (!results.topics.length && !results.resources.length && !results.notes.length) {
+                html = '<div class="p-3 text-center text-muted">No results found</div>';
+            }
+
+            searchResults.innerHTML = html;
+
+        } catch (error) {
+            console.error('Search error:', error);
+            searchResults.innerHTML = '<div class="p-3 text-center text-danger">Search failed</div>';
+        }
+    }
+
+    // Quick timer functions
+    let quickTimerInterval = null;
+    let quickTimerMinutes = 25;
+    let quickTimerSeconds = 0;
+
+    function startQuickTimer() {
+        const display = document.getElementById('modalTimerDisplay').textContent;
+        const [minutes] = display.split(':').map(Number);
+        quickTimerMinutes = minutes;
+        quickTimerSeconds = 0;
+
+        document.getElementById('startQuickTimer').classList.add('d-none');
+        document.getElementById('stopQuickTimer').classList.remove('d-none');
+        document.querySelector('.timer-badge').classList.remove('d-none');
+
+        quickTimerInterval = setInterval(updateQuickTimer, 1000);
+    }
+
+    function updateQuickTimer() {
+        if (quickTimerSeconds === 0) {
+            if (quickTimerMinutes === 0) {
+                stopQuickTimer();
+                showTimerComplete();
+                return;
+            }
+            quickTimerMinutes--;
+            quickTimerSeconds = 59;
+        } else {
+            quickTimerSeconds--;
+        }
+
+        const display = `${String(quickTimerMinutes).padStart(2, '0')}:${String(quickTimerSeconds).padStart(2, '0')}`;
+        document.getElementById('modalTimerDisplay').textContent = display;
+        document.getElementById('quickTimerDisplay').textContent = display;
+    }
+
+    function stopQuickTimer() {
+        clearInterval(quickTimerInterval);
+        quickTimerInterval = null;
+
+        document.getElementById('startQuickTimer').classList.remove('d-none');
+        document.getElementById('stopQuickTimer').classList.add('d-none');
+        document.querySelector('.timer-badge').classList.add('d-none');
+
+        // Reset display
+        document.getElementById('modalTimerDisplay').textContent = '25:00';
+    }
+
+    function showTimerComplete() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Timer Complete!',
+                text: 'Great job! Time for a break.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        } else {
+            alert('Timer complete! Great job!');
+        }
+    }
+
+    // Load notifications
+    async function loadNotifications() {
+        try {
+            // This would fetch from API
+            const notifications = [
+                {
+                    id: '1',
+                    title: 'Daily Streak!',
+                    message: 'Keep it up! You\'re on a 7-day streak.',
+                    type: 'success',
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: '2',
+                    title: 'New Week Available',
+                    message: 'Week 5: Binary Trees is now unlocked!',
+                    type: 'info',
+                    is_read: false,
+                    created_at: new Date(Date.now() - 86400000).toISOString()
+                }
+            ];
+
+            updateNotificationBadge(notifications.filter(n => !n.is_read).length);
+            renderNotifications(notifications);
+
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+        }
+    }
+
+    function updateNotificationBadge(count) {
+        const badge = document.getElementById('notificationBadge');
+        const countElement = document.getElementById('notificationCount');
+
+        if (count > 0) {
+            badge.style.display = 'inline-block';
+            countElement.textContent = count > 99 ? '99+' : count;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function renderNotifications(notifications) {
+        const container = document.getElementById('notificationList');
+
+        if (notifications.length === 0) {
+            container.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="fas fa-bell-slash fs-3 mb-2"></i>
+                <p class="mb-0">No new notifications</p>
+            </div>
+        `;
+            return;
+        }
+
+        container.innerHTML = notifications.slice(0, 5).map(notification => `
+        <div class="notification-item ${notification.is_read ? '' : 'unread'}" data-id="${notification.id}">
+            <div class="d-flex">
+                <div class="me-3">
+                    <i class="fas fa-${getNotificationIcon(notification.type)} text-${notification.type}"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">${notification.title}</h6>
+                    <p class="mb-1 text-muted small">${notification.message}</p>
+                    <small class="text-muted">${formatTimeAgo(notification.created_at)}</small>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    }
+
+    function getNotificationIcon(type) {
+        const icons = {
+            success: 'check-circle',
+            info: 'info-circle',
+            warning: 'exclamation-triangle',
+            error: 'exclamation-circle'
+        };
+        return icons[type] || 'bell';
+    }
+
+    function formatTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        if (seconds < 60) return 'just now';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+        if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+
+        return date.toLocaleDateString();
+    }
+
+    async function markAllNotificationsRead() {
+        try {
+            // API call to mark all as read
+            updateNotificationBadge(0);
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+            });
+        } catch (error) {
+            console.error('Failed to mark notifications as read:', error);
+        }
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTopbar);
+    } else {
+        initializeTopbar();
+    }
+
+    // Update notifications periodically
+    setInterval(loadNotifications, 60000); // Every minute
+</script>

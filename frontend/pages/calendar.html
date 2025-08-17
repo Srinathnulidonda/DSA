@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - DSA Learning Platform</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- FullCalendar -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animation.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" id="topNav">
+        <div class="container-fluid">
+            <button class="btn btn-link text-dark d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                <i class="fas fa-code"></i> DSA Master
+            </a>
+
+            <div class="ms-auto d-flex align-items-center">
+                <!-- Notifications -->
+                <div class="dropdown me-3">
+                    <button class="btn btn-link text-dark position-relative" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            id="notificationBadge">
+                            0
+                        </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown">
+                        <h6 class="dropdown-header">Notifications</h6>
+                        <div id="notificationList">
+                            <div class="text-center py-3 text-muted">
+                                <i class="fas fa-bell-slash"></i>
+                                <p class="mb-0">No new notifications</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile -->
+                <div class="dropdown">
+                    <button class="btn btn-link text-dark d-flex align-items-center" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile"
+                            class="rounded-circle me-2" width="32" height="32" id="userAvatar">
+                        <span class="d-none d-md-inline" id="userName">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a>
+                        </li>
+                        <li><a class="dropdown-item" href="analytics.html"><i
+                                    class="fas fa-chart-line me-2"></i>Analytics</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" id="logoutBtn"><i
+                                    class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-white shadow-sm" id="sidebar">
+            <div class="sidebar-content">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="roadmap.html">
+                            <i class="fas fa-road"></i>
+                            <span>Roadmap</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="calendar.html">
+                            <i class="fas fa-calendar"></i>
+                            <span>Calendar</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="progress.html">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Progress</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="notes.html">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Notes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pomodoro.html">
+                            <i class="fas fa-clock"></i>
+                            <span>Pomodoro</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container-fluid p-4">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h1 class="h3 mb-0">Learning Calendar</h1>
+                                <p class="text-muted mb-0">Track your daily progress and upcoming tasks</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary" id="todayBtn">
+                                    <i class="fas fa-calendar-day"></i> Today
+                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-secondary" id="viewMonthBtn">Month</button>
+                                    <button class="btn btn-outline-secondary" id="viewWeekBtn">Week</button>
+                                    <button class="btn btn-outline-secondary" id="viewListBtn">List</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Legend -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body py-3">
+                                <div class="d-flex flex-wrap gap-4 align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="legend-dot bg-primary me-2"></div>
+                                        <span class="text-muted">Scheduled</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="legend-dot bg-success me-2"></div>
+                                        <span class="text-muted">Completed</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="legend-dot bg-warning me-2"></div>
+                                        <span class="text-muted">In Progress</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="legend-dot bg-danger me-2"></div>
+                                        <span class="text-muted">Overdue</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Container -->
+                <div class="row">
+                    <div class="col-lg-9 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Info -->
+                    <div class="col-lg-3 mb-4">
+                        <!-- Selected Day Details -->
+                        <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-header bg-white border-0 py-3">
+                                <h5 class="mb-0">Day Details</h5>
+                            </div>
+                            <div class="card-body" id="dayDetails">
+                                <div class="text-center py-4 text-muted">
+                                    <i class="fas fa-calendar-alt fs-3 mb-2"></i>
+                                    <p>Select a day to view details</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Tasks -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0 py-3">
+                                <h5 class="mb-0">Upcoming Tasks</h5>
+                            </div>
+                            <div class="card-body" id="upcomingTasks">
+                                <div class="text-center py-4 text-muted">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav d-lg-none">
+        <a href="dashboard.html" class="mobile-nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="roadmap.html" class="mobile-nav-item">
+            <i class="fas fa-road"></i>
+            <span>Roadmap</span>
+        </a>
+        <a href="pomodoro.html" class="mobile-nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Timer</span>
+        </a>
+        <a href="notes.html" class="mobile-nav-item">
+            <i class="fas fa-sticky-note"></i>
+            <span>Notes</span>
+        </a>
+        <a href="profile.html" class="mobile-nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/components.js"></script>
+
+    <script>
+        let calendar;
+        let roadmapData = [];
+        let userProgress = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadCalendarData();
+            initializeCalendar();
+            loadUpcomingTasks();
+        });
+
+        async function loadCalendarData() {
+            try {
+                // Load roadmap
+                const roadmapResponse = await fetchWithAuth(`${API_BASE}/roadmap`);
+                if (roadmapResponse.ok) {
+                    const data = await roadmapResponse.json();
+                    roadmapData = data.roadmap;
+                }
+
+                // Load progress
+                const progressResponse = await fetchWithAuth(`${API_BASE}/progress`);
+                if (progressResponse.ok) {
+                    const data = await progressResponse.json();
+                    userProgress = data.progress;
+                }
+            } catch (error) {
+                console.error('Failed to load calendar data:', error);
+            }
+        }
+
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+
+            // Generate events from roadmap
+            const events = generateEventsFromRoadmap();
+
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 'auto',
+                headerToolbar: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: ''
+                },
+                events: events,
+                eventClick: function (info) {
+                    showDayDetails(info.event);
+                },
+                dateClick: function (info) {
+                    showDayDetailsForDate(info.date);
+                },
+                eventDidMount: function (info) {
+                    // Add custom styling based on completion status
+                    if (info.event.extendedProps.completed) {
+                        info.el.classList.add('event-completed');
+                    } else if (info.event.extendedProps.overdue) {
+                        info.el.classList.add('event-overdue');
+                    }
+                }
+            });
+
+            calendar.render();
+        }
+
+        function generateEventsFromRoadmap() {
+            const events = [];
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30); // Start from 30 days ago
+
+            roadmapData.forEach((week, weekIndex) => {
+                week.days.forEach((day, dayIndex) => {
+                    const eventDate = new Date(startDate);
+                    eventDate.setDate(eventDate.getDate() + (weekIndex * 7) + dayIndex);
+
+                    const isCompleted = userProgress[week.week]?.[day.day]?.completed || false;
+                    const isOverdue = !isCompleted && eventDate < new Date();
+
+                    events.push({
+                        title: day.topic,
+                        date: eventDate.toISOString().split('T')[0],
+                        backgroundColor: isCompleted ? '#10b981' : (isOverdue ? '#ef4444' : '#6366f1'),
+                        borderColor: isCompleted ? '#10b981' : (isOverdue ? '#ef4444' : '#6366f1'),
+                        extendedProps: {
+                            week: week.week,
+                            weekTitle: week.title,
+                            day: day.day,
+                            activities: day.activities,
+                            timeEstimate: day.time_estimate,
+                            resources: day.resources,
+                            completed: isCompleted,
+                            overdue: isOverdue,
+                            timeSpent: userProgress[week.week]?.[day.day]?.time_spent || 0
+                        }
+                    });
+                });
+
+                // Add project milestone
+                const projectDate = new Date(startDate);
+                projectDate.setDate(projectDate.getDate() + (weekIndex * 7) + 6);
+
+                events.push({
+                    title: `Project: ${week.project.title}`,
+                    date: projectDate.toISOString().split('T')[0],
+                    backgroundColor: '#f59e0b',
+                    borderColor: '#f59e0b',
+                    extendedProps: {
+                        isProject: true,
+                        week: week.week,
+                        projectDetails: week.project
+                    }
+                });
+            });
+
+            return events;
+        }
+
+        function showDayDetails(event) {
+            const container = document.getElementById('dayDetails');
+            const props = event.extendedProps;
+
+            if (props.isProject) {
+                container.innerHTML = `
+                    <div class="text-center mb-3">
+                        <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="fas fa-project-diagram text-warning fs-3"></i>
+                        </div>
+                        <h5>${event.title}</h5>
+                        <p class="text-muted">${props.projectDetails.description}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="mb-2">Skills to Practice:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            ${props.projectDetails.skills.map(skill =>
+                    `<span class="badge bg-secondary">${skill}</span>`
+                ).join('')}
+                        </div>
+                    </div>
+                    <a href="roadmap.html?week=${props.week}" class="btn btn-warning w-100">
+                        View Week Details
+                    </a>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="mb-1">${event.title}</h5>
+                            ${props.completed ?
+                        '<i class="fas fa-check-circle text-success fs-4"></i>' :
+                        (props.overdue ? '<i class="fas fa-exclamation-circle text-danger fs-4"></i>' : '')
+                    }
+                        </div>
+                        <p class="text-muted mb-0">Week ${props.week}: ${props.weekTitle}</p>
+                        <p class="text-muted">${props.day}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="mb-2">Activities:</h6>
+                        <p class="text-muted">${props.activities}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Estimated Time:</span>
+                            <span class="fw-bold">${props.timeEstimate} min</span>
+                        </div>
+                        ${props.timeSpent > 0 ? `
+                            <div class="d-flex justify-content-between text-success">
+                                <span>Time Spent:</span>
+                                <span class="fw-bold">${props.timeSpent} min</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="mb-2">Resources:</h6>
+                        <div class="d-grid gap-2">
+                            ${props.resources.length > 0 ?
+                        props.resources.slice(0, 3).map(resId =>
+                            `<button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt me-1"></i> Resource
+                                    </button>`
+                        ).join('') :
+                        '<p class="text-muted mb-0">No resources</p>'
+                    }
+                        </div>
+                    </div>
+                    
+                    <a href="roadmap.html?week=${props.week}" class="btn btn-primary w-100">
+                        Go to Week ${props.week}
+                    </a>
+                `;
+            }
+        }
+
+        function showDayDetailsForDate(date) {
+            const events = calendar.getEvents();
+            const dayEvents = events.filter(event => {
+                const eventDate = new Date(event.start);
+                return eventDate.toDateString() === date.toDateString();
+            });
+
+            const container = document.getElementById('dayDetails');
+
+            if (dayEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-calendar-times fs-3 mb-2"></i>
+                        <p>No tasks scheduled for this day</p>
+                    </div>
+                `;
+            } else {
+                showDayDetails(dayEvents[0]);
+            }
+        }
+
+        async function loadUpcomingTasks() {
+            const container = document.getElementById('upcomingTasks');
+            const today = new Date();
+            const upcomingDays = 7;
+
+            const tasks = [];
+
+            roadmapData.forEach(week => {
+                week.days.forEach(day => {
+                    if (!userProgress[week.week]?.[day.day]?.completed) {
+                        tasks.push({
+                            week: week.week,
+                            weekTitle: week.title,
+                            day: day.day,
+                            topic: day.topic,
+                            timeEstimate: day.time_estimate
+                        });
+                    }
+                });
+            });
+
+            // Show next 5 uncompleted tasks
+            const upcomingTasks = tasks.slice(0, 5);
+
+            if (upcomingTasks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-check-circle fs-3 mb-2"></i>
+                        <p>All tasks completed!</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = upcomingTasks.map(task => `
+                    <div class="task-item mb-3 p-3 border rounded hover-shadow">
+                        <h6 class="mb-1">${task.topic}</h6>
+                        <p class="text-muted mb-2 small">Week ${task.week} - ${task.day}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-clock"></i> ${task.timeEstimate} min
+                            </span>
+                            <a href="roadmap.html?week=${task.week}" class="text-decoration-none">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // View controls
+        document.getElementById('todayBtn').addEventListener('click', () => {
+            calendar.today();
+        });
+
+        document.getElementById('viewMonthBtn').addEventListener('click', () => {
+            calendar.changeView('dayGridMonth');
+        });
+
+        document.getElementById('viewWeekBtn').addEventListener('click', () => {
+            calendar.changeView('timeGridWeek');
+        });
+
+        document.getElementById('viewListBtn').addEventListener('click', () => {
+            calendar.changeView('listMonth');
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = '../auth/login.html';
+        });
+    </script>
+
+    <style>
+        /* Calendar custom styles */
+        .fc-event {
+            cursor: pointer;
+            border: none;
+            padding: 2px 4px;
+            font-size: 0.875rem;
+        }
+
+        .fc-event:hover {
+            opacity: 0.8;
+        }
+
+        .event-completed {
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+
+        .event-overdue {
+            animation: pulse 2s infinite;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .task-item:hover {
+            cursor: pointer;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .fc-day-today {
+            background-color: rgba(99, 102, 241, 0.1) !important;
+        }
+    </style>
+</body>
+
+</html>

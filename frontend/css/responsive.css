@@ -1,1 +1,354 @@
-/* mobile & tablet responsiveness */
+/* Responsive Styles */
+
+/* Mobile First Approach */
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    .container-sm {
+        max-width: 540px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .container-md {
+        max-width: 720px;
+    }
+
+    /* Show desktop navigation */
+    .mobile-nav {
+        display: none !important;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container-lg {
+        max-width: 960px;
+    }
+
+    /* Sidebar visible by default */
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .container-xl {
+        max-width: 1140px;
+    }
+}
+
+/* XXL devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+    .container-xxl {
+        max-width: 1320px;
+    }
+}
+
+/* Mobile Specific Styles */
+@media (max-width: 767.98px) {
+
+    /* Reduce padding */
+    .main-content {
+        padding: 1rem;
+        margin-bottom: var(--mobile-nav-height);
+    }
+
+    /* Stack cards vertically */
+    .row>[class*="col-"] {
+        margin-bottom: 1rem;
+    }
+
+    /* Full width buttons on mobile */
+    .btn-group-mobile-full {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .btn-group-mobile-full .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Adjust card padding */
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* Responsive tables */
+    .table-responsive-mobile {
+        font-size: 0.875rem;
+    }
+
+    .table-responsive-mobile th,
+    .table-responsive-mobile td {
+        padding: 0.5rem;
+    }
+
+    /* Hide less important columns */
+    .hide-mobile {
+        display: none !important;
+    }
+
+    /* Adjust modal size */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-fullscreen-mobile {
+        width: 100vw;
+        max-width: none;
+        height: 100%;
+        margin: 0;
+    }
+
+    /* Adjust font sizes */
+    h1,
+    .h1 {
+        font-size: 1.75rem;
+    }
+
+    h2,
+    .h2 {
+        font-size: 1.5rem;
+    }
+
+    h3,
+    .h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Simplify navigation */
+    .navbar-brand {
+        font-size: 1.125rem;
+    }
+
+    /* Stack form elements */
+    .form-row-mobile {
+        flex-direction: column;
+    }
+
+    .form-row-mobile>* {
+        margin-bottom: 1rem;
+    }
+
+    /* Adjust charts */
+    .chart-container-mobile {
+        height: 200px !important;
+    }
+
+    /* Simplified stats cards */
+    .stats-card .stats-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    /* Dropdown full width */
+    .dropdown-menu-mobile-full {
+        position: static !important;
+        width: 100%;
+        transform: none !important;
+    }
+
+    /* Timeline adjustments */
+    .timeline-mobile {
+        padding-left: 20px;
+    }
+
+    .timeline-mobile .timeline-marker {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Tab scrolling */
+    .nav-tabs-mobile {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-tabs-mobile::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Bottom sheet pattern */
+    .bottom-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        z-index: 1050;
+    }
+
+    .bottom-sheet.show {
+        transform: translateY(0);
+    }
+
+    /* Touch-friendly sizes */
+    .btn-mobile {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+    }
+
+    .form-control-mobile {
+        min-height: 44px;
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+
+    /* Swipeable cards */
+    .swipeable {
+        touch-action: pan-y;
+    }
+}
+
+/* Tablet Specific */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    /* Sidebar as overlay */
+    .sidebar {
+        position: fixed;
+        z-index: 1040;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .sidebar-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1030;
+        display: none;
+    }
+
+    .sidebar-backdrop.show {
+        display: block;
+    }
+
+    /* Two column layout for cards */
+    .card-grid-tablet {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+/* High Resolution Displays */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+    /* Sharper borders */
+    .border {
+        border-width: 0.5px;
+    }
+
+    /* Crisper shadows */
+    .shadow-sm {
+        box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    /* Hide navigation */
+    .navbar,
+    .sidebar,
+    .mobile-nav,
+    .btn,
+    .dropdown {
+        display: none !important;
+    }
+
+    /* Full width content */
+    .main-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Remove shadows and backgrounds */
+    .card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+
+    /* Ensure text is black */
+    body {
+        color: #000;
+        background: #fff;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-after: always;
+    }
+
+    .avoid-break {
+        page-break-inside: avoid;
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    /* Dark mode styles would go here */
+    /* Currently using light theme only */
+}
+
+/* Orientation Specific */
+@media (orientation: landscape) and (max-height: 500px) {
+
+    /* Reduce vertical spacing in landscape */
+    .main-content {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    /* Hide less important elements */
+    .hide-landscape-mobile {
+        display: none !important;
+    }
+}
+
+/* Safe Area Insets (for notched devices) */
+@supports (padding: max(0px)) {
+    .main-content {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .mobile-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}

@@ -1,0 +1,325 @@
+<!-- Sidebar Component -->
+<nav class="sidebar bg-white shadow-sm" id="sidebar">
+    <div class="sidebar-content">
+        <!-- User Profile Section -->
+        <div class="sidebar-header p-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile"
+                    class="rounded-circle me-3" width="40" height="40" id="sidebarUserAvatar">
+                <div class="flex-grow-1">
+                    <h6 class="mb-0" id="sidebarUserName">Loading...</h6>
+                    <small class="text-muted" id="sidebarUserEmail">loading@example.com</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard.html" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                    <span class="badge bg-primary ms-auto" id="dashboardBadge" style="display: none;">0</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="roadmap.html" data-page="roadmap">
+                    <i class="fas fa-road"></i>
+                    <span>Roadmap</span>
+                    <div class="progress ms-auto" style="width: 60px; height: 4px; display: none;" id="roadmapProgress">
+                        <div class="progress-bar bg-success" style="width: 0%"></div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="calendar.html" data-page="calendar">
+                    <i class="fas fa-calendar"></i>
+                    <span>Calendar</span>
+                    <span class="text-danger ms-auto" id="calendarDot" style="display: none;">
+                        <i class="fas fa-circle" style="font-size: 8px;"></i>
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="progress.html" data-page="progress">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="notes.html" data-page="notes">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                    <span class="badge bg-secondary ms-auto" id="noteCount" style="display: none;">0</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pomodoro.html" data-page="pomodoro">
+                    <i class="fas fa-clock"></i>
+                    <span>Pomodoro</span>
+                    <span class="text-success ms-auto" id="pomodoroActive" style="display: none;">
+                        <i class="fas fa-play-circle"></i>
+                    </span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <li class="nav-divider my-3"></li>
+
+            <!-- Secondary Navigation -->
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aiAssistantModal">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                    <span class="badge bg-info ms-auto">New</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#resourcesModal">
+                    <i class="fas fa-book"></i>
+                    <span>Resources</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="analytics.html" data-page="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+
+            <!-- Bottom Section -->
+            <li class="nav-item mt-auto">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="sidebarLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Storage Usage -->
+        <div class="sidebar-footer p-3 border-top">
+            <small class="text-muted d-block mb-1">Storage Used</small>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-primary" id="storageBar" style="width: 35%"></div>
+            </div>
+            <small class="text-muted">
+                <span id="storageUsed">3.5</span> GB of 10 GB
+            </small>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar Styles -->
+<style>
+    .sidebar {
+        position: fixed;
+        top: var(--topbar-height, 60px);
+        left: 0;
+        bottom: 0;
+        width: var(--sidebar-width, 250px);
+        overflow-y: auto;
+        z-index: 100;
+        transition: transform 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-header {
+        background-color: #f8f9fa;
+    }
+
+    .sidebar .nav {
+        flex: 1;
+    }
+
+    .sidebar .nav-link {
+        color: #64748b;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        position: relative;
+    }
+
+    .sidebar .nav-link:hover {
+        background-color: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        border-left-color: #6366f1;
+    }
+
+    .sidebar .nav-link.active {
+        background-color: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        border-left-color: #6366f1;
+        font-weight: 600;
+    }
+
+    .sidebar .nav-link i {
+        width: 20px;
+        margin-right: 0.75rem;
+        text-align: center;
+    }
+
+    .sidebar .nav-link span:not(.badge) {
+        flex: 1;
+    }
+
+    .nav-divider {
+        height: 1px;
+        background-color: #e5e7eb;
+        margin: 0 1.5rem;
+    }
+
+    .sidebar-footer {
+        background-color: #f8f9fa;
+    }
+
+    /* Scrollbar styling */
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 991.98px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<!-- Sidebar Script -->
+<script>
+    // Initialize sidebar component
+    function initializeSidebar() {
+        // Set active link based on current page
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+        const activeLink = document.querySelector(`[data-page="${currentPage}"]`);
+        if (activeLink) {
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            activeLink.classList.add('active');
+        }
+
+        // Load user info
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.name) {
+            document.getElementById('sidebarUserName').textContent = user.name;
+            document.getElementById('sidebarUserEmail').textContent = user.email;
+
+            if (user.avatar_url) {
+                document.getElementById('sidebarUserAvatar').src = user.avatar_url;
+            } else {
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`;
+                document.getElementById('sidebarUserAvatar').src = avatarUrl;
+            }
+        }
+
+        // Update badges and indicators
+        updateSidebarIndicators();
+
+        // Logout functionality
+        document.getElementById('sidebarLogoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Logout?',
+                    text: 'Are you sure you want to logout?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, logout',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.clear();
+                        window.location.href = '../auth/login.html';
+                    }
+                });
+            } else {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.clear();
+                    window.location.href = '../auth/login.html';
+                }
+            }
+        });
+    }
+
+    // Update sidebar indicators (badges, progress, etc.)
+    async function updateSidebarIndicators() {
+        try {
+            // This would fetch real data from API
+            // For now, using placeholder values
+
+            // Update roadmap progress
+            const progressBar = document.querySelector('#roadmapProgress .progress-bar');
+            if (progressBar) {
+                const progress = localStorage.getItem('roadmapProgress') || '0';
+                progressBar.style.width = progress + '%';
+                document.getElementById('roadmapProgress').style.display = 'block';
+            }
+
+            // Update note count
+            const noteCount = localStorage.getItem('noteCount') || '0';
+            if (parseInt(noteCount) > 0) {
+                document.getElementById('noteCount').textContent = noteCount;
+                document.getElementById('noteCount').style.display = 'inline-block';
+            }
+
+            // Check for active pomodoro
+            const activePomodoro = localStorage.getItem('activePomodoroSession');
+            if (activePomodoro) {
+                document.getElementById('pomodoroActive').style.display = 'inline-block';
+            }
+
+            // Check for calendar events today
+            const hasEventsToday = localStorage.getItem('hasEventsToday');
+            if (hasEventsToday === 'true') {
+                document.getElementById('calendarDot').style.display = 'inline-block';
+            }
+
+        } catch (error) {
+            console.error('Failed to update sidebar indicators:', error);
+        }
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeSidebar);
+    } else {
+        initializeSidebar();
+    }
+
+    // Update indicators periodically
+    setInterval(updateSidebarIndicators, 30000); // Every 30 seconds
+</script>
