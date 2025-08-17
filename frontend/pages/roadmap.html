@@ -1,0 +1,527 @@
+<!-- pages/roadmap.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap - DSA Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/components.css" rel="stylesheet">
+    <link href="/css/animation.css" rel="stylesheet">
+    <link href="/css/responsive.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div id="sidebarContainer"></div>
+
+    <!-- Topbar -->
+    <div id="topbarContainer"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="h3 mb-3">14-Week DSA Roadmap</h1>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button class="btn btn-outline-primary btn-sm" onclick="expandAll()">
+                            <i class="fas fa-expand"></i> Expand All
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="collapseAll()">
+                            <i class="fas fa-compress"></i> Collapse All
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="showCompletedOnly()">
+                            <i class="fas fa-check"></i> Show Completed
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="showIncompleteOnly()">
+                            <i class="fas fa-clock"></i> Show Incomplete
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="resetFilters()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Overall Progress</h5>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-success" id="overallProgress" style="width: 0%">
+                                    <span id="progressText">0%</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 d-flex justify-content-between text-muted">
+                                <span>Start</span>
+                                <span id="progressSummary">0 of 98 days completed</span>
+                                <span>Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roadmap Content -->
+            <div id="roadmapContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading roadmap...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <!-- Resource Modal -->
+    <div class="modal fade" id="resourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resourceModalTitle">Resources</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="resourceModalBody">
+                    <!-- Resources will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/components.js"></script>
+    <script>
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let roadmapData = null;
+        let progressData = {};
+        let currentFilter = 'all';
+
+        // Initialize roadmap
+        async function initRoadmap() {
+            await loadComponents();
+            await loadRoadmap();
+            await loadProgress();
+
+            // Check for week parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const week = urlParams.get('week');
+            if (week) {
+                setTimeout(() => scrollToWeek(week), 500);
+            }
+        }
+
+        // Load roadmap data
+        async function loadRoadmap() {
+            try {
+                const response = await fetch(`${API_BASE}/roadmap`);
+                const data = await response.json();
+                roadmapData = data.roadmap;
+                renderRoadmap();
+            } catch (error) {
+                console.error('Failed to load roadmap:', error);
+                showError('Failed to load roadmap. Please refresh the page.');
+            }
+        }
+
+        // Load progress data
+        async function loadProgress() {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    progressData = data.progress;
+                    updateProgressUI();
+                }
+            } catch (error) {
+                console.error('Failed to load progress:', error);
+            }
+        }
+
+        // Render roadmap
+        function renderRoadmap() {
+            const container = document.getElementById('roadmapContent');
+            container.innerHTML = '';
+
+            roadmapData.forEach((week, index) => {
+                const weekElement = createWeekElement(week, index);
+                container.appendChild(weekElement);
+            });
+        }
+
+        // Create week element
+        function createWeekElement(week, index) {
+            const weekDiv = document.createElement('div');
+            weekDiv.className = 'roadmap-week animate-fade-in-up';
+            weekDiv.style.animationDelay = `${index * 50}ms`;
+            weekDiv.id = `week-${week.week}`;
+
+            const weekProgress = progressData[week.week] || {};
+            const completedDays = Object.values(weekProgress).filter(d => d.completed).length;
+            const totalDays = week.days.length;
+            const percentage = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+
+            weekDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="flex-grow-1">
+                        <h4 class="mb-1">
+                            Week ${week.week}: ${week.title}
+                            ${percentage === 100 ? '<i class="fas fa-check-circle text-success ms-2"></i>' : ''}
+                        </h4>
+                        <p class="text-muted mb-2">${week.goal}</p>
+                        <div class="progress mb-2" style="height: 8px; max-width: 300px;">
+                            <div class="progress-bar ${percentage === 100 ? 'bg-success' : 'bg-primary'}" 
+                                 style="width: ${percentage}%"></div>
+                        </div>
+                        <small class="text-muted">${completedDays} of ${totalDays} days completed</small>
+                    </div>
+                    <button class="btn btn-link text-decoration-none" onclick="toggleWeek(${week.week})">
+                        <i class="fas fa-chevron-down" id="week-chevron-${week.week}"></i>
+                    </button>
+                </div>
+                
+                <div class="week-content" id="week-content-${week.week}">
+                    ${week.project ? `
+                        <div class="alert alert-info mb-3">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-project-diagram me-2"></i>Weekly Project: ${week.project.title}
+                            </h6>
+                            <p class="mb-2">${week.project.description}</p>
+                            <div class="d-flex flex-wrap gap-1">
+                                ${week.project.skills.map(skill =>
+                `<span class="badge bg-primary">${skill}</span>`
+            ).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="days-container">
+                        ${week.days.map(day => createDayElement(week.week, day, weekProgress[day.day])).join('')}
+                    </div>
+                </div>
+            `;
+
+            return weekDiv;
+        }
+
+        // Create day element
+        function createDayElement(weekNum, day, progress) {
+            const isCompleted = progress?.completed || false;
+            const timeSpent = progress?.time_spent || 0;
+
+            return `
+                <div class="day-card ${isCompleted ? 'completed' : ''}" data-week="${weekNum}" data-day="${day.day}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">
+                                ${day.day}: ${day.topic}
+                                ${isCompleted ? '<i class="fas fa-check-circle text-success ms-2"></i>' : ''}
+                            </h6>
+                            <p class="text-muted small mb-2">${day.activities}</p>
+                            <div class="d-flex align-items-center gap-3 text-muted small">
+                                <span><i class="fas fa-clock me-1"></i>${day.time_estimate} min</span>
+                                ${timeSpent > 0 ? `<span><i class="fas fa-history me-1"></i>${timeSpent} min spent</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   id="check-${weekNum}-${day.day}" 
+                                   ${isCompleted ? 'checked' : ''}
+                                   onchange="toggleDayComplete(${weekNum}, '${day.day}')">
+                        </div>
+                    </div>
+                    
+                    ${day.resources && day.resources.length > 0 ? `
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    onclick="showResources(${weekNum}, '${day.day}', '${day.topic}')">
+                                <i class="fas fa-book me-1"></i> View Resources (${day.resources.length})
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Toggle week expansion
+        function toggleWeek(weekNum) {
+            const content = document.getElementById(`week-content-${weekNum}`);
+            const chevron = document.getElementById(`week-chevron-${weekNum}`);
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                chevron.classList.remove('fa-chevron-right');
+                chevron.classList.add('fa-chevron-down');
+            } else {
+                content.style.display = 'none';
+                chevron.classList.remove('fa-chevron-down');
+                chevron.classList.add('fa-chevron-right');
+            }
+        }
+
+        // Expand all weeks
+        function expandAll() {
+            roadmapData.forEach(week => {
+                const content = document.getElementById(`week-content-${week.week}`);
+                const chevron = document.getElementById(`week-chevron-${week.week}`);
+                content.style.display = 'block';
+                chevron.classList.remove('fa-chevron-right');
+                chevron.classList.add('fa-chevron-down');
+            });
+        }
+
+        // Collapse all weeks
+        function collapseAll() {
+            roadmapData.forEach(week => {
+                const content = document.getElementById(`week-content-${week.week}`);
+                const chevron = document.getElementById(`week-chevron-${week.week}`);
+                content.style.display = 'none';
+                chevron.classList.remove('fa-chevron-down');
+                chevron.classList.add('fa-chevron-right');
+            });
+        }
+
+        // Show completed only
+        function showCompletedOnly() {
+            currentFilter = 'completed';
+            document.querySelectorAll('.day-card').forEach(card => {
+                if (card.classList.contains('completed')) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Show incomplete only
+        function showIncompleteOnly() {
+            currentFilter = 'incomplete';
+            document.querySelectorAll('.day-card').forEach(card => {
+                if (!card.classList.contains('completed')) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Reset filters
+        function resetFilters() {
+            currentFilter = 'all';
+            document.querySelectorAll('.day-card').forEach(card => {
+                card.style.display = 'block';
+            });
+        }
+
+        // Toggle day completion
+        async function toggleDayComplete(weekNum, day) {
+            const checkbox = document.getElementById(`check-${weekNum}-${day}`);
+            const isCompleted = checkbox.checked;
+            const token = localStorage.getItem('access_token');
+
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        week: weekNum,
+                        day: day,
+                        completed: isCompleted,
+                        time_spent: roadmapData.find(w => w.week === weekNum)
+                            ?.days.find(d => d.day === day)?.time_estimate || 0
+                    })
+                });
+
+                if (response.ok) {
+                    // Update local progress data
+                    if (!progressData[weekNum]) progressData[weekNum] = {};
+                    progressData[weekNum][day] = { completed: isCompleted };
+
+                    // Update UI
+                    const dayCard = document.querySelector(`[data-week="${weekNum}"][data-day="${day}"]`);
+                    if (isCompleted) {
+                        dayCard.classList.add('completed');
+                        showCompletionAnimation();
+                    } else {
+                        dayCard.classList.remove('completed');
+                    }
+
+                    // Reload to update progress
+                    await loadProgress();
+                } else {
+                    checkbox.checked = !isCompleted;
+                    showError('Failed to update progress');
+                }
+            } catch (error) {
+                checkbox.checked = !isCompleted;
+                showError('Network error. Please try again.');
+            }
+        }
+
+        // Show resources
+        async function showResources(weekNum, day, topic) {
+            const week = roadmapData.find(w => w.week === weekNum);
+            const dayData = week.days.find(d => d.day === day);
+
+            if (!dayData.resources || dayData.resources.length === 0) return;
+
+            // Load resources
+            try {
+                const response = await fetch(`${API_BASE}/resources`);
+                const data = await response.json();
+                const allResources = data.resources;
+
+                // Filter relevant resources
+                const relevantResources = dayData.resources.map(resourceId =>
+                    allResources.find(r => r.id === resourceId)
+                ).filter(r => r);
+
+                // Show in modal
+                document.getElementById('resourceModalTitle').textContent = `Resources: ${topic}`;
+                document.getElementById('resourceModalBody').innerHTML = `
+                    <div class="row g-3">
+                        ${relevantResources.map(resource => `
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-${getResourceIcon(resource.type)} me-2"></i>
+                                            ${resource.title}
+                                        </h6>
+                                        <p class="card-text">
+                                            <span class="badge bg-${getResourceBadgeColor(resource.type)} me-2">
+                                                ${resource.type}
+                                            </span>
+                                            <a href="${resource.url}" target="_blank" class="btn btn-sm btn-primary">
+                                                Open Resource <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
+                modal.show();
+            } catch (error) {
+                showError('Failed to load resources');
+            }
+        }
+
+        // Get resource icon
+        function getResourceIcon(type) {
+            const icons = {
+                'text': 'book',
+                'video': 'video',
+                'interactive': 'hand-pointer',
+                'practice': 'code'
+            };
+            return icons[type] || 'link';
+        }
+
+        // Get resource badge color
+        function getResourceBadgeColor(type) {
+            const colors = {
+                'text': 'primary',
+                'video': 'warning',
+                'interactive': 'success',
+                'practice': 'danger'
+            };
+            return colors[type] || 'secondary';
+        }
+
+        // Update progress UI
+        function updateProgressUI() {
+            let totalCompleted = 0;
+            let totalDays = 0;
+
+            roadmapData.forEach(week => {
+                totalDays += week.days.length;
+                const weekProgress = progressData[week.week] || {};
+                totalCompleted += Object.values(weekProgress).filter(d => d.completed).length;
+            });
+
+            const percentage = totalDays > 0 ? Math.round((totalCompleted / totalDays) * 100) : 0;
+
+            document.getElementById('overallProgress').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${percentage}%`;
+            document.getElementById('progressSummary').textContent = `${totalCompleted} of ${totalDays} days completed`;
+
+            // Re-render roadmap to update week progress
+            renderRoadmap();
+        }
+
+        // Scroll to week
+        function scrollToWeek(weekNum) {
+            const weekElement = document.getElementById(`week-${weekNum}`);
+            if (weekElement) {
+                weekElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Expand the week
+                const content = document.getElementById(`week-content-${weekNum}`);
+                const chevron = document.getElementById(`week-chevron-${weekNum}`);
+                content.style.display = 'block';
+                chevron.classList.remove('fa-chevron-right');
+                chevron.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Show completion animation
+        function showCompletionAnimation() {
+            confetti({
+                particleCount: 50,
+                spread: 60,
+                origin: { y: 0.8 }
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3';
+            alert.style.zIndex = '9999';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Initialize on load
+        initRoadmap();
+    </script>
+</body>
+
+</html>

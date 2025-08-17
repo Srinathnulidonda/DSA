@@ -1,1 +1,421 @@
-/* Mobile & tablet responsiveness */
+/* css/responsive.css */
+/* Extra Small Devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+
+    /* Layout adjustments */
+    .main-content {
+        padding: 1rem;
+        margin-bottom: 60px;
+    }
+
+    /* Typography */
+    h1,
+    .h1 {
+        font-size: 1.75rem;
+    }
+
+    h2,
+    .h2 {
+        font-size: 1.5rem;
+    }
+
+    h3,
+    .h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Cards and containers */
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    /* Forms */
+    .form-control,
+    .form-select {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+
+    /* Buttons */
+    .btn-group-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .btn-group-mobile .btn {
+        width: 100%;
+    }
+
+    /* Roadmap */
+    .roadmap-week {
+        padding: 1rem;
+    }
+
+    .day-card {
+        padding: 0.75rem;
+    }
+
+    /* Calendar */
+    .calendar-grid {
+        gap: 0.25rem;
+    }
+
+    .calendar-day {
+        font-size: 0.75rem;
+    }
+
+    /* Timer */
+    .timer-display {
+        font-size: 2.5rem;
+    }
+
+    .timer-ring {
+        width: 150px;
+        height: 150px;
+    }
+
+    /* Notes */
+    .note-card {
+        padding: 1rem;
+    }
+
+    /* Modal adjustments */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-fullscreen-mobile {
+        width: 100vw;
+        max-width: none;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .modal-fullscreen-mobile .modal-content {
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    /* Table responsiveness */
+    .table-responsive-mobile {
+        font-size: 0.875rem;
+    }
+
+    /* Hide elements on mobile */
+    .hide-mobile {
+        display: none !important;
+    }
+
+    /* Stack elements on mobile */
+    .stack-mobile {
+        flex-direction: column !important;
+    }
+
+    /* Full width on mobile */
+    .full-width-mobile {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Small Devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .main-content {
+        padding: 1.5rem;
+        margin-bottom: 60px;
+    }
+
+    /* Cards in grid */
+    .card-grid-sm {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+/* Medium Devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    /* Sidebar adjustments */
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+    }
+
+    .topbar {
+        margin-left: 200px;
+    }
+
+    /* Grid adjustments */
+    .card-grid-md {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    /* Hide mobile nav */
+    .mobile-nav {
+        display: none;
+    }
+}
+
+/* Large Devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+    /* Container max-width */
+    .container-lg-custom {
+        max-width: 960px;
+    }
+}
+
+/* Extra Large Devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+
+    /* Container max-width */
+    .container-xl-custom {
+        max-width: 1140px;
+    }
+
+    /* Large screen optimizations */
+    .card-grid-xl {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* Ultra Wide Screens (1920px and up) */
+@media (min-width: 1920px) {
+    .container-xxl-custom {
+        max-width: 1400px;
+    }
+
+    .main-content {
+        max-width: 1600px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 2rem 3rem;
+    }
+}
+
+/* Portrait orientation specific */
+@media (orientation: portrait) and (max-width: 768px) {
+    .landscape-only {
+        display: none;
+    }
+
+    .portrait-optimize {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Landscape orientation specific */
+@media (orientation: landscape) and (max-height: 500px) {
+    .topbar {
+        height: 50px;
+    }
+
+    .main-content {
+        margin-top: 50px;
+    }
+
+    .mobile-nav {
+        height: 50px;
+    }
+}
+
+/* High resolution screens */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+    /* Sharper borders and shadows */
+    .card {
+        box-shadow: 0 0.5px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Thinner borders */
+    .border {
+        border-width: 0.5px !important;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    /* Hide non-essential elements */
+    .sidebar,
+    .topbar,
+    .mobile-nav,
+    .no-print {
+        display: none !important;
+    }
+
+    /* Adjust layout */
+    .main-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Ensure readable text */
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+        color: #000;
+        background: #fff;
+    }
+
+    /* Avoid page breaks inside elements */
+    .card,
+    .roadmap-week,
+    .day-card {
+        page-break-inside: avoid;
+    }
+
+    /* Show links */
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    /* Handled in main.css but can add specific responsive dark mode styles here */
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Larger touch targets */
+    .btn,
+    .nav-link,
+    .form-control,
+    .form-select {
+        min-height: 44px;
+    }
+
+    /* Remove hover effects */
+    .hover-lift:hover,
+    .hover-glow:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Larger clickable areas */
+    .clickable-card {
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(0, 123, 255, 0.1);
+    }
+}
+
+/* Responsive utilities */
+.text-truncate-mobile {
+    @media (max-width: 575.98px) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.order-mobile-first {
+    @media (max-width: 575.98px) {
+        order: -1;
+    }
+}
+
+.spacing-mobile {
+    @media (max-width: 575.98px) {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Responsive tables */
+@media (max-width: 767.98px) {
+
+    .table-responsive-stack table,
+    .table-responsive-stack thead,
+    .table-responsive-stack tbody,
+    .table-responsive-stack th,
+    .table-responsive-stack td,
+    .table-responsive-stack tr {
+        display: block;
+    }
+
+    .table-responsive-stack thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .table-responsive-stack tr {
+        border: 1px solid #e0e0e0;
+        margin-bottom: 10px;
+    }
+
+    .table-responsive-stack td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .table-responsive-stack td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label);
+        font-weight: bold;
+    }
+}
+
+/* Flex responsive utilities */
+.flex-mobile-column {
+    @media (max-width: 575.98px) {
+        flex-direction: column !important;
+    }
+}
+
+.flex-tablet-row {
+    @media (min-width: 768px) {
+        flex-direction: row !important;
+    }
+}
+
+/* Grid responsive utilities */
+.grid-mobile-1 {
+    @media (max-width: 575.98px) {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.grid-tablet-2 {
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.grid-desktop-3 {
+    @media (min-width: 992px) {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
