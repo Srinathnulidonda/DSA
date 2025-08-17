@@ -4,779 +4,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSA Learning Platform - API Testing</title>
+    <title>DSA Learning Daily - Master Data Structures & Algorithms</title>
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .endpoint-section {
-            border-left: 4px solid #007bff;
-            background: #f8f9fa;
-        }
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        .response-box {
-            background: #f1f3f4;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .method-badge {
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .auth-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .tab-content {
-            min-height: 600px;
-        }
-
-        .json-viewer {
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animation.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 
 <body class="bg-gray-50">
-    <!-- Authentication Status -->
-    <div class="auth-status">
-        <div id="authStatus" class="alert alert-warning" role="alert">
-            <i class="fas fa-exclamation-triangle"></i> Not Authenticated
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading DSA Learning Platform...</p>
         </div>
     </div>
 
-    <div class="container-fluid py-4">
-        <div class="row">
-            <!-- Header -->
-            <div class="col-12 mb-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <h1 class="card-title mb-0">
-                            <i class="fas fa-code"></i> DSA Learning Platform API Tester
-                        </h1>
-                        <p class="card-text">API Base: <code>https://dsa-backend-gj8n.onrender.com</code></p>
+    <!-- Main App Container -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="#">
+                    <i class="bi bi-code-square me-2"></i>DSA Learning Daily
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-page="dashboard">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="roadmap">
+                                <i class="bi bi-map me-1"></i>Roadmap
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="calendar">
+                                <i class="bi bi-calendar-week me-1"></i>Calendar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-page="progress">
+                                <i class="bi bi-graph-up me-1"></i>Progress
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- User Menu -->
+                    <div class="navbar-nav">
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                                data-bs-toggle="dropdown">
+                                <img src="https://via.placeholder.com/32" class="rounded-circle me-2" width="32"
+                                    height="32" id="userAvatar">
+                                <span id="userName">User</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" data-page="profile"><i
+                                            class="bi bi-person me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#" data-page="notes"><i
+                                            class="bi bi-journal-text me-2"></i>Notes</a></li>
+                                <li><a class="dropdown-item" href="#" data-page="pomodoro"><i
+                                            class="bi bi-clock me-2"></i>Pomodoro</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()"><i
+                                            class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
+        </nav>
 
-            <!-- Navigation Tabs -->
-            <div class="col-12">
-                <ul class="nav nav-tabs" id="apiTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="auth-tab" data-bs-toggle="tab" data-bs-target="#auth"
-                            type="button">
-                            <i class="fas fa-lock"></i> Authentication
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
-                            type="button">
-                            <i class="fas fa-user"></i> Profile
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="progress-tab" data-bs-toggle="tab" data-bs-target="#progress"
-                            type="button">
-                            <i class="fas fa-chart-line"></i> Progress
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes"
-                            type="button">
-                            <i class="fas fa-sticky-note"></i> Notes
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pomodoro-tab" data-bs-toggle="tab" data-bs-target="#pomodoro"
-                            type="button">
-                            <i class="fas fa-clock"></i> Pomodoro
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="ai-tab" data-bs-toggle="tab" data-bs-target="#ai" type="button">
-                            <i class="fas fa-robot"></i> AI Assistant
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources"
-                            type="button">
-                            <i class="fas fa-book"></i> Resources
-                        </button>
-                    </li>
-                </ul>
+        <!-- Main Content Area -->
+        <main class="main-content" style="margin-top: 76px;">
+            <div id="pageContent" class="container-fluid p-4">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </main>
 
-                <!-- Tab Content -->
-                <div class="tab-content" id="apiTabsContent">
-                    <!-- Authentication Tab -->
-                    <div class="tab-pane fade show active" id="auth" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- Register -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/auth/register</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="registerForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Name</label>
-                                                <input type="text" class="form-control" name="name" value="Test User"
-                                                    required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" class="form-control" name="email"
-                                                    value="test@example.com" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Password</label>
-                                                <input type="password" class="form-control" name="password"
-                                                    value="password123" required>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-user-plus"></i> Register
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="registerResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- Mobile Bottom Navigation -->
+        <nav class="mobile-nav d-lg-none">
+            <div class="mobile-nav-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="mobile-nav-item" data-page="roadmap">
+                <i class="bi bi-map"></i>
+                <span>Roadmap</span>
+            </div>
+            <div class="mobile-nav-item" data-page="calendar">
+                <i class="bi bi-calendar-week"></i>
+                <span>Calendar</span>
+            </div>
+            <div class="mobile-nav-item" data-page="progress">
+                <i class="bi bi-graph-up"></i>
+                <span>Progress</span>
+            </div>
+            <div class="mobile-nav-item" data-page="notes">
+                <i class="bi bi-journal-text"></i>
+                <span>Notes</span>
+            </div>
+        </nav>
+    </div>
 
-                            <!-- Login -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/auth/login</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="loginForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" class="form-control" name="email"
-                                                    value="test@example.com" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Password</label>
-                                                <input type="password" class="form-control" name="password"
-                                                    value="password123" required>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-sign-in-alt"></i> Login
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="loginResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Success!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successMessage"></div>
+        </div>
+    </div>
 
-                            <!-- Forgot Password -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/auth/forgot-password</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="forgotPasswordForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" class="form-control" name="email"
-                                                    value="test@example.com" required>
-                                            </div>
-                                            <button type="submit" class="btn btn-warning">
-                                                <i class="fas fa-key"></i> Send Reset Link
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="forgotPasswordResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Error Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Error!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorMessage"></div>
+        </div>
+    </div>
 
-                            <!-- Health Check -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/health</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <button onclick="checkHealth()" class="btn btn-info">
-                                            <i class="fas fa-heartbeat"></i> Check Health
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="healthResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Achievement Modal -->
+    <div class="modal fade" id="achievementModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                <div class="modal-body text-center p-5">
+                    <div class="achievement-icon mb-3">
+                        <i class="bi bi-trophy-fill" style="font-size: 3rem;"></i>
                     </div>
-
-                    <!-- Profile Tab -->
-                    <div class="tab-pane fade" id="profile" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- Get Profile -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/profile</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <button onclick="getProfile()" class="btn btn-info">
-                                            <i class="fas fa-user"></i> Get Profile
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="getProfileResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Update Profile -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-warning method-badge">PUT</span>
-                                        <strong>/profile</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="updateProfileForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Name</label>
-                                                <input type="text" class="form-control" name="name"
-                                                    value="Updated Name">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Email</label>
-                                                <input type="email" class="form-control" name="email"
-                                                    value="updated@example.com">
-                                            </div>
-                                            <button type="submit" class="btn btn-warning">
-                                                <i class="fas fa-edit"></i> Update Profile
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="updateProfileResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Dashboard -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/dashboard</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <button onclick="getDashboard()" class="btn btn-info">
-                                            <i class="fas fa-tachometer-alt"></i> Get Dashboard
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="dashboardResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Notifications -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/notifications</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <button onclick="getNotifications()" class="btn btn-info">
-                                            <i class="fas fa-bell"></i> Get Notifications
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="notificationsResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Progress Tab -->
-                    <div class="tab-pane fade" id="progress" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- Get Progress -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/progress</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <button onclick="getProgress()" class="btn btn-info">
-                                            <i class="fas fa-chart-line"></i> Get Progress
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="getProgressResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Update Progress -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/progress</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="updateProgressForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Week</label>
-                                                <input type="number" class="form-control" name="week" value="1" min="1"
-                                                    max="14" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Day</label>
-                                                <select class="form-control" name="day" required>
-                                                    <option value="Monday">Monday</option>
-                                                    <option value="Tuesday">Tuesday</option>
-                                                    <option value="Wednesday">Wednesday</option>
-                                                    <option value="Thursday">Thursday</option>
-                                                    <option value="Friday">Friday</option>
-                                                    <option value="Saturday">Saturday</option>
-                                                    <option value="Sunday">Sunday</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Time Spent (minutes)</label>
-                                                <input type="number" class="form-control" name="time_spent" value="60">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Notes</label>
-                                                <textarea class="form-control" name="notes"
-                                                    rows="3">Completed array operations practice</textarea>
-                                            </div>
-                                            <div class="mb-3 form-check">
-                                                <input type="checkbox" class="form-check-input" name="completed"
-                                                    checked>
-                                                <label class="form-check-label">Completed</label>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-save"></i> Update Progress
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="updateProgressResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Calendar -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/calendar</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Week (optional)</label>
-                                            <input type="number" id="calendarWeek" class="form-control" min="1" max="14"
-                                                placeholder="Leave empty for overview">
-                                        </div>
-                                        <button onclick="getCalendar()" class="btn btn-info">
-                                            <i class="fas fa-calendar"></i> Get Calendar
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="calendarResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Notes Tab -->
-                    <div class="tab-pane fade" id="notes" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- Get Notes -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/notes</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Search</label>
-                                            <input type="text" id="notesSearch" class="form-control"
-                                                placeholder="Search notes...">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Week Filter</label>
-                                            <input type="number" id="notesWeek" class="form-control" min="1" max="14"
-                                                placeholder="Filter by week">
-                                        </div>
-                                        <button onclick="getNotes()" class="btn btn-info">
-                                            <i class="fas fa-sticky-note"></i> Get Notes
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="getNotesResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Create Note -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/notes</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="createNoteForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Title</label>
-                                                <input type="text" class="form-control" name="title"
-                                                    value="Array Operations Notes" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Content</label>
-                                                <textarea class="form-control" name="content" rows="4"
-                                                    required>Arrays are fundamental data structures that store elements in contiguous memory locations...</textarea>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Tags (comma separated)</label>
-                                                <input type="text" class="form-control" name="tags"
-                                                    value="arrays,data-structures,basics">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Week</label>
-                                                <input type="number" class="form-control" name="week" value="1" min="1"
-                                                    max="14">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Day</label>
-                                                <select class="form-control" name="day">
-                                                    <option value="Monday">Monday</option>
-                                                    <option value="Tuesday">Tuesday</option>
-                                                    <option value="Wednesday">Wednesday</option>
-                                                    <option value="Thursday">Thursday</option>
-                                                    <option value="Friday">Friday</option>
-                                                    <option value="Saturday">Saturday</option>
-                                                    <option value="Sunday">Sunday</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-plus"></i> Create Note
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="createNoteResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pomodoro Tab -->
-                    <div class="tab-pane fade" id="pomodoro" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- Start Pomodoro -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/pomodoro</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="startPomodoroForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Duration (minutes)</label>
-                                                <input type="number" class="form-control" name="duration" value="25"
-                                                    min="1" max="60" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Topic</label>
-                                                <input type="text" class="form-control" name="topic"
-                                                    value="Array Operations Study">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Session Type</label>
-                                                <select class="form-control" name="session_type">
-                                                    <option value="study">Study</option>
-                                                    <option value="break">Break</option>
-                                                    <option value="practice">Practice</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-play"></i> Start Pomodoro
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="startPomodoroResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Complete Pomodoro -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/pomodoro/{id}/complete</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Session ID</label>
-                                            <input type="text" id="pomodoroSessionId" class="form-control"
-                                                placeholder="Enter session ID from start response">
-                                        </div>
-                                        <button onclick="completePomodoro()" class="btn btn-warning">
-                                            <i class="fas fa-stop"></i> Complete Pomodoro
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="completePomodoroResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Pomodoro History -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/pomodoro/history</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <button onclick="getPomodoroHistory()" class="btn btn-info">
-                                            <i class="fas fa-history"></i> Get History
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="pomodoroHistoryResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- AI Assistant Tab -->
-                    <div class="tab-pane fade" id="ai" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- AI Ask -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/ai/ask</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="aiAskForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Question</label>
-                                                <textarea class="form-control" name="question" rows="3"
-                                                    placeholder="Ask a question about DSA..."
-                                                    required>What are the time complexities of different array operations?</textarea>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-question-circle"></i> Ask AI
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="aiAskResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Generate Study Plan -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/ai/study-plan</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="studyPlanForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Available Time (minutes/day)</label>
-                                                <input type="number" class="form-control" name="available_time"
-                                                    value="60" min="30" max="480">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Focus Areas (comma separated)</label>
-                                                <input type="text" class="form-control" name="focus_areas"
-                                                    value="arrays,linked-lists,trees">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Difficulty Level</label>
-                                                <select class="form-control" name="difficulty">
-                                                    <option value="beginner">Beginner</option>
-                                                    <option value="medium" selected>Medium</option>
-                                                    <option value="advanced">Advanced</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-calendar-plus"></i> Generate Plan
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="studyPlanResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Generate Quiz -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-success method-badge">POST</span>
-                                        <strong>/ai/quiz</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="quizForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Topic</label>
-                                                <input type="text" class="form-control" name="topic" value="arrays"
-                                                    required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Difficulty</label>
-                                                <select class="form-control" name="difficulty">
-                                                    <option value="easy">Easy</option>
-                                                    <option value="medium" selected>Medium</option>
-                                                    <option value="hard">Hard</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Number of Questions</label>
-                                                <input type="number" class="form-control" name="question_count"
-                                                    value="5" min="1" max="10">
-                                            </div>
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fas fa-question"></i> Generate Quiz
-                                            </button>
-                                        </form>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="quizResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resources Tab -->
-                    <div class="tab-pane fade" id="resources" role="tabpanel">
-                        <div class="row mt-4">
-                            <!-- Get Resources -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/resources</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Type Filter</label>
-                                            <select id="resourceType" class="form-control">
-                                                <option value="">All Types</option>
-                                                <option value="text">Text</option>
-                                                <option value="video">Video</option>
-                                                <option value="interactive">Interactive</option>
-                                                <option value="practice">Practice</option>
-                                            </select>
-                                        </div>
-                                        <button onclick="getResources()" class="btn btn-info">
-                                            <i class="fas fa-book"></i> Get Resources
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="resourcesResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Get Roadmap -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/roadmap</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Week (optional)</label>
-                                            <input type="number" id="roadmapWeek" class="form-control" min="1" max="14"
-                                                placeholder="Leave empty for full roadmap">
-                                        </div>
-                                        <button onclick="getRoadmap()" class="btn btn-info">
-                                            <i class="fas fa-route"></i> Get Roadmap
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="roadmapResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Search -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card endpoint-section">
-                                    <div class="card-header">
-                                        <span class="badge bg-info method-badge">GET</span>
-                                        <strong>/search</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Search Query</label>
-                                            <input type="text" id="searchQuery" class="form-control" value="arrays"
-                                                placeholder="Search term...">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Search Type</label>
-                                            <select id="searchType" class="form-control">
-                                                <option value="all">All</option>
-                                                <option value="resources">Resources</option>
-                                                <option value="roadmap">Roadmap</option>
-                                                <option value="notes">Notes</option>
-                                            </select>
-                                        </div>
-                                        <button onclick="searchContent()" class="btn btn-info">
-                                            <i class="fas fa-search"></i> Search
-                                        </button>
-                                        <div class="response-box mt-3 p-3">
-                                            <div id="searchResponse" class="json-viewer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="modal-title mb-2">🎉 Achievement Unlocked!</h4>
+                    <p class="mb-3" id="achievementMessage">Great job completing your daily goal!</p>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Awesome!</button>
                 </div>
             </div>
         </div>
@@ -784,309 +175,508 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        // API Configuration
+        // Global Configuration
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let accessToken = localStorage.getItem('access_token');
-        let refreshToken = localStorage.getItem('refresh_token');
+        let currentUser = null;
+        let authToken = localStorage.getItem('accessToken');
 
-        // Update auth status
-        function updateAuthStatus() {
-            const authStatus = document.getElementById('authStatus');
-            if (accessToken) {
-                authStatus.className = 'alert alert-success';
-                authStatus.innerHTML = '<i class="fas fa-check-circle"></i> Authenticated';
-            } else {
-                authStatus.className = 'alert alert-warning';
-                authStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Not Authenticated';
-            }
-        }
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeApp();
+        });
 
-        // API Request Helper
-        async function apiRequest(endpoint, options = {}) {
-            const url = `${API_BASE}${endpoint}`;
-            const headers = {
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-
-            if (accessToken && !options.skipAuth) {
-                headers['Authorization'] = `Bearer ${accessToken}`;
-            }
-
-            try {
-                const response = await fetch(url, {
-                    ...options,
-                    headers
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    if (response.status === 401 && refreshToken && !options.skipAuth) {
-                        // Try to refresh token
-                        const refreshResponse = await fetch(`${API_BASE}/auth/refresh`, {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${refreshToken}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-
-                        if (refreshResponse.ok) {
-                            const refreshData = await refreshResponse.json();
-                            accessToken = refreshData.access_token;
-                            localStorage.setItem('access_token', accessToken);
-                            updateAuthStatus();
-
-                            // Retry original request
-                            headers['Authorization'] = `Bearer ${accessToken}`;
-                            const retryResponse = await fetch(url, { ...options, headers });
-                            return await retryResponse.json();
-                        }
-                    }
-                    throw new Error(data.error || `HTTP ${response.status}`);
-                }
-
-                return data;
-            } catch (error) {
-                console.error('API Request failed:', error);
-                throw error;
-            }
-        }
-
-        // Display response in UI
-        function displayResponse(elementId, data) {
-            const element = document.getElementById(elementId);
-            element.textContent = JSON.stringify(data, null, 2);
-        }
-
-        // Form submission helper
-        function handleFormSubmit(formId, endpoint, method = 'POST', responseElementId) {
-            document.getElementById(formId).addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const data = {};
-
-                for (let [key, value] of formData.entries()) {
-                    if (key === 'tags') {
-                        data[key] = value.split(',').map(tag => tag.trim()).filter(tag => tag);
-                    } else if (key === 'completed') {
-                        data[key] = formData.has(key);
-                    } else if (['week', 'time_spent', 'duration', 'question_count', 'available_time'].includes(key)) {
-                        data[key] = parseInt(value) || 0;
-                    } else {
-                        data[key] = value;
-                    }
-                }
-
-                try {
-                    const response = await apiRequest(endpoint, {
-                        method,
-                        body: JSON.stringify(data)
-                    });
-                    displayResponse(responseElementId, response);
-
-                    // Handle login response
-                    if (responseElementId === 'loginResponse' && response.access_token) {
-                        accessToken = response.access_token;
-                        refreshToken = response.refresh_token;
-                        localStorage.setItem('access_token', accessToken);
-                        localStorage.setItem('refresh_token', refreshToken);
-                        updateAuthStatus();
-                    }
-                } catch (error) {
-                    displayResponse(responseElementId, { error: error.message });
-                }
-            });
-        }
-
-        // Authentication Functions
-        handleFormSubmit('registerForm', '/auth/register', 'POST', 'registerResponse');
-        handleFormSubmit('loginForm', '/auth/login', 'POST', 'loginResponse');
-        handleFormSubmit('forgotPasswordForm', '/auth/forgot-password', 'POST', 'forgotPasswordResponse');
-
-        // Profile Functions
-        handleFormSubmit('updateProfileForm', '/profile', 'PUT', 'updateProfileResponse');
-
-        async function getProfile() {
-            try {
-                const response = await apiRequest('/profile');
-                displayResponse('getProfileResponse', response);
-            } catch (error) {
-                displayResponse('getProfileResponse', { error: error.message });
-            }
-        }
-
-        async function getDashboard() {
-            try {
-                const response = await apiRequest('/dashboard');
-                displayResponse('dashboardResponse', response);
-            } catch (error) {
-                displayResponse('dashboardResponse', { error: error.message });
-            }
-        }
-
-        async function getNotifications() {
-            try {
-                const response = await apiRequest('/notifications');
-                displayResponse('notificationsResponse', response);
-            } catch (error) {
-                displayResponse('notificationsResponse', { error: error.message });
-            }
-        }
-
-        // Progress Functions
-        handleFormSubmit('updateProgressForm', '/progress', 'POST', 'updateProgressResponse');
-
-        async function getProgress() {
-            try {
-                const response = await apiRequest('/progress');
-                displayResponse('getProgressResponse', response);
-            } catch (error) {
-                displayResponse('getProgressResponse', { error: error.message });
-            }
-        }
-
-        async function getCalendar() {
-            try {
-                const week = document.getElementById('calendarWeek').value;
-                const endpoint = week ? `/calendar?week=${week}` : '/calendar';
-                const response = await apiRequest(endpoint);
-                displayResponse('calendarResponse', response);
-            } catch (error) {
-                displayResponse('calendarResponse', { error: error.message });
-            }
-        }
-
-        // Notes Functions
-        handleFormSubmit('createNoteForm', '/notes', 'POST', 'createNoteResponse');
-
-        async function getNotes() {
-            try {
-                const search = document.getElementById('notesSearch').value;
-                const week = document.getElementById('notesWeek').value;
-                let endpoint = '/notes?';
-                const params = new URLSearchParams();
-
-                if (search) params.append('search', search);
-                if (week) params.append('week', week);
-
-                endpoint += params.toString();
-                const response = await apiRequest(endpoint);
-                displayResponse('getNotesResponse', response);
-            } catch (error) {
-                displayResponse('getNotesResponse', { error: error.message });
-            }
-        }
-
-        // Pomodoro Functions
-        handleFormSubmit('startPomodoroForm', '/pomodoro', 'POST', 'startPomodoroResponse');
-
-        async function completePomodoro() {
-            const sessionId = document.getElementById('pomodoroSessionId').value;
-            if (!sessionId) {
-                displayResponse('completePomodoroResponse', { error: 'Session ID required' });
+        async function initializeApp() {
+            // Check authentication
+            if (!authToken) {
+                window.location.href = 'auth/login.html';
                 return;
             }
 
             try {
-                const response = await apiRequest(`/pomodoro/${sessionId}/complete`, { method: 'POST' });
-                displayResponse('completePomodoroResponse', response);
+                // Verify token and get user data
+                const userData = await fetchWithAuth('/profile');
+                currentUser = userData.user;
+
+                // Update UI with user data
+                updateUserUI(userData.user);
+
+                // Load dashboard by default
+                await loadPage('dashboard');
+
+                // Hide loading screen
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+
+                // Set up event listeners
+                setupEventListeners();
+
+                // Start real-time updates
+                startRealTimeUpdates();
+
             } catch (error) {
-                displayResponse('completePomodoroResponse', { error: error.message });
+                console.error('Authentication failed:', error);
+                localStorage.removeItem('accessToken');
+                window.location.href = 'auth/login.html';
             }
         }
 
-        async function getPomodoroHistory() {
-            try {
-                const response = await apiRequest('/pomodoro/history');
-                displayResponse('pomodoroHistoryResponse', response);
-            } catch (error) {
-                displayResponse('pomodoroHistoryResponse', { error: error.message });
+        function updateUserUI(user) {
+            document.getElementById('userName').textContent = user.name;
+            if (user.avatar_url) {
+                document.getElementById('userAvatar').src = user.avatar_url;
             }
         }
 
-        // AI Functions
-        handleFormSubmit('aiAskForm', '/ai/ask', 'POST', 'aiAskResponse');
-
-        document.getElementById('studyPlanForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = {
-                available_time: parseInt(formData.get('available_time')),
-                focus_areas: formData.get('focus_areas').split(',').map(area => area.trim()).filter(area => area),
-                difficulty: formData.get('difficulty')
-            };
-
-            try {
-                const response = await apiRequest('/ai/study-plan', {
-                    method: 'POST',
-                    body: JSON.stringify(data)
+        function setupEventListeners() {
+            // Navigation links
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const page = e.currentTarget.getAttribute('data-page');
+                    await loadPage(page);
+                    updateActiveNavigation(page);
                 });
-                displayResponse('studyPlanResponse', response);
-            } catch (error) {
-                displayResponse('studyPlanResponse', { error: error.message });
-            }
-        });
+            });
 
-        handleFormSubmit('quizForm', '/ai/quiz', 'POST', 'quizResponse');
-
-        // Resource Functions
-        async function getResources() {
-            try {
-                const type = document.getElementById('resourceType').value;
-                const endpoint = type ? `/resources?type=${type}` : '/resources';
-                const response = await apiRequest(endpoint, { skipAuth: true });
-                displayResponse('resourcesResponse', response);
-            } catch (error) {
-                displayResponse('resourcesResponse', { error: error.message });
-            }
+            // Mobile navigation
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.addEventListener('click', async (e) => {
+                    const page = e.currentTarget.getAttribute('data-page');
+                    await loadPage(page);
+                    updateActiveMobileNav(page);
+                });
+            });
         }
 
-        async function getRoadmap() {
-            try {
-                const week = document.getElementById('roadmapWeek').value;
-                const endpoint = week ? `/roadmap?week=${week}` : '/roadmap';
-                const response = await apiRequest(endpoint, { skipAuth: true });
-                displayResponse('roadmapResponse', response);
-            } catch (error) {
-                displayResponse('roadmapResponse', { error: error.message });
-            }
+        function updateActiveNavigation(page) {
+            // Update desktop navigation
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
         }
 
-        async function searchContent() {
+        function updateActiveMobileNav(page) {
+            // Update mobile navigation
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.mobile-nav-item[data-page="${page}"]`).classList.add('active');
+        }
+
+        async function loadPage(page) {
             try {
-                const query = document.getElementById('searchQuery').value;
-                const type = document.getElementById('searchType').value;
-                if (!query) {
-                    displayResponse('searchResponse', { error: 'Search query required' });
-                    return;
+                showPageLoading();
+
+                let content = '';
+
+                switch (page) {
+                    case 'dashboard':
+                        content = await loadDashboard();
+                        break;
+                    case 'roadmap':
+                        content = await loadRoadmap();
+                        break;
+                    case 'calendar':
+                        content = await loadCalendar();
+                        break;
+                    case 'progress':
+                        content = await loadProgress();
+                        break;
+                    case 'notes':
+                        content = await loadNotes();
+                        break;
+                    case 'pomodoro':
+                        content = await loadPomodoro();
+                        break;
+                    case 'profile':
+                        content = await loadProfile();
+                        break;
+                    case 'analytics':
+                        content = await loadAnalytics();
+                        break;
+                    default:
+                        content = '<div class="alert alert-warning">Page not found</div>';
                 }
 
-                const params = new URLSearchParams({ q: query });
-                if (type !== 'all') params.append('type', type);
+                document.getElementById('pageContent').innerHTML = content;
+                hidePageLoading();
 
-                const response = await apiRequest(`/search?${params.toString()}`);
-                displayResponse('searchResponse', response);
             } catch (error) {
-                displayResponse('searchResponse', { error: error.message });
+                console.error('Error loading page:', error);
+                showError('Failed to load page content');
+                hidePageLoading();
             }
         }
 
-        // Health Check
-        async function checkHealth() {
-            try {
-                const response = await apiRequest('/health', { skipAuth: true });
-                displayResponse('healthResponse', response);
-            } catch (error) {
-                displayResponse('healthResponse', { error: error.message });
-            }
+        function showPageLoading() {
+            document.getElementById('pageContent').innerHTML = `
+                <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
         }
 
-        // Initialize
-        updateAuthStatus();
+        function hidePageLoading() {
+            // Content is already replaced, nothing to do
+        }
+
+        // API Helper Functions
+        async function fetchWithAuth(endpoint, options = {}) {
+            const response = await fetch(`${API_BASE}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    ...options.headers
+                }
+            });
+
+            if (response.status === 401) {
+                // Token expired, try to refresh
+                try {
+                    await refreshToken();
+                    // Retry the original request
+                    return fetchWithAuth(endpoint, options);
+                } catch (error) {
+                    localStorage.removeItem('accessToken');
+                    window.location.href = 'auth/login.html';
+                    throw new Error('Authentication failed');
+                }
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Request failed');
+            }
+
+            return await response.json();
+        }
+
+        async function refreshToken() {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                throw new Error('No refresh token');
+            }
+
+            const response = await fetch(`${API_BASE}/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${refreshToken}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Token refresh failed');
+            }
+
+            const data = await response.json();
+            authToken = data.access_token;
+            localStorage.setItem('accessToken', authToken);
+        }
+
+        // Dashboard Functions
+        async function loadDashboard() {
+            const dashboardData = await fetchWithAuth('/dashboard');
+            const progressData = await fetchWithAuth('/progress');
+
+            return `
+                <div class="row g-4">
+                    <!-- Welcome Section -->
+                    <div class="col-12">
+                        <div class="card bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 shadow-lg">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h2 class="mb-2">Welcome back, ${currentUser.name}! 👋</h2>
+                                        <p class="mb-0 opacity-90">Ready to continue your DSA journey?</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="h4 mb-1">${dashboardData.stats.current_streak}</div>
+                                        <small>Day Streak</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="col-md-3 col-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="text-primary mb-2">
+                                    <i class="bi bi-fire" style="font-size: 2rem;"></i>
+                                </div>
+                                <h4 class="mb-1">${dashboardData.stats.current_streak}</h4>
+                                <small class="text-muted">Current Streak</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="text-success mb-2">
+                                    <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                                </div>
+                                <h4 class="mb-1">${Math.round(dashboardData.stats.completion_percentage)}%</h4>
+                                <small class="text-muted">Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="text-warning mb-2">
+                                    <i class="bi bi-clock" style="font-size: 2rem;"></i>
+                                </div>
+                                <h4 class="mb-1">${Math.floor(dashboardData.stats.total_study_time / 60)}h</h4>
+                                <small class="text-muted">Study Time</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="text-info mb-2">
+                                    <i class="bi bi-trophy" style="font-size: 2rem;"></i>
+                                </div>
+                                <h4 class="mb-1">${dashboardData.stats.longest_streak}</h4>
+                                <small class="text-muted">Best Streak</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Progress -->
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white border-0 pb-0">
+                                <h5 class="mb-0">Weekly Progress</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="weekly-progress">
+                                    ${generateWeeklyProgressChart(dashboardData.weekly_progress)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Quote & Quick Actions -->
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-quote text-muted" style="font-size: 2rem;"></i>
+                                </div>
+                                <blockquote class="blockquote mb-3">
+                                    <p class="mb-0" id="dailyQuote">Loading inspirational quote...</p>
+                                </blockquote>
+                                <small class="text-muted">Daily Motivation</small>
+                            </div>
+                        </div>
+                        
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0 pb-0">
+                                <h6 class="mb-0">Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-sm" onclick="loadPage('pomodoro')">
+                                        <i class="bi bi-play-circle me-2"></i>Start Study Session
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="loadPage('roadmap')">
+                                        <i class="bi bi-map me-2"></i>View Today's Topic
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0 pb-0">
+                                <h5 class="mb-0">Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted mb-3">Recent Study Sessions</h6>
+                                        ${generateRecentSessions(dashboardData.recent_sessions)}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted mb-3">Recent Notes</h6>
+                                        ${generateRecentNotes(dashboardData.recent_notes)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateWeeklyProgressChart(weeklyProgress) {
+            let html = '<div class="row g-2">';
+
+            for (let week = 1; week <= 14; week++) {
+                const progress = weeklyProgress[week] || { completed: 0, total: 7, percentage: 0 };
+                const isActive = progress.completed > 0;
+
+                html += `
+                    <div class="col-6 col-md-4 col-lg-3 mb-2">
+                        <div class="card ${isActive ? 'border-primary' : 'border-light'} h-100">
+                            <div class="card-body p-2 text-center">
+                                <small class="text-muted">Week ${week}</small>
+                                <div class="progress mt-1 mb-1" style="height: 4px;">
+                                    <div class="progress-bar" style="width: ${progress.percentage}%"></div>
+                                </div>
+                                <small>${progress.completed}/${progress.total}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function generateRecentSessions(sessions) {
+            if (!sessions || sessions.length === 0) {
+                return '<p class="text-muted">No recent study sessions</p>';
+            }
+
+            return sessions.map(session => `
+                <div class="d-flex align-items-center mb-2">
+                    <div class="me-3">
+                        <i class="bi bi-clock-fill text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-medium">${session.topic || 'Study Session'}</div>
+                        <small class="text-muted">${session.duration} minutes • ${formatDate(session.start_time)}</small>
+                    </div>
+                    <div>
+                        <span class="badge ${session.completed ? 'bg-success' : 'bg-warning'}">
+                            ${session.completed ? 'Completed' : 'In Progress'}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateRecentNotes(notes) {
+            if (!notes || notes.length === 0) {
+                return '<p class="text-muted">No recent notes</p>';
+            }
+
+            return notes.map(note => `
+                <div class="d-flex align-items-center mb-2">
+                    <div class="me-3">
+                        <i class="bi bi-journal-text text-info"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-medium">${note.title}</div>
+                        <small class="text-muted">${formatDate(note.updated_at)}</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewNote('${note.id}')">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Utility Functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+            toast.show();
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+            toast.show();
+        }
+
+        function showAchievement(message) {
+            document.getElementById('achievementMessage').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('achievementModal'));
+            modal.show();
+
+            // Trigger confetti
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Real-time Updates
+        function startRealTimeUpdates() {
+            // Update daily quote
+            updateDailyQuote();
+
+            // Refresh dashboard data every 5 minutes
+            setInterval(async () => {
+                if (document.querySelector('[data-page="dashboard"].active')) {
+                    await loadPage('dashboard');
+                }
+            }, 300000); // 5 minutes
+        }
+
+        function updateDailyQuote() {
+            const quotes = [
+                "The only way to learn a new programming language is by writing programs in it. - Dennis Ritchie",
+                "Programs must be written for people to read, and only incidentally for machines to execute. - Harold Abelson",
+                "Code is like humor. When you have to explain it, it's bad. - Cory House",
+                "Programming isn't about what you know; it's about what you can figure out. - Chris Pine",
+                "The best error message is the one that never shows up. - Thomas Fuchs"
+            ];
+
+            const today = new Date().getDate();
+            const quote = quotes[today % quotes.length];
+
+            setTimeout(() => {
+                const quoteElement = document.getElementById('dailyQuote');
+                if (quoteElement) {
+                    quoteElement.textContent = quote;
+                }
+            }, 1000);
+        }
+
+        // Authentication Functions
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            window.location.href = 'auth/login.html';
+        }
+
+        // Placeholder functions for other pages (will be implemented in their respective sections)
+        async function loadRoadmap() { return '<div>Roadmap content will be loaded here</div>'; }
+        async function loadCalendar() { return '<div>Calendar content will be loaded here</div>'; }
+        async function loadProgress() { return '<div>Progress content will be loaded here</div>'; }
+        async function loadNotes() { return '<div>Notes content will be loaded here</div>'; }
+        async function loadPomodoro() { return '<div>Pomodoro content will be loaded here</div>'; }
+        async function loadProfile() { return '<div>Profile content will be loaded here</div>'; }
+        async function loadAnalytics() { return '<div>Analytics content will be loaded here</div>'; }
+
+        function viewNote(noteId) { console.log('View note:', noteId); }
     </script>
 </body>
 

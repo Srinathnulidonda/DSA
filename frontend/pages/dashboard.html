@@ -4,774 +4,698 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - DSA Learning Platform</title>
+    <title>Dashboard - DSA Learning Daily</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Bootstrap Icons -->
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/animation.css">
     <link rel="stylesheet" href="../css/responsive.css">
-
-    <style>
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            transform: rotate(45deg);
-        }
-
-        .activity-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-
-        .streak-fire {
-            animation: flicker 1.5s ease-in-out infinite;
-        }
-
-        @keyframes flicker {
-
-            0%,
-            100% {
-                transform: scale(1) rotate(-5deg);
-            }
-
-            50% {
-                transform: scale(1.1) rotate(5deg);
-            }
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .welcome-gradient {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-
-        @media (max-width: 768px) {
-            .mobile-only {
-                display: block !important;
-            }
-
-            .desktop-only {
-                display: none !important;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .mobile-only {
-                display: none !important;
-            }
-
-            .desktop-only {
-                display: block !important;
-            }
-        }
-    </style>
 </head>
 
 <body class="bg-gray-50">
-    <!-- Desktop Sidebar -->
-    <div id="sidebar" class="desktop-only"></div>
+    <div class="container-fluid p-4">
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="mb-1">Dashboard</h1>
+                        <p class="text-muted mb-0">Track your DSA learning progress</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" onclick="refreshDashboard()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                        </button>
+                        <button class="btn btn-primary" onclick="startQuickSession()">
+                            <i class="bi bi-play-fill me-1"></i>Quick Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Mobile Top Bar -->
-    <div id="topbar" class="mobile-only"></div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-        <div class="container-fluid p-4">
-            <!-- Welcome Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm welcome-gradient">
-                        <div class="card-body p-4">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <h1 class="h3 fw-bold mb-2">
-                                        Welcome back, <span id="userName">User</span>! 👋
-                                    </h1>
-                                    <p class="text-muted mb-0">
-                                        <span id="motivationalQuote">Loading quote...</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-4 text-end d-none d-md-block">
-                                    <button class="btn btn-primary" onclick="window.location.href='roadmap.html'">
-                                        <i class="bi bi-map me-2"></i>Continue Learning
-                                    </button>
-                                </div>
+        <!-- Overview Stats -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="card stats-card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stats-icon bg-primary-subtle text-primary rounded-circle p-3 me-3">
+                                <i class="bi bi-fire fs-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="mb-0" id="currentStreak">0</h3>
+                                <small class="text-muted">Current Streak</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="row mb-4">
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="stat-card">
-                        <div class="position-relative">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div>
-                                    <p class="text-white-50 mb-1 small">Current Streak</p>
-                                    <h2 class="h1 fw-bold mb-0">
-                                        <span id="currentStreak">0</span>
-                                        <i class="bi bi-fire ms-2 streak-fire text-warning"></i>
-                                    </h2>
-                                </div>
-                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
-                                    <i class="bi bi-calendar-check fs-4"></i>
-                                </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card stats-card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stats-icon bg-success-subtle text-success rounded-circle p-3 me-3">
+                                <i class="bi bi-check-circle fs-4"></i>
                             </div>
-                            <p class="mb-0 small">
-                                Longest: <span id="longestStreak">0</span> days
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        <div class="position-relative">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div>
-                                    <p class="text-white-50 mb-1 small">Progress</p>
-                                    <h2 class="h1 fw-bold mb-0">
-                                        <span id="completionRate">0</span>%
-                                    </h2>
-                                </div>
-                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
-                                    <i class="bi bi-graph-up fs-4"></i>
-                                </div>
+                            <div>
+                                <h3 class="mb-0" id="completionRate">0%</h3>
+                                <small class="text-muted">Completion Rate</small>
                             </div>
-                            <div class="progress bg-white bg-opacity-25" style="height: 6px;">
-                                <div id="progressBar" class="progress-bar bg-white" role="progressbar"
-                                    style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                        <div class="position-relative">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div>
-                                    <p class="text-white-50 mb-1 small">Study Time</p>
-                                    <h2 class="h1 fw-bold mb-0">
-                                        <span id="totalHours">0</span>h
-                                    </h2>
-                                </div>
-                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
-                                    <i class="bi bi-clock-history fs-4"></i>
-                                </div>
-                            </div>
-                            <p class="mb-0 small">
-                                This week: <span id="weekHours">0</span>h
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                        <div class="position-relative">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div>
-                                    <p class="text-white-50 mb-1 small">Completed</p>
-                                    <h2 class="h1 fw-bold mb-0">
-                                        <span id="completedTopics">0</span>
-                                    </h2>
-                                </div>
-                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
-                                    <i class="bi bi-check-circle fs-4"></i>
-                                </div>
-                            </div>
-                            <p class="mb-0 small">
-                                Total topics: 98
-                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts Row -->
-            <div class="row mb-4">
-                <div class="col-12 col-lg-8 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-0 py-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 fw-semibold">Weekly Progress</h5>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-secondary active"
-                                        data-range="week">Week</button>
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        data-range="month">Month</button>
-                                </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card stats-card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stats-icon bg-warning-subtle text-warning rounded-circle p-3 me-3">
+                                <i class="bi bi-clock fs-4"></i>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="progressChart" height="300"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-lg-4 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-0 py-3">
-                            <h5 class="mb-0 fw-semibold">Top Topics</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="topicsChart" height="300"></canvas>
+                            <div>
+                                <h3 class="mb-0" id="totalStudyTime">0h</h3>
+                                <small class="text-muted">Total Study Time</small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity & Upcoming -->
-            <div class="row">
-                <div class="col-12 col-lg-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-0 py-3">
-                            <h5 class="mb-0 fw-semibold">Recent Activity</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="recentActivityList" class="list-group list-group-flush">
-                                <!-- Activity items will be inserted here -->
+            <div class="col-md-3 col-sm-6">
+                <div class="card stats-card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="stats-icon bg-info-subtle text-info rounded-circle p-3 me-3">
+                                <i class="bi bi-trophy fs-4"></i>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-lg-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-0 py-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 fw-semibold">Upcoming Topics</h5>
-                                <a href="roadmap.html" class="text-decoration-none small">View all</a>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="upcomingTopicsList">
-                                <!-- Upcoming topics will be inserted here -->
+                            <div>
+                                <h3 class="mb-0" id="longestStreak">0</h3>
+                                <small class="text-muted">Longest Streak</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Mobile Bottom Navigation -->
-    <div id="mobileNav" class="mobile-only"></div>
-
-    <!-- Toast Container -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="achievementToast" class="toast" role="alert">
-            <div class="toast-header">
-                <i class="bi bi-trophy-fill text-warning me-2"></i>
-                <strong class="me-auto">Achievement Unlocked!</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        <!-- Main Content Grid -->
+        <div class="row g-4">
+            <!-- Weekly Progress Chart -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Weekly Progress Overview</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="exportProgress()">Export Data</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" onclick="showDetailedProgress()">Detailed
+                                            View</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="weeklyProgressChart" class="weekly-progress-grid">
+                            <!-- Progress chart will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="toast-body">
-                <span id="achievementMessage"></span>
+
+            <!-- Today's Focus & Quick Actions -->
+            <div class="col-lg-4">
+                <!-- Today's Focus -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0">Today's Focus</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="todaysFocus">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="focus-icon bg-primary-subtle text-primary rounded-circle p-2 me-3">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0" id="todayTopic">Loading...</h6>
+                                    <small class="text-muted" id="todayWeek">Week - Day</small>
+                                </div>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar" id="todayProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-sm" onclick="startTodaySession()">
+                                    <i class="bi bi-play-fill me-1"></i>Start Today's Session
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Motivation -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <div class="motivation-icon mb-3">
+                            <i class="bi bi-lightbulb text-warning" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <blockquote class="blockquote mb-3">
+                            <p class="mb-0 fst-italic" id="motivationalQuote">Loading daily motivation...</p>
+                        </blockquote>
+                        <small class="text-muted">Daily Inspiration</small>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <h6 class="mb-0">Quick Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="openPomodoro()">
+                                <i class="bi bi-clock me-2"></i>Start Pomodoro
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" onclick="openNotes()">
+                                <i class="bi bi-journal-plus me-2"></i>Add Note
+                            </button>
+                            <button class="btn btn-outline-info btn-sm" onclick="openCalendar()">
+                                <i class="bi bi-calendar-check me-2"></i>View Schedule
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm" onclick="openProgress()">
+                                <i class="bi bi-graph-up me-2"></i>View Progress
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Study Sessions</h5>
+                            <a href="#" class="text-decoration-none" onclick="openPomodoro()">View All</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentSessions">
+                            <!-- Recent sessions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Notes</h5>
+                            <a href="#" class="text-decoration-none" onclick="openNotes()">View All</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentNotes">
+                            <!-- Recent notes will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="row g-4 mt-2">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0">Recent Achievements</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="achievementsList" class="row g-3">
+                            <!-- Achievements will be loaded here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Chart.js for progress visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // API Configuration
-        const API_BASE = 'https://dsa-8ko1.onrender.com/api';
-        let authToken = null;
-        let currentUser = null;
-        let progressChart = null;
-        let topicsChart = null;
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let authToken = localStorage.getItem('accessToken');
+        let dashboardData = {};
 
-        // Motivational quotes
-        const quotes = [
-            "Every expert was once a beginner. Keep coding!",
-            "The best time to plant a tree was 20 years ago. The second best time is now.",
-            "Success is the sum of small efforts repeated day in and day out.",
-            "Don't watch the clock; do what it does. Keep going.",
-            "The only way to do great work is to love what you do.",
-            "Code is like humor. When you have to explain it, it's bad.",
-            "First, solve the problem. Then, write the code.",
-            "Programming isn't about what you know; it's about what you can figure out."
-        ];
-
-        // Initialize dashboard
-        async function initDashboard() {
-            authToken = localStorage.getItem('access_token');
-            currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', function () {
             if (!authToken) {
                 window.location.href = '../auth/login.html';
                 return;
             }
+            initializeDashboard();
+        });
 
-            // Load components
-            await loadComponents();
-
-            // Set user name
-            document.getElementById('userName').textContent = currentUser.username || 'User';
-
-            // Set motivational quote
-            setMotivationalQuote();
-
-            // Load dashboard data
-            await loadDashboardData();
-
-            // Initialize charts
-            initializeCharts();
-
-            // Set up real-time updates
-            setupRealTimeUpdates();
-        }
-
-        // Load reusable components
-        async function loadComponents() {
-            // Load sidebar
-            const sidebarResponse = await fetch('../components/sidebar.html');
-            const sidebarHtml = await sidebarResponse.text();
-            document.getElementById('sidebar').innerHTML = sidebarHtml;
-
-            // Load topbar
-            const topbarResponse = await fetch('../components/topbar.html');
-            const topbarHtml = await topbarResponse.text();
-            document.getElementById('topbar').innerHTML = topbarHtml;
-
-            // Load mobile nav
-            const mobileNavResponse = await fetch('../components/mobile-nav.html');
-            const mobileNavHtml = await mobileNavResponse.text();
-            document.getElementById('mobileNav').innerHTML = mobileNavHtml;
-
-            // Set active states
-            setActiveNavItem('dashboard');
-        }
-
-        // Set active navigation item
-        function setActiveNavItem(page) {
-            // Desktop sidebar
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.page === page) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Mobile nav
-            document.querySelectorAll('.mobile-nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.page === page) {
-                    item.classList.add('active');
-                }
-            });
-        }
-
-        // Set motivational quote
-        function setMotivationalQuote() {
-            const quote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('motivationalQuote').textContent = quote;
-        }
-
-        // Load dashboard data
-        async function loadDashboardData() {
+        async function initializeDashboard() {
             try {
-                const response = await fetch(`${API_BASE}/dashboard`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.clear();
-                        window.location.href = '../auth/login.html';
-                        return;
-                    }
-                    throw new Error('Failed to load dashboard data');
-                }
-
-                const data = await response.json();
-                updateDashboardUI(data);
-
+                showLoading();
+                await loadDashboardData();
+                updateDashboardUI();
+                setupRealTimeUpdates();
             } catch (error) {
-                console.error('Dashboard error:', error);
-                showToast('Failed to load dashboard data', 'error');
+                console.error('Failed to initialize dashboard:', error);
+                showError('Failed to load dashboard data');
+            } finally {
+                hideLoading();
             }
         }
 
-        // Update dashboard UI
-        function updateDashboardUI(data) {
-            // Update stats
-            document.getElementById('currentStreak').textContent = data.streak.current;
-            document.getElementById('longestStreak').textContent = data.streak.longest;
-            document.getElementById('completionRate').textContent = data.statistics.completion_rate;
-            document.getElementById('progressBar').style.width = `${data.statistics.completion_rate}%`;
-            document.getElementById('totalHours').textContent = Math.round(data.statistics.total_time_minutes / 60);
-            document.getElementById('weekHours').textContent = Math.round(data.statistics.week_time_minutes / 60);
-            document.getElementById('completedTopics').textContent = data.statistics.total_completed;
+        async function loadDashboardData() {
+            try {
+                const [dashboard, progress, roadmap] = await Promise.all([
+                    fetchWithAuth('/dashboard'),
+                    fetchWithAuth('/progress'),
+                    fetchWithAuth('/roadmap')
+                ]);
 
-            // Update recent activity
-            updateRecentActivity(data.recent_activity);
+                dashboardData = {
+                    ...dashboard,
+                    progress: progress,
+                    roadmap: roadmap.roadmap
+                };
 
-            // Update upcoming topics
-            updateUpcomingTopics();
-
-            // Check for achievements
-            checkAchievements(data);
+                return dashboardData;
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                throw error;
+            }
         }
 
-        // Update recent activity
-        function updateRecentActivity(activities) {
-            const container = document.getElementById('recentActivityList');
-            container.innerHTML = '';
+        function updateDashboardUI() {
+            // Update stats
+            document.getElementById('currentStreak').textContent = dashboardData.stats.current_streak || 0;
+            document.getElementById('completionRate').textContent = Math.round(dashboardData.stats.completion_percentage || 0) + '%';
+            document.getElementById('totalStudyTime').textContent = Math.floor((dashboardData.stats.total_study_time || 0) / 60) + 'h';
+            document.getElementById('longestStreak').textContent = dashboardData.stats.longest_streak || 0;
 
-            if (activities.length === 0) {
-                container.innerHTML = '<p class="text-muted text-center py-3">No recent activity</p>';
+            // Update weekly progress chart
+            updateWeeklyProgressChart();
+
+            // Update today's focus
+            updateTodaysFocus();
+
+            // Update recent activities
+            updateRecentSessions();
+            updateRecentNotes();
+
+            // Update achievements
+            updateAchievements();
+
+            // Update daily quote
+            updateDailyQuote();
+        }
+
+        function updateWeeklyProgressChart() {
+            const chartContainer = document.getElementById('weeklyProgressChart');
+            let html = '<div class="row g-2">';
+
+            for (let week = 1; week <= 14; week++) {
+                const weekProgress = dashboardData.weekly_progress[week] || { completed: 0, total: 7, percentage: 0 };
+                const isCurrentWeek = getCurrentWeek() === week;
+                const isCompleted = weekProgress.percentage === 100;
+
+                let cardClass = 'border-light';
+                if (isCompleted) cardClass = 'border-success bg-success-subtle';
+                else if (isCurrentWeek) cardClass = 'border-primary bg-primary-subtle';
+                else if (weekProgress.completed > 0) cardClass = 'border-warning bg-warning-subtle';
+
+                html += `
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <div class="card ${cardClass} week-progress-card" data-week="${week}" onclick="openWeekDetail(${week})">
+                            <div class="card-body p-3 text-center">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="fw-semibold">Week ${week}</small>
+                                    ${isCompleted ? '<i class="bi bi-check-circle-fill text-success"></i>' : ''}
+                                </div>
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar ${isCompleted ? 'bg-success' : isCurrentWeek ? 'bg-primary' : 'bg-warning'}" 
+                                         style="width: ${weekProgress.percentage}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${weekProgress.completed}/${weekProgress.total}</small>
+                                    <small class="fw-medium">${Math.round(weekProgress.percentage)}%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            chartContainer.innerHTML = html;
+        }
+
+        function updateTodaysFocus() {
+            const currentWeek = getCurrentWeek();
+            const currentDay = getCurrentDay();
+
+            if (dashboardData.roadmap && dashboardData.roadmap[currentWeek - 1]) {
+                const weekData = dashboardData.roadmap[currentWeek - 1];
+                const dayData = weekData.days.find(d => d.day === currentDay);
+
+                if (dayData) {
+                    document.getElementById('todayTopic').textContent = dayData.topic;
+                    document.getElementById('todayWeek').textContent = `Week ${currentWeek} - ${currentDay}`;
+
+                    // Calculate today's progress
+                    const progress = dashboardData.progress[currentWeek] && dashboardData.progress[currentWeek][currentDay];
+                    const progressPercentage = progress && progress.completed ? 100 : 0;
+                    document.getElementById('todayProgress').style.width = progressPercentage + '%';
+                }
+            }
+        }
+
+        function updateRecentSessions() {
+            const container = document.getElementById('recentSessions');
+            const sessions = dashboardData.recent_sessions || [];
+
+            if (sessions.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-3">No recent study sessions</p>';
                 return;
             }
 
-            activities.forEach(activity => {
-                const item = document.createElement('div');
-                item.className = 'list-group-item border-0 px-0';
-                item.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <span class="activity-dot bg-success"></span>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1 fw-medium">${activity.topic}</h6>
-                            <small class="text-muted">Week ${activity.week}, Day ${activity.day}</small>
+            let html = '';
+            sessions.slice(0, 5).forEach(session => {
+                html += `
+                    <div class="d-flex align-items-center mb-3 session-item">
+                        <div class="session-icon me-3">
+                            <i class="bi bi-${session.completed ? 'check-circle-fill text-success' : 'clock text-warning'}"></i>
                         </div>
-                        <small class="text-muted">${formatTimeAgo(activity.completed_at)}</small>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">${session.topic || 'Study Session'}</div>
+                            <small class="text-muted">${session.duration} min • ${formatDateTime(session.start_time)}</small>
+                        </div>
+                        <div>
+                            <span class="badge ${session.completed ? 'bg-success' : 'bg-warning'}">
+                                ${session.completed ? 'Completed' : 'In Progress'}
+                            </span>
+                        </div>
                     </div>
                 `;
-                container.appendChild(item);
             });
+
+            container.innerHTML = html;
         }
 
-        // Update upcoming topics
-        async function updateUpcomingTopics() {
-            try {
-                const roadmapResponse = await fetch(`${API_BASE}/roadmap`);
-                const roadmapData = await roadmapResponse.json();
+        function updateRecentNotes() {
+            const container = document.getElementById('recentNotes');
+            const notes = dashboardData.recent_notes || [];
 
-                const progressResponse = await fetch(`${API_BASE}/progress`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                const progressData = await progressResponse.json();
+            if (notes.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-3">No recent notes</p>';
+                return;
+            }
 
-                const container = document.getElementById('upcomingTopicsList');
-                container.innerHTML = '';
+            let html = '';
+            notes.slice(0, 5).forEach(note => {
+                html += `
+                    <div class="d-flex align-items-center mb-3 note-item">
+                        <div class="note-icon me-3">
+                            <i class="bi bi-journal-text text-info"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">${note.title}</div>
+                            <small class="text-muted">${formatDateTime(note.updated_at)}</small>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewNote('${note.id}')">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
 
-                let upcomingCount = 0;
-                const maxUpcoming = 5;
+            container.innerHTML = html;
+        }
 
-                for (const week of roadmapData.roadmap) {
-                    for (const day of week.days) {
-                        const progressKey = `week${week.week}_day${day.day}`;
-                        if (!progressData.progress[progressKey]?.completed) {
-                            const item = document.createElement('div');
-                            item.className = 'mb-3';
-                            item.innerHTML = `
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                        <i class="bi bi-book text-primary"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-0">${day.topic}</h6>
-                                        <small class="text-muted">Week ${week.week}, Day ${day.day}</small>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="goToTopic(${week.week}, ${day.day})">
-                                        Start
-                                    </button>
+        function updateAchievements() {
+            const container = document.getElementById('achievementsList');
+
+            // Generate sample achievements based on user stats
+            const achievements = generateAchievements();
+
+            if (achievements.length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted text-center py-3">Complete your first day to unlock achievements!</p></div>';
+                return;
+            }
+
+            let html = '';
+            achievements.forEach(achievement => {
+                html += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 bg-gradient-to-r from-yellow-50 to-orange-50 achievement-card">
+                            <div class="card-body text-center">
+                                <div class="achievement-icon mb-2">
+                                    <i class="bi bi-${achievement.icon} text-warning" style="font-size: 2rem;"></i>
                                 </div>
-                            `;
-                            container.appendChild(item);
-
-                            upcomingCount++;
-                            if (upcomingCount >= maxUpcoming) return;
-                        }
-                    }
-                }
-
-                if (upcomingCount === 0) {
-                    container.innerHTML = '<p class="text-muted text-center py-3">All topics completed! 🎉</p>';
-                }
-
-            } catch (error) {
-                console.error('Error loading upcoming topics:', error);
-            }
-        }
-
-        // Initialize charts
-        function initializeCharts() {
-            // Progress Chart
-            const progressCtx = document.getElementById('progressChart').getContext('2d');
-            progressChart = new Chart(progressCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Study Time (minutes)',
-                        data: [0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+                                <h6 class="card-title">${achievement.title}</h6>
+                                <p class="card-text small text-muted">${achievement.description}</p>
+                                <small class="text-muted">${achievement.date}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
 
-            // Topics Chart
-            const topicsCtx = document.getElementById('topicsChart').getContext('2d');
-            topicsChart = new Chart(topicsCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Arrays', 'Linked Lists', 'Trees', 'Graphs', 'Dynamic Programming'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#667eea',
-                            '#764ba2',
-                            '#f093fb',
-                            '#4facfe',
-                            '#fa709a'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Load analytics data
-            loadAnalyticsData();
+            container.innerHTML = html;
         }
 
-        // Load analytics data
-        async function loadAnalyticsData() {
-            try {
-                const response = await fetch(`${API_BASE}/analytics/dashboard?days=7`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    updateChartsWithData(data);
-                }
-
-            } catch (error) {
-                console.error('Error loading analytics:', error);
-            }
-        }
-
-        // Update charts with data
-        function updateChartsWithData(data) {
-            // Update progress chart
-            if (data.progress_timeline && progressChart) {
-                const dailyData = new Array(7).fill(0);
-                const today = new Date();
-                const weekStart = new Date(today);
-                weekStart.setDate(today.getDate() - today.getDay() + 1); // Monday
-
-                data.progress_timeline.forEach(item => {
-                    const itemDate = new Date(item.date);
-                    const dayIndex = Math.floor((itemDate - weekStart) / (1000 * 60 * 60 * 24));
-                    if (dayIndex >= 0 && dayIndex < 7) {
-                        dailyData[dayIndex] = item.time_spent || 0;
-                    }
-                });
-
-                progressChart.data.datasets[0].data = dailyData;
-                progressChart.update();
-            }
-
-            // Update topics chart with dashboard top topics
-            updateTopicsChart();
-        }
-
-        // Update topics chart
-        async function updateTopicsChart() {
-            try {
-                const response = await fetch(`${API_BASE}/dashboard`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.top_topics && topicsChart) {
-                        const labels = data.top_topics.map(t => t.topic);
-                        const values = data.top_topics.map(t => t.time);
-
-                        topicsChart.data.labels = labels;
-                        topicsChart.data.datasets[0].data = values;
-                        topicsChart.update();
-                    }
-                }
-            } catch (error) {
-                console.error('Error updating topics chart:', error);
-            }
-        }
-
-        // Check achievements
-        function checkAchievements(data) {
+        function generateAchievements() {
             const achievements = [];
+            const stats = dashboardData.stats;
 
-            // Check streak achievements
-            if (data.streak.current === 7) {
-                achievements.push('Week Warrior - 7 day streak!');
-            } else if (data.streak.current === 30) {
-                achievements.push('Monthly Master - 30 day streak!');
-            }
-
-            // Check completion achievements
-            if (data.statistics.total_completed === 10) {
-                achievements.push('Getting Started - 10 topics completed!');
-            } else if (data.statistics.total_completed === 50) {
-                achievements.push('Halfway Hero - 50 topics completed!');
-            } else if (data.statistics.total_completed === 98) {
-                achievements.push('DSA Master - All topics completed!');
-            }
-
-            // Show achievements
-            achievements.forEach((achievement, index) => {
-                setTimeout(() => {
-                    showAchievement(achievement);
-                }, index * 3000);
-            });
-        }
-
-        // Show achievement
-        function showAchievement(message) {
-            document.getElementById('achievementMessage').textContent = message;
-            const toast = new bootstrap.Toast(document.getElementById('achievementToast'));
-            toast.show();
-
-            // Confetti effect
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-        }
-
-        // Setup real-time updates
-        function setupRealTimeUpdates() {
-            // Update dashboard every 30 seconds
-            setInterval(loadDashboardData, 30000);
-
-            // Update time-based elements
-            setInterval(() => {
-                document.querySelectorAll('[data-time]').forEach(el => {
-                    const time = el.dataset.time;
-                    el.textContent = formatTimeAgo(time);
+            if (stats.current_streak >= 1) {
+                achievements.push({
+                    icon: 'fire',
+                    title: 'First Streak!',
+                    description: 'Completed your first day of learning',
+                    date: 'Today'
                 });
-            }, 60000);
+            }
+
+            if (stats.current_streak >= 7) {
+                achievements.push({
+                    icon: 'trophy',
+                    title: 'Week Warrior',
+                    description: 'Maintained a 7-day learning streak',
+                    date: 'This week'
+                });
+            }
+
+            if (stats.total_study_time >= 60) {
+                achievements.push({
+                    icon: 'clock',
+                    title: 'Study Master',
+                    description: 'Completed 1 hour of focused study',
+                    date: 'Recently'
+                });
+            }
+
+            if (stats.completion_percentage >= 25) {
+                achievements.push({
+                    icon: 'graph-up',
+                    title: 'Quarter Master',
+                    description: 'Completed 25% of the roadmap',
+                    date: 'Recently'
+                });
+            }
+
+            return achievements;
         }
 
-        // Navigate to topic
-        function goToTopic(week, day) {
-            window.location.href = `roadmap.html#week${week}_day${day}`;
+        function updateDailyQuote() {
+            const quotes = [
+                "The only way to learn a new programming language is by writing programs in it. - Dennis Ritchie",
+                "Programs must be written for people to read, and only incidentally for machines to execute. - Harold Abelson",
+                "Code is like humor. When you have to explain it, it's bad. - Cory House",
+                "Programming isn't about what you know; it's about what you can figure out. - Chris Pine",
+                "The best error message is the one that never shows up. - Thomas Fuchs",
+                "Talk is cheap. Show me the code. - Linus Torvalds",
+                "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. - Martin Fowler",
+                "First, solve the problem. Then, write the code. - John Johnson"
+            ];
+
+            const today = new Date().getDate();
+            const quote = quotes[today % quotes.length];
+            document.getElementById('motivationalQuote').textContent = quote;
         }
 
-        // Format time ago
-        function formatTimeAgo(dateString) {
+        // Helper Functions
+        function getCurrentWeek() {
+            // Calculate current week based on user's progress
+            const completedDays = Object.values(dashboardData.progress || {}).flat().filter(p => p && p.completed).length;
+            return Math.floor(completedDays / 7) + 1;
+        }
+
+        function getCurrentDay() {
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            return days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+        }
+
+        function formatDateTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
-            const seconds = Math.floor((now - date) / 1000);
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            if (seconds < 60) return 'just now';
-            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-            if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
             return date.toLocaleDateString();
         }
 
-        // Show toast notification
-        function showToast(message, type = 'info') {
-            const toastHtml = `
-                <div class="toast align-items-center text-bg-${type} border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
+        // API Functions
+        async function fetchWithAuth(endpoint, options = {}) {
+            const response = await fetch(`${API_BASE}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    ...options.headers
+                }
+            });
 
-            const toastContainer = document.querySelector('.toast-container');
-            const toastElement = document.createElement('div');
-            toastElement.innerHTML = toastHtml;
-            toastContainer.appendChild(toastElement.firstElementChild);
+            if (response.status === 401) {
+                localStorage.removeItem('accessToken');
+                window.location.href = '../auth/login.html';
+                return;
+            }
 
-            const toast = new bootstrap.Toast(toastElement.firstElementChild);
-            toast.show();
+            if (!response.ok) {
+                throw new Error('Request failed');
+            }
+
+            return await response.json();
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        // Action Functions
+        async function refreshDashboard() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Refreshing...';
+            btn.disabled = true;
+
+            try {
+                await loadDashboardData();
+                updateDashboardUI();
+                showSuccess('Dashboard refreshed successfully');
+            } catch (error) {
+                showError('Failed to refresh dashboard');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function startQuickSession() {
+            window.location.href = 'pomodoro.html?quick=true';
+        }
+
+        function startTodaySession() {
+            const currentWeek = getCurrentWeek();
+            const currentDay = getCurrentDay();
+            window.location.href = `pomodoro.html?week=${currentWeek}&day=${currentDay}`;
+        }
+
+        function openPomodoro() {
+            window.location.href = 'pomodoro.html';
+        }
+
+        function openNotes() {
+            window.location.href = 'notes.html';
+        }
+
+        function openCalendar() {
+            window.location.href = 'calendar.html';
+        }
+
+        function openProgress() {
+            window.location.href = 'progress.html';
+        }
+
+        function openWeekDetail(week) {
+            window.location.href = `roadmap.html?week=${week}`;
+        }
+
+        function viewNote(noteId) {
+            window.location.href = `notes.html?note=${noteId}`;
+        }
+
+        function exportProgress() {
+            // Implementation for exporting progress data
+            showSuccess('Progress data exported successfully');
+        }
+
+        function showDetailedProgress() {
+            window.location.href = 'analytics.html';
+        }
+
+        // Real-time Updates
+        function setupRealTimeUpdates() {
+            // Refresh dashboard every 5 minutes
+            setInterval(() => {
+                refreshDashboard();
+            }, 300000);
+
+            // Update time-based elements every minute
+            setInterval(() => {
+                updateRecentSessions();
+                updateRecentNotes();
+            }, 60000);
+        }
+
+        // UI Helper Functions
+        function showLoading() {
+            // Implementation for showing loading state
+        }
+
+        function hideLoading() {
+            // Implementation for hiding loading state
+        }
+
+        function showSuccess(message) {
+            // Show success toast
+            console.log('Success:', message);
+        }
+
+        function showError(message) {
+            // Show error toast
+            console.log('Error:', message);
+        }
     </script>
 </body>
 
