@@ -1,3 +1,4 @@
+<!-- pages/progress.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,287 +13,224 @@
     <link href="../css/components.css" rel="stylesheet">
     <link href="../css/animation.css" rel="stylesheet">
     <link href="../css/responsive.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="dashboard-body">
+<body class="app-layout">
+    <!-- Sidebar -->
     <div id="sidebarContainer"></div>
-    <div id="topbarContainer"></div>
-    <div id="mobileNavContainer"></div>
 
-    <main class="main-content">
-        <div class="container-fluid">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Progress Content -->
+        <div class="content-area">
             <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div>
-                            <h2 class="fw-bold text-dark mb-2">Progress Analytics</h2>
-                            <p class="text-muted mb-0">Track your learning journey with detailed insights</p>
-                        </div>
-                        <div class="progress-controls">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-outline-primary active"
-                                    data-period="week">Week</button>
-                                <button type="button" class="btn btn-outline-primary" data-period="month">Month</button>
-                                <button type="button" class="btn btn-outline-primary" data-period="all">All
-                                    Time</button>
+            <div class="page-header">
+                <div class="row align-items-center mb-4">
+                    <div class="col-lg-8">
+                        <h1 class="page-title">
+                            <i class="fas fa-chart-line me-3"></i>
+                            Progress Tracking
+                        </h1>
+                        <p class="page-subtitle">Monitor your learning journey and achievements</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <div class="progress-overview">
+                            <div class="progress-circle-large" id="overallProgressLarge">
+                                <div class="progress-text">0%</div>
                             </div>
-                            <button class="btn btn-primary ms-2" onclick="exportProgress()">
-                                <i class="fas fa-download me-2"></i>Export
-                            </button>
+                            <div class="progress-label">Overall Completion</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Key Metrics -->
-            <div class="row mb-4">
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-icon bg-primary">
-                            <i class="fas fa-chart-line"></i>
+            <!-- Progress Stats -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-calendar-check"></i>
                         </div>
-                        <div class="metric-content">
-                            <h3 class="metric-value" id="overallProgress">0%</h3>
-                            <p class="metric-label">Overall Progress</p>
-                            <div class="metric-change">
-                                <i class="fas fa-arrow-up text-success me-1"></i>
-                                <span class="text-success" id="progressChange">+5%</span>
-                                <span class="text-muted">this week</span>
-                            </div>
+                        <div class="stat-content">
+                            <h3 id="totalCompleted">0</h3>
+                            <p>Days Completed</p>
+                            <small class="text-muted">Out of 98 total</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-icon bg-success">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success">
                             <i class="fas fa-fire"></i>
                         </div>
-                        <div class="metric-content">
-                            <h3 class="metric-value" id="currentStreak">0</h3>
-                            <p class="metric-label">Current Streak</p>
-                            <div class="metric-change">
-                                <span class="text-muted">Best: </span>
-                                <span class="fw-bold" id="bestStreak">0</span>
-                                <span class="text-muted">days</span>
-                            </div>
+                        <div class="stat-content">
+                            <h3 id="currentStreakDisplay">0</h3>
+                            <p>Current Streak</p>
+                            <small class="text-muted" id="streakSubtext">Keep it up!</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-icon bg-info">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <div class="metric-content">
-                            <h3 class="metric-value" id="totalStudyTime">0h</h3>
-                            <p class="metric-label">Study Time</p>
-                            <div class="metric-change">
-                                <span class="text-muted">Avg: </span>
-                                <span class="fw-bold" id="avgDailyTime">0</span>
-                                <span class="text-muted">min/day</span>
-                            </div>
+                        <div class="stat-content">
+                            <h3 id="totalStudyTime">0h</h3>
+                            <p>Study Time</p>
+                            <small class="text-muted">Total accumulated</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-icon bg-warning">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info">
                             <i class="fas fa-trophy"></i>
                         </div>
-                        <div class="metric-content">
-                            <h3 class="metric-value" id="completedTasks">0</h3>
-                            <p class="metric-label">Tasks Completed</p>
-                            <div class="metric-change">
-                                <span class="text-muted">of </span>
-                                <span class="fw-bold" id="totalTasks">98</span>
-                                <span class="text-muted">total</span>
-                            </div>
+                        <div class="stat-content">
+                            <h3 id="weeksCompleted">0</h3>
+                            <p>Weeks Completed</p>
+                            <small class="text-muted">Out of 14 weeks</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <!-- Progress Chart -->
-                <div class="col-lg-8 mb-4">
-                    <div class="card h-100">
+            <!-- Main Progress Grid -->
+            <div class="row g-4">
+                <!-- Weekly Progress Chart -->
+                <div class="col-lg-8">
+                    <div class="dashboard-card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">Learning Progress Over Time</h5>
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-bar me-2"></i>
+                                    Weekly Progress
+                                </h5>
                                 <div class="chart-controls">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-primary active"
-                                            data-chart="completion">Completion</button>
-                                        <button type="button" class="btn btn-outline-primary" data-chart="time">Study
-                                            Time</button>
-                                        <button type="button" class="btn btn-outline-primary"
-                                            data-chart="streak">Streak</button>
-                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary active"
+                                        data-chart="completion">Completion</button>
+                                    <button class="btn btn-sm btn-outline-primary" data-chart="time">Study Time</button>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="chart-container">
-                                <canvas id="progressChart" height="300"></canvas>
-                            </div>
+                            <canvas id="weeklyProgressChart" height="300"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Weekly Breakdown -->
-                <div class="col-lg-4 mb-4">
-                    <div class="card h-100">
+                <!-- Achievements & Milestones -->
+                <div class="col-lg-4">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Weekly Breakdown</h5>
+                            <h5 class="mb-0">
+                                <i class="fas fa-medal me-2"></i>
+                                Achievements
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div id="weeklyBreakdown">
-                                <div class="text-center py-4">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>
+                            <div id="achievementsList">
+                                <!-- Achievements will be loaded here -->
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <!-- Learning Patterns -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
+                <!-- Study Habits Chart -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Learning Patterns</h5>
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Study Patterns
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="learning-heatmap">
-                                <h6 class="fw-semibold mb-3">Activity Heatmap (Last 4 Weeks)</h6>
-                                <div id="activityHeatmap">
-                                    <div class="heatmap-grid" id="heatmapGrid">
-                                        <!-- Heatmap will be generated here -->
-                                    </div>
-                                    <div class="heatmap-legend mt-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">Less active</small>
-                                            <div class="legend-scale">
-                                                <span class="legend-box" data-level="0"></span>
-                                                <span class="legend-box" data-level="1"></span>
-                                                <span class="legend-box" data-level="2"></span>
-                                                <span class="legend-box" data-level="3"></span>
-                                                <span class="legend-box" data-level="4"></span>
-                                            </div>
-                                            <small class="text-muted">More active</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="study-habits mt-4">
-                                <h6 class="fw-semibold mb-3">Study Habits</h6>
-                                <div class="habit-item">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-muted">Best Study Day</span>
-                                        <span class="fw-bold" id="bestStudyDay">Monday</span>
-                                    </div>
-                                </div>
-                                <div class="habit-item">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-muted">Average Session</span>
-                                        <span class="fw-bold" id="avgSessionTime">45 min</span>
-                                    </div>
-                                </div>
-                                <div class="habit-item">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-muted">Consistency Score</span>
-                                        <span class="fw-bold" id="consistencyScore">85%</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <canvas id="studyPatternsChart" height="250"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Topic Progress -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
+                <!-- Topic Mastery -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Topic Mastery</h5>
+                            <h5 class="mb-0">
+                                <i class="fas fa-brain me-2"></i>
+                                Topic Mastery
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div id="topicProgress">
-                                <!-- Topic progress will be populated here -->
+                            <div id="topicMasteryList">
+                                <!-- Topic mastery will be loaded here -->
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Detailed Progress Table -->
-            <div class="row">
+                <!-- Detailed Week Breakdown -->
                 <div class="col-12">
-                    <div class="card">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">Detailed Progress</h5>
-                                <div class="table-controls">
-                                    <input type="text" class="form-control form-control-sm"
-                                        placeholder="Search topics..." id="topicSearch" style="width: 200px;">
-                                </div>
-                            </div>
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>
+                                Detailed Progress Breakdown
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Week</th>
-                                            <th>Topic</th>
-                                            <th>Status</th>
-                                            <th>Completion Date</th>
-                                            <th>Time Spent</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="progressTable">
-                                        <tr>
-                                            <td colspan="6" class="text-center py-4">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="week-breakdown" id="weekBreakdown">
+                                <!-- Week breakdown will be loaded here -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <!-- Achievement Modal -->
+    <div class="modal fade" id="achievementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-trophy me-2"></i>
+                        Achievement Unlocked!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="achievement-icon mb-3">
+                        <i class="fas fa-medal text-warning" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 id="achievementTitle">Achievement Title</h4>
+                    <p id="achievementDescription">Achievement description</p>
+                    <div class="confetti-container" id="modalConfetti"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Awesome!</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let currentPeriod = 'week';
-        let currentChartType = 'completion';
         let progressData = {};
         let roadmapData = [];
-        let progressChart = null;
+        let charts = {};
 
-        document.addEventListener('DOMContentLoaded', async function () {
-            await loadComponents();
-            await checkAuth();
-            await loadProgressData();
-            updateActivePage('progress');
-            initializeEventListeners();
-            renderProgressChart();
-            renderHeatmap();
-        });
-
+        // Load components
         async function loadComponents() {
             try {
                 const [sidebarResponse, topbarResponse, mobileNavResponse] = await Promise.all([
@@ -306,296 +244,237 @@
                 document.getElementById('mobileNavContainer').innerHTML = await mobileNavResponse.text();
 
                 initializeComponents();
+                setActiveNavItem('progress');
+                document.getElementById('pageTitle').textContent = 'Progress';
             } catch (error) {
                 console.error('Error loading components:', error);
             }
         }
 
-        function initializeComponents() {
-            const sidebarToggle = document.getElementById('sidebarToggleBtn');
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function () {
-                    document.body.classList.toggle('sidebar-collapsed');
-                });
-            }
-
-            const globalSearch = document.getElementById('globalSearch');
-            if (globalSearch) {
-                globalSearch.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
-                        window.location.href = `/search?q=${encodeURIComponent(this.value)}`;
-                    }
-                });
-            }
-        }
-
-        async function checkAuth() {
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    updateUserInfo(data.user);
-                } else {
-                    localStorage.removeItem('accessToken');
-                    window.location.href = '/login';
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login';
-            }
-        }
-
-        function updateUserInfo(user) {
-            const userNameElements = ['sidebarUserName', 'topbarUserName', 'dropdownUserName', 'mobileUserName'];
-            userNameElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = user.name;
-            });
-
-            const userEmailElements = ['sidebarUserEmail', 'dropdownUserEmail', 'mobileUserEmail'];
-            userEmailElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = user.email;
-            });
-
-            const avatarUrl = user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=ffffff`;
-            const avatarElements = ['sidebarAvatar', 'topbarAvatar', 'mobileUserAvatar'];
-            avatarElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.src = avatarUrl;
-            });
-        }
-
+        // Load progress data
         async function loadProgressData() {
             try {
-                const token = localStorage.getItem('accessToken');
-                const [dashboardResponse, roadmapResponse] = await Promise.all([
-                    fetch(`${API_BASE}/dashboard`, {
+                const token = localStorage.getItem('access_token');
+
+                const [progressResponse, roadmapResponse] = await Promise.all([
+                    fetch(`${API_BASE}/progress`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     }),
                     fetch(`${API_BASE}/roadmap`)
                 ]);
 
-                if (dashboardResponse.ok && roadmapResponse.ok) {
-                    const dashboardResult = await dashboardResponse.json();
+                if (progressResponse.ok && roadmapResponse.ok) {
+                    progressData = await progressResponse.json();
                     const roadmapResult = await roadmapResponse.json();
-
-                    progressData = dashboardResult;
                     roadmapData = roadmapResult.roadmap;
 
-                    updateKeyMetrics();
-                    updateWeeklyBreakdown();
-                    updateTopicProgress();
-                    updateProgressTable();
+                    updateProgressStats();
+                    renderCharts();
+                    renderAchievements();
+                    renderTopicMastery();
+                    renderWeekBreakdown();
                 } else {
                     throw new Error('Failed to load progress data');
                 }
             } catch (error) {
-                console.error('Error loading progress:', error);
-                showError('Failed to load progress data. Please try again.');
+                console.error('Progress error:', error);
+                showError('Failed to load progress data');
             }
         }
 
-        function updateKeyMetrics() {
+        // Update progress statistics
+        function updateProgressStats() {
             const stats = progressData.stats;
+            const progress = progressData.progress;
 
-            document.getElementById('overallProgress').textContent = Math.round(stats.completion_percentage) + '%';
-            document.getElementById('currentStreak').textContent = stats.current_streak;
-            document.getElementById('bestStreak').textContent = stats.longest_streak;
-            document.getElementById('totalStudyTime').textContent = Math.round(stats.total_study_time / 60) + 'h';
-            document.getElementById('completedTasks').textContent = stats.completed_days;
-            document.getElementById('totalTasks').textContent = stats.total_days;
+            // Calculate total completed days
+            let totalCompleted = 0;
+            let totalStudyTime = 0;
+            let weeksCompleted = 0;
 
-            // Calculate average daily time
-            const avgDaily = stats.total_study_time / Math.max(stats.completed_days, 1);
-            document.getElementById('avgDailyTime').textContent = Math.round(avgDaily);
+            for (const week of roadmapData) {
+                const weekProgress = progress[week.week] || {};
+                const weekCompletedDays = Object.values(weekProgress).filter(day => day.completed).length;
 
-            // Mock progress change (in real app, calculate from historical data)
-            const progressChange = Math.round(Math.random() * 10 + 2);
-            document.getElementById('progressChange').textContent = `+${progressChange}%`;
-        }
+                totalCompleted += weekCompletedDays;
 
-        function updateWeeklyBreakdown() {
-            const weeklyProgress = progressData.weekly_progress || {};
-            const container = document.getElementById('weeklyBreakdown');
-
-            const sortedWeeks = Object.keys(weeklyProgress)
-                .sort((a, b) => parseInt(a) - parseInt(b))
-                .slice(-4); // Show last 4 weeks
-
-            container.innerHTML = sortedWeeks.map(weekNum => {
-                const week = weeklyProgress[weekNum];
-                const percentage = Math.round(week.percentage);
-
-                return `
-                    <div class="week-progress-item mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <h6 class="fw-bold mb-0">Week ${weekNum}</h6>
-                                <small class="text-muted">${week.title}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="fw-bold ${percentage === 100 ? 'text-success' : 'text-primary'}">${percentage}%</span>
-                                <br>
-                                <small class="text-muted">${week.completed}/${week.total}</small>
-                            </div>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar ${percentage === 100 ? 'bg-success' : 'bg-primary'}" 
-                                 style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateTopicProgress() {
-            const container = document.getElementById('topicProgress');
-
-            // Group topics by category
-            const topicCategories = [
-                { name: 'Arrays & Strings', weeks: [1, 2], color: 'primary' },
-                { name: 'Linked Lists & Stacks', weeks: [3, 4], color: 'success' },
-                { name: 'Trees & Heaps', weeks: [5, 6, 7], color: 'info' },
-                { name: 'Graphs & Advanced', weeks: [8, 9, 10], color: 'warning' },
-                { name: 'Algorithms & DP', weeks: [11, 12, 13, 14], color: 'danger' }
-            ];
-
-            container.innerHTML = topicCategories.map(category => {
-                const categoryWeeks = category.weeks;
-                const totalDays = categoryWeeks.reduce((sum, weekNum) => {
-                    const week = roadmapData.find(w => w.week === weekNum);
-                    return sum + (week ? week.days.length : 0);
-                }, 0);
-
-                const completedDays = categoryWeeks.reduce((sum, weekNum) => {
-                    const weekProgress = progressData.weekly_progress?.[weekNum];
-                    return sum + (weekProgress ? weekProgress.completed : 0);
-                }, 0);
-
-                const percentage = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
-
-                return `
-                    <div class="topic-category mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="fw-semibold mb-0">${category.name}</h6>
-                            <span class="badge bg-${category.color}">${percentage}%</span>
-                        </div>
-                        <div class="progress mb-2" style="height: 6px;">
-                            <div class="progress-bar bg-${category.color}" style="width: ${percentage}%"></div>
-                        </div>
-                        <small class="text-muted">${completedDays}/${totalDays} topics completed</small>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateProgressTable() {
-            const tbody = document.getElementById('progressTable');
-            let tableHTML = '';
-
-            roadmapData.forEach(week => {
-                week.days.forEach(day => {
-                    const dayProgress = progressData.weekly_progress?.[week.week];
-                    const isCompleted = dayProgress ? (dayProgress.completed > 0) : false;
-                    const completionDate = isCompleted ? new Date().toLocaleDateString() : '-';
-                    const timeSpent = isCompleted ? `${day.time_estimate} min` : '-';
-
-                    tableHTML += `
-                        <tr class="${isCompleted ? 'table-success' : ''}">
-                            <td>
-                                <span class="fw-bold">Week ${week.week}</span>
-                                <br>
-                                <small class="text-muted">${week.title}</small>
-                            </td>
-                            <td>
-                                <div class="topic-cell">
-                                    <div class="fw-semibold">${day.topic}</div>
-                                    <small class="text-muted">${day.activities}</small>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge ${isCompleted ? 'bg-success' : 'bg-secondary'}">
-                                    ${isCompleted ? 'Completed' : 'Pending'}
-                                </span>
-                            </td>
-                            <td>${completionDate}</td>
-                            <td>${timeSpent}</td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" onclick="viewTopicDetails(${week.week}, '${day.day}')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-outline-success" onclick="toggleCompletion(${week.week}, '${day.day}')">
-                                        <i class="fas fa-${isCompleted ? 'undo' : 'check'}"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
+                // Calculate study time for this week
+                Object.values(weekProgress).forEach(day => {
+                    totalStudyTime += day.time_spent || 0;
                 });
+
+                // Check if week is fully completed
+                if (weekCompletedDays === week.days.length) {
+                    weeksCompleted++;
+                }
+            }
+
+            // Update UI
+            document.getElementById('totalCompleted').textContent = totalCompleted;
+            document.getElementById('currentStreakDisplay').textContent = stats.current_streak;
+            document.getElementById('totalStudyTime').textContent = Math.round(totalStudyTime / 60) + 'h';
+            document.getElementById('weeksCompleted').textContent = weeksCompleted;
+
+            // Update overall progress circle
+            const overallPercentage = (totalCompleted / (roadmapData.length * 7)) * 100;
+            updateProgressCircle('overallProgressLarge', overallPercentage);
+
+            // Update streak subtext
+            const streakSubtext = document.getElementById('streakSubtext');
+            if (stats.current_streak === 0) {
+                streakSubtext.textContent = 'Start your streak!';
+            } else if (stats.current_streak < 7) {
+                streakSubtext.textContent = 'Building momentum!';
+            } else if (stats.current_streak < 30) {
+                streakSubtext.textContent = 'Great consistency!';
+            } else {
+                streakSubtext.textContent = 'Amazing dedication!';
+            }
+        }
+
+        // Update progress circle
+        function updateProgressCircle(elementId, percentage) {
+            const element = document.getElementById(elementId);
+            const progressText = element.querySelector('.progress-text');
+
+            progressText.textContent = Math.round(percentage) + '%';
+
+            // Update CSS conic gradient
+            element.style.background = `conic-gradient(#007bff ${percentage * 3.6}deg, #e9ecef 0deg)`;
+        }
+
+        // Render charts
+        function renderCharts() {
+            renderWeeklyProgressChart();
+            renderStudyPatternsChart();
+        }
+
+        // Render weekly progress chart
+        function renderWeeklyProgressChart() {
+            const ctx = document.getElementById('weeklyProgressChart').getContext('2d');
+
+            const weekLabels = roadmapData.map(week => `Week ${week.week}`);
+            const completionData = roadmapData.map(week => {
+                const weekProgress = progressData.progress[week.week] || {};
+                const completed = Object.values(weekProgress).filter(day => day.completed).length;
+                return (completed / week.days.length) * 100;
             });
 
-            tbody.innerHTML = tableHTML;
+            const timeData = roadmapData.map(week => {
+                const weekProgress = progressData.progress[week.week] || {};
+                const totalTime = Object.values(weekProgress).reduce((sum, day) => sum + (day.time_spent || 0), 0);
+                return totalTime / 60; // Convert to hours
+            });
+
+            if (charts.weeklyProgress) {
+                charts.weeklyProgress.destroy();
+            }
+
+            charts.weeklyProgress = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: weekLabels,
+                    datasets: [{
+                        label: 'Completion %',
+                        data: completionData,
+                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `Completion: ${context.parsed.y.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart control handlers
+            document.querySelectorAll('[data-chart]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('[data-chart]').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    const chartType = e.target.dataset.chart;
+                    if (chartType === 'time') {
+                        charts.weeklyProgress.data.datasets[0].data = timeData;
+                        charts.weeklyProgress.data.datasets[0].label = 'Study Time (hours)';
+                        charts.weeklyProgress.options.scales.y.max = Math.max(...timeData) * 1.2;
+                        charts.weeklyProgress.options.plugins.tooltip.callbacks.label = function (context) {
+                            return `Study Time: ${context.parsed.y.toFixed(1)}h`;
+                        };
+                    } else {
+                        charts.weeklyProgress.data.datasets[0].data = completionData;
+                        charts.weeklyProgress.data.datasets[0].label = 'Completion %';
+                        charts.weeklyProgress.options.scales.y.max = 100;
+                        charts.weeklyProgress.options.plugins.tooltip.callbacks.label = function (context) {
+                            return `Completion: ${context.parsed.y.toFixed(1)}%`;
+                        };
+                    }
+                    charts.weeklyProgress.update();
+                });
+            });
         }
 
-        function renderProgressChart() {
-            const ctx = document.getElementById('progressChart').getContext('2d');
+        // Render study patterns chart
+        function renderStudyPatternsChart() {
+            const ctx = document.getElementById('studyPatternsChart').getContext('2d');
 
-            if (progressChart) {
-                progressChart.destroy();
-            }
+            // Calculate study patterns by day of week
+            const dayPatterns = {
+                'Sunday': 0, 'Monday': 0, 'Tuesday': 0, 'Wednesday': 0,
+                'Thursday': 0, 'Friday': 0, 'Saturday': 0
+            };
 
-            const labels = [];
-            const data = [];
+            for (const week of roadmapData) {
+                const weekProgress = progressData.progress[week.week] || {};
 
-            if (currentChartType === 'completion') {
-                // Generate completion data over weeks
-                for (let i = 1; i <= 14; i++) {
-                    labels.push(`Week ${i}`);
-                    const weekProgress = progressData.weekly_progress?.[i];
-                    data.push(weekProgress ? weekProgress.percentage : 0);
-                }
-            } else if (currentChartType === 'time') {
-                // Generate study time data
-                for (let i = 1; i <= 14; i++) {
-                    labels.push(`Week ${i}`);
-                    const weekProgress = progressData.weekly_progress?.[i];
-                    // Mock study time data
-                    data.push(weekProgress ? weekProgress.completed * 90 : 0);
-                }
-            } else if (currentChartType === 'streak') {
-                // Generate streak data (mock)
-                for (let i = 0; i < 30; i++) {
-                    const date = new Date();
-                    date.setDate(date.getDate() - (29 - i));
-                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-                    data.push(Math.floor(Math.random() * 10) + 1);
+                for (const day of week.days) {
+                    const dayProgress = weekProgress[day.day] || {};
+                    if (dayProgress.completed) {
+                        dayPatterns[day.day]++;
+                    }
                 }
             }
 
-            progressChart = new Chart(ctx, {
-                type: currentChartType === 'streak' ? 'line' : 'bar',
+            if (charts.studyPatterns) {
+                charts.studyPatterns.destroy();
+            }
+
+            charts.studyPatterns = new Chart(ctx, {
+                type: 'doughnut',
                 data: {
-                    labels: labels,
+                    labels: Object.keys(dayPatterns),
                     datasets: [{
-                        label: getChartLabel(),
-                        data: data,
-                        backgroundColor: currentChartType === 'streak' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(99, 102, 241, 0.8)',
-                        borderColor: '#6366f1',
+                        data: Object.values(dayPatterns),
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                            '#9966FF', '#FF9F40', '#FF6384'
+                        ],
                         borderWidth: 2,
-                        fill: currentChartType === 'streak',
-                        tension: 0.4
+                        borderColor: '#fff'
                     }]
                 },
                 options: {
@@ -603,18 +482,14 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: currentChartType === 'completion' ? 100 : undefined,
-                            ticks: {
-                                callback: function (value) {
-                                    if (currentChartType === 'completion') return value + '%';
-                                    if (currentChartType === 'time') return value + 'min';
-                                    return value;
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} days (${percentage}%)`;
                                 }
                             }
                         }
@@ -623,432 +498,503 @@
             });
         }
 
-        function getChartLabel() {
-            switch (currentChartType) {
-                case 'completion': return 'Completion %';
-                case 'time': return 'Study Time (min)';
-                case 'streak': return 'Streak Days';
-                default: return 'Progress';
-            }
-        }
+        // Render achievements
+        function renderAchievements() {
+            const container = document.getElementById('achievementsList');
+            const achievements = calculateAchievements();
 
-        function renderHeatmap() {
-            const grid = document.getElementById('heatmapGrid');
-            const weeks = 4;
-            const daysPerWeek = 7;
-
-            let heatmapHTML = '';
-
-            for (let week = 0; week < weeks; week++) {
-                heatmapHTML += '<div class="heatmap-week">';
-                for (let day = 0; day < daysPerWeek; day++) {
-                    const activity = Math.floor(Math.random() * 5); // 0-4 activity level
-                    heatmapHTML += `<div class="heatmap-day" data-level="${activity}" title="Activity level: ${activity}"></div>`;
-                }
-                heatmapHTML += '</div>';
-            }
-
-            grid.innerHTML = heatmapHTML;
-        }
-
-        function initializeEventListeners() {
-            // Period filters
-            document.querySelectorAll('[data-period]').forEach(button => {
-                button.addEventListener('click', function () {
-                    currentPeriod = this.dataset.period;
-                    document.querySelectorAll('[data-period]').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    // Refresh data based on period
-                    loadProgressData();
-                });
-            });
-
-            // Chart type filters
-            document.querySelectorAll('[data-chart]').forEach(button => {
-                button.addEventListener('click', function () {
-                    currentChartType = this.dataset.chart;
-                    document.querySelectorAll('[data-chart]').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    renderProgressChart();
-                });
-            });
-
-            // Topic search
-            const topicSearch = document.getElementById('topicSearch');
-            if (topicSearch) {
-                topicSearch.addEventListener('input', function () {
-                    const searchTerm = this.value.toLowerCase();
-                    const rows = document.querySelectorAll('#progressTable tr');
-
-                    rows.forEach(row => {
-                        const topicCell = row.querySelector('.topic-cell');
-                        if (topicCell) {
-                            const topicText = topicCell.textContent.toLowerCase();
-                            row.style.display = topicText.includes(searchTerm) ? '' : 'none';
-                        }
-                    });
-                });
-            }
-        }
-
-        function viewTopicDetails(weekNum, dayName) {
-            // Redirect to roadmap with specific week/day
-            window.location.href = `/roadmap?week=${weekNum}&day=${dayName}`;
-        }
-
-        async function toggleCompletion(weekNum, dayName) {
-            try {
-                const token = localStorage.getItem('accessToken');
-                const response = await fetch(`${API_BASE}/progress`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        week: weekNum,
-                        day: dayName,
-                        completed: true, // This should be toggled based on current state
-                        time_spent: 90
-                    })
-                });
-
-                if (response.ok) {
-                    await loadProgressData();
-                    showToast('Progress updated successfully!', 'success');
-                } else {
-                    throw new Error('Failed to update progress');
-                }
-            } catch (error) {
-                console.error('Error updating progress:', error);
-                showToast('Failed to update progress. Please try again.', 'error');
-            }
-        }
-
-        function exportProgress() {
-            // Generate CSV data
-            let csvContent = "Week,Topic,Status,Completion Date,Time Spent\n";
-
-            roadmapData.forEach(week => {
-                week.days.forEach(day => {
-                    const dayProgress = progressData.weekly_progress?.[week.week];
-                    const isCompleted = dayProgress ? (dayProgress.completed > 0) : false;
-                    const completionDate = isCompleted ? new Date().toLocaleDateString() : '';
-                    const timeSpent = isCompleted ? day.time_estimate : 0;
-
-                    csvContent += `"Week ${week.week}","${day.topic}","${isCompleted ? 'Completed' : 'Pending'}","${completionDate}","${timeSpent} min"\n`;
-                });
-            });
-
-            // Download CSV
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'dsa_progress.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-
-            showToast('Progress exported successfully!', 'success');
-        }
-
-        function updateActivePage(page) {
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.page === page) {
-                    link.classList.add('active');
-                }
-            });
-
-            document.querySelectorAll('.mobile-nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.page === page) {
-                    item.classList.add('active');
-                }
-            });
-
-            const pageTitle = document.getElementById('pageTitle');
-            if (pageTitle) {
-                pageTitle.textContent = page.charAt(0).toUpperCase() + page.slice(1);
-            }
-        }
-
-        function showError(message) {
-            console.error(message);
-            showToast(message, 'error');
-        }
-
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
-            const toastHtml = `
-                <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary'} border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">${message}</div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            if (achievements.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-trophy text-muted mb-3" style="font-size: 3rem;"></i>
+                        <h6 class="text-muted">No achievements yet</h6>
+                        <p class="text-muted mb-0">Complete your first day to start earning achievements!</p>
                     </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = achievements.map(achievement => `
+                <div class="achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}">
+                    <div class="achievement-icon">
+                        <i class="fas ${achievement.icon} ${achievement.unlocked ? 'text-warning' : 'text-muted'}"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h6 class="mb-1">${achievement.title}</h6>
+                        <p class="text-muted mb-0">${achievement.description}</p>
+                        ${achievement.progress !== undefined ? `
+                            <div class="progress mt-2" style="height: 4px;">
+                                <div class="progress-bar" style="width: ${achievement.progress}%"></div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${achievement.unlocked ? `
+                        <div class="achievement-badge">
+                            <i class="fas fa-check text-success"></i>
+                        </div>
+                    ` : ''}
                 </div>
-            `;
-
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-
-            toastElement.addEventListener('hidden.bs.toast', function () {
-                this.remove();
-            });
+            `).join('');
         }
 
-        function createToastContainer() {
-            const container = document.createElement('div');
-            container.id = 'toastContainer';
-            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-            document.body.appendChild(container);
-            return container;
+        // Calculate achievements based on progress
+        function calculateAchievements() {
+            const stats = progressData.stats;
+            const progress = progressData.progress;
+
+            let totalCompleted = 0;
+            let weeksCompleted = 0;
+
+            for (const week of roadmapData) {
+                const weekProgress = progress[week.week] || {};
+                const weekCompletedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                totalCompleted += weekCompletedDays;
+
+                if (weekCompletedDays === week.days.length) {
+                    weeksCompleted++;
+                }
+            }
+
+            const achievements = [
+                {
+                    title: "First Step",
+                    description: "Complete your first day",
+                    icon: "fa-baby",
+                    unlocked: totalCompleted >= 1
+                },
+                {
+                    title: "Week Warrior",
+                    description: "Complete your first week",
+                    icon: "fa-calendar-week",
+                    unlocked: weeksCompleted >= 1
+                },
+                {
+                    title: "Streak Starter",
+                    description: "Maintain a 7-day streak",
+                    icon: "fa-fire",
+                    unlocked: stats.current_streak >= 7 || stats.longest_streak >= 7
+                },
+                {
+                    title: "Month Master",
+                    description: "Complete 4 weeks",
+                    icon: "fa-calendar-alt",
+                    unlocked: weeksCompleted >= 4
+                },
+                {
+                    title: "Consistency King",
+                    description: "Maintain a 30-day streak",
+                    icon: "fa-crown",
+                    unlocked: stats.current_streak >= 30 || stats.longest_streak >= 30
+                },
+                {
+                    title: "Halfway Hero",
+                    description: "Complete 7 weeks (50% of the course)",
+                    icon: "fa-medal",
+                    unlocked: weeksCompleted >= 7,
+                    progress: (weeksCompleted / 7) * 100
+                },
+                {
+                    title: "DSA Master",
+                    description: "Complete all 14 weeks",
+                    icon: "fa-trophy",
+                    unlocked: weeksCompleted >= 14
+                },
+                {
+                    title: "Time Keeper",
+                    description: "Study for 100+ hours total",
+                    icon: "fa-clock",
+                    unlocked: stats.total_study_time >= 6000, // 100 hours in minutes
+                    progress: Math.min((stats.total_study_time / 6000) * 100, 100)
+                }
+            ];
+
+            return achievements;
         }
 
-        // Global functions
-        window.logout = function () {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        };
+        // Render topic mastery
+        function renderTopicMastery() {
+            const container = document.getElementById('topicMasteryList');
+            const topics = calculateTopicMastery();
 
-        window.toggleTheme = function () {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        };
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-theme');
+            container.innerHTML = topics.map(topic => `
+                <div class="topic-mastery-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">${topic.name}</h6>
+                        <span class="badge bg-${getMasteryColor(topic.percentage)}">${topic.percentage}%</span>
+                    </div>
+                    <div class="progress mb-1" style="height: 6px;">
+                        <div class="progress-bar bg-${getMasteryColor(topic.percentage)}" 
+                             style="width: ${topic.percentage}%"></div>
+                    </div>
+                    <small class="text-muted">${topic.completed}/${topic.total} concepts</small>
+                </div>
+            `).join('');
         }
+
+        // Calculate topic mastery
+        function calculateTopicMastery() {
+            const topicGroups = {
+                'Arrays & Strings': { completed: 0, total: 0 },
+                'Linked Lists': { completed: 0, total: 0 },
+                'Stacks & Queues': { completed: 0, total: 0 },
+                'Trees': { completed: 0, total: 0 },
+                'Graphs': { completed: 0, total: 0 },
+                'Dynamic Programming': { completed: 0, total: 0 },
+                'Advanced Topics': { completed: 0, total: 0 }
+            };
+
+            const topicMapping = {
+                1: 'Arrays & Strings', 2: 'Arrays & Strings', 3: 'Linked Lists',
+                4: 'Stacks & Queues', 5: 'Trees', 6: 'Trees', 7: 'Stacks & Queues',
+                8: 'Arrays & Strings', 9: 'Graphs', 10: 'Graphs', 11: 'Advanced Topics',
+                12: 'Advanced Topics', 13: 'Dynamic Programming', 14: 'Advanced Topics'
+            };
+
+            for (const week of roadmapData) {
+                const topicGroup = topicMapping[week.week] || 'Advanced Topics';
+                const weekProgress = progressData.progress[week.week] || {};
+                const completed = Object.values(weekProgress).filter(day => day.completed).length;
+
+                topicGroups[topicGroup].completed += completed;
+                topicGroups[topicGroup].total += week.days.length;
+            }
+
+            return Object.entries(topicGroups).map(([name, data]) => ({
+                name,
+                completed: data.completed,
+                total: data.total,
+                percentage: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0
+            })).sort((a, b) => b.percentage - a.percentage);
+        }
+
+        // Get mastery color based on percentage
+        function getMasteryColor(percentage) {
+            if (percentage >= 80) return 'success';
+            if (percentage >= 60) return 'info';
+            if (percentage >= 40) return 'warning';
+            return 'danger';
+        }
+
+        // Render week breakdown
+        function renderWeekBreakdown() {
+            const container = document.getElementById('weekBreakdown');
+
+            container.innerHTML = roadmapData.map(week => {
+                const weekProgress = progressData.progress[week.week] || {};
+                const completed = Object.values(weekProgress).filter(day => day.completed).length;
+                const percentage = (completed / week.days.length) * 100;
+
+                return `
+                    <div class="week-breakdown-item">
+                        <div class="week-header">
+                            <div class="week-info">
+                                <h6 class="mb-1">Week ${week.week}: ${week.title}</h6>
+                                <p class="text-muted mb-0">${week.goal}</p>
+                            </div>
+                            <div class="week-progress">
+                                <div class="progress-circle-small">
+                                    <svg viewBox="0 0 36 36">
+                                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        <path class="circle" stroke-dasharray="${percentage}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    </svg>
+                                    <div class="percentage">${Math.round(percentage)}%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="week-details">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="day-grid">
+                                        ${week.days.map(day => {
+                    const dayProgress = weekProgress[day.day] || {};
+                    const isCompleted = dayProgress.completed;
+
+                    return `
+                                                <div class="day-cell ${isCompleted ? 'completed' : ''}">
+                                                    <div class="day-name">${day.day.substring(0, 3)}</div>
+                                                    <div class="day-status">
+                                                        ${isCompleted ? '<i class="fas fa-check"></i>' : '<i class="fas fa-circle"></i>'}
+                                                    </div>
+                                                </div>
+                                            `;
+                }).join('')}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="week-stats">
+                                        <small class="text-muted">
+                                            ${completed}/${week.days.length} days completed<br>
+                                            Project: ${week.project.title}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Show achievement modal
+        function showAchievementModal(achievement) {
+            document.getElementById('achievementTitle').textContent = achievement.title;
+            document.getElementById('achievementDescription').textContent = achievement.description;
+
+            const modal = new bootstrap.Modal(document.getElementById('achievementModal'));
+            modal.show();
+
+            // Add confetti effect
+            setTimeout(() => {
+                showConfetti();
+            }, 500);
+        }
+
+        // Check for new achievements
+        function checkNewAchievements() {
+            const achievements = calculateAchievements();
+            const unlockedAchievements = achievements.filter(a => a.unlocked);
+
+            // This would typically check against previously stored achievements
+            // For demo purposes, we'll show the latest achievement if any exist
+            if (unlockedAchievements.length > 0) {
+                const latestAchievement = unlockedAchievements[unlockedAchievements.length - 1];
+
+                // Only show if this is a new session or achievement was just unlocked
+                const lastShownAchievement = localStorage.getItem('lastShownAchievement');
+                if (lastShownAchievement !== latestAchievement.title) {
+                    setTimeout(() => {
+                        showAchievementModal(latestAchievement);
+                        localStorage.setItem('lastShownAchievement', latestAchievement.title);
+                    }, 2000);
+                }
+            }
+        }
+
+        // Initialize progress page
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            await loadComponents();
+            await loadProgressData();
+            checkNewAchievements();
+        });
     </script>
 
     <style>
-        .metric-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .progress-overview {
+            text-align: center;
         }
 
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .metric-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: var(--radius-lg);
+        .progress-circle-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            flex-shrink: 0;
+            background: conic-gradient(var(--primary-color) 0deg, #e9ecef 0deg);
+            margin: 0 auto;
         }
 
-        .metric-content {
+        .progress-circle-large::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .progress-circle-large .progress-text {
+            position: relative;
+            z-index: 2;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-controls .btn {
+            padding: 0.25rem 0.75rem;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            border: 1px solid #e5e7eb;
+        }
+
+        .achievement-item.unlocked {
+            background: linear-gradient(135deg, #fff8e1 0%, #f3e5ab 100%);
+            border-color: #ffc107;
+        }
+
+        .achievement-item.locked {
+            background: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .achievement-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: white;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .achievement-content {
             flex: 1;
         }
 
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-            line-height: 1;
-        }
-
-        .metric-label {
-            color: var(--muted-color);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-change {
-            font-size: 0.75rem;
+        .achievement-badge {
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--success-color);
+            color: white;
         }
 
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        .week-progress-item {
+        .topic-mastery-item {
             padding: 1rem;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: var(--radius-md);
-            transition: all 0.2s ease;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .week-progress-item:hover {
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .topic-category {
-            padding: 1rem;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .heatmap-grid {
-            display: flex;
-            gap: 2px;
-            margin-bottom: 1rem;
-        }
-
-        .heatmap-week {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .heatmap-day {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            background: #ebedf0;
-            cursor: pointer;
-        }
-
-        .heatmap-day[data-level="1"] {
-            background: #c6e48b;
-        }
-
-        .heatmap-day[data-level="2"] {
-            background: #7bc96f;
-        }
-
-        .heatmap-day[data-level="3"] {
-            background: #239a3b;
-        }
-
-        .heatmap-day[data-level="4"] {
-            background: #196127;
-        }
-
-        .legend-scale {
-            display: flex;
-            gap: 2px;
-        }
-
-        .legend-box {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            background: #ebedf0;
-        }
-
-        .legend-box[data-level="1"] {
-            background: #c6e48b;
-        }
-
-        .legend-box[data-level="2"] {
-            background: #7bc96f;
-        }
-
-        .legend-box[data-level="3"] {
-            background: #239a3b;
-        }
-
-        .legend-box[data-level="4"] {
-            background: #196127;
-        }
-
-        .habit-item {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .habit-item:last-child {
+        .topic-mastery-item:last-child {
             border-bottom: none;
         }
 
-        .topic-cell {
-            max-width: 300px;
+        .week-breakdown-item {
+            border: 1px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            overflow: hidden;
         }
 
-        .table-success {
-            background-color: rgba(25, 135, 84, 0.1) !important;
+        .week-header {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @media (max-width: 991.98px) {
-            .metric-card {
-                padding: 1.25rem;
-            }
+        .week-details {
+            padding: 1.5rem;
+        }
 
-            .metric-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.25rem;
-            }
+        .progress-circle-small {
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
 
-            .metric-value {
-                font-size: 1.75rem;
-            }
+        .progress-circle-small svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
 
-            .chart-container {
-                height: 250px;
-            }
+        .progress-circle-small .circle-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 3;
+        }
 
-            .progress-controls {
-                width: 100%;
-                justify-content: center;
-                margin-top: 1rem;
-            }
+        .progress-circle-small .circle {
+            fill: none;
+            stroke: var(--primary-color);
+            stroke-width: 3;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.6s ease;
+        }
+
+        .progress-circle-small .percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .day-cell {
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .day-cell.completed {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .day-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .day-status i {
+            font-size: 0.8rem;
         }
 
         @media (max-width: 767.98px) {
-            .metric-card {
-                padding: 1rem;
+            .progress-circle-large {
+                width: 100px;
+                height: 100px;
+            }
+
+            .progress-circle-large::before {
+                width: 70px;
+                height: 70px;
+            }
+
+            .progress-circle-large .progress-text {
+                font-size: 1.25rem;
+            }
+
+            .chart-controls {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .achievement-item {
                 flex-direction: column;
                 text-align: center;
             }
 
-            .metric-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.125rem;
+            .achievement-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
             }
 
-            .metric-value {
-                font-size: 1.5rem;
-            }
-
-            .chart-controls {
-                width: 100%;
-                margin-top: 0.5rem;
-            }
-
-            .heatmap-day {
-                width: 10px;
-                height: 10px;
-            }
-
-            .legend-box {
-                width: 10px;
-                height: 10px;
-            }
-
-            .table-responsive {
-                font-size: 0.875rem;
+            .day-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>

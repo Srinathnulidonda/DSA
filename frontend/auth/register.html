@@ -1,3 +1,4 @@
+<!-- auth/register.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,134 +11,117 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
     <link href="../css/components.css" rel="stylesheet">
-    <link href="../css/animation.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <div class="container-fluid">
+    <div class="container-fluid h-100">
         <div class="row min-vh-100">
-            <!-- Left Side - Registration Form -->
+            <!-- Left Side - Illustration -->
+            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-success">
+                <div class="text-center text-white">
+                    <div class="auth-illustration mb-4">
+                        <i class="fas fa-rocket display-1 mb-3"></i>
+                        <h3>Start Your Journey</h3>
+                        <p class="lead">Join thousands of learners mastering DSA concepts through structured learning.
+                        </p>
+                    </div>
+                    <div class="auth-features">
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span>Comprehensive 14-week roadmap</span>
+                        </div>
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span>Progress tracking & analytics</span>
+                        </div>
+                        <div class="feature-item mb-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span>AI-powered learning assistant</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Form -->
             <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                <div class="auth-form-container">
-                    <div class="text-center mb-5">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
                         <a href="/" class="text-decoration-none">
-                            <h2 class="fw-bold text-primary">
-                                <i class="fas fa-code me-2"></i>DSA Path
-                            </h2>
+                            <h3 class="text-primary mb-2">
+                                <i class="fas fa-code me-2"></i>DSA Learning Path
+                            </h3>
                         </a>
-                        <h3 class="fw-bold text-dark mb-2">Create Your Account</h3>
-                        <p class="text-muted">Join thousands of students mastering DSA</p>
+                        <h4 class="fw-bold text-dark">Create Account</h4>
+                        <p class="text-muted">Start your DSA mastery journey today</p>
                     </div>
 
-                    <div id="alertContainer"></div>
-
-                    <form id="registerForm" class="auth-form">
-                        <div class="mb-4">
-                            <label for="name" class="form-label fw-semibold">Full Name</label>
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-user text-muted"></i>
-                                </span>
-                                <input type="text" class="form-control border-start-0 ps-0" id="name" required>
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="name" required>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-envelope text-muted"></i>
-                                </span>
-                                <input type="email" class="form-control border-start-0 ps-0" id="email" required>
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" required>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="password" class="form-label fw-semibold">Password</label>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-lock text-muted"></i>
-                                </span>
-                                <input type="password" class="form-control border-start-0 border-end-0 ps-0"
-                                    id="password" required>
-                                <button class="btn border-start-0 bg-light" type="button" id="togglePassword">
-                                    <i class="fas fa-eye text-muted"></i>
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" required minlength="8">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <div class="password-strength mt-2">
-                                <div class="progress" style="height: 4px;">
-                                    <div class="progress-bar" id="passwordStrength" style="width: 0%"></div>
-                                </div>
-                                <small class="text-muted" id="passwordHint">Use 8+ characters with mix of letters,
-                                    numbers & symbols</small>
-                            </div>
+                            <div class="form-text">Password must be at least 8 characters long</div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-lock text-muted"></i>
-                                </span>
-                                <input type="password" class="form-control border-start-0 ps-0" id="confirmPassword"
-                                    required>
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="confirmPassword" required>
                             </div>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-                                <label class="form-check-label" for="agreeTerms">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
                                     I agree to the <a href="#" class="text-primary">Terms of Service</a> and
                                     <a href="#" class="text-primary">Privacy Policy</a>
                                 </label>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-4" id="registerBtn">
-                            <span class="spinner-border spinner-border-sm me-2 d-none" id="registerSpinner"></span>
-                            Create Account
+                        <button type="submit" class="btn btn-success w-100 mb-3" id="registerBtn">
+                            <span class="btn-text">Create Account</span>
+                            <span class="btn-spinner d-none">
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Creating account...
+                            </span>
                         </button>
 
                         <div class="text-center">
-                            <p class="text-muted">
+                            <p class="text-muted mb-0">
                                 Already have an account?
                                 <a href="/login" class="text-primary text-decoration-none fw-semibold">Sign in</a>
                             </p>
                         </div>
                     </form>
-                </div>
-            </div>
 
-            <!-- Right Side - Benefits Showcase -->
-            <div
-                class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-gradient-to-br from-green-500 to-blue-600">
-                <div class="text-center text-white p-5">
-                    <div class="feature-showcase">
-                        <i class="fas fa-graduation-cap display-1 mb-4 opacity-75"></i>
-                        <h3 class="fw-bold mb-3">Start Learning Today</h3>
-                        <p class="lead mb-4">
-                            Get access to our comprehensive DSA curriculum with personalized learning paths and AI
-                            assistance.
-                        </p>
-                        <div class="benefits-list text-start">
-                            <div class="benefit-item mb-3">
-                                <i class="fas fa-check-circle me-3"></i>
-                                <span>14-week structured roadmap</span>
-                            </div>
-                            <div class="benefit-item mb-3">
-                                <i class="fas fa-check-circle me-3"></i>
-                                <span>AI-powered study assistant</span>
-                            </div>
-                            <div class="benefit-item mb-3">
-                                <i class="fas fa-check-circle me-3"></i>
-                                <span>Progress tracking & analytics</span>
-                            </div>
-                            <div class="benefit-item mb-3">
-                                <i class="fas fa-check-circle me-3"></i>
-                                <span>Interactive visualizations</span>
-                            </div>
-                        </div>
+                    <!-- Error Alert -->
+                    <div id="errorAlert" class="alert alert-danger d-none mt-3" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="errorMessage"></span>
                     </div>
                 </div>
             </div>
@@ -148,151 +132,94 @@
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
 
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-
-        // Password strength checker
-        document.getElementById('password').addEventListener('input', function () {
-            const password = this.value;
-            const strengthBar = document.getElementById('passwordStrength');
-            const hint = document.getElementById('passwordHint');
-
-            let score = 0;
-            let feedback = [];
-
-            // Length check
-            if (password.length >= 8) score += 25;
-            else feedback.push('8+ characters');
-
-            // Uppercase check
-            if (/[A-Z]/.test(password)) score += 25;
-            else feedback.push('uppercase letter');
-
-            // Lowercase check
-            if (/[a-z]/.test(password)) score += 25;
-            else feedback.push('lowercase letter');
-
-            // Number or symbol check
-            if (/[\d\W]/.test(password)) score += 25;
-            else feedback.push('number or symbol');
-
-            // Update progress bar
-            strengthBar.style.width = score + '%';
-
-            if (score < 50) {
-                strengthBar.className = 'progress-bar bg-danger';
-                hint.textContent = 'Weak - Need: ' + feedback.join(', ');
-            } else if (score < 75) {
-                strengthBar.className = 'progress-bar bg-warning';
-                hint.textContent = 'Fair - Need: ' + feedback.join(', ');
-            } else if (score < 100) {
-                strengthBar.className = 'progress-bar bg-info';
-                hint.textContent = 'Good - Need: ' + feedback.join(', ');
-            } else {
-                strengthBar.className = 'progress-bar bg-success';
-                hint.textContent = 'Strong password!';
-            }
-        });
-
-        // Show alert function
-        function showAlert(message, type = 'danger') {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            document.getElementById('alertContainer').innerHTML = alertHtml;
+        // Check if already logged in
+        if (localStorage.getItem('access_token')) {
+            window.location.href = '/dashboard';
         }
 
-        // Form validation and submission
-        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const password = document.getElementById('password');
+            const icon = this.querySelector('i');
+
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
+        // Password confirmation validation
+        document.getElementById('confirmPassword').addEventListener('input', function () {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+
+            if (confirmPassword && password !== confirmPassword) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const registerBtn = document.getElementById('registerBtn');
-            const spinner = document.getElementById('registerSpinner');
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+            const errorAlert = document.getElementById('errorAlert');
 
             // Validate passwords match
             if (password !== confirmPassword) {
-                showAlert('Passwords do not match');
-                return;
-            }
-
-            // Validate password strength
-            if (password.length < 8) {
-                showAlert('Password must be at least 8 characters long');
+                document.getElementById('errorMessage').textContent = 'Passwords do not match';
+                errorAlert.classList.remove('d-none');
                 return;
             }
 
             // Show loading state
             registerBtn.disabled = true;
-            spinner.classList.remove('d-none');
-            registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
+            registerBtn.querySelector('.btn-text').classList.add('d-none');
+            registerBtn.querySelector('.btn-spinner').classList.remove('d-none');
+            errorAlert.classList.add('d-none');
 
             try {
                 const response = await fetch(`${API_BASE}/auth/register`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        password: password
-                    })
+                    body: JSON.stringify({ name, email, password })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
                     // Store tokens
-                    localStorage.setItem('accessToken', data.access_token);
-                    localStorage.setItem('refreshToken', data.refresh_token);
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token);
                     localStorage.setItem('user', JSON.stringify(data.user));
 
-                    showAlert('Account created successfully! Redirecting...', 'success');
-
                     // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 1500);
+                    window.location.href = '/dashboard';
                 } else {
-                    showAlert(data.error || 'Registration failed. Please try again.');
+                    // Show error
+                    document.getElementById('errorMessage').textContent = data.error || 'Registration failed';
+                    errorAlert.classList.remove('d-none');
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                showAlert('Network error. Please check your connection and try again.');
+                document.getElementById('errorMessage').textContent = 'Network error. Please try again.';
+                errorAlert.classList.remove('d-none');
             } finally {
                 // Reset button state
                 registerBtn.disabled = false;
-                spinner.classList.add('d-none');
-                registerBtn.innerHTML = 'Create Account';
-            }
-        });
-
-        // Check if already logged in
-        document.addEventListener('DOMContentLoaded', function () {
-            const token = localStorage.getItem('accessToken');
-            if (token) {
-                window.location.href = '/dashboard';
+                registerBtn.querySelector('.btn-text').classList.remove('d-none');
+                registerBtn.querySelector('.btn-spinner').classList.add('d-none');
             }
         });
     </script>

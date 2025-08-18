@@ -1,3 +1,4 @@
+<!-- pages/dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,394 +13,264 @@
     <link href="../css/components.css" rel="stylesheet">
     <link href="../css/animation.css" rel="stylesheet">
     <link href="../css/responsive.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="dashboard-body">
-    <!-- Include Components -->
+<body class="app-layout">
+    <!-- Sidebar -->
     <div id="sidebarContainer"></div>
-    <div id="topbarContainer"></div>
-    <div id="mobileNavContainer"></div>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container-fluid">
+    <div class="main-content">
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Dashboard Content -->
+        <div class="content-area">
             <!-- Welcome Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="welcome-card">
-                        <div class="row align-items-center">
-                            <div class="col-lg-8">
-                                <h2 class="fw-bold text-dark mb-2">Welcome back, <span
-                                        id="welcomeUserName">Student</span>! 👋</h2>
-                                <p class="text-muted mb-3">Ready to continue your DSA journey? Let's make today count!
-                                </p>
-                                <div class="welcome-actions">
-                                    <a href="/roadmap" class="btn btn-primary rounded-pill me-3">
-                                        <i class="fas fa-play me-2"></i>Continue Learning
-                                    </a>
-                                    <a href="/pomodoro" class="btn btn-outline-primary rounded-pill">
-                                        <i class="fas fa-clock me-2"></i>Start Focus Session
-                                    </a>
-                                </div>
+            <div class="welcome-section">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="display-6 fw-bold mb-2">Welcome back, <span id="welcomeName">User</span>!</h1>
+                        <p class="lead text-muted mb-0">Let's continue your DSA journey today</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <div class="streak-card">
+                            <div class="streak-icon">
+                                <i class="fas fa-fire"></i>
                             </div>
-                            <div class="col-lg-4 text-center">
-                                <div class="welcome-illustration">
-                                    <div class="floating-elements">
-                                        <div class="float-element">📚</div>
-                                        <div class="float-element">💡</div>
-                                        <div class="float-element">🎯</div>
-                                    </div>
-                                </div>
+                            <div class="streak-info">
+                                <div class="streak-number" id="currentStreak">0</div>
+                                <div class="streak-label">Day Streak</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Overview -->
-            <div class="row mb-4">
-                <div class="col-lg-3 col-md-6 mb-3">
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
                     <div class="stat-card">
                         <div class="stat-icon bg-primary">
-                            <i class="fas fa-fire"></i>
+                            <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="currentStreak">0</h3>
-                            <p class="stat-label">Day Streak</p>
-                            <small class="stat-change text-success">
-                                <i class="fas fa-arrow-up me-1"></i>
-                                Keep it up!
-                            </small>
+                            <h3 id="completedDays">0</h3>
+                            <p>Days Completed</p>
+                            <small class="text-muted">Out of 98 total days</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-md-3">
                     <div class="stat-card">
                         <div class="stat-icon bg-success">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="fas fa-percentage"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="completionRate">0%</h3>
-                            <p class="stat-label">Completion Rate</p>
-                            <small class="stat-change text-success">
-                                <i class="fas fa-arrow-up me-1"></i>
-                                <span id="completedDays">0</span>/<span id="totalDays">98</span> days
-                            </small>
+                            <h3 id="completionRate">0%</h3>
+                            <p>Completion Rate</p>
+                            <small class="text-muted">Overall progress</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-icon bg-info">
+                        <div class="stat-icon bg-warning">
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="totalStudyTime">0h</h3>
-                            <p class="stat-label">Total Study Time</p>
-                            <small class="stat-change text-info">
-                                <span id="studyTimeThisWeek">0h</span> this week
-                            </small>
+                            <h3 id="studyTime">0h</h3>
+                            <p>Study Time</p>
+                            <small class="text-muted">This week</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-3">
+                <div class="col-md-3">
                     <div class="stat-card">
-                        <div class="stat-icon bg-warning">
+                        <div class="stat-icon bg-info">
                             <i class="fas fa-trophy"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="longestStreak">0</h3>
-                            <p class="stat-label">Longest Streak</p>
-                            <small class="stat-change text-warning">
-                                Personal best
-                            </small>
+                            <h3 id="longestStreak">0</h3>
+                            <p>Best Streak</p>
+                            <small class="text-muted">Personal record</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <!-- Learning Progress -->
-                <div class="col-lg-8 mb-4">
-                    <div class="card h-100">
+            <!-- Main Dashboard Grid -->
+            <div class="row g-4">
+                <!-- Weekly Progress -->
+                <div class="col-lg-8">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">Learning Progress</h5>
-                                <a href="/roadmap" class="btn btn-sm btn-outline-primary">View Roadmap</a>
-                            </div>
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Weekly Progress
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="progress-overview mb-4">
-                                <div class="progress-circle">
-                                    <svg width="120" height="120">
-                                        <circle cx="60" cy="60" r="54" stroke="#e9ecef" stroke-width="12" fill="none">
-                                        </circle>
-                                        <circle cx="60" cy="60" r="54" stroke="#0d6efd" stroke-width="12" fill="none"
-                                            stroke-dasharray="339.292" stroke-dashoffset="339.292"
-                                            class="progress-circle-fill" id="progressCircle"></circle>
-                                    </svg>
-                                    <div class="progress-text">
-                                        <div class="progress-percentage" id="progressPercentage">0%</div>
-                                        <div class="progress-label">Complete</div>
-                                    </div>
-                                </div>
-                                <div class="progress-details">
-                                    <h6 class="fw-bold mb-3">Current Week: <span id="currentWeekTitle">Getting
-                                            Started</span></h6>
-                                    <div class="progress-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-value" id="weeksCompleted">0</span>
-                                            <span class="stat-label">Weeks Completed</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-value" id="daysCompleted">0</span>
-                                            <span class="stat-label">Days Completed</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-value" id="topicsLearned">0</span>
-                                            <span class="stat-label">Topics Learned</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Weekly Progress -->
-                            <div class="weekly-progress">
-                                <h6 class="fw-semibold mb-3">Weekly Progress</h6>
-                                <div class="row" id="weeklyProgressContainer">
-                                    <!-- Week progress items will be dynamically inserted -->
-                                </div>
+                            <div id="weeklyProgressContainer">
+                                <!-- Weekly progress will be loaded here -->
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Today's Focus & Quick Actions -->
-                <div class="col-lg-4 mb-4">
-                    <div class="card h-100">
+                <!-- Quick Actions -->
+                <div class="col-lg-4">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Today's Focus</h5>
+                            <h5 class="mb-0">
+                                <i class="fas fa-bolt me-2"></i>
+                                Quick Actions
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="today-topic mb-4">
-                                <div class="topic-icon">
-                                    <i class="fas fa-book-open text-primary"></i>
-                                </div>
-                                <h6 class="fw-bold mb-1" id="todayTopicTitle">Arrays and String Manipulation</h6>
-                                <p class="text-muted small mb-3" id="todayTopicDescription">Practice two-pointer
-                                    technique and sliding window problems</p>
-                                <div class="topic-actions">
-                                    <a href="/roadmap" class="btn btn-primary btn-sm rounded-pill">
-                                        <i class="fas fa-play me-1"></i>Start Learning
-                                    </a>
-                                    <a href="/notes" class="btn btn-outline-secondary btn-sm rounded-pill ms-2">
-                                        <i class="fas fa-note-sticky me-1"></i>Notes
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Quick Actions -->
                             <div class="quick-actions">
-                                <h6 class="fw-semibold mb-3">Quick Actions</h6>
-                                <div class="d-grid gap-2">
-                                    <a href="/pomodoro" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-clock me-2"></i>Start 25min Focus
-                                    </a>
-                                    <a href="/notes" class="btn btn-outline-success btn-sm">
-                                        <i class="fas fa-plus me-2"></i>Add Quick Note
-                                    </a>
-                                    <a href="/calendar" class="btn btn-outline-info btn-sm">
-                                        <i class="fas fa-calendar me-2"></i>View Calendar
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Daily Quote -->
-                            <div class="daily-quote mt-4">
-                                <div class="quote-container">
-                                    <i class="fas fa-quote-left text-muted"></i>
-                                    <p class="quote-text" id="dailyQuote">
-                                        "The only way to learn a new programming language is by writing programs in it."
-                                    </p>
-                                    <small class="quote-author text-muted">- Dennis Ritchie</small>
-                                </div>
+                                <button class="quick-action-btn" onclick="startPomodoro()">
+                                    <i class="fas fa-play"></i>
+                                    <span>Start Study Session</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="openNotes()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Add Note</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="viewRoadmap()">
+                                    <i class="fas fa-map"></i>
+                                    <span>View Roadmap</span>
+                                </button>
+                                <button class="quick-action-btn" onclick="openAI()">
+                                    <i class="fas fa-robot"></i>
+                                    <span>Ask AI Assistant</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <!-- Recent Activity -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
+                <!-- Today's Schedule -->
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">Recent Study Sessions</h5>
-                                <a href="/analytics" class="btn btn-sm btn-outline-primary">View All</a>
-                            </div>
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-day me-2"></i>
+                                Today's Schedule
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div id="recentSessions">
-                                <div class="text-center text-muted py-4">
-                                    <i class="fas fa-clock fs-1 mb-3 opacity-50"></i>
-                                    <p>No study sessions yet. Start your first session!</p>
-                                    <a href="/pomodoro" class="btn btn-primary btn-sm">Start Now</a>
-                                </div>
+                            <div id="todaySchedule">
+                                <!-- Today's tasks will be loaded here -->
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Recent Notes -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">Recent Notes</h5>
-                                <a href="/notes" class="btn btn-sm btn-outline-primary">View All</a>
-                            </div>
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                Recent Notes
+                            </h5>
+                            <a href="/notes" class="btn btn-sm btn-outline-primary">View All</a>
                         </div>
                         <div class="card-body">
                             <div id="recentNotes">
-                                <div class="text-center text-muted py-4">
-                                    <i class="fas fa-sticky-note fs-1 mb-3 opacity-50"></i>
-                                    <p>No notes yet. Create your first note!</p>
-                                    <a href="/notes" class="btn btn-primary btn-sm">Add Note</a>
-                                </div>
+                                <!-- Recent notes will be loaded here -->
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motivational Quote -->
+                <div class="col-12">
+                    <div class="quote-card">
+                        <div class="quote-content">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <blockquote class="mb-0" id="dailyQuote">
+                                Loading inspirational quote...
+                            </blockquote>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Achievement Toast -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="achievementToasts"></div>
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <!-- AI Assistant Modal -->
+    <div class="modal fade" id="aiModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-robot me-2"></i>
+                        AI Assistant
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="ai-chat" id="aiChat">
+                        <div class="ai-message">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="ai-content">
+                                Hi! I'm your DSA learning assistant. Ask me anything about data structures, algorithms,
+                                or your study plan!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-input-area">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Ask me anything..." id="aiInput">
+                            <button class="btn btn-primary" type="button" id="aiSendBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let userInfo = null;
+        let dashboardData = null;
 
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', async function () {
-            await loadComponents();
-            await checkAuth();
-            await loadDashboardData();
-            updateActivePage('dashboard');
-            loadTodayQuote();
-        });
-
+        // Load components
         async function loadComponents() {
             try {
-                // Load sidebar
-                const sidebarResponse = await fetch('../components/sidebar.html');
-                const sidebarHtml = await sidebarResponse.text();
-                document.getElementById('sidebarContainer').innerHTML = sidebarHtml;
+                const [sidebarResponse, topbarResponse, mobileNavResponse] = await Promise.all([
+                    fetch('../components/sidebar.html'),
+                    fetch('../components/topbar.html'),
+                    fetch('../components/mobile-nav.html')
+                ]);
 
-                // Load topbar
-                const topbarResponse = await fetch('../components/topbar.html');
-                const topbarHtml = await topbarResponse.text();
-                document.getElementById('topbarContainer').innerHTML = topbarHtml;
-
-                // Load mobile nav
-                const mobileNavResponse = await fetch('../components/mobile-nav.html');
-                const mobileNavHtml = await mobileNavResponse.text();
-                document.getElementById('mobileNavContainer').innerHTML = mobileNavHtml;
+                document.getElementById('sidebarContainer').innerHTML = await sidebarResponse.text();
+                document.getElementById('topbarContainer').innerHTML = await topbarResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = await mobileNavResponse.text();
 
                 // Initialize component functionality
                 initializeComponents();
+                setActiveNavItem('dashboard');
             } catch (error) {
                 console.error('Error loading components:', error);
             }
         }
 
-        function initializeComponents() {
-            // Initialize sidebar toggle
-            const sidebarToggle = document.getElementById('sidebarToggleBtn');
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function () {
-                    document.body.classList.toggle('sidebar-collapsed');
-                });
-            }
-
-            // Initialize global search
-            const globalSearch = document.getElementById('globalSearch');
-            if (globalSearch) {
-                globalSearch.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
-                        window.location.href = `/search?q=${encodeURIComponent(this.value)}`;
-                    }
-                });
-            }
-        }
-
-        async function checkAuth() {
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
-
+        // Load dashboard data
+        async function loadDashboard() {
             try {
-                const response = await fetch(`${API_BASE}/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    userInfo = data.user;
-                    updateUserInfo(data.user);
-                } else {
-                    localStorage.removeItem('accessToken');
-                    window.location.href = '/login';
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login';
-            }
-        }
-
-        function updateUserInfo(user) {
-            // Update all user name displays
-            const userNameElements = [
-                'welcomeUserName', 'sidebarUserName', 'topbarUserName',
-                'dropdownUserName', 'mobileUserName'
-            ];
-            userNameElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = user.name;
-            });
-
-            // Update all user email displays
-            const userEmailElements = [
-                'sidebarUserEmail', 'dropdownUserEmail', 'mobileUserEmail'
-            ];
-            userEmailElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = user.email;
-            });
-
-            // Update all avatar displays
-            const avatarElements = [
-                'sidebarAvatar', 'topbarAvatar', 'mobileUserAvatar'
-            ];
-            const avatarUrl = user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=ffffff`;
-            avatarElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.src = avatarUrl;
-            });
-        }
-
-        async function loadDashboardData() {
-            try {
-                const token = localStorage.getItem('accessToken');
+                const token = localStorage.getItem('access_token');
                 const response = await fetch(`${API_BASE}/dashboard`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -407,227 +278,277 @@
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    updateDashboardStats(data);
-                    updateWeeklyProgress(data.weekly_progress);
-                    updateRecentActivity(data.recent_sessions, data.recent_notes);
+                    dashboardData = await response.json();
+                    updateDashboard(dashboardData);
                 } else {
-                    console.error('Failed to load dashboard data');
+                    throw new Error('Failed to load dashboard');
                 }
             } catch (error) {
-                console.error('Error loading dashboard:', error);
+                console.error('Dashboard error:', error);
+                showError('Failed to load dashboard data');
             }
         }
 
-        function updateDashboardStats(data) {
-            const stats = data.stats;
+        // Update dashboard with data
+        function updateDashboard(data) {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-            // Update main stats
-            document.getElementById('currentStreak').textContent = stats.current_streak;
-            document.getElementById('longestStreak').textContent = stats.longest_streak;
-            document.getElementById('totalStudyTime').textContent = Math.round(stats.total_study_time / 60) + 'h';
-            document.getElementById('completionRate').textContent = Math.round(stats.completion_percentage) + '%';
-            document.getElementById('completedDays').textContent = stats.completed_days;
-            document.getElementById('totalDays').textContent = stats.total_days;
+            // Update welcome name
+            document.getElementById('welcomeName').textContent = user.name || 'User';
 
-            // Update progress circle
-            const progressPercentage = Math.round(stats.completion_percentage);
-            document.getElementById('progressPercentage').textContent = progressPercentage + '%';
+            // Update stats
+            document.getElementById('currentStreak').textContent = data.stats.current_streak;
+            document.getElementById('completedDays').textContent = data.stats.completed_days;
+            document.getElementById('completionRate').textContent = Math.round(data.stats.completion_percentage) + '%';
+            document.getElementById('studyTime').textContent = Math.round(data.stats.study_time_last_7_days / 60) + 'h';
+            document.getElementById('longestStreak').textContent = data.stats.longest_streak;
+            document.getElementById('streakCount').textContent = data.stats.current_streak;
 
-            const circle = document.getElementById('progressCircle');
-            const circumference = 2 * Math.PI * 54;
-            const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
-            circle.style.strokeDashoffset = strokeDashoffset;
+            // Update weekly progress
+            updateWeeklyProgress(data.weekly_progress);
 
-            // Update sidebar and topbar stats
-            document.getElementById('streakCount').textContent = stats.current_streak;
-            document.getElementById('studyTime').textContent = Math.round(stats.study_time_last_7_days / 60) + 'h';
-            document.getElementById('sidebarProgress').textContent = progressPercentage + '%';
-            document.getElementById('sidebarProgressBar').style.width = progressPercentage + '%';
+            // Update today's schedule
+            updateTodaySchedule();
 
-            // Mobile stats
-            document.getElementById('mobileStreak').textContent = stats.current_streak;
-            document.getElementById('mobileProgress').textContent = progressPercentage + '%';
-            document.getElementById('mobileStudyTime').textContent = Math.round(stats.total_study_time / 60) + 'h';
+            // Update recent notes
+            updateRecentNotes(data.recent_notes);
 
-            // Calculate completed weeks and days
-            const weeksCompleted = Object.keys(data.weekly_progress).filter(week => {
-                const weekData = data.weekly_progress[week];
-                return weekData.completed === weekData.total;
-            }).length;
-
-            document.getElementById('weeksCompleted').textContent = weeksCompleted;
-            document.getElementById('daysCompleted').textContent = stats.completed_days;
-            document.getElementById('topicsLearned').textContent = stats.completed_days; // Assuming 1 topic per day
+            // Load daily quote
+            loadDailyQuote();
         }
 
+        // Update weekly progress
         function updateWeeklyProgress(weeklyProgress) {
             const container = document.getElementById('weeklyProgressContainer');
             container.innerHTML = '';
 
-            Object.keys(weeklyProgress).slice(0, 4).forEach(weekNum => {
-                const week = weeklyProgress[weekNum];
-                const percentage = Math.round(week.percentage);
+            for (let week = 1; week <= 14; week++) {
+                const progress = weeklyProgress[week] || { completed: 0, total: 7, percentage: 0 };
 
                 const weekElement = document.createElement('div');
-                weekElement.className = 'col-6 mb-3';
+                weekElement.className = 'week-progress-item';
                 weekElement.innerHTML = `
-                    <div class="week-progress-item">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-semibold">Week ${weekNum}</span>
-                            <span class="text-muted small">${week.completed}/${week.total}</span>
+                    <div class="week-label">Week ${week}</div>
+                    <div class="progress-bar-container">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${progress.percentage}%"></div>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-gradient" style="width: ${percentage}%"></div>
-                        </div>
-                        <small class="text-muted">${week.title}</small>
+                        <small class="text-muted">${progress.completed}/${progress.total}</small>
                     </div>
                 `;
+
                 container.appendChild(weekElement);
-            });
+            }
         }
 
-        function updateRecentActivity(sessions, notes) {
-            // Update recent sessions
-            const sessionsContainer = document.getElementById('recentSessions');
-            if (sessions && sessions.length > 0) {
-                sessionsContainer.innerHTML = sessions.slice(0, 5).map(session => `
-                    <div class="activity-item">
-                        <div class="activity-icon ${session.completed ? 'bg-success' : 'bg-warning'}">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h6 class="mb-1">${session.topic || 'Study Session'}</h6>
-                            <p class="mb-1 text-muted small">${session.duration} minutes</p>
-                            <small class="text-muted">${new Date(session.start_time).toLocaleDateString()}</small>
-                        </div>
-                        <div class="activity-status">
-                            <span class="badge ${session.completed ? 'bg-success' : 'bg-warning'}">
-                                ${session.completed ? 'Completed' : 'In Progress'}
-                            </span>
-                        </div>
-                    </div>
-                `).join('');
-            }
+        // Update today's schedule
+        function updateTodaySchedule() {
+            const container = document.getElementById('todaySchedule');
+            const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
-            // Update recent notes
-            const notesContainer = document.getElementById('recentNotes');
+            // Get current week based on progress
+            const currentWeek = getCurrentWeek();
+
+            if (currentWeek) {
+                const todayTask = currentWeek.days.find(day => day.day === today);
+
+                if (todayTask) {
+                    container.innerHTML = `
+                        <div class="today-task">
+                            <div class="task-header">
+                                <h6 class="mb-1">${todayTask.topic}</h6>
+                                <span class="badge bg-primary">${todayTask.time_estimate} min</span>
+                            </div>
+                            <p class="text-muted mb-2">${todayTask.activities}</p>
+                            <div class="task-actions">
+                                <button class="btn btn-sm btn-success" onclick="markCompleted(${currentWeek.week}, '${today}')">
+                                    Mark Complete
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewResources(${currentWeek.week}, '${today}')">
+                                    View Resources
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<p class="text-muted">No tasks scheduled for today</p>';
+                }
+            } else {
+                container.innerHTML = '<p class="text-muted">Complete previous weeks to unlock new tasks</p>';
+            }
+        }
+
+        // Update recent notes
+        function updateRecentNotes(notes) {
+            const container = document.getElementById('recentNotes');
+
             if (notes && notes.length > 0) {
-                notesContainer.innerHTML = notes.slice(0, 5).map(note => `
-                    <div class="activity-item">
-                        <div class="activity-icon bg-primary">
-                            <i class="fas fa-sticky-note"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h6 class="mb-1">${note.title}</h6>
-                            <small class="text-muted">${new Date(note.updated_at).toLocaleDateString()}</small>
-                        </div>
-                        <div class="activity-action">
-                            <a href="/notes" class="btn btn-sm btn-outline-primary">View</a>
-                        </div>
+                container.innerHTML = notes.map(note => `
+                    <div class="note-item">
+                        <h6 class="mb-1">${note.title}</h6>
+                        <small class="text-muted">${formatDate(note.updated_at)}</small>
                     </div>
                 `).join('');
+            } else {
+                container.innerHTML = '<p class="text-muted">No notes yet</p>';
             }
         }
 
-        function loadTodayQuote() {
+        // Load daily quote
+        async function loadDailyQuote() {
             const quotes = [
-                { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
-                { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
-                { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
-                { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
-                { text: "In order to understand recursion, one must first understand recursion.", author: "Anonymous" },
-                { text: "The best error message is the one that never shows up.", author: "Thomas Fuchs" },
-                { text: "Programming isn't about what you know; it's about what you can figure out.", author: "Chris Pine" }
+                "The only way to learn a new programming language is by writing programs in it. - Dennis Ritchie",
+                "Code is like humor. When you have to explain it, it's bad. - Cory House",
+                "First, solve the problem. Then, write the code. - John Johnson",
+                "Experience is the name everyone gives to their mistakes. - Oscar Wilde",
+                "The best error message is the one that never shows up. - Thomas Fuchs",
+                "Simplicity is the ultimate sophistication. - Leonardo da Vinci",
+                "Make it work, make it right, make it fast. - Kent Beck"
             ];
 
-            // Use date as seed for deterministic quote selection
-            const today = new Date().toDateString();
-            const quoteIndex = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % quotes.length;
-            const todayQuote = quotes[quoteIndex];
-
-            document.getElementById('dailyQuote').textContent = `"${todayQuote.text}"`;
-            document.querySelector('.quote-author').textContent = `- ${todayQuote.author}`;
+            const today = new Date().getDate();
+            const quote = quotes[today % quotes.length];
+            document.getElementById('dailyQuote').textContent = quote;
         }
 
-        function updateActivePage(page) {
-            // Update sidebar active state
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.page === page) {
-                    link.classList.add('active');
-                }
-            });
+        // Quick action functions
+        function startPomodoro() {
+            window.location.href = '/pomodoro';
+        }
 
-            // Update mobile nav active state
-            document.querySelectorAll('.mobile-nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.page === page) {
-                    item.classList.add('active');
-                }
-            });
+        function openNotes() {
+            window.location.href = '/notes';
+        }
 
-            // Update page title
-            const pageTitle = document.getElementById('pageTitle');
-            if (pageTitle) {
-                pageTitle.textContent = page.charAt(0).toUpperCase() + page.slice(1);
+        function viewRoadmap() {
+            window.location.href = '/roadmap';
+        }
+
+        function openAI() {
+            const modal = new bootstrap.Modal(document.getElementById('aiModal'));
+            modal.show();
+        }
+
+        // AI Chat functionality
+        document.getElementById('aiSendBtn').addEventListener('click', sendAIMessage);
+        document.getElementById('aiInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendAIMessage();
             }
-        }
+        });
 
-        // Global functions
-        window.logout = function () {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        };
+        async function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const question = input.value.trim();
 
-        window.toggleTheme = function () {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        };
+            if (!question) return;
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-theme');
-        }
+            const chat = document.getElementById('aiChat');
 
-        // Achievement notifications
-        function showAchievement(title, message) {
-            const toastHtml = `
-                <div class="toast achievement-toast" role="alert">
-                    <div class="toast-header bg-warning text-dark">
-                        <i class="fas fa-trophy me-2"></i>
-                        <strong class="me-auto">${title}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-                    </div>
-                    <div class="toast-body">
-                        ${message}
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'user-message';
+            userMessage.innerHTML = `
+                <div class="user-content">${question}</div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            `;
+            chat.appendChild(userMessage);
+
+            input.value = '';
+
+            // Add loading message
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'ai-message';
+            loadingMessage.innerHTML = `
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ai-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </div>
                 </div>
             `;
+            chat.appendChild(loadingMessage);
 
-            document.getElementById('achievementToasts').insertAdjacentHTML('beforeend', toastHtml);
-            const toastEl = document.querySelector('.achievement-toast:last-child');
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/ai/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ question })
+                });
 
-            // Confetti animation
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+                const data = await response.json();
+
+                // Remove loading message
+                chat.removeChild(loadingMessage);
+
+                // Add AI response
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'ai-message';
+                aiMessage.innerHTML = `
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="ai-content">${data.answer || data.error}</div>
+                `;
+                chat.appendChild(aiMessage);
+
+            } catch (error) {
+                chat.removeChild(loadingMessage);
+
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'ai-message';
+                errorMessage.innerHTML = `
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="ai-content">Sorry, I'm having trouble connecting. Please try again later.</div>
+                `;
+                chat.appendChild(errorMessage);
+            }
+
+            chat.scrollTop = chat.scrollHeight;
         }
 
-        // Check for achievements periodically
-        setTimeout(() => {
-            if (userInfo && Math.random() > 0.7) { // 30% chance for demo
-                showAchievement('🔥 Streak Master!', 'You\'ve maintained a 7-day learning streak!');
+        // Helper functions
+        function getCurrentWeek() {
+            if (!dashboardData) return null;
+
+            // Find the current week based on progress
+            for (let week = 1; week <= 14; week++) {
+                const weekProgress = dashboardData.weekly_progress[week];
+                if (weekProgress && weekProgress.completed < weekProgress.total) {
+                    return { week: week, ...weekProgress };
+                }
             }
-        }, 3000);
+
+            return null;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        function showError(message) {
+            // You can implement a toast notification here
+            console.error(message);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            await loadComponents();
+            await loadDashboard();
+        });
     </script>
 </body>
 

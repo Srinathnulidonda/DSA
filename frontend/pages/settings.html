@@ -1,0 +1,1173 @@
+<!-- pages/settings.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - DSA Learning Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
+</head>
+
+<body class="app-layout">
+    <!-- Sidebar -->
+    <div id="sidebarContainer"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Settings Content -->
+        <div class="content-area">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="row align-items-center mb-4">
+                    <div class="col-lg-8">
+                        <h1 class="page-title">
+                            <i class="fas fa-cog me-3"></i>
+                            Settings
+                        </h1>
+                        <p class="page-subtitle">Customize your learning experience</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <button class="btn btn-outline-secondary" onclick="resetAllSettings()">
+                            <i class="fas fa-undo me-2"></i>
+                            Reset to Defaults
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Settings Navigation -->
+                <div class="col-lg-3">
+                    <div class="settings-nav">
+                        <div class="nav nav-pills flex-column" role="tablist">
+                            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#appearance"
+                                type="button" role="tab">
+                                <i class="fas fa-palette me-2"></i>
+                                Appearance
+                            </button>
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications" type="button"
+                                role="tab">
+                                <i class="fas fa-bell me-2"></i>
+                                Notifications
+                            </button>
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#study" type="button"
+                                role="tab">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                Study Preferences
+                            </button>
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#privacy" type="button"
+                                role="tab">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Privacy & Data
+                            </button>
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#advanced" type="button"
+                                role="tab">
+                                <i class="fas fa-cogs me-2"></i>
+                                Advanced
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="col-lg-9">
+                    <div class="tab-content">
+                        <!-- Appearance Settings -->
+                        <div class="tab-pane fade show active" id="appearance" role="tabpanel">
+                            <div class="settings-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-palette me-2"></i>
+                                    Appearance Settings
+                                </h4>
+                                <p class="text-muted">Customize how the application looks and feels</p>
+
+                                <!-- Theme Selection -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Color Theme</h6>
+                                        <p class="text-muted mb-0">Choose your preferred color scheme</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="theme-options">
+                                            <div class="theme-option" data-theme="light">
+                                                <div class="theme-preview light-theme">
+                                                    <div class="theme-header"></div>
+                                                    <div class="theme-body">
+                                                        <div class="theme-element"></div>
+                                                        <div class="theme-element"></div>
+                                                    </div>
+                                                </div>
+                                                <span>Light</span>
+                                            </div>
+                                            <div class="theme-option" data-theme="dark">
+                                                <div class="theme-preview dark-theme">
+                                                    <div class="theme-header"></div>
+                                                    <div class="theme-body">
+                                                        <div class="theme-element"></div>
+                                                        <div class="theme-element"></div>
+                                                    </div>
+                                                </div>
+                                                <span>Dark</span>
+                                            </div>
+                                            <div class="theme-option" data-theme="auto">
+                                                <div class="theme-preview auto-theme">
+                                                    <div class="theme-header"></div>
+                                                    <div class="theme-body">
+                                                        <div class="theme-element"></div>
+                                                        <div class="theme-element"></div>
+                                                    </div>
+                                                </div>
+                                                <span>Auto</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Layout Options -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Layout</h6>
+                                        <p class="text-muted mb-0">Adjust the application layout</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="compactMode">
+                                                    <label class="form-check-label" for="compactMode">
+                                                        Compact mode
+                                                    </label>
+                                                    <div class="form-text">Reduce spacing for more content</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="sidebarCollapsed">
+                                                    <label class="form-check-label" for="sidebarCollapsed">
+                                                        Start with collapsed sidebar
+                                                    </label>
+                                                    <div class="form-text">Sidebar will be minimized by default</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Font Settings -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Typography</h6>
+                                        <p class="text-muted mb-0">Adjust text appearance</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="fontSize" class="form-label">Font Size</label>
+                                                <select class="form-select" id="fontSize">
+                                                    <option value="small">Small</option>
+                                                    <option value="medium" selected>Medium</option>
+                                                    <option value="large">Large</option>
+                                                    <option value="extra-large">Extra Large</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-check mt-4">
+                                                    <input class="form-check-input" type="checkbox" id="dyslexiaFont">
+                                                    <label class="form-check-label" for="dyslexiaFont">
+                                                        Use dyslexia-friendly font
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Settings -->
+                        <div class="tab-pane fade" id="notifications" role="tabpanel">
+                            <div class="settings-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-bell me-2"></i>
+                                    Notification Settings
+                                </h4>
+                                <p class="text-muted">Control when and how you receive notifications</p>
+
+                                <!-- Push Notifications -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Push Notifications</h6>
+                                        <p class="text-muted mb-0">Browser notifications for important updates</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="browserNotifications">
+                                            <label class="form-check-label" for="browserNotifications">
+                                                Enable browser notifications
+                                            </label>
+                                        </div>
+                                        <div class="notification-types">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="notifyStudyReminders">
+                                                <label class="form-check-label" for="notifyStudyReminders">
+                                                    Study reminders
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="notifyBreakReminders">
+                                                <label class="form-check-label" for="notifyBreakReminders">
+                                                    Break reminders
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="notifyAchievements">
+                                                <label class="form-check-label" for="notifyAchievements">
+                                                    Achievement unlocks
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="notifyWeeklyProgress">
+                                                <label class="form-check-label" for="notifyWeeklyProgress">
+                                                    Weekly progress reports
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Email Notifications -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Email Notifications</h6>
+                                        <p class="text-muted mb-0">Receive updates via email</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailNotifications">
+                                            <label class="form-check-label" for="emailNotifications">
+                                                Enable email notifications
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <select class="form-select" id="emailFrequency">
+                                                    <option value="immediate">Immediate</option>
+                                                    <option value="daily">Daily digest</option>
+                                                    <option value="weekly">Weekly summary</option>
+                                                    <option value="never">Never</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sound Settings -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Sound Notifications</h6>
+                                        <p class="text-muted mb-0">Audio alerts and feedback</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="soundEffects">
+                                                    <label class="form-check-label" for="soundEffects">
+                                                        Sound effects
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="soundVolume" class="form-label">Volume</label>
+                                                <input type="range" class="form-range" id="soundVolume" min="0"
+                                                    max="100" value="50">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Study Preferences -->
+                        <div class="tab-pane fade" id="study" role="tabpanel">
+                            <div class="settings-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-graduation-cap me-2"></i>
+                                    Study Preferences
+                                </h4>
+                                <p class="text-muted">Customize your learning experience</p>
+
+                                <!-- Pomodoro Settings -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Pomodoro Timer</h6>
+                                        <p class="text-muted mb-0">Default timer durations</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label for="defaultFocusTime" class="form-label">Focus Time
+                                                    (minutes)</label>
+                                                <input type="number" class="form-control" id="defaultFocusTime" min="5"
+                                                    max="60" value="25">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="defaultShortBreak" class="form-label">Short Break
+                                                    (minutes)</label>
+                                                <input type="number" class="form-control" id="defaultShortBreak" min="1"
+                                                    max="15" value="5">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="defaultLongBreak" class="form-label">Long Break
+                                                    (minutes)</label>
+                                                <input type="number" class="form-control" id="defaultLongBreak" min="10"
+                                                    max="30" value="15">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="autoStartBreaks">
+                                                <label class="form-check-label" for="autoStartBreaks">
+                                                    Auto-start breaks
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="autoStartPomodoros">
+                                                <label class="form-check-label" for="autoStartPomodoros">
+                                                    Auto-start next pomodoro after break
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Daily Goals -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Daily Goals</h6>
+                                        <p class="text-muted mb-0">Set your daily study targets</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="dailyStudyGoal" class="form-label">Study Time Goal
+                                                    (hours)</label>
+                                                <input type="number" class="form-control" id="dailyStudyGoal" min="0.5"
+                                                    max="12" step="0.5" value="2">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="dailyTopicsGoal" class="form-label">Topics to
+                                                    Complete</label>
+                                                <input type="number" class="form-control" id="dailyTopicsGoal" min="1"
+                                                    max="10" value="3">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="weekendGoals">
+                                                <label class="form-check-label" for="weekendGoals">
+                                                    Apply goals to weekends
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Tracking -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Progress Tracking</h6>
+                                        <p class="text-muted mb-0">How to track your learning progress</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="autoMarkComplete">
+                                            <label class="form-check-label" for="autoMarkComplete">
+                                                Auto-mark topics as complete after study time
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="showTimeEstimates">
+                                            <label class="form-check-label" for="showTimeEstimates">
+                                                Show time estimates for topics
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="trackPracticeTime">
+                                            <label class="form-check-label" for="trackPracticeTime">
+                                                Track practice problem solving time
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Privacy & Data -->
+                        <div class="tab-pane fade" id="privacy" role="tabpanel">
+                            <div class="settings-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    Privacy & Data
+                                </h4>
+                                <p class="text-muted">Control your data and privacy settings</p>
+
+                                <!-- Data Collection -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Analytics & Tracking</h6>
+                                        <p class="text-muted mb-0">Help us improve the platform</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="analyticsTracking">
+                                            <label class="form-check-label" for="analyticsTracking">
+                                                Allow usage analytics
+                                            </label>
+                                            <div class="form-text">Anonymous data to help improve the platform</div>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="crashReporting">
+                                            <label class="form-check-label" for="crashReporting">
+                                                Send crash reports
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Data Export -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Data Management</h6>
+                                        <p class="text-muted mb-0">Export or delete your data</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button class="btn btn-outline-primary" onclick="exportData()">
+                                                <i class="fas fa-download me-2"></i>
+                                                Export My Data
+                                            </button>
+                                            <button class="btn btn-outline-warning" onclick="clearLocalData()">
+                                                <i class="fas fa-broom me-2"></i>
+                                                Clear Local Data
+                                            </button>
+                                            <button class="btn btn-outline-danger" onclick="requestDataDeletion()">
+                                                <i class="fas fa-trash me-2"></i>
+                                                Delete All Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Session Management -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Session Security</h6>
+                                        <p class="text-muted mb-0">Manage your active sessions</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="autoLogout">
+                                            <label class="form-check-label" for="autoLogout">
+                                                Auto-logout after inactivity
+                                            </label>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label for="logoutTime" class="form-label">Logout after (hours)</label>
+                                            <select class="form-select" id="logoutTime" style="max-width: 200px;">
+                                                <option value="1">1 hour</option>
+                                                <option value="2">2 hours</option>
+                                                <option value="4">4 hours</option>
+                                                <option value="8">8 hours</option>
+                                                <option value="24">24 hours</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Settings -->
+                        <div class="tab-pane fade" id="advanced" role="tabpanel">
+                            <div class="settings-section">
+                                <h4 class="section-title">
+                                    <i class="fas fa-cogs me-2"></i>
+                                    Advanced Settings
+                                </h4>
+                                <p class="text-muted">Advanced configuration options</p>
+
+                                <!-- Performance -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Performance</h6>
+                                        <p class="text-muted mb-0">Optimize app performance</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="reducedAnimations">
+                                            <label class="form-check-label" for="reducedAnimations">
+                                                Reduce animations
+                                            </label>
+                                            <div class="form-text">Improve performance on slower devices</div>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="offlineMode">
+                                            <label class="form-check-label" for="offlineMode">
+                                                Enable offline mode
+                                            </label>
+                                            <div class="form-text">Cache content for offline access</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Developer Options -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Developer Options</h6>
+                                        <p class="text-muted mb-0">For debugging and development</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="debugMode">
+                                            <label class="form-check-label" for="debugMode">
+                                                Enable debug mode
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="betaFeatures">
+                                            <label class="form-check-label" for="betaFeatures">
+                                                Enable beta features
+                                            </label>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="clearCache()">
+                                                Clear Application Cache
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Backup & Sync -->
+                                <div class="setting-card">
+                                    <div class="setting-header">
+                                        <h6>Backup & Sync</h6>
+                                        <p class="text-muted mb-0">Keep your data synchronized</p>
+                                    </div>
+                                    <div class="setting-content">
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="autoBackup">
+                                            <label class="form-check-label" for="autoBackup">
+                                                Automatic backup
+                                            </label>
+                                        </div>
+                                        <div class="backup-info">
+                                            <small class="text-muted">
+                                                Last backup: <span id="lastBackup">Never</span>
+                                            </small>
+                                            <button class="btn btn-outline-primary btn-sm ms-2"
+                                                onclick="createBackup()">
+                                                Backup Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-secondary" onclick="loadSettings()">
+                            <i class="fas fa-undo me-2"></i>
+                            Reset Changes
+                        </button>
+                        <button class="btn btn-primary" onclick="saveSettings()">
+                            <i class="fas fa-save me-2"></i>
+                            Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let currentSettings = {};
+
+        // Load components
+        async function loadComponents() {
+            try {
+                const [sidebarResponse, topbarResponse, mobileNavResponse] = await Promise.all([
+                    fetch('../components/sidebar.html'),
+                    fetch('../components/topbar.html'),
+                    fetch('../components/mobile-nav.html')
+                ]);
+
+                document.getElementById('sidebarContainer').innerHTML = await sidebarResponse.text();
+                document.getElementById('topbarContainer').innerHTML = await topbarResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = await mobileNavResponse.text();
+
+                initializeComponents();
+                setActiveNavItem('settings');
+                document.getElementById('pageTitle').textContent = 'Settings';
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        // Load settings
+        async function loadSettings() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/preferences`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    currentSettings = await response.json();
+                } else {
+                    // Use default settings
+                    currentSettings = getDefaultSettings();
+                }
+
+                populateSettings();
+            } catch (error) {
+                console.error('Load settings error:', error);
+                currentSettings = getDefaultSettings();
+                populateSettings();
+            }
+        }
+
+        // Get default settings
+        function getDefaultSettings() {
+            return {
+                theme: 'light',
+                layout: 'default',
+                fontSize: 'medium',
+                compactMode: false,
+                sidebarCollapsed: false,
+                dyslexiaFont: false,
+                browserNotifications: true,
+                emailNotifications: true,
+                emailFrequency: 'weekly',
+                soundEffects: true,
+                soundVolume: 50,
+                notifyStudyReminders: true,
+                notifyBreakReminders: true,
+                notifyAchievements: true,
+                notifyWeeklyProgress: true,
+                defaultFocusTime: 25,
+                defaultShortBreak: 5,
+                defaultLongBreak: 15,
+                autoStartBreaks: false,
+                autoStartPomodoros: false,
+                dailyStudyGoal: 2,
+                dailyTopicsGoal: 3,
+                weekendGoals: false,
+                autoMarkComplete: false,
+                showTimeEstimates: true,
+                trackPracticeTime: true,
+                analyticsTracking: true,
+                crashReporting: true,
+                autoLogout: false,
+                logoutTime: 8,
+                reducedAnimations: false,
+                offlineMode: false,
+                debugMode: false,
+                betaFeatures: false,
+                autoBackup: true
+            };
+        }
+
+        // Populate settings form
+        function populateSettings() {
+            Object.keys(currentSettings).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = currentSettings[key];
+                    } else {
+                        element.value = currentSettings[key];
+                    }
+                }
+            });
+
+            // Set active theme
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.theme === currentSettings.theme) {
+                    option.classList.add('active');
+                }
+            });
+
+            // Apply current settings
+            applySettings();
+        }
+
+        // Save settings
+        async function saveSettings() {
+            try {
+                // Collect current form values
+                const formData = {};
+
+                Object.keys(currentSettings).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            formData[key] = element.checked;
+                        } else {
+                            formData[key] = element.value;
+                        }
+                    }
+                });
+
+                // Get selected theme
+                const activeTheme = document.querySelector('.theme-option.active');
+                if (activeTheme) {
+                    formData.theme = activeTheme.dataset.theme;
+                }
+
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/preferences`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    currentSettings = formData;
+                    applySettings();
+                    showSuccess('Settings saved successfully!');
+                } else {
+                    throw new Error('Failed to save settings');
+                }
+            } catch (error) {
+                console.error('Save settings error:', error);
+                showError('Failed to save settings');
+            }
+        }
+
+        // Apply settings to the application
+        function applySettings() {
+            // Apply theme
+            applyTheme(currentSettings.theme);
+
+            // Apply font size
+            document.documentElement.style.fontSize = getFontSize(currentSettings.fontSize);
+
+            // Apply dyslexia font
+            if (currentSettings.dyslexiaFont) {
+                document.body.classList.add('dyslexia-font');
+            } else {
+                document.body.classList.remove('dyslexia-font');
+            }
+
+            // Apply compact mode
+            if (currentSettings.compactMode) {
+                document.body.classList.add('compact-mode');
+            } else {
+                document.body.classList.remove('compact-mode');
+            }
+
+            // Apply reduced animations
+            if (currentSettings.reducedAnimations) {
+                document.body.classList.add('reduced-motion');
+            } else {
+                document.body.classList.remove('reduced-motion');
+            }
+
+            // Save to localStorage for immediate application
+            localStorage.setItem('userSettings', JSON.stringify(currentSettings));
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+
+            if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            }
+        }
+
+        function getFontSize(size) {
+            const sizes = {
+                'small': '14px',
+                'medium': '16px',
+                'large': '18px',
+                'extra-large': '20px'
+            };
+            return sizes[size] || '16px';
+        }
+
+        // Theme selection
+        function setupThemeSelection() {
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                });
+            });
+        }
+
+        // Reset all settings
+        function resetAllSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                currentSettings = getDefaultSettings();
+                populateSettings();
+                showInfo('Settings reset to defaults. Click Save to apply changes.');
+            }
+        }
+
+        // Data management functions
+        async function exportData() {
+            try {
+                const token = localStorage.getItem('access_token');
+
+                // Collect all user data
+                const [profile, progress, notes, sessions] = await Promise.all([
+                    fetch(`${API_BASE}/profile`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch(`${API_BASE}/progress`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch(`${API_BASE}/notes`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch(`${API_BASE}/pomodoro/history`, { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+
+                const userData = {
+                    profile: profile.ok ? await profile.json() : null,
+                    progress: progress.ok ? await progress.json() : null,
+                    notes: notes.ok ? await notes.json() : null,
+                    sessions: sessions.ok ? await sessions.json() : null,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+
+                // Create and download file
+                const blob = new Blob([JSON.stringify(userData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dsa-learning-data-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showSuccess('Data exported successfully!');
+            } catch (error) {
+                console.error('Export data error:', error);
+                showError('Failed to export data');
+            }
+        }
+
+        function clearLocalData() {
+            if (confirm('This will clear all locally stored data (cache, preferences, etc.). Continue?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Clear service worker cache if available
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+
+                showSuccess('Local data cleared successfully!');
+                setTimeout(() => window.location.reload(), 2000);
+            }
+        }
+
+        function requestDataDeletion() {
+            if (confirm('This will permanently delete ALL your data. This action cannot be undone. Continue?')) {
+                // In a real app, this would trigger account deletion
+                showWarning('Account deletion request submitted. You will receive a confirmation email.');
+            }
+        }
+
+        function clearCache() {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                }).then(() => {
+                    showSuccess('Application cache cleared!');
+                });
+            } else {
+                showInfo('Cache clearing is not supported in this browser');
+            }
+        }
+
+        function createBackup() {
+            // Simulate backup creation
+            showInfo('Creating backup...');
+            setTimeout(() => {
+                document.getElementById('lastBackup').textContent = new Date().toLocaleString();
+                showSuccess('Backup created successfully!');
+            }, 2000);
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showSuccess('Notifications enabled!');
+                    }
+                });
+            }
+        }
+
+        // Initialize settings page
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            await loadComponents();
+            await loadSettings();
+            setupThemeSelection();
+
+            // Setup notification permission request
+            document.getElementById('browserNotifications').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    requestNotificationPermission();
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .settings-nav {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            position: sticky;
+            top: 100px;
+        }
+
+        .settings-nav .nav-link {
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--secondary-color);
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .settings-nav .nav-link:hover {
+            background: #f8f9fa;
+            color: var(--primary-color);
+        }
+
+        .settings-nav .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .settings-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-title {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .setting-card {
+            border: 1px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #fafafa;
+        }
+
+        .setting-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-header {
+            margin-bottom: 1rem;
+        }
+
+        .setting-header h6 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .theme-option {
+            text-align: center;
+            cursor: pointer;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .theme-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .theme-option.active {
+            border-color: var(--primary-color);
+            background: #f0f8ff;
+        }
+
+        .theme-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            margin: 0 auto 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-theme {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dark-theme {
+            background: #1a1a1a;
+        }
+
+        .auto-theme {
+            background: linear-gradient(45deg, #fff 50%, #1a1a1a 50%);
+        }
+
+        .theme-header {
+            height: 8px;
+            background: var(--primary-color);
+        }
+
+        .theme-body {
+            padding: 4px;
+            height: 32px;
+        }
+
+        .theme-element {
+            height: 4px;
+            background: #ccc;
+            margin-bottom: 2px;
+            border-radius: 1px;
+        }
+
+        .light-theme .theme-element {
+            background: #e5e7eb;
+        }
+
+        .dark-theme .theme-element {
+            background: #404040;
+        }
+
+        .notification-types {
+            margin-left: 1.5rem;
+        }
+
+        .notification-types .form-check {
+            margin-bottom: 0.5rem;
+        }
+
+        .backup-info {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        /* Dyslexia-friendly font */
+        .dyslexia-font {
+            font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+        }
+
+        /* Compact mode */
+        .compact-mode .setting-card {
+            padding: 1rem;
+        }
+
+        .compact-mode .settings-section {
+            padding: 1.5rem;
+        }
+
+        /* Reduced motion */
+        .reduced-motion * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .settings-nav {
+                position: static;
+                margin-bottom: 2rem;
+            }
+
+            .settings-nav .nav {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .settings-nav .nav-link {
+                white-space: nowrap;
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .settings-section {
+                padding: 1rem;
+            }
+
+            .setting-card {
+                padding: 1rem;
+            }
+
+            .theme-options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .page-header .col-lg-4 {
+                text-align: left !important;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

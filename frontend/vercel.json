@@ -5,6 +5,22 @@
             "destination": "/index.html"
         },
         {
+            "source": "/login",
+            "destination": "/auth/login.html"
+        },
+        {
+            "source": "/register",
+            "destination": "/auth/register.html"
+        },
+        {
+            "source": "/forgot-password",
+            "destination": "/auth/forgot-password.html"
+        },
+        {
+            "source": "/reset-password",
+            "destination": "/auth/reset-password.html"
+        },
+        {
             "source": "/dashboard",
             "destination": "/pages/dashboard.html"
         },
@@ -39,22 +55,6 @@
         {
             "source": "/analytics",
             "destination": "/pages/analytics.html"
-        },
-        {
-            "source": "/login",
-            "destination": "/auth/login.html"
-        },
-        {
-            "source": "/register",
-            "destination": "/auth/register.html"
-        },
-        {
-            "source": "/forgot-password",
-            "destination": "/auth/forgot-password.html"
-        },
-        {
-            "source": "/reset-password",
-            "destination": "/auth/reset-password.html"
         }
     ],
     "headers": [

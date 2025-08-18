@@ -1,111 +1,56 @@
-<!-- Desktop Topbar -->
-<header class="topbar d-none d-lg-block" id="topbar">
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="topbar-left">
-                <button class="btn btn-link sidebar-toggle me-3" id="sidebarToggleBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h4 class="mb-0 fw-bold page-title" id="pageTitle">Dashboard</h4>
-            </div>
+<!-- components/topbar.html -->
+<div class="topbar">
+    <div class="topbar-left">
+        <button class="btn btn-link text-dark d-lg-none" id="toggleSidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h5 class="mb-0 ms-2" id="pageTitle">Dashboard</h5>
+    </div>
 
-            <div class="topbar-center">
-                <div class="search-box">
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent border-end-0">
-                            <i class="fas fa-search text-muted"></i>
-                        </span>
-                        <input type="text" class="form-control border-start-0" placeholder="Search resources, notes..."
-                            id="globalSearch">
-                    </div>
-                </div>
-            </div>
+    <div class="topbar-center">
+        <div class="search-box">
+            <input type="text" class="form-control" placeholder="Search topics, notes..." id="globalSearch">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
 
-            <div class="topbar-right">
-                <div class="d-flex align-items-center">
-                    <!-- Quick Stats -->
-                    <div class="quick-stats me-4">
-                        <div class="d-flex gap-4">
-                            <div class="stat-item">
-                                <i class="fas fa-fire text-warning me-1"></i>
-                                <span class="fw-semibold" id="streakCount">0</span>
-                                <small class="text-muted">streak</small>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fas fa-clock text-info me-1"></i>
-                                <span class="fw-semibold" id="studyTime">0h</span>
-                                <small class="text-muted">today</small>
-                            </div>
-                        </div>
-                    </div>
+    <div class="topbar-right">
+        <div class="streak-display">
+            <i class="fas fa-fire text-warning"></i>
+            <span id="streakCount">0</span>
+        </div>
 
-                    <!-- Notifications -->
-                    <div class="dropdown me-3">
-                        <button class="btn btn-link position-relative p-2" data-bs-toggle="dropdown">
-                            <i class="fas fa-bell fs-5 text-muted"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                id="notificationBadge" style="display: none;">
-                                0
-                            </span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
-                            <li class="dropdown-header">
-                                <div class="d-flex justify-content-between">
-                                    <span>Notifications</span>
-                                    <button class="btn btn-sm btn-link p-0 text-primary"
-                                        onclick="markAllNotificationsRead()">
-                                        Mark all read
-                                    </button>
-                                </div>
-                            </li>
-                            <div id="notificationList">
-                                <li class="dropdown-item text-center text-muted py-3">
-                                    No new notifications
-                                </li>
-                            </div>
-                            <li class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-center" href="#" onclick="viewAllNotifications()">
-                                    View All Notifications
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- User Dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-link d-flex align-items-center p-0" data-bs-toggle="dropdown">
-                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=ffffff" alt="Avatar"
-                                class="avatar-img me-2" id="topbarAvatar">
-                            <span class="fw-semibold" id="topbarUserName">User</span>
-                            <i class="fas fa-chevron-down ms-2 text-muted"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end user-dropdown">
-                            <li class="dropdown-header">
-                                <div class="user-info">
-                                    <div class="fw-semibold" id="dropdownUserName">User Name</div>
-                                    <small class="text-muted" id="dropdownUserEmail">user@example.com</small>
-                                </div>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
-                            </li>
-                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
-                            </li>
-                            <li><a class="dropdown-item" href="#" onclick="toggleTheme()"><i
-                                        class="fas fa-moon me-2"></i>Dark Mode</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
-                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </div>
+        <div class="notification-dropdown">
+            <button class="btn btn-link text-dark" data-bs-toggle="dropdown">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <h6 class="dropdown-header">Notifications</h6>
+                <div id="notificationList">
+                    <div class="dropdown-item text-muted">No new notifications</div>
                 </div>
             </div>
         </div>
+
+        <div class="user-dropdown">
+            <button class="btn btn-link" data-bs-toggle="dropdown">
+                <img src="https://via.placeholder.com/32" alt="User" class="user-avatar" id="userAvatar">
+                <span id="userName">User</span>
+                <i class="fas fa-chevron-down ms-1"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="/profile">
+                    <i class="fas fa-user me-2"></i>Profile
+                </a>
+                <a class="dropdown-item" href="/settings">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" id="logoutBtnTop">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+            </div>
+        </div>
     </div>
-</header>
+</div>

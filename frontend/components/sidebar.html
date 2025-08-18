@@ -1,110 +1,58 @@
-<!-- Desktop Sidebar -->
-<nav class="sidebar d-none d-lg-block" id="sidebar">
+<!-- components/sidebar.html -->
+<div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-code text-primary fs-4 me-3"></i>
-            <h5 class="mb-0 fw-bold text-dark">DSA Path</h5>
-        </div>
-        <button class="btn btn-link p-0 sidebar-toggle d-lg-none" id="sidebarToggle">
-            <i class="fas fa-times fs-5"></i>
+        <h5 class="mb-0">
+            <i class="fas fa-code me-2"></i>
+            DSA Path
+        </h5>
+        <button class="btn btn-link text-white d-lg-none" id="closeSidebar">
+            <i class="fas fa-times"></i>
         </button>
     </div>
 
-    <div class="sidebar-user">
-        <div class="d-flex align-items-center">
-            <div class="user-avatar me-3">
-                <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=ffffff" alt="Avatar"
-                    class="avatar-img" id="sidebarAvatar">
-            </div>
-            <div class="user-info">
-                <h6 class="mb-0 fw-semibold" id="sidebarUserName">Loading...</h6>
-                <small class="text-muted" id="sidebarUserEmail">user@example.com</small>
-            </div>
-        </div>
-    </div>
-
-    <div class="sidebar-menu">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="/dashboard" data-page="dashboard">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/roadmap" data-page="roadmap">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span>Roadmap</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/calendar" data-page="calendar">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Calendar</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/progress" data-page="progress">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Progress</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/notes" data-page="notes">
-                    <i class="fas fa-sticky-note"></i>
-                    <span>Notes</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/pomodoro" data-page="pomodoro">
-                    <i class="fas fa-clock"></i>
-                    <span>Pomodoro</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/analytics" data-page="analytics">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Analytics</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-divider"></div>
-
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="/profile" data-page="profile">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/settings" data-page="settings">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-danger" href="#" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
-        </ul>
+    <div class="sidebar-nav">
+        <a href="/dashboard" class="nav-item" data-page="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/roadmap" class="nav-item" data-page="roadmap">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Roadmap</span>
+        </a>
+        <a href="/calendar" class="nav-item" data-page="calendar">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Calendar</span>
+        </a>
+        <a href="/progress" class="nav-item" data-page="progress">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+        <a href="/notes" class="nav-item" data-page="notes">
+            <i class="fas fa-sticky-note"></i>
+            <span>Notes</span>
+        </a>
+        <a href="/pomodoro" class="nav-item" data-page="pomodoro">
+            <i class="fas fa-clock"></i>
+            <span>Pomodoro</span>
+        </a>
+        <a href="/analytics" class="nav-item" data-page="analytics">
+            <i class="fas fa-chart-bar"></i>
+            <span>Analytics</span>
+        </a>
     </div>
 
     <div class="sidebar-footer">
-        <div class="progress-widget">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <small class="text-muted">Overall Progress</small>
-                <small class="fw-bold" id="sidebarProgress">0%</small>
-            </div>
-            <div class="progress" style="height: 6px;">
-                <div class="progress-bar bg-gradient" id="sidebarProgressBar" style="width: 0%"></div>
-            </div>
-        </div>
+        <a href="/profile" class="nav-item" data-page="profile">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="/settings" class="nav-item" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <button class="nav-item logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
     </div>
-</nav>
-
-<!-- Sidebar Overlay for Mobile -->
-<div class="sidebar-overlay d-lg-none" id="sidebarOverlay"></div>
+</div>

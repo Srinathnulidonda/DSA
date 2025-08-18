@@ -1,109 +1,23 @@
-<!-- Mobile Bottom Navigation -->
-<nav class="mobile-nav d-lg-none" id="mobileNav">
-    <div class="mobile-nav-container">
-        <a href="/dashboard" class="mobile-nav-item" data-page="dashboard">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="/roadmap" class="mobile-nav-item" data-page="roadmap">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>Roadmap</span>
-        </a>
-        <a href="/progress" class="mobile-nav-item" data-page="progress">
-            <i class="fas fa-chart-line"></i>
-            <span>Progress</span>
-        </a>
-        <a href="/notes" class="mobile-nav-item" data-page="notes">
-            <i class="fas fa-sticky-note"></i>
-            <span>Notes</span>
-        </a>
-        <a href="/profile" class="mobile-nav-item" data-page="profile">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-    </div>
-</nav>
-
-<!-- Mobile Top Header -->
-<header class="mobile-header d-lg-none" id="mobileHeader">
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="mobile-header-left">
-            <h5 class="mb-0 fw-bold text-primary">
-                <i class="fas fa-code me-2"></i>DSA Path
-            </h5>
-        </div>
-        <div class="mobile-header-right">
-            <button class="btn btn-link p-2 me-2" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-                <i class="fas fa-bars fs-5"></i>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- Mobile Menu Offcanvas -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title fw-bold">Menu</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-        <!-- User Info -->
-        <div class="mobile-user-info mb-4">
-            <div class="d-flex align-items-center">
-                <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=ffffff" alt="Avatar"
-                    class="avatar-img me-3" id="mobileUserAvatar">
-                <div>
-                    <h6 class="mb-0 fw-semibold" id="mobileUserName">User Name</h6>
-                    <small class="text-muted" id="mobileUserEmail">user@example.com</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="mobile-stats mb-4">
-            <div class="row text-center">
-                <div class="col-4">
-                    <div class="stat-card">
-                        <div class="stat-value" id="mobileStreak">0</div>
-                        <div class="stat-label">Streak</div>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="stat-card">
-                        <div class="stat-value" id="mobileProgress">0%</div>
-                        <div class="stat-label">Progress</div>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="stat-card">
-                        <div class="stat-value" id="mobileStudyTime">0h</div>
-                        <div class="stat-label">Study Time</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation Menu -->
-        <div class="mobile-menu-items">
-            <a href="/calendar" class="mobile-menu-item">
-                <i class="fas fa-calendar-alt me-3"></i>Calendar
-            </a>
-            <a href="/pomodoro" class="mobile-menu-item">
-                <i class="fas fa-clock me-3"></i>Pomodoro Timer
-            </a>
-            <a href="/analytics" class="mobile-menu-item">
-                <i class="fas fa-chart-bar me-3"></i>Analytics
-            </a>
-            <div class="mobile-menu-divider"></div>
-            <a href="/settings" class="mobile-menu-item">
-                <i class="fas fa-cog me-3"></i>Settings
-            </a>
-            <a href="#" class="mobile-menu-item" onclick="toggleTheme()">
-                <i class="fas fa-moon me-3"></i>Dark Mode
-            </a>
-            <a href="#" class="mobile-menu-item text-danger" onclick="logout()">
-                <i class="fas fa-sign-out-alt me-3"></i>Logout
-            </a>
-        </div>
-    </div>
+<!-- components/mobile-nav.html -->
+<div class="mobile-nav d-lg-none">
+    <a href="/dashboard" class="nav-item" data-page="dashboard">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="/roadmap" class="nav-item" data-page="roadmap">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>Roadmap</span>
+    </a>
+    <a href="/calendar" class="nav-item" data-page="calendar">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Calendar</span>
+    </a>
+    <a href="/notes" class="nav-item" data-page="notes">
+        <i class="fas fa-sticky-note"></i>
+        <span>Notes</span>
+    </a>
+    <a href="/pomodoro" class="nav-item" data-page="pomodoro">
+        <i class="fas fa-clock"></i>
+        <span>Timer</span>
+    </a>
 </div>

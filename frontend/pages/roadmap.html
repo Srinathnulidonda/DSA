@@ -1,3 +1,4 @@
+<!-- pages/roadmap.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,140 +15,90 @@
     <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body class="dashboard-body">
+<body class="app-layout">
+    <!-- Sidebar -->
     <div id="sidebarContainer"></div>
-    <div id="topbarContainer"></div>
-    <div id="mobileNavContainer"></div>
 
-    <main class="main-content">
-        <div class="container-fluid">
-            <!-- Header Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="roadmap-header">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                            <div>
-                                <h2 class="fw-bold text-dark mb-2">14-Week DSA Roadmap</h2>
-                                <p class="text-muted mb-0">Your structured path to mastering Data Structures &
-                                    Algorithms</p>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Roadmap Content -->
+        <div class="content-area">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="page-title">
+                            <i class="fas fa-map-marked-alt me-3"></i>
+                            14-Week DSA Roadmap
+                        </h1>
+                        <p class="page-subtitle">A comprehensive journey through Data Structures and Algorithms</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <div class="roadmap-progress">
+                            <div class="progress-circle" id="overallProgress">
+                                <div class="progress-text">0%</div>
                             </div>
-                            <div class="roadmap-controls">
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-outline-primary active" data-view="timeline">
-                                        <i class="fas fa-list me-2"></i>Timeline
-                                    </button>
-                                    <button type="button" class="btn btn-outline-primary" data-view="grid">
-                                        <i class="fas fa-th me-2"></i>Grid
-                                    </button>
-                                </div>
-                                <button class="btn btn-primary ms-2" data-bs-toggle="modal"
-                                    data-bs-target="#progressModal">
-                                    <i class="fas fa-chart-line me-2"></i>Progress
-                                </button>
-                            </div>
+                            <div class="progress-label">Overall Progress</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Progress Overview -->
+            <!-- Filter Controls -->
             <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="roadmap-progress">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-semibold mb-0">Overall Progress</h6>
-                                    <span class="badge bg-primary rounded-pill" id="overallProgress">0%</span>
-                                </div>
-                                <div class="progress mb-3" style="height: 12px;">
-                                    <div class="progress-bar bg-gradient" id="overallProgressBar" style="width: 0%">
-                                    </div>
-                                </div>
-                                <div class="row text-center">
-                                    <div class="col-3">
-                                        <div class="fw-bold text-primary" id="completedWeeks">0</div>
-                                        <small class="text-muted">Weeks Complete</small>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="fw-bold text-success" id="completedDays">0</div>
-                                        <small class="text-muted">Days Complete</small>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="fw-bold text-info" id="currentStreak">0</div>
-                                        <small class="text-muted">Current Streak</small>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="fw-bold text-warning" id="studyHours">0h</div>
-                                        <small class="text-muted">Study Hours</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="filter-controls">
+                        <button class="filter-btn active" data-filter="all">All Weeks</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                        <button class="filter-btn" data-filter="current">Current</button>
+                        <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Search topics..." id="roadmapSearch">
+                        <i class="fas fa-search"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Roadmap Content -->
-            <div class="roadmap-content" id="roadmapContent">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="text-muted mt-3">Loading roadmap...</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Progress Modal -->
-    <div class="modal fade" id="progressModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detailed Progress</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="progressChart" style="height: 300px;">
-                        <canvas id="progressCanvasChart"></canvas>
-                    </div>
-                </div>
+            <!-- Roadmap Timeline -->
+            <div class="roadmap-timeline" id="roadmapContainer">
+                <!-- Roadmap weeks will be loaded here -->
             </div>
         </div>
     </div>
 
-    <!-- Week Details Modal -->
-    <div class="modal fade" id="weekModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <!-- Resource Modal -->
+    <div class="modal fade" id="resourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="weekModalTitle">Week Details</h5>
+                    <h5 class="modal-title">Resources</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="weekModalBody">
-                    <!-- Week content will be loaded here -->
+                <div class="modal-body" id="resourceModalBody">
+                    <!-- Resources will be loaded here -->
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
         let roadmapData = [];
-        let userProgress = {};
-        let currentView = 'timeline';
+        let progressData = {};
+        let filteredRoadmap = [];
 
-        document.addEventListener('DOMContentLoaded', async function () {
-            await loadComponents();
-            await checkAuth();
-            await loadRoadmapData();
-            updateActivePage('roadmap');
-            initializeEventListeners();
-        });
-
+        // Load components
         async function loadComponents() {
             try {
                 const [sidebarResponse, topbarResponse, mobileNavResponse] = await Promise.all([
@@ -161,79 +112,19 @@
                 document.getElementById('mobileNavContainer').innerHTML = await mobileNavResponse.text();
 
                 initializeComponents();
+                setActiveNavItem('roadmap');
+                document.getElementById('pageTitle').textContent = 'Roadmap';
             } catch (error) {
                 console.error('Error loading components:', error);
             }
         }
 
-        function initializeComponents() {
-            const sidebarToggle = document.getElementById('sidebarToggleBtn');
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function () {
-                    document.body.classList.toggle('sidebar-collapsed');
-                });
-            }
-
-            const globalSearch = document.getElementById('globalSearch');
-            if (globalSearch) {
-                globalSearch.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
-                        window.location.href = `/search?q=${encodeURIComponent(this.value)}`;
-                    }
-                });
-            }
-        }
-
-        async function checkAuth() {
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
-
+        // Load roadmap data
+        async function loadRoadmap() {
             try {
-                const response = await fetch(`${API_BASE}/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const token = localStorage.getItem('access_token');
 
-                if (response.ok) {
-                    const data = await response.json();
-                    updateUserInfo(data.user);
-                } else {
-                    localStorage.removeItem('accessToken');
-                    window.location.href = '/login';
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login';
-            }
-        }
-
-        function updateUserInfo(user) {
-            const userNameElements = ['sidebarUserName', 'topbarUserName', 'dropdownUserName', 'mobileUserName'];
-            userNameElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = user.name;
-            });
-
-            const userEmailElements = ['sidebarUserEmail', 'dropdownUserEmail', 'mobileUserEmail'];
-            userEmailElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = user.email;
-            });
-
-            const avatarUrl = user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=ffffff`;
-            const avatarElements = ['sidebarAvatar', 'topbarAvatar', 'mobileUserAvatar'];
-            avatarElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.src = avatarUrl;
-            });
-        }
-
-        async function loadRoadmapData() {
-            try {
-                const token = localStorage.getItem('accessToken');
+                // Load roadmap and progress in parallel
                 const [roadmapResponse, progressResponse] = await Promise.all([
                     fetch(`${API_BASE}/roadmap`),
                     fetch(`${API_BASE}/progress`, {
@@ -246,815 +137,337 @@
                     const progressResult = await progressResponse.json();
 
                     roadmapData = roadmapResult.roadmap;
-                    userProgress = progressResult.progress;
+                    progressData = progressResult.progress;
 
-                    updateProgressStats(progressResult.stats);
+                    filteredRoadmap = [...roadmapData];
                     renderRoadmap();
+                    updateOverallProgress();
                 } else {
                     throw new Error('Failed to load roadmap data');
                 }
             } catch (error) {
-                console.error('Error loading roadmap:', error);
-                showError('Failed to load roadmap. Please try again.');
+                console.error('Roadmap error:', error);
+                showError('Failed to load roadmap');
             }
         }
 
-        function updateProgressStats(stats) {
-            const completionPercentage = Math.round(stats.completion_percentage);
-            document.getElementById('overallProgress').textContent = completionPercentage + '%';
-            document.getElementById('overallProgressBar').style.width = completionPercentage + '%';
-
-            const completedWeeks = Object.keys(userProgress).filter(week => {
-                const weekProgress = userProgress[week];
-                const totalDays = roadmapData.find(w => w.week == week)?.days.length || 7;
-                const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
-                return completedDays === totalDays;
-            }).length;
-
-            document.getElementById('completedWeeks').textContent = completedWeeks;
-            document.getElementById('completedDays').textContent = stats.completed_days;
-            document.getElementById('currentStreak').textContent = stats.current_streak;
-            document.getElementById('studyHours').textContent = Math.round(stats.total_study_time / 60) + 'h';
-
-            // Update sidebar stats
-            const sidebarProgress = document.getElementById('sidebarProgress');
-            const sidebarProgressBar = document.getElementById('sidebarProgressBar');
-            if (sidebarProgress) sidebarProgress.textContent = completionPercentage + '%';
-            if (sidebarProgressBar) sidebarProgressBar.style.width = completionPercentage + '%';
-        }
-
+        // Render roadmap
         function renderRoadmap() {
-            const container = document.getElementById('roadmapContent');
+            const container = document.getElementById('roadmapContainer');
+            container.innerHTML = '';
 
-            if (currentView === 'timeline') {
-                container.innerHTML = renderTimelineView();
-            } else {
-                container.innerHTML = renderGridView();
-            }
+            filteredRoadmap.forEach((week, index) => {
+                const weekProgress = progressData[week.week] || {};
+                const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                const totalDays = week.days.length;
+                const weekPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
-            // Add event listeners for interactive elements
-            addRoadmapEventListeners();
-        }
+                const weekStatus = getWeekStatus(week.week, weekPercentage);
 
-        function renderTimelineView() {
-            return `
-                <div class="roadmap-timeline">
-                    ${roadmapData.map(week => `
-                        <div class="timeline-item ${getWeekCompletionClass(week.week)}" data-week="${week.week}">
-                            <div class="timeline-marker">
-                                <div class="timeline-number">${week.week}</div>
-                                <div class="timeline-status">
-                                    ${getWeekStatusIcon(week.week)}
-                                </div>
-                            </div>
-                            <div class="timeline-content">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <div>
-                                                <h5 class="fw-bold mb-1">${week.title}</h5>
-                                                <p class="text-muted mb-2">${week.goal}</p>
-                                                <small class="text-primary">Week ${week.week} • ${week.days.length} days</small>
-                                            </div>
-                                            <div class="week-progress">
-                                                <div class="progress-circle-small">
-                                                    ${getWeekProgressPercentage(week.week)}%
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="week-preview mb-3">
-                                            <div class="daily-topics">
-                                                ${week.days.slice(0, 3).map(day => `
-                                                    <div class="topic-tag ${getDayCompletionClass(week.week, day.day)}">
-                                                        <i class="fas fa-${getDayIcon(day.day)} me-1"></i>
-                                                        ${day.topic}
-                                                    </div>
-                                                `).join('')}
-                                                ${week.days.length > 3 ? `<div class="topic-tag more">+${week.days.length - 3} more</div>` : ''}
-                                            </div>
-                                        </div>
-
-                                        <div class="week-project mb-3">
-                                            <div class="project-card">
-                                                <i class="fas fa-project-diagram text-warning me-2"></i>
-                                                <strong>Project:</strong> ${week.project.title}
-                                                <small class="text-muted d-block">${week.project.description}</small>
-                                            </div>
-                                        </div>
-
-                                        <div class="week-actions">
-                                            <button class="btn btn-primary btn-sm" onclick="openWeekDetails(${week.week})">
-                                                <i class="fas fa-eye me-1"></i>View Details
-                                            </button>
-                                            <button class="btn btn-outline-success btn-sm" onclick="startWeek(${week.week})">
-                                                <i class="fas fa-play me-1"></i>${getWeekButtonText(week.week)}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                const weekElement = document.createElement('div');
+                weekElement.className = `roadmap-week ${weekStatus}`;
+                weekElement.innerHTML = `
+                    <div class="week-header" onclick="toggleWeek(${week.week})">
+                        <div class="week-number">
+                            <span class="week-badge">Week ${week.week}</span>
+                            <div class="week-progress-circle">
+                                <svg viewBox="0 0 36 36">
+                                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    <path class="circle" stroke-dasharray="${weekPercentage}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                </svg>
+                                <div class="percentage">${Math.round(weekPercentage)}%</div>
                             </div>
                         </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function renderGridView() {
-            return `
-                <div class="roadmap-grid">
-                    <div class="row">
-                        ${roadmapData.map(week => `
-                            <div class="col-lg-6 col-xl-4 mb-4">
-                                <div class="week-card ${getWeekCompletionClass(week.week)}" data-week="${week.week}">
-                                    <div class="card h-100">
-                                        <div class="card-header">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="fw-bold mb-0">Week ${week.week}</h6>
-                                                    <small class="text-muted">${week.days.length} days</small>
-                                                </div>
-                                                <div class="week-status">
-                                                    ${getWeekStatusIcon(week.week)}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <h6 class="fw-bold mb-2">${week.title}</h6>
-                                            <p class="text-muted small mb-3">${week.goal}</p>
-                                            
-                                            <div class="progress mb-3" style="height: 6px;">
-                                                <div class="progress-bar bg-gradient" style="width: ${getWeekProgressPercentage(week.week)}%"></div>
-                                            </div>
-                                            
-                                            <div class="project-preview mb-3">
-                                                <i class="fas fa-laptop-code text-primary me-2"></i>
-                                                <small class="fw-semibold">${week.project.title}</small>
-                                            </div>
-                                            
-                                            <div class="skills-preview mb-3">
-                                                ${week.project.skills.slice(0, 3).map(skill => `
-                                                    <span class="badge bg-light text-dark me-1">${skill}</span>
-                                                `).join('')}
-                                            </div>
-                                        </div>
-                                        <div class="card-footer bg-transparent">
-                                            <div class="d-flex gap-2">
-                                                <button class="btn btn-outline-primary btn-sm flex-fill" onclick="openWeekDetails(${week.week})">
-                                                    <i class="fas fa-eye me-1"></i>Details
-                                                </button>
-                                                <button class="btn btn-primary btn-sm flex-fill" onclick="startWeek(${week.week})">
-                                                    <i class="fas fa-play me-1"></i>Start
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function getWeekCompletionClass(weekNum) {
-            const weekProgress = userProgress[weekNum] || {};
-            const week = roadmapData.find(w => w.week === weekNum);
-            if (!week) return '';
-
-            const totalDays = week.days.length;
-            const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
-
-            if (completedDays === totalDays) return 'week-completed';
-            if (completedDays > 0) return 'week-in-progress';
-            return 'week-not-started';
-        }
-
-        function getWeekStatusIcon(weekNum) {
-            const weekProgress = userProgress[weekNum] || {};
-            const week = roadmapData.find(w => w.week === weekNum);
-            if (!week) return '<i class="fas fa-circle text-muted"></i>';
-
-            const totalDays = week.days.length;
-            const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
-
-            if (completedDays === totalDays) {
-                return '<i class="fas fa-check-circle text-success"></i>';
-            } else if (completedDays > 0) {
-                return '<i class="fas fa-play-circle text-primary"></i>';
-            } else {
-                return '<i class="fas fa-circle text-muted"></i>';
-            }
-        }
-
-        function getWeekProgressPercentage(weekNum) {
-            const weekProgress = userProgress[weekNum] || {};
-            const week = roadmapData.find(w => w.week === weekNum);
-            if (!week) return 0;
-
-            const totalDays = week.days.length;
-            const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
-
-            return Math.round((completedDays / totalDays) * 100);
-        }
-
-        function getDayCompletionClass(weekNum, dayName) {
-            const dayProgress = userProgress[weekNum]?.[dayName];
-            return dayProgress?.completed ? 'topic-completed' : '';
-        }
-
-        function getDayIcon(dayName) {
-            const icons = {
-                'Monday': 'calendar-alt',
-                'Tuesday': 'book-open',
-                'Wednesday': 'code',
-                'Thursday': 'laptop-code',
-                'Friday': 'puzzle-piece',
-                'Saturday': 'project-diagram',
-                'Sunday': 'trophy'
-            };
-            return icons[dayName] || 'circle';
-        }
-
-        function getWeekButtonText(weekNum) {
-            const weekProgress = userProgress[weekNum] || {};
-            const week = roadmapData.find(w => w.week === weekNum);
-            if (!week) return 'Start';
-
-            const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
-
-            if (completedDays === 0) return 'Start';
-            if (completedDays === week.days.length) return 'Review';
-            return 'Continue';
-        }
-
-        async function openWeekDetails(weekNum) {
-            const week = roadmapData.find(w => w.week === weekNum);
-            if (!week) return;
-
-            const modal = new bootstrap.Modal(document.getElementById('weekModal'));
-            document.getElementById('weekModalTitle').textContent = `Week ${weekNum}: ${week.title}`;
-
-            const modalBody = document.getElementById('weekModalBody');
-            modalBody.innerHTML = `
-                <div class="week-details">
-                    <div class="week-overview mb-4">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h5 class="fw-bold mb-2">${week.title}</h5>
-                                <p class="text-muted mb-3">${week.goal}</p>
-                                <div class="progress mb-3" style="height: 8px;">
-                                    <div class="progress-bar bg-gradient" style="width: ${getWeekProgressPercentage(weekNum)}%"></div>
-                                </div>
-                                <small class="text-muted">${getWeekProgressPercentage(weekNum)}% completed</small>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="project-info p-3 bg-light rounded">
-                                    <h6 class="fw-bold mb-2">
-                                        <i class="fas fa-project-diagram text-warning me-2"></i>
-                                        Week Project
-                                    </h6>
-                                    <p class="fw-semibold mb-1">${week.project.title}</p>
-                                    <p class="small text-muted mb-2">${week.project.description}</p>
-                                    <div class="skills">
-                                        ${week.project.skills.map(skill => `
-                                            <span class="badge bg-primary me-1">${skill}</span>
-                                        `).join('')}
-                                    </div>
-                                </div>
+                        <div class="week-info">
+                            <h4 class="week-title">${week.title}</h4>
+                            <p class="week-goal">${week.goal}</p>
+                            <div class="week-stats">
+                                <span class="stat-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    ${completedDays}/${totalDays} days
+                                </span>
+                                <span class="stat-item">
+                                    <i class="fas fa-code"></i>
+                                    ${week.project.title}
+                                </span>
                             </div>
                         </div>
+                        <div class="week-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
                     </div>
-
-                    <div class="daily-schedule">
-                        <h6 class="fw-bold mb-3">Daily Schedule</h6>
-                        <div class="row">
+                    
+                    <div class="week-content" id="week-${week.week}-content">
+                        <!-- Project Card -->
+                        <div class="project-card">
+                            <div class="project-header">
+                                <h6><i class="fas fa-project-diagram me-2"></i>${week.project.title}</h6>
+                            </div>
+                            <p class="project-description">${week.project.description}</p>
+                            <div class="project-skills">
+                                ${week.project.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Days List -->
+                        <div class="days-container">
                             ${week.days.map(day => {
-                const dayProgress = userProgress[weekNum]?.[day.day];
-                const isCompleted = dayProgress?.completed || false;
+                    const dayProgress = weekProgress[day.day] || {};
+                    const isCompleted = dayProgress.completed || false;
 
-                return `
-                                    <div class="col-lg-6 mb-3">
-                                        <div class="day-card ${isCompleted ? 'completed' : ''}">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                                        <div>
-                                                            <h6 class="fw-bold mb-1">
-                                                                <i class="fas fa-${getDayIcon(day.day)} me-2"></i>
-                                                                ${day.day}
-                                                            </h6>
-                                                            <small class="text-muted">${day.time_estimate} minutes</small>
-                                                        </div>
-                                                        <div class="day-status">
-                                                            ${isCompleted ?
-                        '<i class="fas fa-check-circle text-success"></i>' :
-                        '<i class="fas fa-circle text-muted"></i>'
-                    }
-                                                        </div>
-                                                    </div>
-                                                    <h6 class="topic-title">${day.topic}</h6>
-                                                    <p class="small text-muted mb-3">${day.activities}</p>
-                                                    
-                                                    <div class="resources mb-3">
-                                                        <small class="fw-semibold text-primary">Resources:</small>
-                                                        <div class="resource-links">
-                                                            ${day.resources.slice(0, 2).map(resourceId => {
-                        const resource = getResourceById(resourceId);
-                        return resource ? `
-                                                                    <a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary me-1 mb-1">
-                                                                        <i class="fas fa-${getResourceIcon(resource.type)} me-1"></i>
-                                                                        ${resource.title}
-                                                                    </a>
-                                                                ` : '';
-                    }).join('')}
-                                                            ${day.resources.length > 2 ? `<small class="text-muted">+${day.resources.length - 2} more</small>` : ''}
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="day-actions">
-                                                        <button class="btn btn-sm ${isCompleted ? 'btn-success' : 'btn-primary'}" 
-                                                                onclick="toggleDayCompletion(${weekNum}, '${day.day}')" 
-                                                                id="dayBtn_${weekNum}_${day.day}">
-                                                            <i class="fas fa-${isCompleted ? 'check' : 'play'} me-1"></i>
-                                                            ${isCompleted ? 'Completed' : 'Mark Complete'}
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-secondary ms-1" onclick="addDayNote(${weekNum}, '${day.day}')">
-                                                            <i class="fas fa-note-sticky me-1"></i>
-                                                            Notes
-                                                        </button>
-                                                    </div>
+                    return `
+                                    <div class="day-item ${isCompleted ? 'completed' : ''}">
+                                        <div class="day-header">
+                                            <div class="day-info">
+                                                <div class="day-name">
+                                                    <i class="fas fa-calendar-day me-2"></i>
+                                                    ${day.day}
+                                                </div>
+                                                <div class="day-topic">${day.topic}</div>
+                                            </div>
+                                            <div class="day-actions">
+                                                <span class="time-badge">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    ${day.time_estimate} min
+                                                </span>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           ${isCompleted ? 'checked' : ''}
+                                                           onchange="toggleDayComplete(${week.week}, '${day.day}', this.checked)">
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="day-activities">
+                                            <p>${day.activities}</p>
+                                        </div>
+                                        <div class="day-resources">
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    onclick="showResources(${week.week}, '${day.day}')">
+                                                <i class="fas fa-book me-1"></i>
+                                                Resources (${day.resources.length})
+                                            </button>
                                         </div>
                                     </div>
                                 `;
-            }).join('')}
+                }).join('')}
                         </div>
                     </div>
+                `;
+
+                container.appendChild(weekElement);
+            });
+        }
+
+        // Get week status
+        function getWeekStatus(weekNumber, percentage) {
+            if (percentage === 100) return 'completed';
+            if (percentage > 0) return 'current';
+
+            // Check if this is the next week to start
+            for (let i = 1; i < weekNumber; i++) {
+                const prevWeekProgress = progressData[i] || {};
+                const prevWeekDays = roadmapData.find(w => w.week === i)?.days.length || 7;
+                const prevCompleted = Object.values(prevWeekProgress).filter(day => day.completed).length;
+
+                if (prevCompleted < prevWeekDays) {
+                    return 'locked';
+                }
+            }
+
+            return 'upcoming';
+        }
+
+        // Toggle week expansion
+        function toggleWeek(weekNumber) {
+            const content = document.getElementById(`week-${weekNumber}-content`);
+            const toggle = content.previousElementSibling.querySelector('.week-toggle i');
+
+            if (content.style.display === 'none' || !content.style.display) {
+                content.style.display = 'block';
+                toggle.classList.add('rotated');
+            } else {
+                content.style.display = 'none';
+                toggle.classList.remove('rotated');
+            }
+        }
+
+        // Toggle day completion
+        async function toggleDayComplete(week, day, completed) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        week: week,
+                        day: day,
+                        completed: completed,
+                        time_spent: completed ? 60 : 0 // Default time if completed
+                    })
+                });
+
+                if (response.ok) {
+                    // Update local progress data
+                    if (!progressData[week]) progressData[week] = {};
+                    progressData[week][day] = { completed: completed };
+
+                    // Re-render to update progress indicators
+                    renderRoadmap();
+                    updateOverallProgress();
+
+                    // Show success animation
+                    if (completed) {
+                        showCompletionAnimation();
+                    }
+                } else {
+                    throw new Error('Failed to update progress');
+                }
+            } catch (error) {
+                console.error('Progress update error:', error);
+                showError('Failed to update progress');
+            }
+        }
+
+        // Show resources
+        function showResources(week, day) {
+            const weekData = roadmapData.find(w => w.week === week);
+            const dayData = weekData.days.find(d => d.day === day);
+
+            const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
+            const modalBody = document.getElementById('resourceModalBody');
+
+            modalBody.innerHTML = `
+                <h6 class="mb-3">Resources for ${day} - ${dayData.topic}</h6>
+                <div class="resource-list">
+                    ${dayData.resources.map(resourceId => {
+                // This would normally fetch from the resources API
+                return `
+                            <div class="resource-item">
+                                <div class="resource-info">
+                                    <h6>Resource ${resourceId}</h6>
+                                    <p class="text-muted">Click to open in new tab</p>
+                                </div>
+                                <button class="btn btn-sm btn-primary" onclick="openResource('${resourceId}')">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                            </div>
+                        `;
+            }).join('')}
                 </div>
             `;
 
             modal.show();
         }
 
-        function getResourceById(resourceId) {
-            // This would typically come from the backend, but for demo purposes:
-            const resourceMap = {
-                'w3_python_getstarted': { title: 'Python Setup', url: 'https://www.w3schools.com/python/python_getstarted.asp', type: 'text' },
-                'galles_array_vis': { title: 'Array Visualization', url: 'https://www.cs.usfca.edu/~galles/visualization/Array.html', type: 'interactive' },
-                'yt_neetcode_two_pointers': { title: 'Two Pointers - NeetCode', url: 'https://www.youtube.com/watch?v=jzZsG8n2R9A', type: 'video' },
-                'lc_1_two_sum': { title: 'Two Sum - LeetCode', url: 'https://leetcode.com/problems/two-sum/', type: 'practice' }
-            };
-            return resourceMap[resourceId] || { title: 'Resource', url: '#', type: 'text' };
+        // Open resource
+        function openResource(resourceId) {
+            // This would normally get the URL from the resources API
+            const resourceUrl = `https://example.com/resource/${resourceId}`;
+            window.open(resourceUrl, '_blank');
         }
 
-        function getResourceIcon(type) {
-            const icons = {
-                'text': 'book-open',
-                'video': 'play-circle',
-                'interactive': 'mouse-pointer',
-                'practice': 'code'
-            };
-            return icons[type] || 'link';
+        // Update overall progress
+        function updateOverallProgress() {
+            const totalDays = roadmapData.reduce((sum, week) => sum + week.days.length, 0);
+            const completedDays = Object.values(progressData).reduce((sum, weekProgress) => {
+                return sum + Object.values(weekProgress).filter(day => day.completed).length;
+            }, 0);
+
+            const percentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+
+            const progressElement = document.getElementById('overallProgress');
+            progressElement.querySelector('.progress-text').textContent = Math.round(percentage) + '%';
+
+            // Update progress circle
+            const circle = progressElement.querySelector('.progress-circle');
+            circle.style.background = `conic-gradient(#007bff ${percentage * 3.6}deg, #e9ecef 0deg)`;
         }
 
-        async function toggleDayCompletion(weekNum, dayName) {
-            try {
-                const token = localStorage.getItem('accessToken');
-                const currentStatus = userProgress[weekNum]?.[dayName]?.completed || false;
+        // Filter functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                // Update active filter
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
 
-                const response = await fetch(`${API_BASE}/progress`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        week: weekNum,
-                        day: dayName,
-                        completed: !currentStatus,
-                        time_spent: currentStatus ? 0 : 90
-                    })
-                });
-
-                if (response.ok) {
-                    // Update local progress
-                    if (!userProgress[weekNum]) userProgress[weekNum] = {};
-                    if (!userProgress[weekNum][dayName]) userProgress[weekNum][dayName] = {};
-                    userProgress[weekNum][dayName].completed = !currentStatus;
-
-                    // Update UI
-                    const button = document.getElementById(`dayBtn_${weekNum}_${dayName}`);
-                    if (button) {
-                        if (!currentStatus) {
-                            button.className = 'btn btn-sm btn-success';
-                            button.innerHTML = '<i class="fas fa-check me-1"></i>Completed';
-                            showToast('Day marked as complete! 🎉', 'success');
-                        } else {
-                            button.className = 'btn btn-sm btn-primary';
-                            button.innerHTML = '<i class="fas fa-play me-1"></i>Mark Complete';
-                        }
-                    }
-
-                    // Refresh progress stats
-                    await loadRoadmapData();
-                } else {
-                    throw new Error('Failed to update progress');
-                }
-            } catch (error) {
-                console.error('Error updating progress:', error);
-                showToast('Failed to update progress. Please try again.', 'error');
+                const filter = e.target.dataset.filter;
+                applyFilter(filter);
             }
+        });
+
+        // Apply filter
+        function applyFilter(filter) {
+            switch (filter) {
+                case 'completed':
+                    filteredRoadmap = roadmapData.filter(week => {
+                        const weekProgress = progressData[week.week] || {};
+                        const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                        return completedDays === week.days.length;
+                    });
+                    break;
+                case 'current':
+                    filteredRoadmap = roadmapData.filter(week => {
+                        const weekProgress = progressData[week.week] || {};
+                        const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                        return completedDays > 0 && completedDays < week.days.length;
+                    });
+                    break;
+                case 'upcoming':
+                    filteredRoadmap = roadmapData.filter(week => {
+                        const weekProgress = progressData[week.week] || {};
+                        const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                        return completedDays === 0;
+                    });
+                    break;
+                default:
+                    filteredRoadmap = [...roadmapData];
+            }
+
+            renderRoadmap();
         }
 
-        function addDayNote(weekNum, dayName) {
-            // Redirect to notes page with week and day context
-            window.location.href = `/notes?week=${weekNum}&day=${dayName}`;
-        }
+        // Search functionality
+        document.getElementById('roadmapSearch').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
 
-        function startWeek(weekNum) {
-            // Open the first incomplete day of the week
-            const week = roadmapData.find(w => w.week === weekNum);
-            if (!week) return;
-
-            const weekProgress = userProgress[weekNum] || {};
-            const firstIncompleteDay = week.days.find(day => !weekProgress[day.day]?.completed);
-
-            if (firstIncompleteDay) {
-                openWeekDetails(weekNum);
+            if (searchTerm) {
+                filteredRoadmap = roadmapData.filter(week => {
+                    return week.title.toLowerCase().includes(searchTerm) ||
+                        week.goal.toLowerCase().includes(searchTerm) ||
+                        week.days.some(day =>
+                            day.topic.toLowerCase().includes(searchTerm) ||
+                            day.activities.toLowerCase().includes(searchTerm)
+                        );
+                });
             } else {
-                // Week is complete, open for review
-                openWeekDetails(weekNum);
+                filteredRoadmap = [...roadmapData];
             }
+
+            renderRoadmap();
+        });
+
+        // Show completion animation
+        function showCompletionAnimation() {
+            // You can add confetti or celebration animation here
+            console.log('Task completed!');
         }
 
-        function initializeEventListeners() {
-            // View toggle buttons
-            document.querySelectorAll('[data-view]').forEach(button => {
-                button.addEventListener('click', function () {
-                    const view = this.dataset.view;
-                    currentView = view;
-
-                    // Update active button
-                    document.querySelectorAll('[data-view]').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // Re-render roadmap
-                    renderRoadmap();
-                });
-            });
-
-            // Progress modal
-            const progressModal = document.getElementById('progressModal');
-            if (progressModal) {
-                progressModal.addEventListener('shown.bs.modal', function () {
-                    renderProgressChart();
-                });
-            }
-        }
-
-        function renderProgressChart() {
-            const ctx = document.getElementById('progressCanvasChart').getContext('2d');
-
-            const weekLabels = roadmapData.map(week => `Week ${week.week}`);
-            const progressData = roadmapData.map(week => getWeekProgressPercentage(week.week));
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: weekLabels,
-                    datasets: [{
-                        label: 'Completion %',
-                        data: progressData,
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function (value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        function addRoadmapEventListeners() {
-            // Add click handlers for week cards
-            document.querySelectorAll('[data-week]').forEach(element => {
-                element.addEventListener('click', function (e) {
-                    if (!e.target.closest('button')) {
-                        const weekNum = parseInt(this.dataset.week);
-                        openWeekDetails(weekNum);
-                    }
-                });
-            });
-        }
-
-        function updateActivePage(page) {
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.page === page) {
-                    link.classList.add('active');
-                }
-            });
-
-            document.querySelectorAll('.mobile-nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.page === page) {
-                    item.classList.add('active');
-                }
-            });
-
-            const pageTitle = document.getElementById('pageTitle');
-            if (pageTitle) {
-                pageTitle.textContent = page.charAt(0).toUpperCase() + page.slice(1);
-            }
-        }
-
+        // Show error message
         function showError(message) {
-            document.getElementById('roadmapContent').innerHTML = `
-                <div class="text-center py-5">
-                    <i class="fas fa-exclamation-triangle fs-1 text-danger mb-3"></i>
-                    <h5 class="text-danger mb-3">Error Loading Roadmap</h5>
-                    <p class="text-muted mb-3">${message}</p>
-                    <button class="btn btn-primary" onclick="location.reload()">
-                        <i class="fas fa-refresh me-2"></i>Try Again
-                    </button>
-                </div>
-            `;
+            console.error(message);
+            // You can implement toast notifications here
         }
 
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
-            const toastHtml = `
-                <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'primary'} border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
-
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-
-            toastElement.addEventListener('hidden.bs.toast', function () {
-                this.remove();
-            });
-        }
-
-        function createToastContainer() {
-            const container = document.createElement('div');
-            container.id = 'toastContainer';
-            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-            document.body.appendChild(container);
-            return container;
-        }
-
-        // Global functions
-        window.logout = function () {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        };
-
-        window.toggleTheme = function () {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        };
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-theme');
-        }
+        // Initialize roadmap page
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            await loadComponents();
+            await loadRoadmap();
+        });
     </script>
-
-    <style>
-        .roadmap-timeline {
-            position: relative;
-        }
-
-        .roadmap-timeline::before {
-            content: '';
-            position: absolute;
-            left: 30px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            margin-left: 60px;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: -90px;
-            top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .timeline-number {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .timeline-status {
-            font-size: 1.2rem;
-        }
-
-        .week-completed .timeline-number {
-            background: linear-gradient(135deg, var(--success-color), #059669);
-        }
-
-        .week-in-progress .timeline-number {
-            background: linear-gradient(135deg, var(--warning-color), #d97706);
-        }
-
-        .week-not-started .timeline-number {
-            background: linear-gradient(135deg, var(--muted-color), #64748b);
-        }
-
-        .timeline-content .card {
-            border: none;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .timeline-content .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        .daily-topics {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .topic-tag {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .topic-tag.topic-completed {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .topic-tag.more {
-            background: rgba(156, 163, 175, 0.1);
-            color: var(--muted-color);
-        }
-
-        .project-card {
-            background: rgba(245, 158, 11, 0.1);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border-left: 4px solid var(--warning-color);
-        }
-
-        .progress-circle-small {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: conic-gradient(var(--primary-color) var(--progress-angle, 0deg), #e5e7eb 0deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            position: relative;
-        }
-
-        .progress-circle-small::before {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        .progress-circle-small span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .roadmap-grid .week-card {
-            transition: all 0.3s ease;
-        }
-
-        .roadmap-grid .week-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .roadmap-grid .week-card.week-completed {
-            border-left: 4px solid var(--success-color);
-        }
-
-        .roadmap-grid .week-card.week-in-progress {
-            border-left: 4px solid var(--warning-color);
-        }
-
-        .roadmap-grid .week-card.week-not-started {
-            border-left: 4px solid var(--muted-color);
-        }
-
-        .day-card.completed {
-            background: rgba(16, 185, 129, 0.05);
-            border-left: 4px solid var(--success-color);
-        }
-
-        .resource-links {
-            margin-top: 0.5rem;
-        }
-
-        @media (max-width: 991.98px) {
-            .roadmap-timeline::before {
-                left: 20px;
-            }
-
-            .timeline-item {
-                margin-left: 50px;
-            }
-
-            .timeline-marker {
-                left: -70px;
-            }
-
-            .timeline-number {
-                width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 767.98px) {
-            .roadmap-controls {
-                width: 100%;
-                justify-content: center;
-                margin-top: 1rem;
-            }
-
-            .week-actions {
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-            }
-
-            .week-actions .btn {
-                flex: 1;
-                min-width: 120px;
-            }
-        }
-    </style>
 </body>
 
 </html>
