@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer - DSA Learning Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
+</head>
+
+<body class="dashboard-body">
+    <div id="sidebarContainer"></div>
+    <div id="topbarContainer"></div>
+    <div id="mobileNavContainer"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h2 class="fw-bold text-dark mb-2">Pomodoro Timer</h2>
+                            <p class="text-muted mb-0">Focus on your studies with the proven Pomodoro Technique</p>
+                        </div>
+                        <div class="timer-controls">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                data-bs-target="#settingsModal">
+                                <i class="fas fa-cog me-2"></i>Settings
+                            </button>
+                            <button class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#historyModal">
+                                <i class="fas fa-history me-2"></i>History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Timer Section -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                            <!-- Timer Circle -->
+                            <div class="timer-circle mb-4">
+                                <svg width="300" height="300" class="timer-svg">
+                                    <circle cx="150" cy="150" r="140" stroke="#e9ecef" stroke-width="8" fill="none">
+                                    </circle>
+                                    <circle cx="150" cy="150" r="140" stroke="#6366f1" stroke-width="8" fill="none"
+                                        stroke-dasharray="879.646" stroke-dashoffset="879.646" class="timer-progress"
+                                        id="timerProgress" stroke-linecap="round" transform="rotate(-90 150 150)">
+                                    </circle>
+                                </svg>
+                                <div class="timer-display">
+                                    <div class="timer-time" id="timerDisplay">25:00</div>
+                                    <div class="timer-session" id="timerSession">Focus Session</div>
+                                </div>
+                            </div>
+
+                            <!-- Current Topic -->
+                            <div class="current-topic mb-4">
+                                <h5 class="fw-bold mb-2" id="currentTopic">Select a topic to start</h5>
+                                <p class="text-muted" id="currentDescription">Choose what you want to study during this
+                                    session</p>
+                            </div>
+
+                            <!-- Timer Controls -->
+                            <div class="timer-buttons">
+                                <button class="btn btn-primary btn-lg me-3" id="startStopBtn" onclick="toggleTimer()">
+                                    <i class="fas fa-play me-2" id="playPauseIcon"></i>
+                                    <span id="playPauseText">Start</span>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-lg" id="resetBtn" onclick="resetTimer()"
+                                    disabled>
+                                    <i class="fas fa-redo me-2"></i>
+                                    Reset
+                                </button>
+                            </div>
+
+                            <!-- Session Info -->
+                            <div class="session-info mt-4">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="info-item">
+                                            <div class="info-value" id="sessionsCompleted">0</div>
+                                            <div class="info-label">Completed</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="info-item">
+                                            <div class="info-value" id="currentCycle">1/4</div>
+                                            <div class="info-label">Cycle</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="info-item">
+                                            <div class="info-value" id="nextSession">Break</div>
+                                            <div class="info-label">Next</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic Selection -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Study Topics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="topic-presets mb-3">
+                                <h6 class="fw-semibold mb-2">Quick Select</h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm"
+                                        onclick="selectTopic('Arrays & Strings', 'Practice two-pointer and sliding window techniques')">
+                                        <i class="fas fa-code me-2"></i>Arrays & Strings
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm"
+                                        onclick="selectTopic('Trees & Graphs', 'Study traversal algorithms and graph theory')">
+                                        <i class="fas fa-project-diagram me-2"></i>Trees & Graphs
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm"
+                                        onclick="selectTopic('Dynamic Programming', 'Practice DP patterns and optimization')">
+                                        <i class="fas fa-brain me-2"></i>Dynamic Programming
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm"
+                                        onclick="selectTopic('System Design', 'Learn scalability and architecture patterns')">
+                                        <i class="fas fa-building me-2"></i>System Design
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="custom-topic">
+                                <h6 class="fw-semibold mb-2">Custom Topic</h6>
+                                <div class="mb-2">
+                                    <input type="text" class="form-control form-control-sm" id="customTopic"
+                                        placeholder="Enter topic name">
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control form-control-sm" id="customDescription" rows="2"
+                                        placeholder="Description (optional)"></textarea>
+                                </div>
+                                <button class="btn btn-primary btn-sm w-100" onclick="selectCustomTopic()">
+                                    <i class="fas fa-check me-2"></i>Set Topic
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Progress -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Today's Progress</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-stats">
+                                <div class="stat-row">
+                                    <span class="stat-label">Study Time:</span>
+                                    <span class="stat-value" id="todayStudyTime">0h 0m</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Sessions:</span>
+                                    <span class="stat-value" id="todaySessions">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Focus Score:</span>
+                                    <span class="stat-value" id="focusScore">100%</span>
+                                </div>
+                            </div>
+
+                            <div class="today-sessions mt-3">
+                                <h6 class="fw-semibold mb-2">Recent Sessions</h6>
+                                <div id="recentSessions">
+                                    <p class="text-muted small">No sessions yet today</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Timer Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="focusDuration" class="form-label">Focus Duration (minutes)</label>
+                        <input type="number" class="form-control" id="focusDuration" value="25" min="1" max="90">
+                    </div>
+                    <div class="mb-3">
+                        <label for="shortBreakDuration" class="form-label">Short Break (minutes)</label>
+                        <input type="number" class="form-control" id="shortBreakDuration" value="5" min="1" max="30">
+                    </div>
+                    <div class="mb-3">
+                        <label for="longBreakDuration" class="form-label">Long Break (minutes)</label>
+                        <input type="number" class="form-control" id="longBreakDuration" value="15" min="5" max="60">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="autoStartBreaks" checked>
+                            <label class="form-check-label" for="autoStartBreaks">
+                                Auto-start breaks
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="notifications" checked>
+                            <label class="form-check-label" for="notifications">
+                                Browser notifications
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="sounds" checked>
+                            <label class="form-check-label" for="sounds">
+                                Sound alerts
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Session History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="history-filters mb-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm" id="historyPeriod">
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="all">All Time</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm" id="historyType">
+                                    <option value="all">All Sessions</option>
+                                    <option value="study">Study Only</option>
+                                    <option value="break">Break Only</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sessionHistory">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+
+        // Timer state
+        let timerState = {
+            isRunning: false,
+            isPaused: false,
+            currentSession: 'focus', // 'focus', 'shortBreak', 'longBreak'
+            timeRemaining: 25 * 60, // in seconds
+            totalTime: 25 * 60,
+            cycleCount: 1,
+            sessionsCompleted: 0,
+            currentTopic: null,
+            currentDescription: null,
+            sessionId: null
+        };
+
+        // Settings
+        let settings = {
+            focusDuration: 25,
+            shortBreakDuration: 5,
+            longBreakDuration: 15,
+            autoStartBreaks: true,
+            notifications: true,
+            sounds: true
+        };
+
+        let timerInterval = null;
+        let todayStats = {
+            studyTime: 0,
+            sessions: 0,
+            recentSessions: []
+        };
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            await loadComponents();
+            await checkAuth();
+            updateActivePage('pomodoro');
+            initializeTimer();
+            loadSettings();
+            loadTodayStats();
+            requestNotificationPermission();
+        });
+
+        async function loadComponents() {
+            try {
+                const [sidebarResponse, topbarResponse, mobileNavResponse] = await Promise.all([
+                    fetch('../components/sidebar.html'),
+                    fetch('../components/topbar.html'),
+                    fetch('../components/mobile-nav.html')
+                ]);
+
+                document.getElementById('sidebarContainer').innerHTML = await sidebarResponse.text();
+                document.getElementById('topbarContainer').innerHTML = await topbarResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = await mobileNavResponse.text();
+
+                initializeComponents();
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        function initializeComponents() {
+            const sidebarToggle = document.getElementById('sidebarToggleBtn');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function () {
+                    document.body.classList.toggle('sidebar-collapsed');
+                });
+            }
+
+            const globalSearch = document.getElementById('globalSearch');
+            if (globalSearch) {
+                globalSearch.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        window.location.href = `/search?q=${encodeURIComponent(this.value)}`;
+                    }
+                });
+            }
+        }
+
+        async function checkAuth() {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateUserInfo(data.user);
+                } else {
+                    localStorage.removeItem('accessToken');
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                localStorage.removeItem('accessToken');
+                window.location.href = '/login';
+            }
+        }
+
+        function updateUserInfo(user) {
+            const userNameElements = ['sidebarUserName', 'topbarUserName', 'dropdownUserName', 'mobileUserName'];
+            userNameElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = user.name;
+            });
+
+            const userEmailElements = ['sidebarUserEmail', 'dropdownUserEmail', 'mobileUserEmail'];
+            userEmailElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = user.email;
+            });
+
+            const avatarUrl = user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=ffffff`;
+            const avatarElements = ['sidebarAvatar', 'topbarAvatar', 'mobileUserAvatar'];
+            avatarElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.src = avatarUrl;
+            });
+        }
+
+        function initializeTimer() {
+            updateTimerDisplay();
+            updateSessionInfo();
+            updateProgressCircle();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerState.timeRemaining / 60);
+            const seconds = timerState.timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update page title
+            document.title = `${minutes}:${seconds.toString().padStart(2, '0')} - Pomodoro Timer`;
+        }
+
+        function updateSessionInfo() {
+            const sessionTypes = {
+                'focus': 'Focus Session',
+                'shortBreak': 'Short Break',
+                'longBreak': 'Long Break'
+            };
+
+            document.getElementById('timerSession').textContent = sessionTypes[timerState.currentSession];
+            document.getElementById('sessionsCompleted').textContent = timerState.sessionsCompleted;
+            document.getElementById('currentCycle').textContent = `${timerState.cycleCount}/4`;
+
+            // Update next session
+            let nextSession = 'Break';
+            if (timerState.currentSession === 'focus') {
+                nextSession = timerState.cycleCount === 4 ? 'Long Break' : 'Short Break';
+    

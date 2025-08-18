@@ -1,1 +1,695 @@
-/* Mobile & tablet responsiveness */
+/* Mobile First Responsive Design */
+
+/* Extra Small Devices (phones, 576px and down) */
+@media (max-width: 575.98px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .main-content {
+        padding: 1rem 0.5rem;
+    }
+
+    /* Typography */
+    h1,
+    .h1 {
+        font-size: 2rem;
+    }
+
+    h2,
+    .h2 {
+        font-size: 1.75rem;
+    }
+
+    h3,
+    .h3 {
+        font-size: 1.5rem;
+    }
+
+    h4,
+    .h4 {
+        font-size: 1.25rem;
+    }
+
+    h5,
+    .h5 {
+        font-size: 1.125rem;
+    }
+
+    h6,
+    .h6 {
+        font-size: 1rem;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+    }
+
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    /* Cards */
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-header {
+        padding: 1rem;
+    }
+
+    /* Buttons */
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-group-vertical .btn {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Welcome Card */
+    .welcome-card {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .welcome-actions .btn {
+        width: 100%;
+        margin: 0;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        margin-bottom: 1rem;
+        padding: 1.25rem;
+    }
+
+    .stat-card .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.75rem;
+    }
+
+    /* Progress Overview */
+    .progress-overview {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+    }
+
+    .progress-circle svg {
+        width: 100px;
+        height: 100px;
+    }
+
+    .progress-percentage {
+        font-size: 1.25rem;
+    }
+
+    .progress-stats {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .progress-stats .stat-item {
+        padding: 0.75rem;
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: var(--radius-md);
+    }
+
+    /* Today's Topic */
+    .today-topic {
+        padding: 1.25rem;
+    }
+
+    .topic-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
+    .topic-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .topic-actions .btn {
+        width: 100%;
+    }
+
+    /* Activity Items */
+    .activity-item {
+        padding: 0.75rem 0;
+        flex-wrap: wrap;
+    }
+
+    .activity-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 0.875rem;
+        margin-right: 0.75rem;
+    }
+
+    .activity-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .activity-status,
+    .activity-action {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+
+    /* Tables */
+    .table-responsive {
+        border: none;
+    }
+
+    .table td,
+    .table th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    /* Forms */
+    .auth-form-container {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .form-control {
+        padding: 0.875rem 0.75rem;
+    }
+
+    .input-group-text {
+        padding: 0.875rem 0.75rem;
+    }
+
+    /* Mobile Navigation */
+    .mobile-nav-item {
+        font-size: 0.7rem;
+        padding: 0.25rem;
+    }
+
+    .mobile-nav-item i {
+        font-size: 1.125rem;
+        margin-bottom: 0.125rem;
+    }
+
+    /* Modals */
+    .modal-dialog {
+        margin: 1rem;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+    }
+}
+
+/* Small Devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .main-content {
+        padding: 1.5rem 1rem;
+    }
+
+    /* Stats Grid */
+    .stat-card {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Progress Overview */
+    .progress-overview {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .progress-circle {
+        flex-shrink: 0;
+    }
+
+    .progress-stats {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+
+    /* Activity Layout */
+    .activity-item {
+        flex-wrap: nowrap;
+    }
+
+    .activity-status,
+    .activity-action {
+        margin-left: 1rem;
+        margin-top: 0;
+        width: auto;
+    }
+
+    /* Auth Forms */
+    .auth-form-container {
+        max-width: 400px;
+        padding: 2.5rem;
+    }
+}
+
+/* Medium Devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    /* Main Content */
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    /* Welcome Card */
+    .welcome-card {
+        padding: 2rem;
+    }
+
+    .welcome-actions {
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    /* Grid Layouts */
+    .row .col-md-6:nth-child(odd) {
+        padding-right: 0.75rem;
+    }
+
+    .row .col-md-6:nth-child(even) {
+        padding-left: 0.75rem;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    /* Progress Layout */
+    .progress-overview {
+        flex-direction: row;
+        gap: 2rem;
+    }
+
+    .progress-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* Today's Topic */
+    .today-topic {
+        padding: 1.5rem;
+    }
+
+    .topic-actions {
+        flex-direction: row;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    /* Tables */
+    .table-responsive {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+    }
+}
+
+/* Large Devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+
+    /* Sidebar and Main Content */
+    .main-content {
+        margin-left: var(--sidebar-width);
+        margin-top: var(--topbar-height);
+        padding: 2rem;
+    }
+
+    .sidebar-collapsed .main-content {
+        margin-left: 80px;
+    }
+
+    /* Progress Stats */
+    .progress-stats {
+        flex-direction: row;
+        gap: 2rem;
+    }
+
+    /* Grid Layouts */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    /* Today's Topic */
+    .topic-actions {
+        flex-direction: row;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+}
+
+/* Extra Large Devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .main-content {
+        padding: 2.5rem;
+    }
+
+    .container-fluid {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Enhanced Grid Layouts */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .activity-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+}
+
+/* XXL Devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+    .main-content {
+        padding: 3rem;
+    }
+
+    .welcome-card {
+        padding: 3rem;
+    }
+
+    .stat-card {
+        padding: 2rem;
+    }
+
+    .progress-overview {
+        gap: 3rem;
+    }
+
+    .progress-stats {
+        gap: 3rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    .sidebar,
+    .topbar,
+    .mobile-header,
+    .mobile-nav,
+    .welcome-actions,
+    .topic-actions,
+    .activity-action,
+    .btn,
+    .floating-elements {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+    }
+
+    .stat-card {
+        break-inside: avoid;
+    }
+
+    .welcome-card {
+        background: #f8f9fa !important;
+        color: #000 !important;
+    }
+
+    .progress-circle svg {
+        width: 80px !important;
+        height: 80px !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000;
+    }
+
+    .btn {
+        border: 2px solid #000;
+    }
+
+    .progress-bar {
+        background: #000 !important;
+    }
+
+    .stat-icon {
+        border: 2px solid #fff;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .floating-elements,
+    .progress-circle-fill,
+    .hover-lift,
+    .hover-scale {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .sidebar,
+    .main-content {
+        transition: none !important;
+    }
+}
+
+/* Landscape Orientation */
+@media (orientation: landscape) and (max-width: 991.98px) {
+    .mobile-header {
+        height: 50px;
+    }
+
+    .mobile-nav {
+        height: 60px;
+    }
+
+    .main-content {
+        margin-top: 50px;
+        margin-bottom: 60px;
+    }
+
+    .welcome-card {
+        padding: 1.5rem;
+    }
+
+    .progress-overview {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+
+    .progress-stats {
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .nav-link {
+        min-height: 44px;
+        padding: 0.75rem 1rem;
+    }
+
+    .mobile-nav-item {
+        min-height: 44px;
+        padding: 0.5rem;
+    }
+
+    .form-control {
+        min-height: 44px;
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+
+    .sidebar .nav-link {
+        padding: 1rem 1.5rem;
+    }
+}
+
+/* Hover-capable Devices */
+@media (hover: hover) and (pointer: fine) {
+    .hover-effects:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .activity-item:hover {
+        background: rgba(99, 102, 241, 0.05);
+        margin: 0 -1rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+    }
+}
+
+/* Container Query Support (Future-proofing) */
+@supports (container-type: inline-size) {
+    .responsive-container {
+        container-type: inline-size;
+    }
+
+    @container (max-width: 400px) {
+        .progress-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+
+    @container (min-width: 600px) {
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+    }
+}
+
+/* Safe Area Insets for devices with notches */
+@supports (padding: max(0px)) {
+    .mobile-header {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-top: max(0.5rem, env(safe-area-inset-top));
+    }
+
+    .mobile-nav {
+        padding-left: max(0, env(safe-area-inset-left));
+        padding-right: max(0, env(safe-area-inset-right));
+        padding-bottom: max(0, env(safe-area-inset-bottom));
+    }
+
+    .main-content {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
+
+/* Accessibility - Focus Management */
+@media (max-width: 991.98px) {
+    .skip-to-content {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: var(--primary-color);
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 10000;
+    }
+
+    .skip-to-content:focus {
+        top: 6px;
+    }
+}
+
+/* Responsive Images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.avatar-img {
+    max-width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Responsive Text */
+.responsive-text {
+    font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+}
+
+.responsive-heading {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* Fluid Grid System */
+.fluid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.fluid-grid-sm {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.fluid-grid-lg {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
