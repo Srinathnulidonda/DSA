@@ -33,6 +33,10 @@
             "destination": "/pages/profile.html"
         },
         {
+            "source": "/settings",
+            "destination": "/pages/settings.html"
+        },
+        {
             "source": "/analytics",
             "destination": "/pages/analytics.html"
         },

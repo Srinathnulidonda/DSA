@@ -6,104 +6,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progress - DSA Learning Platform</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.min.js">
     <link href="../css/main.css" rel="stylesheet">
     <link href="../css/components.css" rel="stylesheet">
     <link href="../css/animation.css" rel="stylesheet">
     <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
-    <!-- Sidebar -->
-    <div id="sidebarContainer"></div>
+<body>
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">Progress</h4>
+                <small class="text-muted" id="progressSummary">Track your journey</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-success btn-sm" onclick="exportReport()">
+                    <i class="fas fa-download"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="setTimeframe('week')">This Week</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setTimeframe('month')">This Month</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setTimeframe('all')">All Time</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Topbar -->
-    <div id="topbarContainer"></div>
+    <!-- Desktop Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div id="sidebarContainer"></div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container-fluid">
-            <!-- Header -->
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Progress Overview -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <h1 class="h3 mb-3">My Progress</h1>
-                    <p class="text-muted">Track your learning journey and achievements</p>
-                </div>
-            </div>
-
-            <!-- Overall Stats -->
-            <div class="row g-4 mb-4">
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="stat-card text-center">
-                        <div class="stat-icon bg-primary text-white mx-auto mb-3">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <h3 class="mb-1"><span id="overallProgress">0</span>%</h3>
-                        <p class="text-muted mb-0">Overall Progress</p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="stat-card text-center">
-                        <div class="stat-icon bg-success text-white mx-auto mb-3">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h3 class="mb-1"><span id="completedDays">0</span></h3>
-                        <p class="text-muted mb-0">Days Completed</p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="stat-card text-center">
-                        <div class="stat-icon bg-warning text-white mx-auto mb-3">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <h3 class="mb-1"><span id="currentStreak">0</span></h3>
-                        <p class="text-muted mb-0">Current Streak</p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="stat-card text-center">
-                        <div class="stat-icon bg-info text-white mx-auto mb-3">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <h3 class="mb-1"><span id="totalHours">0</span>h</h3>
-                        <p class="text-muted mb-0">Total Study Time</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Progress Chart -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0">Weekly Progress Chart</h5>
-                        </div>
+                    <div class="card bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-fade-in">
                         <div class="card-body">
-                            <canvas id="progressChart" height="100"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Detailed Progress -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">Detailed Progress by Week</h5>
-                                <button class="btn btn-sm btn-outline-primary" onclick="exportProgress()">
-                                    <i class="fas fa-download me-1"></i> Export
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="detailedProgress">
-                                <div class="text-center py-4">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
+                            <div class="row align-items-center">
+                                <div class="col-lg-8">
+                                    <h2 class="mb-2"><i class="fas fa-chart-line me-2"></i>Learning Progress</h2>
+                                    <p class="mb-0 opacity-75">Track your DSA mastery journey with detailed analytics
+                                    </p>
+                                </div>
+                                <div class="col-lg-4 text-lg-end">
+                                    <div
+                                        class="d-flex justify-content-lg-end justify-content-center mt-3 mt-lg-0 gap-2">
+                                        <button class="btn btn-light btn-sm" onclick="refreshData()">
+                                            <i class="fas fa-sync-alt"></i>
+                                            Refresh
+                                        </button>
+                                        <button class="btn btn-outline-light btn-sm" onclick="exportReport()">
+                                            <i class="fas fa-download"></i>
+                                            Export
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -112,129 +82,498 @@
                 </div>
             </div>
 
-            <!-- Achievements -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0">Achievements</h5>
+            <!-- Key Metrics -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up">
+                        <div class="card-body">
+                            <div class="progress-ring mx-auto mb-3" style="width: 80px; height: 80px;">
+                                <svg width="80" height="80">
+                                    <circle cx="40" cy="40" r="30" class="progress-ring-circle"></circle>
+                                    <circle cx="40" cy="40" r="30" class="progress-ring-progress"
+                                        id="overallProgressRing"></circle>
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <strong id="overallPercentage">0%</strong>
+                                </div>
+                            </div>
+                            <h6 class="text-muted">Overall Progress</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up animation-delay-100">
+                        <div class="card-body">
+                            <div class="text-success mb-2">
+                                <i class="fas fa-fire text-4xl"></i>
+                            </div>
+                            <h3 class="mb-1" id="currentStreak">0</h3>
+                            <h6 class="text-muted">Day Streak</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up animation-delay-200">
+                        <div class="card-body">
+                            <div class="text-primary mb-2">
+                                <i class="fas fa-clock text-4xl"></i>
+                            </div>
+                            <h3 class="mb-1" id="totalHours">0h</h3>
+                            <h6 class="text-muted">Study Time</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up animation-delay-300">
+                        <div class="card-body">
+                            <div class="text-warning mb-2">
+                                <i class="fas fa-trophy text-4xl"></i>
+                            </div>
+                            <h3 class="mb-1" id="completedTopics">0</h3>
+                            <h6 class="text-muted">Topics Mastered</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-4">
+                <div class="col-lg-8 mb-4">
+                    <div class="card animate-slide-up animation-delay-400">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Study Progress Over Time</h5>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary active"
+                                    onclick="setChartPeriod('week')">Week</button>
+                                <button type="button" class="btn btn-outline-primary"
+                                    onclick="setChartPeriod('month')">Month</button>
+                                <button type="button" class="btn btn-outline-primary"
+                                    onclick="setChartPeriod('year')">Year</button>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <div class="row g-3" id="achievements">
-                                <!-- Achievements will be loaded here -->
+                            <canvas id="progressChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card animate-slide-up animation-delay-500">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Topic Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topicChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Breakdown -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-600">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-calendar-week me-2"></i>Weekly Breakdown</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="weeklyBreakdown">
+                                <!-- Weekly progress will be loaded here -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+
+            <!-- Achievements & Milestones -->
+            <div class="row mb-4">
+                <div class="col-lg-6 mb-4">
+                    <div class="card animate-slide-up animation-delay-700">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-medal me-2"></i>Recent Achievements</h5>
+                        </div>
+                        <div class="card-body" id="achievements">
+                            <!-- Achievements will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card animate-slide-up animation-delay-800">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-target me-2"></i>Study Goals</h5>
+                        </div>
+                        <div class="card-body" id="studyGoals">
+                            <!-- Study goals will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Patterns -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-900">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-brain me-2"></i>Study Patterns & Insights</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <canvas id="heatmapChart" height="200"></canvas>
+                                </div>
+                                <div class="col-lg-4" id="studyInsights">
+                                    <!-- Study insights will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-1000">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-analytics me-2"></i>Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="performanceTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Week</th>
+                                            <th>Topics Covered</th>
+                                            <th>Time Spent</th>
+                                            <th>Completion Rate</th>
+                                            <th>Average Score</th>
+                                            <th>Trend</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="performanceTableBody">
+                                        <!-- Performance data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <!-- Mobile Navigation -->
     <div id="mobileNavContainer"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../js/main.js"></script>
-    <script src="../js/components.js"></script>
+    <!-- Goal Setting Modal -->
+    <div class="modal fade" id="goalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Set Study Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="goalForm">
+                        <div class="mb-3">
+                            <label for="goalType" class="form-label">Goal Type</label>
+                            <select class="form-control" id="goalType" required>
+                                <option value="daily_time">Daily Study Time</option>
+                                <option value="weekly_topics">Weekly Topics</option>
+                                <option value="streak">Streak Target</option>
+                                <option value="completion">Completion Date</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="goalTarget" class="form-label">Target</label>
+                            <input type="number" class="form-control" id="goalTarget" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="goalDeadline" class="form-label">Deadline</label>
+                            <input type="date" class="form-control" id="goalDeadline">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveGoal()">Save Goal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.min.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+
+        // Global variables
+        let currentUser = null;
         let progressData = null;
-        let statsData = null;
-        let roadmapData = null;
-        let progressChart = null;
+        let charts = {};
+        let currentTimeframe = 'all';
+        let currentChartPeriod = 'week';
 
-        // Initialize progress page
-        async function initProgress() {
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
             await loadComponents();
-            await loadRoadmap();
             await loadProgressData();
-            renderProgressChart();
-            renderDetailedProgress();
-            renderAchievements();
-        }
+            setActivePage('progress');
+            initializeCharts();
+        });
 
-        // Load roadmap
-        async function loadRoadmap() {
-            try {
-                const response = await fetch(`${API_BASE}/roadmap`);
-                const data = await response.json();
-                roadmapData = data.roadmap;
-            } catch (error) {
-                console.error('Failed to load roadmap:', error);
-            }
-        }
-
-        // Load progress data
-        async function loadProgressData() {
-            const token = localStorage.getItem('access_token');
+        // Authentication check
+        async function checkAuth() {
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 window.location.href = '/login';
                 return;
             }
 
             try {
+                const response = await fetch(`${API_BASE}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
+                }
+
+                const data = await response.json();
+                currentUser = data.user;
+            } catch (error) {
+                console.error('Auth error:', error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            }
+        }
+
+        // Load reusable components
+        async function loadComponents() {
+            try {
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebarContainer').innerHTML = sidebarHtml;
+
+                if (window.innerWidth >= 992) {
+                    const topbarResponse = await fetch('../components/topbar.html');
+                    const topbarHtml = await topbarResponse.text();
+                    document.getElementById('topbarContainer').innerHTML = topbarHtml;
+
+                    setTimeout(() => {
+                        const pageTitle = document.getElementById('pageTitle');
+                        if (pageTitle) pageTitle.textContent = 'Progress';
+                    }, 100);
+                }
+
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = mobileNavHtml;
+
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        // Load progress data
+        async function loadProgressData() {
+            const token = localStorage.getItem('accessToken');
+
+            try {
                 const response = await fetch(`${API_BASE}/progress`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    progressData = data.progress;
-                    statsData = data.stats;
-                    updateStats();
+                    progressData = await response.json();
+                    updateProgressMetrics();
+                    updateWeeklyBreakdown();
+                    updateAchievements();
+                    updateStudyGoals();
+                    updateStudyInsights();
+                    updatePerformanceTable();
+                } else {
+                    throw new Error('Failed to load progress data');
                 }
+
             } catch (error) {
-                console.error('Failed to load progress:', error);
+                console.error('Progress error:', error);
+                showToast('Error loading progress data', 'error');
             }
         }
 
-        // Update stats
-        function updateStats() {
-            let totalCompleted = 0;
-            let totalDays = 0;
+        // Update progress metrics
+        function updateProgressMetrics() {
+            if (!progressData) return;
 
-            if (roadmapData) {
-                roadmapData.forEach(week => {
-                    totalDays += week.days.length;
-                    const weekProgress = progressData[week.week] || {};
-                    totalCompleted += Object.values(weekProgress).filter(d => d.completed).length;
+            const stats = progressData.stats;
+
+            // Overall progress
+            const percentage = Math.round(stats.completion_percentage || 0);
+            document.getElementById('overallPercentage').textContent = `${percentage}%`;
+            updateProgressRing('overallProgressRing', percentage);
+
+            // Other metrics
+            document.getElementById('currentStreak').textContent = stats.current_streak || 0;
+            document.getElementById('totalHours').textContent = `${Math.round((stats.total_study_time || 0) / 60)}h`;
+
+            // Count completed topics
+            let completedTopics = 0;
+            Object.values(progressData.progress || {}).forEach(week => {
+                Object.values(week).forEach(day => {
+                    if (day.completed) completedTopics++;
                 });
-            }
+            });
+            document.getElementById('completedTopics').textContent = completedTopics;
 
-            const percentage = totalDays > 0 ? Math.round((totalCompleted / totalDays) * 100) : 0;
-
-            document.getElementById('overallProgress').textContent = percentage;
-            document.getElementById('completedDays').textContent = totalCompleted;
-            document.getElementById('currentStreak').textContent = statsData.current_streak || 0;
-            document.getElementById('totalHours').textContent = Math.round((statsData.total_study_time || 0) / 60);
+            // Update summary
+            document.getElementById('progressSummary').textContent = `${percentage}% complete • ${completedTopics} topics mastered`;
         }
 
-        // Render progress chart
-        function renderProgressChart() {
+        // Update progress ring
+        function updateProgressRing(elementId, percentage) {
+            const circle = document.getElementById(elementId);
+            const radius = 30;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+
+            circle.style.strokeDasharray = circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            initializeProgressChart();
+            initializeTopicChart();
+            initializeHeatmapChart();
+        }
+
+        // Initialize progress chart
+        function initializeProgressChart() {
             const ctx = document.getElementById('progressChart').getContext('2d');
 
-            const weekLabels = roadmapData.map(w => `Week ${w.week}`);
-            const progressValues = roadmapData.map(week => {
-                const weekProgress = progressData[week.week] || {};
-                const completed = Object.values(weekProgress).filter(d => d.completed).length;
-                return Math.round((completed / week.days.length) * 100);
-            });
+            // Generate sample data based on current progress
+            const labels = [];
+            const completedData = [];
+            const timeData = [];
 
-            progressChart = new Chart(ctx, {
+            // Generate last 30 days
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en', { month: 'short', day: 'numeric' }));
+
+                // Simulate progress data
+                completedData.push(Math.random() * 3 + i * 0.1);
+                timeData.push(Math.random() * 120 + 30);
+            }
+
+            charts.progressChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: weekLabels,
+                    labels: labels,
                     datasets: [{
-                        label: 'Progress %',
-                        data: progressValues,
-                        borderColor: '#007bff',
-                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
+                        label: 'Topics Completed',
+                        data: completedData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Study Time (min)',
+                        data: timeData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Topics'
+                            },
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Minutes'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize topic chart
+        function initializeTopicChart() {
+            const ctx = document.getElementById('topicChart').getContext('2d');
+
+            const topics = [
+                'Arrays & Strings',
+                'Linked Lists',
+                'Stacks & Queues',
+                'Trees',
+                'Graphs',
+                'Dynamic Programming',
+                'Sorting & Searching',
+                'Other'
+            ];
+
+            const data = [15, 12, 10, 18, 14, 8, 13, 10]; // Sample data
+
+            charts.topicChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: topics,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#3b82f6',
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444',
+                            '#8b5cf6',
+                            '#06b6d4',
+                            '#84cc16',
+                            '#f97316'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
@@ -242,23 +581,93 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize heatmap chart (activity chart)
+        function initializeHeatmapChart() {
+            const ctx = document.getElementById('heatmapChart').getContext('2d');
+
+            // Generate weekly activity data
+            const weeks = [];
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const data = [];
+
+            for (let week = 0; week < 12; week++) {
+                weeks.push(`Week ${week + 1}`);
+                for (let day = 0; day < 7; day++) {
+                    data.push({
+                        x: week,
+                        y: day,
+                        v: Math.random() * 4 // Activity level 0-4
+                    });
+                }
+            }
+
+            charts.heatmapChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Study Activity',
+                        data: data,
+                        backgroundColor: function (context) {
+                            const value = context.parsed.v;
+                            const alpha = value / 4;
+                            return `rgba(59, 130, 246, ${alpha})`;
+                        },
+                        pointRadius: 8,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    return `Week ${value + 1}`;
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Weeks'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    return days[value];
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Days'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
                             display: false
                         },
                         tooltip: {
                             callbacks: {
+                                title: function (context) {
+                                    const point = context[0];
+                                    return `Week ${point.parsed.x + 1}, ${days[point.parsed.y]}`;
+                                },
                                 label: function (context) {
-                                    return `Progress: ${context.parsed.y}%`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function (value) {
-                                    return value + '%';
+                                    const activity = Math.round(context.parsed.v);
+                                    return `Activity Level: ${activity}/4`;
                                 }
                             }
                         }
@@ -267,42 +676,165 @@
             });
         }
 
-        // Render detailed progress
-        function renderDetailedProgress() {
-            const container = document.getElementById('detailedProgress');
-            let html = '';
+        // Update weekly breakdown
+        function updateWeeklyBreakdown() {
+            const container = document.getElementById('weeklyBreakdown');
 
-            roadmapData.forEach(week => {
-                const weekProgress = progressData[week.week] || {};
-                const completedDays = Object.values(weekProgress).filter(d => d.completed).length;
-                const totalDays = week.days.length;
+            let html = '';
+            for (let week = 1; week <= 14; week++) {
+                const weekProgress = progressData.progress[week] || {};
+                const totalDays = 7;
+                const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
                 const percentage = Math.round((completedDays / totalDays) * 100);
 
+                const statusClass = percentage === 100 ? 'success' :
+                    percentage >= 50 ? 'warning' : 'primary';
+
                 html += `
-                    <div class="mb-4 animate-fade-in">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">
-                                Week ${week.week}: ${week.title}
-                                ${percentage === 100 ? '<i class="fas fa-check-circle text-success ms-2"></i>' : ''}
-                            </h6>
-                            <span class="text-muted">${completedDays}/${totalDays} days</span>
-                        </div>
-                        <div class="progress mb-3" style="height: 10px;">
-                            <div class="progress-bar ${percentage === 100 ? 'bg-success' : 'bg-primary'}" 
-                                 style="width: ${percentage}%"></div>
-                        </div>
-                        <div class="row g-2">
-                            ${week.days.map(day => {
-                    const dayProgress = weekProgress[day.day];
-                    const isCompleted = dayProgress?.completed || false;
-                    return `
-                                    <div class="col-auto">
-                                        <span class="badge ${isCompleted ? 'bg-success' : 'bg-secondary'}">
-                                            ${day.day.substring(0, 3)}
-                                        </span>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                        <div class="card week-progress-card h-100">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Week ${week}</h6>
+                                <div class="progress-ring mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <svg width="60" height="60">
+                                        <circle cx="30" cy="30" r="25" class="progress-ring-circle"></circle>
+                                        <circle cx="30" cy="30" r="25" class="progress-ring-progress" 
+                                                style="stroke-dasharray: ${percentage * 1.57} 157;"></circle>
+                                    </svg>
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <small><strong>${percentage}%</strong></small>
                                     </div>
-                                `;
-                }).join('')}
+                                </div>
+                                <p class="card-text small text-muted">${completedDays}/${totalDays} days</p>
+                                <span class="badge bg-${statusClass}">${percentage === 100 ? 'Complete' : 'In Progress'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `<div class="row">${html}</div>`;
+        }
+
+        // Update achievements
+        function updateAchievements() {
+            const achievements = [
+                {
+                    title: 'First Week Complete',
+                    description: 'Completed your first week of DSA learning',
+                    icon: 'fas fa-graduation-cap',
+                    color: 'success',
+                    date: '2024-01-07',
+                    unlocked: true
+                },
+                {
+                    title: '7-Day Streak',
+                    description: 'Studied for 7 consecutive days',
+                    icon: 'fas fa-fire',
+                    color: 'warning',
+                    date: '2024-01-10',
+                    unlocked: true
+                },
+                {
+                    title: 'Array Master',
+                    description: 'Completed all array-related topics',
+                    icon: 'fas fa-code',
+                    color: 'info',
+                    date: '2024-01-15',
+                    unlocked: true
+                },
+                {
+                    title: 'Speed Demon',
+                    description: 'Completed 5 topics in one day',
+                    icon: 'fas fa-rocket',
+                    color: 'danger',
+                    date: null,
+                    unlocked: false
+                },
+                {
+                    title: 'Night Owl',
+                    description: 'Study session completed after 10 PM',
+                    icon: 'fas fa-moon',
+                    color: 'primary',
+                    date: null,
+                    unlocked: false
+                }
+            ];
+
+            const container = document.getElementById('achievements');
+
+            let html = '';
+            achievements.forEach(achievement => {
+                const opacity = achievement.unlocked ? '1' : '0.5';
+                const textClass = achievement.unlocked ? '' : 'text-muted';
+
+                html += `
+                    <div class="d-flex align-items-center mb-3 p-2 rounded" style="opacity: ${opacity}">
+                        <div class="achievement-badge bg-${achievement.color} text-white me-3">
+                            <i class="${achievement.icon}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 ${textClass}">${achievement.title}</h6>
+                            <p class="mb-0 small ${textClass}">${achievement.description}</p>
+                            ${achievement.date ? `<small class="text-muted">Unlocked: ${new Date(achievement.date).toLocaleDateString()}</small>` : ''}
+                        </div>
+                        ${achievement.unlocked ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-lock text-muted"></i>'}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Update study goals
+        function updateStudyGoals() {
+            const goals = [
+                {
+                    title: 'Daily Study Time',
+                    target: 120,
+                    current: 95,
+                    unit: 'minutes',
+                    type: 'daily_time'
+                },
+                {
+                    title: 'Weekly Topics',
+                    target: 7,
+                    current: 5,
+                    unit: 'topics',
+                    type: 'weekly_topics'
+                },
+                {
+                    title: 'Study Streak',
+                    target: 30,
+                    current: progressData?.stats?.current_streak || 0,
+                    unit: 'days',
+                    type: 'streak'
+                }
+            ];
+
+            const container = document.getElementById('studyGoals');
+
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Current Goals</h6>
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#goalModal">
+                        <i class="fas fa-plus me-1"></i>Add Goal
+                    </button>
+                </div>
+            `;
+
+            goals.forEach(goal => {
+                const percentage = Math.min((goal.current / goal.target) * 100, 100);
+                const statusClass = percentage >= 100 ? 'success' : percentage >= 70 ? 'warning' : 'primary';
+
+                html += `
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="fw-semibold">${goal.title}</small>
+                            <small class="text-muted">${goal.current}/${goal.target} ${goal.unit}</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-${statusClass}" style="width: ${percentage}%"></div>
                         </div>
                     </div>
                 `;
@@ -311,186 +843,326 @@
             container.innerHTML = html;
         }
 
-        // Render achievements
-        function renderAchievements() {
-            const container = document.getElementById('achievements');
-            const achievements = getAchievements();
-
-            if (achievements.length === 0) {
-                container.innerHTML = `
-                    <div class="col-12 text-center py-4">
-                        <i class="fas fa-trophy fa-3x text-muted opacity-25 mb-3"></i>
-                        <p class="text-muted">Complete more tasks to unlock achievements!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = achievements.map(achievement => `
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}">
-                        <div class="achievement-icon">
-                            <i class="fas fa-${achievement.icon}"></i>
-                        </div>
-                        <h6>${achievement.title}</h6>
-                        <p class="small text-muted mb-0">${achievement.description}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Get achievements
-        function getAchievements() {
-            const achievements = [];
-
-            let totalCompleted = 0;
-            if (roadmapData) {
-                roadmapData.forEach(week => {
-                    const weekProgress = progressData[week.week] || {};
-                    totalCompleted += Object.values(weekProgress).filter(d => d.completed).length;
-                });
-            }
-
-            // Define achievements
-            const allAchievements = [
+        // Update study insights
+        function updateStudyInsights() {
+            const insights = [
                 {
-                    id: 'first-day',
-                    title: 'First Step',
-                    description: 'Complete your first day',
-                    icon: 'shoe-prints',
-                    requirement: () => totalCompleted >= 1
+                    icon: 'fas fa-clock',
+                    title: 'Peak Study Time',
+                    value: '2:00 PM - 4:00 PM',
+                    description: 'You\'re most productive in the afternoon'
                 },
                 {
-                    id: 'week-warrior',
-                    title: 'Week Warrior',
-                    description: 'Complete an entire week',
-                    icon: 'calendar-week',
-                    requirement: () => {
-                        return roadmapData.some(week => {
-                            const weekProgress = progressData[week.week] || {};
-                            return Object.values(weekProgress).filter(d => d.completed).length === week.days.length;
-                        });
-                    }
+                    icon: 'fas fa-calendar-day',
+                    title: 'Most Active Day',
+                    value: 'Tuesday',
+                    description: 'Your highest completion rate'
                 },
                 {
-                    id: 'halfway',
-                    title: 'Halfway There',
-                    description: 'Complete 50% of the roadmap',
-                    icon: 'star-half-alt',
-                    requirement: () => {
-                        const totalDays = roadmapData.reduce((sum, week) => sum + week.days.length, 0);
-                        return totalCompleted >= totalDays / 2;
-                    }
+                    icon: 'fas fa-trending-up',
+                    title: 'Improvement Rate',
+                    value: '+15%',
+                    description: 'Compared to last month'
                 },
                 {
-                    id: 'streak-7',
-                    title: 'On Fire',
-                    description: 'Maintain a 7-day streak',
-                    icon: 'fire',
-                    requirement: () => statsData.current_streak >= 7
-                },
-                {
-                    id: 'streak-30',
-                    title: 'Unstoppable',
-                    description: 'Maintain a 30-day streak',
-                    icon: 'rocket',
-                    requirement: () => statsData.current_streak >= 30
-                },
-                {
-                    id: 'completion',
-                    title: 'DSA Master',
-                    description: 'Complete the entire roadmap',
-                    icon: 'crown',
-                    requirement: () => {
-                        const totalDays = roadmapData.reduce((sum, week) => sum + week.days.length, 0);
-                        return totalCompleted === totalDays;
-                    }
+                    icon: 'fas fa-target',
+                    title: 'Focus Score',
+                    value: '8.5/10',
+                    description: 'Based on session completion'
                 }
             ];
 
-            return allAchievements.map(achievement => ({
-                ...achievement,
-                unlocked: achievement.requirement()
-            }));
-        }
+            const container = document.getElementById('studyInsights');
 
-        // Export progress
-        function exportProgress() {
-            const exportData = {
-                exportDate: new Date().toISOString(),
-                stats: statsData,
-                weeklyProgress: {}
-            };
-
-            roadmapData.forEach(week => {
-                const weekProgress = progressData[week.week] || {};
-                const completedDays = Object.values(weekProgress).filter(d => d.completed).length;
-
-                exportData.weeklyProgress[`Week ${week.week}`] = {
-                    title: week.title,
-                    completedDays: completedDays,
-                    totalDays: week.days.length,
-                    percentage: Math.round((completedDays / week.days.length) * 100),
-                    details: week.days.map(day => ({
-                        day: day.day,
-                        topic: day.topic,
-                        completed: weekProgress[day.day]?.completed || false
-                    }))
-                };
+            let html = '<h6 class="mb-3">Study Insights</h6>';
+            insights.forEach(insight => {
+                html += `
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded p-2">
+                                <i class="${insight.icon}"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${insight.title}</h6>
+                            <p class="mb-1 fw-semibold">${insight.value}</p>
+                            <small class="text-muted">${insight.description}</small>
+                        </div>
+                    </div>
+                `;
             });
 
-            // Download as JSON
-            const dataStr = JSON.stringify(exportData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-            const exportFileDefaultName = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
-
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
+            container.innerHTML = html;
         }
 
-        // Add achievement styles
-        const style = document.createElement('style');
-        style.textContent = `
-            .achievement-card {
-                background: #f8f9fa;
-                padding: 1.5rem;
-                border-radius: 1rem;
-                text-align: center;
-                transition: all 0.3s ease;
-                height: 100%;
-            }
-            
-            .achievement-card.unlocked {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-            
-            .achievement-card.locked {
-                opacity: 0.6;
-                filter: grayscale(100%);
-            }
-            
-            .achievement-icon {
-                font-size: 2.5rem;
-                margin-bottom: 1rem;
-            }
-            
-            .achievement-card.unlocked .achievement-icon {
-                animation: bounceIn 0.6s ease-out;
-            }
-            
-            .achievement-card h6 {
-                margin-bottom: 0.5rem;
-            }
-        `;
-        document.head.appendChild(style);
+        // Update performance table
+        function updatePerformanceTable() {
+            const tbody = document.getElementById('performanceTableBody');
 
-        // Initialize on load
-        initProgress();
+            let html = '';
+            for (let week = 1; week <= 14; week++) {
+                const weekProgress = progressData.progress[week] || {};
+                const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                const totalTime = Object.values(weekProgress).reduce((sum, day) => sum + (day.time_spent || 0), 0);
+                const completionRate = Math.round((completedDays / 7) * 100);
+                const avgScore = 75 + Math.random() * 20; // Simulated score
+                const trend = Math.random() > 0.5 ? 'up' : 'down';
+
+                const trendIcon = trend === 'up' ? 'fas fa-arrow-up text-success' : 'fas fa-arrow-down text-danger';
+
+                html += `
+                    <tr>
+                        <td>Week ${week}</td>
+                        <td>${completedDays}/7</td>
+                        <td>${Math.round(totalTime / 60)}h ${totalTime % 60}m</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                    <div class="progress-bar" style="width: ${completionRate}%"></div>
+                                </div>
+                                <small>${completionRate}%</small>
+                            </div>
+                        </td>
+                        <td>${Math.round(avgScore)}%</td>
+                        <td><i class="${trendIcon}"></i></td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = html;
+        }
+
+        // Chart period selection
+        function setChartPeriod(period) {
+            currentChartPeriod = period;
+
+            // Update button states
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update chart data based on period
+            updateProgressChartData(period);
+        }
+
+        // Update progress chart data
+        function updateProgressChartData(period) {
+            if (!charts.progressChart) return;
+
+            const chart = charts.progressChart;
+            const labels = [];
+            const data1 = [];
+            const data2 = [];
+
+            let points = 0;
+            let dateStep = 1;
+
+            switch (period) {
+                case 'week':
+                    points = 7;
+                    dateStep = 1;
+                    break;
+                case 'month':
+                    points = 30;
+                    dateStep = 1;
+                    break;
+                case 'year':
+                    points = 12;
+                    dateStep = 30;
+                    break;
+            }
+
+            for (let i = points - 1; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i * dateStep);
+
+                if (period === 'year') {
+                    labels.push(date.toLocaleDateString('en', { month: 'short' }));
+                } else {
+                    labels.push(date.toLocaleDateString('en', { month: 'short', day: 'numeric' }));
+                }
+
+                data1.push(Math.random() * 3 + i * 0.1);
+                data2.push(Math.random() * 120 + 30);
+            }
+
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data1;
+            chart.data.datasets[1].data = data2;
+            chart.update();
+        }
+
+        // Timeframe selection
+        function setTimeframe(timeframe) {
+            currentTimeframe = timeframe;
+            // Update data based on timeframe
+            showToast(`Showing ${timeframe} data`, 'info');
+        }
+
+        // Save goal
+        function saveGoal() {
+            const goalType = document.getElementById('goalType').value;
+            const goalTarget = document.getElementById('goalTarget').value;
+            const goalDeadline = document.getElementById('goalDeadline').value;
+
+            if (!goalType || !goalTarget) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+
+            // In real implementation, would save to backend
+            showToast('Goal saved successfully!', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('goalModal')).hide();
+            document.getElementById('goalForm').reset();
+        }
+
+        // Refresh data
+        async function refreshData() {
+            showToast('Refreshing progress data...', 'info');
+            await loadProgressData();
+
+            // Update charts
+            if (charts.progressChart) {
+                updateProgressChartData(currentChartPeriod);
+            }
+
+            showToast('Data refreshed successfully!', 'success');
+        }
+
+        // Export report
+        function exportReport() {
+            const reportData = {
+                user: currentUser.name,
+                exportDate: new Date().toISOString(),
+                progress: progressData,
+                summary: {
+                    overallProgress: document.getElementById('overallPercentage').textContent,
+                    currentStreak: document.getElementById('currentStreak').textContent,
+                    totalHours: document.getElementById('totalHours').textContent,
+                    completedTopics: document.getElementById('completedTopics').textContent
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-progress-report-${currentUser.name}-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Progress report exported successfully!', 'success');
+        }
+
+        // Set active page in navigation
+        function setActivePage(page) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+
+            const toast = `
+                <div class="toast ${type}" role="alert" id="${toastId}">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            toastContainer.innerHTML += toast;
+
+            const toastElement = document.getElementById(toastId);
+            const bsToast = new bootstrap.Toast(toastElement);
+            bsToast.show();
+
+            setTimeout(() => {
+                toastElement.remove();
+            }, 5000);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
     </script>
+
+    <style>
+        .week-progress-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .week-progress-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .progress-ring {
+            position: relative;
+        }
+
+        .progress-ring-circle {
+            stroke: #e5e7eb;
+            stroke-width: 4;
+            fill: none;
+        }
+
+        .progress-ring-progress {
+            stroke: #3b82f6;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        #performanceTable th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        #performanceTable td {
+            vertical-align: middle;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        #performanceTable tbody tr:hover {
+            background-color: #f9fafb;
+        }
+    </style>
 </body>
 
 </html>

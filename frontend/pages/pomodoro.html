@@ -6,301 +6,587 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer - DSA Learning Platform</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="/css/main.css" rel="stylesheet">
-    <link href="/css/components.css" rel="stylesheet">
-    <link href="/css/animation.css" rel="stylesheet">
-    <link href="/css/responsive.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
-    <!-- Sidebar -->
-    <div id="sidebarContainer"></div>
-
-    <!-- Topbar -->
-    <div id="topbarContainer"></div>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container-fluid">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="h3 mb-3">Pomodoro Timer</h1>
-                    <p class="text-muted">Stay focused and productive with the Pomodoro Technique</p>
-                </div>
+<body>
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">Pomodoro Timer</h4>
+                <small class="text-muted" id="sessionCount">0 sessions today</small>
             </div>
-
-            <!-- Timer Section -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-12 col-lg-8">
-                    <div class="card">
-                        <div class="card-body text-center py-5">
-                            <!-- Timer Display -->
-                            <div class="study-timer">
-                                <div class="timer-ring mx-auto">
-                                    <svg width="200" height="200">
-                                        <circle cx="100" cy="100" r="90" class="timer-ring-circle"></circle>
-                                        <circle cx="100" cy="100" r="90" class="timer-ring-progress"
-                                            stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
-                                    </svg>
-                                    <div class="position-absolute top-50 start-50 translate-middle">
-                                        <div class="timer-display" id="timerDisplay">25:00</div>
-                                    </div>
-                                </div>
-
-                                <!-- Session Info -->
-                                <div class="mt-4 mb-4">
-                                    <h4 id="sessionType" class="mb-2">Study Session</h4>
-                                    <div class="d-flex justify-content-center gap-3 text-muted">
-                                        <span>Session <span id="sessionCount">1</span></span>
-                                        <span>•</span>
-                                        <span>Today: <span id="todayMinutes">0</span> min</span>
-                                    </div>
-                                </div>
-
-                                <!-- Timer Controls -->
-                                <div class="timer-controls">
-                                    <button class="btn btn-primary btn-lg" id="startBtn" onclick="startTimer()">
-                                        <i class="fas fa-play me-2"></i> Start
-                                    </button>
-                                    <button class="btn btn-warning btn-lg d-none" id="pauseBtn" onclick="pauseTimer()">
-                                        <i class="fas fa-pause me-2"></i> Pause
-                                    </button>
-                                    <button class="btn btn-success btn-lg d-none" id="resumeBtn"
-                                        onclick="resumeTimer()">
-                                        <i class="fas fa-play me-2"></i> Resume
-                                    </button>
-                                    <button class="btn btn-danger btn-lg" onclick="resetTimer()">
-                                        <i class="fas fa-redo me-2"></i> Reset
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-12 col-lg-8">
-                    <div class="card">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0">Timer Settings</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">Study Duration (minutes)</label>
-                                    <input type="number" class="form-control" id="studyDuration" value="25" min="1"
-                                        max="60" onchange="updateSettings()">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Short Break (minutes)</label>
-                                    <input type="number" class="form-control" id="shortBreak" value="5" min="1" max="30"
-                                        onchange="updateSettings()">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Long Break (minutes)</label>
-                                    <input type="number" class="form-control" id="longBreak" value="15" min="5" max="60"
-                                        onchange="updateSettings()">
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="autoStart" checked>
-                                        <label class="form-check-label" for="autoStart">
-                                            Auto-start next session
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="notifications" checked>
-                                        <label class="form-check-label" for="notifications">
-                                            Enable notifications
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="soundEnabled" checked>
-                                        <label class="form-check-label" for="soundEnabled">
-                                            Play sound when timer ends
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Today's Sessions -->
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <div class="card">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Today's Sessions</h5>
-                            <button class="btn btn-sm btn-outline-primary" onclick="loadSessionHistory()">
-                                View All History
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div id="todaySessions">
-                                <div class="text-center py-4 text-muted">
-                                    <i class="fas fa-clock fa-3x mb-3 opacity-25"></i>
-                                    <p>No sessions yet today. Start your first session!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Mobile Navigation -->
-    <div id="mobileNavContainer"></div>
-
-    <!-- Session Complete Modal -->
-    <div class="modal fade" id="sessionCompleteModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center py-4">
-                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
-                    <h4 id="sessionCompleteTitle">Session Complete!</h4>
-                    <p id="sessionCompleteMessage">Great job! Take a break.</p>
-                    <button class="btn btn-primary" onclick="startNextSession()">
-                        Start Next Session
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="dropdown">
+                        <i class="fas fa-history"></i>
                     </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="showHistory()">Session History</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showStats()">Statistics</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" onclick="exportData()">Export Data</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Desktop Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div id="sidebarContainer"></div>
+
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-gradient-to-r from-red-500 to-pink-500 text-white animate-fade-in">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-lg-8">
+                                    <h2 class="mb-2"><i class="fas fa-clock me-2"></i>Pomodoro Study Timer</h2>
+                                    <p class="mb-0 opacity-75">Boost your focus with the proven Pomodoro Technique</p>
+                                </div>
+                                <div class="col-lg-4 text-lg-end">
+                                    <div
+                                        class="d-flex justify-content-lg-end justify-content-center mt-3 mt-lg-0 gap-2">
+                                        <button class="btn btn-light btn-sm" onclick="toggleSettings()">
+                                            <i class="fas fa-cog me-1"></i>
+                                            Settings
+                                        </button>
+                                        <button class="btn btn-outline-light btn-sm" onclick="showHistory()">
+                                            <i class="fas fa-history me-1"></i>
+                                            History
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Timer Section -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card animate-slide-up">
+                        <div class="card-body text-center p-5">
+                            <!-- Timer Display -->
+                            <div class="timer-container mb-4">
+                                <div class="timer-circle mx-auto" id="timerCircle">
+                                    <svg width="280" height="280" class="timer-svg">
+                                        <circle cx="140" cy="140" r="130" class="timer-track"></circle>
+                                        <circle cx="140" cy="140" r="130" class="timer-progress" id="timerProgress">
+                                        </circle>
+                                    </svg>
+                                    <div class="timer-content">
+                                        <div class="timer-time" id="timerDisplay">25:00</div>
+                                        <div class="timer-session" id="timerSession">Focus Session</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Session Type Selector -->
+                            <div class="btn-group mb-4" role="group" id="sessionTypeGroup">
+                                <button type="button" class="btn btn-outline-primary active"
+                                    onclick="setSessionType('focus')" id="focusBtn">
+                                    <i class="fas fa-brain me-1"></i>Focus (25m)
+                                </button>
+                                <button type="button" class="btn btn-outline-success" onclick="setSessionType('short')"
+                                    id="shortBtn">
+                                    <i class="fas fa-coffee me-1"></i>Short Break (5m)
+                                </button>
+                                <button type="button" class="btn btn-outline-info" onclick="setSessionType('long')"
+                                    id="longBtn">
+                                    <i class="fas fa-pause me-1"></i>Long Break (15m)
+                                </button>
+                            </div>
+
+                            <!-- Timer Controls -->
+                            <div class="timer-controls mb-4">
+                                <button class="btn btn-primary btn-lg me-2" onclick="startTimer()" id="startBtn">
+                                    <i class="fas fa-play me-2"></i>Start
+                                </button>
+                                <button class="btn btn-warning btn-lg me-2" onclick="pauseTimer()" id="pauseBtn"
+                                    style="display: none;">
+                                    <i class="fas fa-pause me-2"></i>Pause
+                                </button>
+                                <button class="btn btn-secondary btn-lg" onclick="resetTimer()" id="resetBtn">
+                                    <i class="fas fa-stop me-2"></i>Reset
+                                </button>
+                            </div>
+
+                            <!-- Current Task -->
+                            <div class="current-task">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="What are you working on?"
+                                        id="currentTask">
+                                    <button class="btn btn-outline-secondary" onclick="clearTask()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Panel -->
+                <div class="col-lg-4">
+                    <!-- Today's Progress -->
+                    <div class="card mb-4 animate-slide-up animation-delay-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Today's Progress</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="progress-ring mx-auto" style="width: 100px; height: 100px;">
+                                    <svg width="100" height="100">
+                                        <circle cx="50" cy="50" r="40" class="progress-ring-circle"></circle>
+                                        <circle cx="50" cy="50" r="40" class="progress-ring-progress"
+                                            id="dailyProgressRing"></circle>
+                                    </svg>
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <strong id="dailyPercentage">0%</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <h4 class="text-primary mb-0" id="completedSessions">0</h4>
+                                    <small class="text-muted">Completed</small>
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="text-success mb-0" id="totalFocusTime">0h</h4>
+                                    <small class="text-muted">Focus Time</small>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small">Daily Goal</span>
+                                <span class="small text-muted" id="dailyGoalText">0/8 sessions</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" id="dailyGoalProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="card mb-4 animate-slide-up animation-delay-200">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Quick Stats</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-fire text-warning me-2"></i>
+                                    <span>Current Streak</span>
+                                </div>
+                                <strong id="currentStreak">0 days</strong>
+                            </div>
+                            <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar-week text-info me-2"></i>
+                                    <span>This Week</span>
+                                </div>
+                                <strong id="weekSessions">0 sessions</strong>
+                            </div>
+                            <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock text-primary me-2"></i>
+                                    <span>Average Session</span>
+                                </div>
+                                <strong id="avgSession">0 min</strong>
+                            </div>
+                            <div class="stat-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-star text-success me-2"></i>
+                                    <span>Best Day</span>
+                                </div>
+                                <strong id="bestDay">Monday</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Panel -->
+                    <div class="card animate-slide-up animation-delay-300" id="settingsPanel" style="display: none;">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Timer Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Focus Session (minutes)</label>
+                                <input type="number" class="form-control" value="25" min="1" max="60"
+                                    id="focusDuration">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Short Break (minutes)</label>
+                                <input type="number" class="form-control" value="5" min="1" max="30"
+                                    id="shortBreakDuration">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Long Break (minutes)</label>
+                                <input type="number" class="form-control" value="15" min="1" max="60"
+                                    id="longBreakDuration">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Auto-start breaks</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoStartBreaks">
+                                    <label class="form-check-label" for="autoStartBreaks">
+                                        Automatically start break sessions
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Sound notifications</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="soundNotifications" checked>
+                                    <label class="form-check-label" for="soundNotifications">
+                                        Play sound when session ends
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Daily Goal (sessions)</label>
+                                <input type="number" class="form-control" value="8" min="1" max="20" id="dailyGoal">
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary" onclick="saveSettings()">
+                                    <i class="fas fa-save me-1"></i>Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Sessions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-400">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Sessions</h5>
+                            <button class="btn btn-outline-primary btn-sm" onclick="showAllHistory()">
+                                View All
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentSessions">
+                                <!-- Recent sessions will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <!-- Session History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Session History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Duration</th>
+                                    <th>Task</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- History data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Permission Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enable Notifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Would you like to enable browser notifications for timer alerts?</p>
+                    <p class="text-muted small">This will help you stay focused and know when sessions end.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Not Now</button>
+                    <button type="button" class="btn btn-primary" onclick="enableNotifications()">Enable</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
     <!-- Audio for notifications -->
     <audio id="notificationSound" preload="auto">
         <source
-            src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhCBSBzvLZiTYIF2m98OScTgwOUarm7blmFgU7k9n1yXkn"
+            src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmEbBTiS3fPKdyMFl3fN+f2YTgcVYZLu+NpnEAfH6vB8bVYYYJrr4JZmBhCe2F7kSFQKiOBr0AcANbIAQBDCkSigtKJhJPjTCJAkqRIe2FqAQA=="
             type="audio/wav">
     </audio>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/main.js"></script>
-    <script src="../js/components.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
 
-        // Timer state
+        // Global variables
+        let currentUser = null;
         let timerInterval = null;
-        let currentTime = 25 * 60; // 25 minutes in seconds
+        let currentSessionType = 'focus';
+        let timeRemaining = 25 * 60; // 25 minutes in seconds
         let isRunning = false;
         let isPaused = false;
-        let sessionType = 'study'; // study, shortBreak, longBreak
-        let sessionCount = 1;
         let currentSessionId = null;
-        let todayMinutes = 0;
-        let todaySessions = [];
-
-        // Timer settings
+        let sessions = [];
         let settings = {
-            studyDuration: 25,
+            focus: 25,
             shortBreak: 5,
             longBreak: 15,
-            autoStart: true,
-            notifications: true,
-            soundEnabled: true
+            autoStartBreaks: false,
+            soundNotifications: true,
+            dailyGoal: 8
         };
 
-        // Initialize
-        async function initPomodoro() {
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
             await loadComponents();
-            loadSettings();
-            loadTodaySessions();
-            requestNotificationPermission();
+            await loadSettings();
+            await loadSessions();
+            setActivePage('pomodoro');
             updateDisplay();
-        }
+            requestNotificationPermission();
+        });
 
-        // Load settings from localStorage
-        function loadSettings() {
-            const saved = localStorage.getItem('pomodoroSettings');
-            if (saved) {
-                settings = JSON.parse(saved);
-                document.getElementById('studyDuration').value = settings.studyDuration;
-                document.getElementById('shortBreak').value = settings.shortBreak;
-                document.getElementById('longBreak').value = settings.longBreak;
-                document.getElementById('autoStart').checked = settings.autoStart;
-                document.getElementById('notifications').checked = settings.notifications;
-                document.getElementById('soundEnabled').checked = settings.soundEnabled;
+        // Authentication check
+        async function checkAuth() {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                window.location.href = '/login';
+                return;
             }
-        }
 
-        // Update settings
-        function updateSettings() {
-            settings = {
-                studyDuration: parseInt(document.getElementById('studyDuration').value),
-                shortBreak: parseInt(document.getElementById('shortBreak').value),
-                longBreak: parseInt(document.getElementById('longBreak').value),
-                autoStart: document.getElementById('autoStart').checked,
-                notifications: document.getElementById('notifications').checked,
-                soundEnabled: document.getElementById('soundEnabled').checked
-            };
-            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            try {
+                const response = await fetch(`${API_BASE}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-            // Update current time if timer is not running
-            if (!isRunning && !isPaused) {
-                if (sessionType === 'study') {
-                    currentTime = settings.studyDuration * 60;
-                } else if (sessionType === 'shortBreak') {
-                    currentTime = settings.shortBreak * 60;
-                } else {
-                    currentTime = settings.longBreak * 60;
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
                 }
-                updateDisplay();
+
+                const data = await response.json();
+                currentUser = data.user;
+            } catch (error) {
+                console.error('Auth error:', error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
             }
+        }
+
+        // Load reusable components
+        async function loadComponents() {
+            try {
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebarContainer').innerHTML = sidebarHtml;
+
+                if (window.innerWidth >= 992) {
+                    const topbarResponse = await fetch('../components/topbar.html');
+                    const topbarHtml = await topbarResponse.text();
+                    document.getElementById('topbarContainer').innerHTML = topbarHtml;
+
+                    setTimeout(() => {
+                        const pageTitle = document.getElementById('pageTitle');
+                        if (pageTitle) pageTitle.textContent = 'Pomodoro Timer';
+                    }, 100);
+                }
+
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = mobileNavHtml;
+
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        // Load settings
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('pomodoroSettings');
+            if (savedSettings) {
+                settings = { ...settings, ...JSON.parse(savedSettings) };
+            }
+
+            // Update UI
+            document.getElementById('focusDuration').value = settings.focus;
+            document.getElementById('shortBreakDuration').value = settings.shortBreak;
+            document.getElementById('longBreakDuration').value = settings.longBreak;
+            document.getElementById('autoStartBreaks').checked = settings.autoStartBreaks;
+            document.getElementById('soundNotifications').checked = settings.soundNotifications;
+            document.getElementById('dailyGoal').value = settings.dailyGoal;
+
+            // Set initial time
+            setSessionType('focus');
+        }
+
+        // Load sessions
+        async function loadSessions() {
+            const token = localStorage.getItem('accessToken');
+
+            try {
+                const response = await fetch(`${API_BASE}/pomodoro/history`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    sessions = data.sessions;
+                } else {
+                    // Generate sample data for demo
+                    sessions = generateSampleSessions();
+                }
+
+                updateStats();
+                updateRecentSessions();
+
+            } catch (error) {
+                console.error('Sessions error:', error);
+                sessions = generateSampleSessions();
+                updateStats();
+                updateRecentSessions();
+            }
+        }
+
+        // Generate sample sessions for demo
+        function generateSampleSessions() {
+            const sampleSessions = [];
+            const today = new Date();
+
+            for (let i = 0; i < 15; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                date.setHours(Math.floor(Math.random() * 12) + 8); // 8 AM to 8 PM
+                date.setMinutes(Math.floor(Math.random() * 60));
+
+                const types = ['study', 'short_break', 'long_break'];
+                const durations = [25, 5, 15];
+                const typeIndex = Math.floor(Math.random() * 3);
+
+                sampleSessions.push({
+                    id: `session-${i}`,
+                    start_time: date.toISOString(),
+                    end_time: new Date(date.getTime() + durations[typeIndex] * 60000).toISOString(),
+                    duration: durations[typeIndex],
+                    completed: Math.random() > 0.1, // 90% completion rate
+                    topic: `DSA Topic ${Math.floor(Math.random() * 20) + 1}`,
+                    session_type: types[typeIndex]
+                });
+            }
+
+            return sampleSessions.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+        }
+
+        // Set session type
+        function setSessionType(type) {
+            if (isRunning) return;
+
+            currentSessionType = type;
+
+            // Update button states
+            document.querySelectorAll('#sessionTypeGroup .btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${type}Btn`).classList.add('active');
+
+            // Set time based on type
+            switch (type) {
+                case 'focus':
+                    timeRemaining = settings.focus * 60;
+                    document.getElementById('timerSession').textContent = 'Focus Session';
+                    break;
+                case 'short':
+                    timeRemaining = settings.shortBreak * 60;
+                    document.getElementById('timerSession').textContent = 'Short Break';
+                    break;
+                case 'long':
+                    timeRemaining = settings.longBreak * 60;
+                    document.getElementById('timerSession').textContent = 'Long Break';
+                    break;
+            }
+
+            updateDisplay();
         }
 
         // Start timer
         async function startTimer() {
-            if (isRunning) return;
-
-            isRunning = true;
-            isPaused = false;
-
-            // Start session in backend
-            const token = localStorage.getItem('access_token');
-            if (token) {
-                try {
-                    const response = await fetch(`${API_BASE}/pomodoro`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            duration: Math.ceil(currentTime / 60),
-                            session_type: sessionType,
-                            topic: document.getElementById('sessionType').textContent
-                        })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        currentSessionId = data.session_id;
-                    }
-                } catch (error) {
-                    console.error('Failed to start session:', error);
-                }
+            if (isPaused) {
+                // Resume
+                isPaused = false;
+            } else {
+                // Start new session
+                const task = document.getElementById('currentTask').value.trim();
+                await startNewSession(task);
             }
 
+            isRunning = true;
+
             // Update UI
-            document.getElementById('startBtn').classList.add('d-none');
-            document.getElementById('pauseBtn').classList.remove('d-none');
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            document.getElementById('timerCircle').classList.add('active');
 
             // Start countdown
             timerInterval = setInterval(() => {
-                currentTime--;
+                timeRemaining--;
                 updateDisplay();
 
-                if (currentTime <= 0) {
+                if (timeRemaining <= 0) {
                     completeSession();
                 }
             }, 1000);
@@ -308,32 +594,14 @@
 
         // Pause timer
         function pauseTimer() {
-            if (!isRunning) return;
-
             isPaused = true;
+            isRunning = false;
             clearInterval(timerInterval);
 
-            document.getElementById('pauseBtn').classList.add('d-none');
-            document.getElementById('resumeBtn').classList.remove('d-none');
-        }
-
-        // Resume timer
-        function resumeTimer() {
-            if (!isPaused) return;
-
-            isPaused = false;
-
-            document.getElementById('resumeBtn').classList.add('d-none');
-            document.getElementById('pauseBtn').classList.remove('d-none');
-
-            timerInterval = setInterval(() => {
-                currentTime--;
-                updateDisplay();
-
-                if (currentTime <= 0) {
-                    completeSession();
-                }
-            }, 1000);
+            // Update UI
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('timerCircle').classList.remove('active');
         }
 
         // Reset timer
@@ -342,21 +610,52 @@
             isRunning = false;
             isPaused = false;
 
-            // Reset to current session type duration
-            if (sessionType === 'study') {
-                currentTime = settings.studyDuration * 60;
-            } else if (sessionType === 'shortBreak') {
-                currentTime = settings.shortBreak * 60;
-            } else {
-                currentTime = settings.longBreak * 60;
-            }
+            // Reset time
+            setSessionType(currentSessionType);
 
             // Update UI
-            document.getElementById('startBtn').classList.remove('d-none');
-            document.getElementById('pauseBtn').classList.add('d-none');
-            document.getElementById('resumeBtn').classList.add('d-none');
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('timerCircle').classList.remove('active');
 
-            updateDisplay();
+            if (currentSessionId) {
+                // Mark session as incomplete
+                currentSessionId = null;
+            }
+        }
+
+        // Start new session
+        async function startNewSession(task) {
+            const token = localStorage.getItem('accessToken');
+
+            const sessionData = {
+                duration: getDurationForType(currentSessionType),
+                topic: task || `${currentSessionType.charAt(0).toUpperCase() + currentSessionType.slice(1)} Session`,
+                session_type: currentSessionType === 'focus' ? 'study' : currentSessionType === 'short' ? 'short_break' : 'long_break'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/pomodoro`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(sessionData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentSessionId = data.session_id;
+                } else {
+                    // Create local session for demo
+                    currentSessionId = Date.now().toString();
+                }
+
+            } catch (error) {
+                console.error('Start session error:', error);
+                currentSessionId = Date.now().toString();
+            }
         }
 
         // Complete session
@@ -364,263 +663,542 @@
             clearInterval(timerInterval);
             isRunning = false;
 
-            // Complete session in backend
+            // Play notification sound
+            if (settings.soundNotifications) {
+                document.getElementById('notificationSound').play().catch(() => { });
+            }
+
+            // Show browser notification
+            showNotification();
+
+            // Complete session on server
             if (currentSessionId) {
-                const token = localStorage.getItem('access_token');
-                if (token) {
-                    try {
-                        await fetch(`${API_BASE}/pomodoro/${currentSessionId}/complete`, {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Failed to complete session:', error);
-                    }
-                }
+                await completeSessionOnServer();
             }
 
-            // Update stats
-            if (sessionType === 'study') {
-                todayMinutes += settings.studyDuration;
-                document.getElementById('todayMinutes').textContent = todayMinutes;
-            }
+            // Add to local sessions
+            const newSession = {
+                id: currentSessionId || Date.now().toString(),
+                start_time: new Date(Date.now() - getDurationForType(currentSessionType) * 60000).toISOString(),
+                end_time: new Date().toISOString(),
+                duration: getDurationForType(currentSessionType),
+                completed: true,
+                topic: document.getElementById('currentTask').value.trim() || `${currentSessionType} session`,
+                session_type: currentSessionType === 'focus' ? 'study' : currentSessionType === 'short' ? 'short_break' : 'long_break'
+            };
 
-            // Play sound
-            if (settings.soundEnabled) {
-                document.getElementById('notificationSound').play();
-            }
-
-            // Show notification
-            if (settings.notifications) {
-                showNotification();
-            }
-
-            // Show completion modal
-            showCompletionModal();
-
-            // Update sessions list
-            loadTodaySessions();
-        }
-
-        // Update display
-        function updateDisplay() {
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = currentTime % 60;
-            document.getElementById('timerDisplay').textContent =
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-            // Update progress ring
-            const totalTime = sessionType === 'study' ? settings.studyDuration * 60 :
-                sessionType === 'shortBreak' ? settings.shortBreak * 60 :
-                    settings.longBreak * 60;
-            const progress = (totalTime - currentTime) / totalTime;
-            const circumference = 2 * Math.PI * 90;
-            const offset = circumference - (progress * circumference);
-
-            document.querySelector('.timer-ring-progress').style.strokeDashoffset = offset;
-        }
-
-        // Show completion modal
-        function showCompletionModal() {
-            let title, message;
-
-            if (sessionType === 'study') {
-                title = 'Study Session Complete!';
-                message = sessionCount % 4 === 0 ?
-                    'Great work! Time for a long break.' :
-                    'Well done! Take a short break.';
-            } else {
-                title = 'Break Complete!';
-                message = 'Ready to get back to studying?';
-            }
-
-            document.getElementById('sessionCompleteTitle').textContent = title;
-            document.getElementById('sessionCompleteMessage').textContent = message;
-
-            const modal = new bootstrap.Modal(document.getElementById('sessionCompleteModal'));
-            modal.show();
-
-            // Auto-start next session if enabled
-            if (settings.autoStart) {
-                setTimeout(() => {
-                    modal.hide();
-                    startNextSession();
-                }, 5000);
-            }
-        }
-
-        // Start next session
-        function startNextSession() {
-            // Determine next session type
-            if (sessionType === 'study') {
-                if (sessionCount % 4 === 0) {
-                    sessionType = 'longBreak';
-                    document.getElementById('sessionType').textContent = 'Long Break';
-                } else {
-                    sessionType = 'shortBreak';
-                    document.getElementById('sessionType').textContent = 'Short Break';
-                }
-            } else {
-                sessionType = 'study';
-                document.getElementById('sessionType').textContent = 'Study Session';
-                if (sessionType === 'longBreak') {
-                    sessionCount = 1;
-                } else {
-                    sessionCount++;
-                }
-                document.getElementById('sessionCount').textContent = sessionCount;
-            }
+            sessions.unshift(newSession);
 
             // Reset timer
             resetTimer();
 
-            // Hide modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('sessionCompleteModal'));
-            if (modal) modal.hide();
+            // Update stats
+            updateStats();
+            updateRecentSessions();
 
-            // Auto-start if enabled
-            if (settings.autoStart) {
-                startTimer();
+            // Auto-start next session if enabled
+            if (settings.autoStartBreaks) {
+                setTimeout(() => {
+                    if (currentSessionType === 'focus') {
+                        // Determine next break type based on completed focus sessions
+                        const focusSessions = getTodaySessions().filter(s => s.session_type === 'study').length;
+                        setSessionType(focusSessions % 4 === 0 ? 'long' : 'short');
+                    } else {
+                        setSessionType('focus');
+                    }
+                    startTimer();
+                }, 3000);
             }
+
+            showToast('Session completed! Great work! 🎉', 'success');
         }
 
-        // Load today's sessions
-        async function loadTodaySessions() {
-            const token = localStorage.getItem('access_token');
-            if (!token) return;
+        // Complete session on server
+        async function completeSessionOnServer() {
+            const token = localStorage.getItem('accessToken');
 
             try {
-                const response = await fetch(`${API_BASE}/pomodoro/history?per_page=20`, {
+                await fetch(`${API_BASE}/pomodoro/${currentSessionId}/complete`, {
+                    method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const today = new Date().toDateString();
-
-                    todaySessions = data.sessions.filter(session =>
-                        new Date(session.start_time).toDateString() === today
-                    );
-
-                    // Calculate today's total minutes
-                    todayMinutes = todaySessions
-                        .filter(s => s.completed && s.session_type === 'study')
-                        .reduce((total, s) => total + s.duration, 0);
-
-                    document.getElementById('todayMinutes').textContent = todayMinutes;
-
-                    renderTodaySessions();
-                }
             } catch (error) {
-                console.error('Failed to load sessions:', error);
+                console.error('Complete session error:', error);
             }
         }
 
-        // Render today's sessions
-        function renderTodaySessions() {
-            const container = document.getElementById('todaySessions');
+        // Update display
+        function updateDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
 
-            if (todaySessions.length === 0) {
+            document.getElementById('timerDisplay').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update progress ring
+            const totalTime = getDurationForType(currentSessionType) * 60;
+            const progress = (totalTime - timeRemaining) / totalTime;
+            const circumference = 2 * Math.PI * 130;
+            const offset = circumference - (progress * circumference);
+
+            document.getElementById('timerProgress').style.strokeDasharray = circumference;
+            document.getElementById('timerProgress').style.strokeDashoffset = offset;
+        }
+
+        // Get duration for session type
+        function getDurationForType(type) {
+            switch (type) {
+                case 'focus': return settings.focus;
+                case 'short': return settings.shortBreak;
+                case 'long': return settings.longBreak;
+                default: return 25;
+            }
+        }
+
+        // Update stats
+        function updateStats() {
+            const todaySessions = getTodaySessions();
+            const completedToday = todaySessions.filter(s => s.completed);
+            const focusTime = completedToday
+                .filter(s => s.session_type === 'study')
+                .reduce((total, s) => total + s.duration, 0);
+
+            // Update display
+            document.getElementById('completedSessions').textContent = completedToday.length;
+            document.getElementById('totalFocusTime').textContent = `${Math.round(focusTime / 60)}h`;
+            document.getElementById('sessionCount').textContent = `${completedToday.length} sessions today`;
+
+            // Daily goal progress
+            const goalProgress = Math.min((completedToday.length / settings.dailyGoal) * 100, 100);
+            document.getElementById('dailyGoalText').textContent = `${completedToday.length}/${settings.dailyGoal} sessions`;
+            document.getElementById('dailyGoalProgress').style.width = `${goalProgress}%`;
+
+            // Daily percentage
+            document.getElementById('dailyPercentage').textContent = `${Math.round(goalProgress)}%`;
+            updateProgressRing('dailyProgressRing', goalProgress);
+
+            // Week sessions
+            const weekSessions = getWeekSessions().filter(s => s.completed);
+            document.getElementById('weekSessions').textContent = `${weekSessions.length} sessions`;
+
+            // Average session
+            const avgDuration = sessions.filter(s => s.completed && s.session_type === 'study')
+                .reduce((sum, s, _, arr) => sum + s.duration / arr.length, 0);
+            document.getElementById('avgSession').textContent = `${Math.round(avgDuration)} min`;
+
+            // Current streak
+            document.getElementById('currentStreak').textContent = calculateStreak();
+        }
+
+        // Get today's sessions
+        function getTodaySessions() {
+            const today = new Date().toDateString();
+            return sessions.filter(s => new Date(s.start_time).toDateString() === today);
+        }
+
+        // Get week's sessions
+        function getWeekSessions() {
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return sessions.filter(s => new Date(s.start_time) >= weekAgo);
+        }
+
+        // Calculate streak
+        function calculateStreak() {
+            let streak = 0;
+            const today = new Date();
+
+            for (let i = 0; i < 30; i++) {
+                const checkDate = new Date(today);
+                checkDate.setDate(today.getDate() - i);
+                const dateString = checkDate.toDateString();
+
+                const dayHasSessions = sessions.some(s =>
+                    new Date(s.start_time).toDateString() === dateString &&
+                    s.completed &&
+                    s.session_type === 'study'
+                );
+
+                if (dayHasSessions) {
+                    streak++;
+                } else if (i > 0) {
+                    break;
+                }
+            }
+
+            return `${streak} days`;
+        }
+
+        // Update progress ring
+        function updateProgressRing(elementId, percentage) {
+            const circle = document.getElementById(elementId);
+            const radius = 40;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+
+            circle.style.strokeDasharray = circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // Update recent sessions
+        function updateRecentSessions() {
+            const container = document.getElementById('recentSessions');
+            const recentSessions = sessions.slice(0, 5);
+
+            if (recentSessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-clock text-3xl mb-2"></i>
+                        <p>No sessions yet. Start your first pomodoro!</p>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = `
-                <div class="list-group">
-                    ${todaySessions.map(session => {
+            let html = '';
+            recentSessions.forEach(session => {
                 const startTime = new Date(session.start_time);
-                const typeIcon = session.session_type === 'study' ? 'book' : 'coffee';
-                const typeBadge = session.session_type === 'study' ? 'primary' : 'success';
+                const statusClass = session.completed ? 'success' : 'warning';
+                const statusIcon = session.completed ? 'fa-check-circle' : 'fa-clock';
+                const typeIcon = session.session_type === 'study' ? 'fa-brain' : 'fa-coffee';
 
-                return `
-                            <div class="list-group-item border-0 px-0">
-                                <div class="d-flex align-items-center">
-                                                                        <div class="stat-icon bg-${typeBadge} text-white me-3" style="width: 40px; height: 40px;">
-                                        <i class="fas fa-${typeIcon}"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">${session.topic || (session.session_type === 'study' ? 'Study Session' : 'Break')}</h6>
-                                        <small class="text-muted">
-                                            ${startTime.toLocaleTimeString()} - ${session.duration} minutes
-                                        </small>
-                                    </div>
-                                    ${session.completed ?
-                        '<span class="badge bg-success">Completed</span>' :
-                        '<span class="badge bg-warning">Incomplete</span>'}
-                                </div>
-                            </div>
-                        `;
-            }).join('')}
-                </div>
-            `;
+                html += `
+                    <div class="d-flex align-items-center mb-3 p-2 border rounded">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fas ${typeIcon} text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${session.topic}</h6>
+                            <small class="text-muted">
+                                ${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()} • ${session.duration} min
+                            </small>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas ${statusIcon} text-${statusClass}"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
-        // Load session history
-        function loadSessionHistory() {
-            // Navigate to analytics page with pomodoro filter
-            window.location.href = '/analytics#pomodoro';
+        // Clear current task
+        function clearTask() {
+            document.getElementById('currentTask').value = '';
+        }
+
+        // Toggle settings panel
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                panel.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // Save settings
+        function saveSettings() {
+            settings.focus = parseInt(document.getElementById('focusDuration').value);
+            settings.shortBreak = parseInt(document.getElementById('shortBreakDuration').value);
+            settings.longBreak = parseInt(document.getElementById('longBreakDuration').value);
+            settings.autoStartBreaks = document.getElementById('autoStartBreaks').checked;
+            settings.soundNotifications = document.getElementById('soundNotifications').checked;
+            settings.dailyGoal = parseInt(document.getElementById('dailyGoal').value);
+
+            localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+
+            // Update session type durations
+            setSessionType(currentSessionType);
+
+            showToast('Settings saved successfully!', 'success');
+            toggleSettings();
+        }
+
+        // Show history modal
+        function showHistory() {
+            const tbody = document.getElementById('historyTableBody');
+
+            let html = '';
+            sessions.slice(0, 20).forEach(session => {
+                const startTime = new Date(session.start_time);
+                const statusBadge = session.completed ?
+                    '<span class="badge bg-success">Completed</span>' :
+                    '<span class="badge bg-warning">Incomplete</span>';
+                const typeText = session.session_type === 'study' ? 'Focus' :
+                    session.session_type === 'short_break' ? 'Short Break' : 'Long Break';
+
+                html += `
+                    <tr>
+                        <td>${startTime.toLocaleDateString()}</td>
+                        <td>${typeText}</td>
+                        <td>${session.duration} min</td>
+                        <td>${session.topic}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            new bootstrap.Modal(document.getElementById('historyModal')).show();
+        }
+
+        // Show all history
+        function showAllHistory() {
+            showHistory();
+        }
+
+        // Show stats (placeholder)
+        function showStats() {
+            showToast('Detailed statistics coming soon!', 'info');
+        }
+
+        // Export data
+        function exportData() {
+            const exportData = {
+                user: currentUser.name,
+                exportDate: new Date().toISOString(),
+                sessions: sessions,
+                settings: settings
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pomodoro-data-${currentUser.name}-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Data exported successfully!', 'success');
         }
 
         // Request notification permission
         function requestNotificationPermission() {
             if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
+                setTimeout(() => {
+                    new bootstrap.Modal(document.getElementById('notificationModal')).show();
+                }, 2000);
             }
         }
 
-        // Show notification
-        function showNotification() {
-            if (!('Notification' in window) || Notification.permission !== 'granted') {
-                return;
+        // Enable notifications
+        function enableNotifications() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showToast('Notifications enabled!', 'success');
+                    }
+                    bootstrap.Modal.getInstance(document.getElementById('notificationModal')).hide();
+                });
             }
+        }
 
-            const title = sessionType === 'study' ? 'Study Session Complete!' : 'Break Complete!';
-            const body = sessionType === 'study' ?
-                'Great job! Time for a break.' :
-                'Break is over. Ready to continue?';
+        // Show browser notification
+        function showNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const sessionName = currentSessionType === 'focus' ? 'Focus session' :
+                    currentSessionType === 'short' ? 'Short break' : 'Long break';
 
-            new Notification(title, {
-                body: body,
-                icon: '/assets/icons/timer-icon.png',
-                badge: '/assets/icons/timer-badge.png'
+                new Notification('Pomodoro Timer', {
+                    body: `${sessionName} completed! Time for a break.`,
+                    icon: '../assets/icons/icon-192x192.png'
+                });
+            }
+        }
+
+        // Set active page in navigation
+        function setActivePage(page) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
             });
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Space bar to start/pause
-            if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-                e.preventDefault();
-                if (!isRunning) {
-                    startTimer();
-                } else if (!isPaused) {
-                    pauseTimer();
-                } else {
-                    resumeTimer();
-                }
-            }
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
 
-            // R to reset
-            if (e.code === 'KeyR' && e.target.tagName !== 'INPUT') {
-                e.preventDefault();
-                resetTimer();
+            const toast = `
+                <div class="toast ${type}" role="alert" id="${toastId}">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            toastContainer.innerHTML += toast;
+
+            const toastElement = document.getElementById(toastId);
+            const bsToast = new bootstrap.Toast(toastElement);
+            bsToast.show();
+
+            setTimeout(() => {
+                toastElement.remove();
+            }, 5000);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
             }
         });
-
-        // Prevent accidental page leave during active session
-        window.addEventListener('beforeunload', (e) => {
-            if (isRunning && !isPaused) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-        // Initialize on load
-        initPomodoro();
     </script>
+
+    <style>
+        .timer-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .timer-circle {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timer-circle.active {
+            animation: pulse 2s infinite;
+        }
+
+        .timer-svg {
+            transform: rotate(-90deg);
+        }
+
+        .timer-track {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 8;
+        }
+
+        .timer-progress {
+            fill: none;
+            stroke: #ef4444;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+            stroke-dasharray: 816.81;
+            stroke-dashoffset: 816.81;
+        }
+
+        .timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .timer-time {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1f2937;
+            font-family: 'Monaco', monospace;
+        }
+
+        .timer-session {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .timer-controls .btn {
+            min-width: 120px;
+        }
+
+        .current-task {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 0.5rem 0;
+        }
+
+        .progress-ring {
+            position: relative;
+        }
+
+        .progress-ring-circle {
+            stroke: #e5e7eb;
+            stroke-width: 6;
+            fill: none;
+        }
+
+        .progress-ring-progress {
+            stroke: #3b82f6;
+            stroke-width: 6;
+            fill: none;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .timer-circle {
+                width: 200px !important;
+                height: 200px !important;
+            }
+
+            .timer-svg {
+                width: 200px;
+                height: 200px;
+            }
+
+            .timer-time {
+                font-size: 2rem;
+            }
+
+            .timer-session {
+                font-size: 0.9rem;
+            }
+
+            .timer-controls .btn {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
 </body>
 
 </html>

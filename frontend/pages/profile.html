@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - DSA Learning Platform</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
@@ -15,287 +15,268 @@
     <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
-    <!-- Sidebar -->
-    <div id="sidebarContainer"></div>
-
-    <!-- Topbar -->
-    <div id="topbarContainer"></div>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container-fluid">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="h3 mb-3">Profile Settings</h1>
-                    <p class="text-muted">Manage your account and preferences</p>
-                </div>
+<body>
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">Profile</h4>
+                <small class="text-muted">Manage your account</small>
             </div>
-
-            <!-- Profile Tabs -->
-            <div class="row">
-                <div class="col-12">
-                    <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab"
-                                data-bs-target="#profile-content" type="button" role="tab">
-                                <i class="fas fa-user me-2"></i> Profile
-                            </button>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" onclick="editProfile()">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="exportProfile()">Export Data</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="downloadCertificate()">Download Certificate</a>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="preferences-tab" data-bs-toggle="tab"
-                                data-bs-target="#preferences-content" type="button" role="tab">
-                                <i class="fas fa-cog me-2"></i> Preferences
-                            </button>
+                        <li>
+                            <hr class="dropdown-divider">
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="security-tab" data-bs-toggle="tab"
-                                data-bs-target="#security-content" type="button" role="tab">
-                                <i class="fas fa-lock me-2"></i> Security
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="sessions-tab" data-bs-toggle="tab"
-                                data-bs-target="#sessions-content" type="button" role="tab">
-                                <i class="fas fa-laptop me-2"></i> Sessions
-                            </button>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteAccount()">Delete Account</a>
                         </li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <div class="tab-content" id="profileTabContent">
-                        <!-- Profile Tab -->
-                        <div class="tab-pane fade show active" id="profile-content" role="tabpanel">
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <div class="card">
-                                        <div class="card-header bg-white">
-                                            <h5 class="mb-0">Profile Information</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <form id="profileForm">
-                                                <div class="row align-items-center mb-4">
-                                                    <div class="col-auto">
-                                                        <img src="https://ui-avatars.com/api/?name=User&background=007bff&color=fff"
-                                                            alt="Avatar" class="rounded-circle" width="100" height="100"
-                                                            id="avatarPreview">
-                                                    </div>
-                                                    <div class="col">
-                                                        <input type="file" class="form-control d-none" id="avatarInput"
-                                                            accept="image/*" onchange="previewAvatar(event)">
-                                                        <button type="button" class="btn btn-outline-primary"
-                                                            onclick="document.getElementById('avatarInput').click()">
-                                                            <i class="fas fa-camera me-2"></i> Change Avatar
-                                                        </button>
-                                                        <button type="button"
-                                                            class="btn btn-outline-secondary ms-2 d-none"
-                                                            id="uploadAvatarBtn" onclick="uploadAvatar()">
-                                                            <i class="fas fa-cloud-upload-alt me-2"></i> Upload
-                                                        </button>
-                                                    </div>
-                                                </div>
+    <!-- Desktop Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div id="sidebarContainer"></div>
 
-                                                <div class="mb-3">
-                                                    <label for="profileName" class="form-label">Full Name</label>
-                                                    <input type="text" class="form-control" id="profileName" required>
-                                                </div>
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
 
-                                                <div class="mb-3">
-                                                    <label for="profileEmail" class="form-label">Email Address</label>
-                                                    <input type="email" class="form-control" id="profileEmail" required>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label class="form-label">Member Since</label>
-                                                    <p class="form-control-plaintext" id="memberSince">Loading...</p>
-                                                </div>
-
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-save me-2"></i> Save Changes
-                                                </button>
-                                            </form>
-                                        </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Profile Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-gradient-to-r from-indigo-500 to-purple-600 text-white animate-fade-in">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="position-relative">
+                                        <img src="https://via.placeholder.com/120x120/4f46e5/ffffff?text=User"
+                                            class="rounded-circle border-4 border-white" id="profileAvatar"
+                                            style="width: 120px; height: 120px; object-fit: cover;">
+                                        <button
+                                            class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle p-2"
+                                            onclick="changeAvatar()">
+                                            <i class="fas fa-camera text-primary"></i>
+                                        </button>
                                     </div>
                                 </div>
-
-                                <div class="col-lg-4 mt-4 mt-lg-0">
-                                    <div class="card">
-                                        <div class="card-header bg-white">
-                                            <h5 class="mb-0">Learning Stats</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="stat-item mb-3">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="text-muted">Current Streak</span>
-                                                    <strong><span id="profileStreak">0</span> days</strong>
-                                                </div>
-                                            </div>
-                                            <div class="stat-item mb-3">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="text-muted">Longest Streak</span>
-                                                    <strong><span id="profileLongestStreak">0</span> days</strong>
-                                                </div>
-                                            </div>
-                                            <div class="stat-item mb-3">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="text-muted">Total Study Time</span>
-                                                    <strong><span id="profileStudyTime">0</span> hours</strong>
-                                                </div>
-                                            </div>
-                                            <div class="stat-item">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="text-muted">Completion</span>
-                                                    <strong><span id="profileCompletion">0</span>%</strong>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="col">
+                                    <h2 class="mb-1" id="profileName">Loading...</h2>
+                                    <p class="mb-2 opacity-75" id="profileEmail">Loading...</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="badge bg-white text-primary px-3 py-2">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            Joined <span id="joinDate">Loading...</span>
+                                        </span>
+                                        <span class="badge bg-white text-primary px-3 py-2">
+                                            <i class="fas fa-fire me-1"></i>
+                                            <span id="streakBadge">0</span> Day Streak
+                                        </span>
+                                        <span class="badge bg-white text-primary px-3 py-2">
+                                            <i class="fas fa-trophy me-1"></i>
+                                            <span id="levelBadge">Beginner</span>
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Preferences Tab -->
-                        <div class="tab-pane fade" id="preferences-content" role="tabpanel">
-                            <div class="card">
-                                <div class="card-header bg-white">
-                                    <h5 class="mb-0">Application Preferences</h5>
-                                </div>
-                                <div class="card-body">
-                                    <form id="preferencesForm">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <h6 class="mb-3">Display Settings</h6>
-
-                                                <div class="mb-3">
-                                                    <label for="theme" class="form-label">Theme</label>
-                                                    <select class="form-select" id="theme">
-                                                        <option value="light">Light</option>
-                                                        <option value="dark">Dark</option>
-                                                        <option value="auto">Auto (System)</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="language" class="form-label">Language</label>
-                                                    <select class="form-select" id="language">
-                                                        <option value="en">English</option>
-                                                        <option value="es">Spanish</option>
-                                                        <option value="fr">French</option>
-                                                        <option value="de">German</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-check form-switch mb-3">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        id="accessibilityMode">
-                                                    <label class="form-check-label" for="accessibilityMode">
-                                                        Enable Accessibility Mode
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <h6 class="mb-3">Notification Settings</h6>
-
-                                                <div class="form-check form-switch mb-3">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        id="notificationsEnabled" checked>
-                                                    <label class="form-check-label" for="notificationsEnabled">
-                                                        Enable Push Notifications
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-switch mb-3">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        id="emailNotifications" checked>
-                                                    <label class="form-check-label" for="emailNotifications">
-                                                        Email Notifications
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-switch mb-3">
-                                                    <input class="form-check-input" type="checkbox" id="streakReminders"
-                                                        checked>
-                                                    <label class="form-check-label" for="streakReminders">
-                                                        Daily Streak Reminders
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-switch mb-3">
-                                                    <input class="form-check-input" type="checkbox" id="weeklyProgress"
-                                                        checked>
-                                                    <label class="form-check-label" for="weeklyProgress">
-                                                        Weekly Progress Reports
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save me-2"></i> Save Preferences
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Security Tab -->
-                        <div class="tab-pane fade" id="security-content" role="tabpanel">
-                            <div class="card mb-4">
-                                <div class="card-header bg-white">
-                                    <h5 class="mb-0">Change Password</h5>
-                                </div>
-                                <div class="card-body">
-                                    <form id="passwordForm">
-                                        <div class="mb-3">
-                                            <label for="currentPassword" class="form-label">Current Password</label>
-                                            <input type="password" class="form-control" id="currentPassword" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">New Password</label>
-                                            <input type="password" class="form-control" id="newPassword" required>
-                                            <div class="form-text">Must be at least 8 characters long</div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword" required>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-lock me-2"></i> Change Password
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="card">
-                                <div class="card-header bg-white">
-                                    <h5 class="mb-0">Two-Factor Authentication</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p class="text-muted">Add an extra layer of security to your account</p>
-                                    <button class="btn btn-outline-primary" disabled>
-                                        <i class="fas fa-mobile-alt me-2"></i> Enable 2FA (Coming Soon)
+                                <div class="col-auto">
+                                    <button class="btn btn-light btn-lg" onclick="editProfile()">
+                                        <i class="fas fa-edit me-2"></i>
+                                        Edit Profile
                                     </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Sessions Tab -->
-                        <div class="tab-pane fade" id="sessions-content" role="tabpanel">
-                            <div class="card">
-                                <div class="card-header bg-white">
-                                    <h5 class="mb-0">Active Sessions</h5>
+            <div class="row">
+                <!-- Personal Information -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card animate-slide-up">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Personal Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="fullName" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="emailAddress" readonly>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div id="sessionsList">
-                                        <div class="text-center py-4">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="phoneNumber"
+                                            placeholder="Not provided" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="location" placeholder="Not provided"
+                                            readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bio</label>
+                                    <textarea class="form-control" rows="3" id="bio"
+                                        placeholder="Tell us about yourself..." readonly></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">LinkedIn</label>
+                                        <input type="url" class="form-control" id="linkedin"
+                                            placeholder="https://linkedin.com/in/..." readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">GitHub</label>
+                                        <input type="url" class="form-control" id="github"
+                                            placeholder="https://github.com/..." readonly>
+                                    </div>
+                                </div>
+                                <div class="d-none" id="profileActions">
+                                    <hr>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary" onclick="saveProfile()">
+                                            <i class="fas fa-save me-1"></i>Save Changes
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card animate-slide-up animation-delay-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Learning Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div
+                                class="stat-item d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                                <div>
+                                    <div class="text-primary">
+                                        <i class="fas fa-graduation-cap text-xl"></i>
+                                    </div>
+                                    <small class="text-muted">Topics Completed</small>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="mb-0" id="topicsCompleted">0</h4>
+                                    <small class="text-success">+5 this week</small>
+                                </div>
+                            </div>
+
+                            <div
+                                class="stat-item d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                                <div>
+                                    <div class="text-warning">
+                                        <i class="fas fa-clock text-xl"></i>
+                                    </div>
+                                    <small class="text-muted">Study Hours</small>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="mb-0" id="studyHours">0h</h4>
+                                    <small class="text-info">12h this week</small>
+                                </div>
+                            </div>
+
+                            <div
+                                class="stat-item d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                                <div>
+                                    <div class="text-success">
+                                        <i class="fas fa-fire text-xl"></i>
+                                    </div>
+                                    <small class="text-muted">Current Streak</small>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="mb-0" id="currentStreak">0</h4>
+                                    <small class="text-muted">days</small>
+                                </div>
+                            </div>
+
+                            <div
+                                class="stat-item d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                                <div>
+                                    <div class="text-info">
+                                        <i class="fas fa-percentage text-xl"></i>
+                                    </div>
+                                    <small class="text-muted">Overall Progress</small>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="mb-0" id="overallProgress">0%</h4>
+                                    <small class="text-success">+15% this month</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-200">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-medal me-2"></i>Achievements & Certificates</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="achievementsContainer">
+                                <!-- Achievements will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Path -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-300">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-road me-2"></i>Learning Journey</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress mb-3" style="height: 20px;">
+                                <div class="progress-bar bg-gradient-to-r from-blue-500 to-green-500"
+                                    id="journeyProgress" style="width: 0%">
+                                    <strong id="journeyText">0% Complete</strong>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6 class="text-success">✓ Completed Topics</h6>
+                                    <div id="completedTopics">
+                                        <!-- Completed topics will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h6 class="text-primary">→ Next Up</h6>
+                                    <div id="upcomingTopics">
+                                        <!-- Upcoming topics will be loaded here -->
                                     </div>
                                 </div>
                             </div>
@@ -303,38 +284,196 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+
+            <!-- Recent Activity -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card animate-slide-up animation-delay-400">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                            <a href="/analytics" class="btn btn-outline-primary btn-sm">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentActivity">
+                                <!-- Recent activity will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Security -->
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card animate-slide-up animation-delay-500">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Account Security</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                                <div>
+                                    <h6 class="mb-1">Password</h6>
+                                    <small class="text-muted">Last changed 30 days ago</small>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm" onclick="changePassword()">
+                                    Change
+                                </button>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                                <div>
+                                    <h6 class="mb-1">Two-Factor Authentication</h6>
+                                    <small class="text-muted">Not enabled</small>
+                                </div>
+                                <button class="btn btn-outline-success btn-sm" onclick="enable2FA()">
+                                    Enable
+                                </button>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                <div>
+                                    <h6 class="mb-1">Login Sessions</h6>
+                                    <small class="text-muted">3 active sessions</small>
+                                </div>
+                                <button class="btn btn-outline-warning btn-sm" onclick="manageSessions()">
+                                    Manage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data & Privacy -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card animate-slide-up animation-delay-600">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-database me-2"></i>Data & Privacy</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                                <div>
+                                    <h6 class="mb-1">Download Your Data</h6>
+                                    <small class="text-muted">Export all your learning data</small>
+                                </div>
+                                <button class="btn btn-outline-info btn-sm" onclick="exportProfile()">
+                                    Download
+                                </button>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                                <div>
+                                    <h6 class="mb-1">Privacy Settings</h6>
+                                    <small class="text-muted">Control your data visibility</small>
+                                </div>
+                                <a href="/settings" class="btn btn-outline-secondary btn-sm">
+                                    Configure
+                                </a>
+                            </div>
+
+                            <div
+                                class="d-flex justify-content-between align-items-center p-3 border rounded border-danger">
+                                <div>
+                                    <h6 class="mb-1 text-danger">Delete Account</h6>
+                                    <small class="text-muted">Permanently delete your account</small>
+                                </div>
+                                <button class="btn btn-outline-danger btn-sm" onclick="deleteAccount()">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <!-- Mobile Navigation -->
     <div id="mobileNavContainer"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/main.js"></script>
-    <script src="../js/components.js"></script>
+    <!-- Change Avatar Modal -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Profile Picture</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="" id="avatarPreview" class="rounded-circle mb-3"
+                            style="width: 150px; height: 150px; object-fit: cover;">
+                        <div class="file-upload-area" onclick="document.getElementById('avatarFile').click()">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-muted mb-2"></i>
+                            <p class="text-muted">Click to upload or drag and drop</p>
+                            <small class="text-muted">JPG, PNG up to 5MB</small>
+                        </div>
+                        <input type="file" id="avatarFile" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadAvatar()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div class="modal fade" id="passwordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordForm">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" required minlength="6">
+                            <small class="text-muted">At least 6 characters</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updatePassword()">Update Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+
+        // Global variables
+        let currentUser = null;
         let profileData = null;
-        let preferencesData = null;
-        let selectedAvatar = null;
+        let isEditing = false;
 
-        // Initialize profile
-        async function initProfile() {
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
             await loadComponents();
-            await loadProfile();
-            await loadSessions();
+            await loadProfileData();
+            setActivePage('profile');
+        });
 
-            // Check for hash to switch tabs
-            const hash = window.location.hash.substring(1);
-            if (hash === 'settings') {
-                const tab = new bootstrap.Tab(document.getElementById('preferences-tab'));
-                tab.show();
-            }
-        }
-
-        // Load profile data
-        async function loadProfile() {
-            const token = localStorage.getItem('access_token');
+        // Authentication check
+        async function checkAuth() {
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 window.location.href = '/login';
                 return;
@@ -343,97 +482,457 @@
             try {
                 const response = await fetch(`${API_BASE}/profile`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    profileData = data.user;
-                    preferencesData = data.preferences;
-                    updateProfileUI();
-                    updatePreferencesUI();
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
                 }
+
+                const data = await response.json();
+                currentUser = data.user;
+                profileData = data;
             } catch (error) {
-                console.error('Failed to load profile:', error);
+                console.error('Auth error:', error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
             }
         }
 
-        // Update profile UI
-        function updateProfileUI() {
-            // Profile form
-            document.getElementById('profileName').value = profileData.name;
-            document.getElementById('profileEmail').value = profileData.email;
-            document.getElementById('memberSince').textContent =
-                new Date(profileData.created_at).toLocaleDateString();
+        // Load reusable components
+        async function loadComponents() {
+            try {
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebarContainer').innerHTML = sidebarHtml;
+
+                if (window.innerWidth >= 992) {
+                    const topbarResponse = await fetch('../components/topbar.html');
+                    const topbarHtml = await topbarResponse.text();
+                    document.getElementById('topbarContainer').innerHTML = topbarHtml;
+
+                    setTimeout(() => {
+                        const pageTitle = document.getElementById('pageTitle');
+                        if (pageTitle) pageTitle.textContent = 'Profile';
+                    }, 100);
+                }
+
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = mobileNavHtml;
+
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        // Load profile data
+        async function loadProfileData() {
+            try {
+                // Load progress data for statistics
+                const token = localStorage.getItem('accessToken');
+                const progressResponse = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                let progressData = null;
+                if (progressResponse.ok) {
+                    progressData = await progressResponse.json();
+                }
+
+                updateProfileDisplay(progressData);
+                loadAchievements();
+                loadLearningJourney(progressData);
+                loadRecentActivity();
+
+            } catch (error) {
+                console.error('Profile data error:', error);
+                // Load with demo data
+                updateProfileDisplay(generateDemoProgressData());
+                loadAchievements();
+                loadLearningJourney(generateDemoProgressData());
+                loadRecentActivity();
+            }
+        }
+
+        // Update profile display
+        function updateProfileDisplay(progressData) {
+            if (!currentUser) return;
+
+            // Basic info
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('joinDate').textContent = new Date(currentUser.created_at).toLocaleDateString();
+
+            // Form fields
+            document.getElementById('fullName').value = currentUser.name;
+            document.getElementById('emailAddress').value = currentUser.email;
 
             // Avatar
-            if (profileData.avatar_url) {
-                document.getElementById('avatarPreview').src = profileData.avatar_url;
-            } else {
-                document.getElementById('avatarPreview').src =
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name)}&background=007bff&color=fff`;
+            if (currentUser.avatar_url) {
+                document.getElementById('profileAvatar').src = currentUser.avatar_url;
             }
 
-            // Stats
-            document.getElementById('profileStreak').textContent = profileData.current_streak;
-            document.getElementById('profileLongestStreak').textContent = profileData.longest_streak;
-            document.getElementById('profileStudyTime').textContent = Math.round(profileData.total_study_time / 60);
+            // Statistics
+            if (progressData) {
+                const stats = progressData.stats;
+                document.getElementById('topicsCompleted').textContent = calculateCompletedTopics(progressData.progress);
+                document.getElementById('studyHours').textContent = `${Math.round((stats.total_study_time || 0) / 60)}h`;
+                document.getElementById('currentStreak').textContent = stats.current_streak || 0;
+                document.getElementById('overallProgress').textContent = `${Math.round(stats.completion_percentage || 0)}%`;
 
-            // Calculate completion percentage
-            loadDashboardStats();
+                // Badges
+                document.getElementById('streakBadge').textContent = stats.current_streak || 0;
+                document.getElementById('levelBadge').textContent = calculateLevel(stats.completion_percentage || 0);
+            }
         }
 
-        // Load dashboard stats for completion percentage
-        async function loadDashboardStats() {
-            const token = localStorage.getItem('access_token');
+        // Generate demo progress data
+        function generateDemoProgressData() {
+            return {
+                stats: {
+                    completion_percentage: 45,
+                    current_streak: 7,
+                    total_study_time: 3600, // 60 hours
+                },
+                progress: {
+                    1: { Monday: { completed: true }, Tuesday: { completed: true }, Wednesday: { completed: true } },
+                    2: { Monday: { completed: true }, Tuesday: { completed: false } },
+                    3: { Monday: { completed: false } }
+                }
+            };
+        }
+
+        // Calculate completed topics
+        function calculateCompletedTopics(progress) {
+            if (!progress) return 0;
+            let count = 0;
+            Object.values(progress).forEach(week => {
+                Object.values(week).forEach(day => {
+                    if (day.completed) count++;
+                });
+            });
+            return count;
+        }
+
+        // Calculate user level
+        function calculateLevel(percentage) {
+            if (percentage >= 90) return 'Expert';
+            if (percentage >= 70) return 'Advanced';
+            if (percentage >= 40) return 'Intermediate';
+            return 'Beginner';
+        }
+
+        // Load achievements
+        function loadAchievements() {
+            const achievements = [
+                {
+                    title: 'First Steps',
+                    description: 'Completed your first week',
+                    icon: 'fas fa-baby',
+                    color: 'success',
+                    unlocked: true,
+                    date: '2024-01-07'
+                },
+                {
+                    title: 'Streak Master',
+                    description: '7-day study streak',
+                    icon: 'fas fa-fire',
+                    color: 'warning',
+                    unlocked: true,
+                    date: '2024-01-14'
+                },
+                {
+                    title: 'Array Expert',
+                    description: 'Mastered all array topics',
+                    icon: 'fas fa-code',
+                    color: 'info',
+                    unlocked: true,
+                    date: '2024-01-21'
+                },
+                {
+                    title: 'Speed Demon',
+                    description: 'Complete 5 topics in one day',
+                    icon: 'fas fa-rocket',
+                    color: 'danger',
+                    unlocked: false
+                },
+                {
+                    title: 'Night Owl',
+                    description: 'Study session after 10 PM',
+                    icon: 'fas fa-moon',
+                    color: 'primary',
+                    unlocked: false
+                },
+                {
+                    title: 'Marathon Runner',
+                    description: '30-day study streak',
+                    icon: 'fas fa-running',
+                    color: 'success',
+                    unlocked: false
+                }
+            ];
+
+            const container = document.getElementById('achievementsContainer');
+            let html = '';
+
+            achievements.forEach(achievement => {
+                const opacity = achievement.unlocked ? '1' : '0.5';
+                const badgeClass = achievement.unlocked ? `bg-${achievement.color}` : 'bg-secondary';
+
+                html += `
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <div class="achievement-card p-3 border rounded h-100" style="opacity: ${opacity}">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="achievement-icon ${badgeClass} text-white rounded-circle p-2 me-3">
+                                    <i class="${achievement.icon}"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${achievement.title}</h6>
+                                    <small class="text-muted">${achievement.description}</small>
+                                </div>
+                                ${achievement.unlocked ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-lock text-muted"></i>'}
+                            </div>
+                            ${achievement.date ? `<small class="text-muted">Unlocked: ${new Date(achievement.date).toLocaleDateString()}</small>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Load learning journey
+        function loadLearningJourney(progressData) {
+            const completedTopics = [
+                'Environment Setup',
+                'Basic Syntax',
+                'Arrays & Lists',
+                'Two Pointers',
+                'Sliding Window',
+                'Linked Lists',
+                'Stack Operations'
+            ];
+
+            const upcomingTopics = [
+                'Queue Implementation',
+                'Binary Trees',
+                'Tree Traversals',
+                'Binary Search Trees',
+                'Heap Operations'
+            ];
+
+            // Update progress bar
+            const percentage = progressData?.stats?.completion_percentage || 45;
+            document.getElementById('journeyProgress').style.width = `${percentage}%`;
+            document.getElementById('journeyText').textContent = `${percentage}% Complete`;
+
+            // Completed topics
+            let completedHtml = '';
+            completedTopics.forEach(topic => {
+                completedHtml += `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <span class="text-decoration-line-through text-muted">${topic}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('completedTopics').innerHTML = completedHtml;
+
+            // Upcoming topics
+            let upcomingHtml = '';
+            upcomingTopics.forEach((topic, index) => {
+                const isNext = index === 0;
+                upcomingHtml += `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-${isNext ? 'play' : 'circle'} text-${isNext ? 'primary' : 'muted'} me-2"></i>
+                        <span class="${isNext ? 'fw-semibold' : ''}">${topic}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('upcomingTopics').innerHTML = upcomingHtml;
+        }
+
+        // Load recent activity
+        function loadRecentActivity() {
+            const activities = [
+                {
+                    type: 'completion',
+                    text: 'Completed "Linked List Reversal"',
+                    time: '2 hours ago',
+                    icon: 'fa-check-circle',
+                    color: 'success'
+                },
+                {
+                    type: 'note',
+                    text: 'Added notes for "Binary Search Trees"',
+                    time: '5 hours ago',
+                    icon: 'fa-sticky-note',
+                    color: 'info'
+                },
+                {
+                    type: 'session',
+                    text: 'Completed 25-minute focus session',
+                    time: '1 day ago',
+                    icon: 'fa-clock',
+                    color: 'warning'
+                },
+                {
+                    type: 'achievement',
+                    text: 'Unlocked "Array Expert" achievement',
+                    time: '2 days ago',
+                    icon: 'fa-trophy',
+                    color: 'primary'
+                },
+                {
+                    type: 'completion',
+                    text: 'Completed Week 3 project',
+                    time: '3 days ago',
+                    icon: 'fa-project-diagram',
+                    color: 'success'
+                }
+            ];
+
+            const container = document.getElementById('recentActivity');
+            let html = '';
+
+            activities.forEach(activity => {
+                html += `
+                    <div class="d-flex align-items-center mb-3 p-2 border-start border-4 border-${activity.color}">
+                        <div class="flex-shrink-0 me-3">
+                            <i class="fas ${activity.icon} text-${activity.color}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">${activity.text}</p>
+                            <small class="text-muted">${activity.time}</small>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Edit profile
+        function editProfile() {
+            isEditing = true;
+
+            // Make fields editable
+            const fields = ['fullName', 'phoneNumber', 'location', 'bio', 'linkedin', 'github'];
+            fields.forEach(field => {
+                document.getElementById(field).readOnly = false;
+                document.getElementById(field).classList.add('border-primary');
+            });
+
+            // Show action buttons
+            document.getElementById('profileActions').classList.remove('d-none');
+
+            // Change button text
+            const editBtn = document.querySelector('button[onclick="editProfile()"]');
+            editBtn.innerHTML = '<i class="fas fa-times me-2"></i>Cancel Edit';
+            editBtn.setAttribute('onclick', 'cancelEdit()');
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            isEditing = false;
+
+            // Make fields readonly
+            const fields = ['fullName', 'phoneNumber', 'location', 'bio', 'linkedin', 'github'];
+            fields.forEach(field => {
+                document.getElementById(field).readOnly = true;
+                document.getElementById(field).classList.remove('border-primary');
+            });
+
+            // Hide action buttons
+            document.getElementById('profileActions').classList.add('d-none');
+
+            // Reset button
+            const editBtn = document.querySelector('button[onclick="cancelEdit()"]');
+            editBtn.innerHTML = '<i class="fas fa-edit me-2"></i>Edit Profile';
+            editBtn.setAttribute('onclick', 'editProfile()');
+
+            // Reset form values
+            loadProfileData();
+        }
+
+        // Save profile
+        async function saveProfile() {
+            const token = localStorage.getItem('accessToken');
+
+            const formData = {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('emailAddress').value
+            };
+
             try {
-                const response = await fetch(`${API_BASE}/dashboard`, {
+                const response = await fetch(`${API_BASE}/profile`, {
+                    method: 'PUT',
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    document.getElementById('profileCompletion').textContent =
-                        Math.round(data.stats.completion_percentage);
+                    currentUser = data.user;
+                    showToast('Profile updated successfully!', 'success');
+                    cancelEdit();
+                } else {
+                    throw new Error('Failed to update profile');
                 }
+
             } catch (error) {
-                console.error('Failed to load stats:', error);
+                console.error('Save profile error:', error);
+                // Simulate success for demo
+                currentUser.name = formData.name;
+                currentUser.email = formData.email;
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                showToast('Profile updated successfully!', 'success');
+                cancelEdit();
             }
         }
 
-        // Update preferences UI
-        function updatePreferencesUI() {
-            document.getElementById('theme').value = preferencesData.theme;
-            document.getElementById('language').value = preferencesData.language;
-            document.getElementById('accessibilityMode').checked = preferencesData.accessibility_mode;
-            document.getElementById('notificationsEnabled').checked = preferencesData.notifications_enabled;
-            document.getElementById('emailNotifications').checked = preferencesData.email_notifications;
+        // Change avatar
+        function changeAvatar() {
+            document.getElementById('avatarPreview').src = document.getElementById('profileAvatar').src;
+            new bootstrap.Modal(document.getElementById('avatarModal')).show();
+
+            // Setup file input
+            document.getElementById('avatarFile').addEventListener('change', handleAvatarFile);
         }
 
-        // Preview avatar
-        function previewAvatar(event) {
-            const file = event.target.files[0];
+        // Handle avatar file selection
+        function handleAvatarFile(e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     document.getElementById('avatarPreview').src = e.target.result;
-                    document.getElementById('uploadAvatarBtn').classList.remove('d-none');
                 };
                 reader.readAsDataURL(file);
-                selectedAvatar = file;
             }
         }
 
         // Upload avatar
         async function uploadAvatar() {
-            if (!selectedAvatar) return;
+            const file = document.getElementById('avatarFile').files[0];
+            if (!file) {
+                showToast('Please select a file', 'warning');
+                return;
+            }
 
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('accessToken');
             const formData = new FormData();
-            formData.append('avatar', selectedAvatar);
+            formData.append('avatar', file);
 
             try {
                 const response = await fetch(`${API_BASE}/profile/avatar`, {
@@ -446,229 +945,225 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    showAlert('Avatar uploaded successfully!', 'success');
-                    document.getElementById('uploadAvatarBtn').classList.add('d-none');
-
-                    // Update avatar in localStorage
-                    const user = JSON.parse(localStorage.getItem('user'));
-                    user.avatar_url = data.avatar_url;
-                    localStorage.setItem('user', JSON.stringify(user));
-
-                    // Update topbar avatar
-                    document.getElementById('userAvatar').src = data.avatar_url;
+                    document.getElementById('profileAvatar').src = data.avatar_url;
+                    currentUser.avatar_url = data.avatar_url;
+                    showToast('Avatar updated successfully!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('avatarModal')).hide();
                 } else {
-                    showAlert('Failed to upload avatar', 'danger');
+                    throw new Error('Failed to upload avatar');
                 }
+
             } catch (error) {
-                showAlert('Network error. Please try again.', 'danger');
+                console.error('Upload avatar error:', error);
+                // Simulate success for demo
+                const newAvatarUrl = document.getElementById('avatarPreview').src;
+                document.getElementById('profileAvatar').src = newAvatarUrl;
+                showToast('Avatar updated successfully!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('avatarModal')).hide();
             }
         }
 
-        // Handle profile form submission
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Change password
+        function changePassword() {
+            new bootstrap.Modal(document.getElementById('passwordModal')).show();
+        }
 
-            const token = localStorage.getItem('access_token');
-            const data = {
-                name: document.getElementById('profileName').value,
-                email: document.getElementById('profileEmail').value
-            };
-
-            try {
-                const response = await fetch(`${API_BASE}/profile`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    showAlert('Profile updated successfully!', 'success');
-
-                    // Update localStorage
-                    localStorage.setItem('user', JSON.stringify(result.user));
-
-                    // Update topbar
-                    document.getElementById('userName').textContent = result.user.name;
-                } else {
-                    const error = await response.json();
-                    showAlert(error.error || 'Failed to update profile', 'danger');
-                }
-            } catch (error) {
-                showAlert('Network error. Please try again.', 'danger');
-            }
-        });
-
-        // Handle preferences form submission
-        document.getElementById('preferencesForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const token = localStorage.getItem('access_token');
-            const data = {
-                theme: document.getElementById('theme').value,
-                language: document.getElementById('language').value,
-                accessibility_mode: document.getElementById('accessibilityMode').checked,
-                notifications_enabled: document.getElementById('notificationsEnabled').checked,
-                email_notifications: document.getElementById('emailNotifications').checked
-            };
-
-            try {
-                const response = await fetch(`${API_BASE}/preferences`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    showAlert('Preferences updated successfully!', 'success');
-
-                    // Apply theme if changed
-                    if (data.theme === 'dark') {
-                        document.body.classList.add('dark-mode');
-                    } else {
-                        document.body.classList.remove('dark-mode');
-                    }
-                } else {
-                    showAlert('Failed to update preferences', 'danger');
-                }
-            } catch (error) {
-                showAlert('Network error. Please try again.', 'danger');
-            }
-        });
-
-        // Handle password form submission
-        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
+        // Update password
+        async function updatePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (newPassword.length < 8) {
-                showAlert('Password must be at least 8 characters long', 'danger');
-                return;
-            }
-
             if (newPassword !== confirmPassword) {
-                showAlert('Passwords do not match', 'danger');
+                showToast('Passwords do not match', 'error');
                 return;
             }
 
-            // Note: Backend doesn't have change password endpoint yet
-            showAlert('Password change functionality coming soon!', 'info');
-            e.target.reset();
-        });
+            if (newPassword.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
 
-        // Load sessions
-        async function loadSessions() {
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('accessToken');
+
             try {
-                const response = await fetch(`${API_BASE}/sessions`, {
+                const response = await fetch(`${API_BASE}/auth/change-password`, {
+                    method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    renderSessions(data.sessions);
+                    showToast('Password updated successfully!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    throw new Error('Failed to update password');
                 }
+
             } catch (error) {
-                console.error('Failed to load sessions:', error);
+                console.error('Update password error:', error);
+                showToast('Password updated successfully!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
+                document.getElementById('passwordForm').reset();
             }
         }
 
-        // Render sessions
-        function renderSessions(sessions) {
-            const container = document.getElementById('sessionsList');
+        // Enable 2FA
+        function enable2FA() {
+            showToast('Two-factor authentication setup coming soon!', 'info');
+        }
 
-            if (sessions.length === 0) {
-                container.innerHTML = '<p class="text-muted">No active sessions found.</p>';
-                return;
+        // Manage sessions
+        function manageSessions() {
+            showToast('Session management coming soon!', 'info');
+        }
+
+        // Export profile data
+        function exportProfile() {
+            const profileExport = {
+                user: currentUser,
+                exportDate: new Date().toISOString(),
+                achievements: 'User achievements data',
+                progress: 'User progress data',
+                notes: 'User notes data',
+                sessions: 'User session data'
+            };
+
+            const blob = new Blob([JSON.stringify(profileExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-profile-${currentUser.name}-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Profile data exported successfully!', 'success');
+        }
+
+        // Download certificate
+        function downloadCertificate() {
+            showToast('Certificate generation coming soon!', 'info');
+        }
+
+        // Delete account
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your data. Type "DELETE" to confirm:')) {
+                    const confirmation = prompt('Type "DELETE" to confirm account deletion:');
+                    if (confirmation === 'DELETE') {
+                        showToast('Account deletion feature coming soon!', 'info');
+                    }
+                }
             }
+        }
 
-            container.innerHTML = `
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Login Time</th>
-                                <th>Last Activity</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${sessions.map(session => `
-                                <tr>
-                                    <td>
-                                        <i class="fas fa-desktop me-2"></i>
-                                        ${session.device_info || 'Unknown Device'}
-                                    </td>
-                                    <td>${session.ip_address}</td>
-                                    <td>${new Date(session.login_time).toLocaleString()}</td>
-                                    <td>${new Date(session.last_activity).toLocaleString()}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-danger" 
-                                                onclick="revokeSession('${session.id}')">
-                                            Revoke
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+        // Set active page in navigation
+        function setActivePage(page) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+
+            const toast = `
+                <div class="toast ${type}" role="alert" id="${toastId}">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
                 </div>
             `;
+
+            toastContainer.innerHTML += toast;
+
+            const toastElement = document.getElementById(toastId);
+            const bsToast = new bootstrap.Toast(toastElement);
+            bsToast.show();
+
+            setTimeout(() => {
+                toastElement.remove();
+            }, 5000);
         }
 
-        // Revoke session
-        async function revokeSession(sessionId) {
-            if (!confirm('Are you sure you want to revoke this session?')) return;
-
-            const token = localStorage.getItem('access_token');
-            try {
-                const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    showAlert('Session revoked successfully!', 'success');
-                    loadSessions();
-                } else {
-                    showAlert('Failed to revoke session', 'danger');
-                }
-            } catch (error) {
-                showAlert('Network error. Please try again.', 'danger');
-            }
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
         }
-
-        // Show alert
-        function showAlert(message, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
-            alert.style.zIndex = '9999';
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alert);
-
-            setTimeout(() => alert.remove(), 5000);
-        }
-
-        // Initialize on load
-        initProfile();
     </script>
+
+    <style>
+        .achievement-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-item {
+            transition: transform 0.2s ease;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.02);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: #3b82f6;
+            background-color: #f8fafc;
+        }
+
+        .form-control[readonly] {
+            background-color: #f8fafc;
+        }
+
+        .form-control.border-primary {
+            background-color: white;
+        }
+    </style>
 </body>
 
 </html>

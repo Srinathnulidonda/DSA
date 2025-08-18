@@ -1,189 +1,62 @@
 <!-- components/topbar.html -->
-<nav class="topbar navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom d-none d-lg-block">
     <div class="container-fluid px-4">
-        <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
-            <i class="fas fa-bars fa-lg"></i>
-        </button>
-
-        <div class="navbar-brand d-lg-none">
-            <h5 class="mb-0 text-primary fw-bold">DSA Master</h5>
+        <div class="d-flex align-items-center">
+            <button class="btn btn-link text-dark me-3" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h4 class="mb-0" id="pageTitle">Dashboard</h4>
         </div>
 
-        <div class="ms-auto d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center">
             <!-- Search -->
-            <div class="search-box d-none d-md-block">
-                <div class="input-group">
-                    <input type="text" class="form-control form-control-sm border-end-0" placeholder="Search..."
-                        id="globalSearch">
-                    <button class="btn btn-sm btn-outline-secondary border-start-0" type="button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+            <div class="position-relative me-3">
+                <input type="text" class="form-control" placeholder="Search..." id="globalSearch" style="width: 250px;">
+                <i class="fas fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
             </div>
 
+            <!-- AI Assistant -->
+            <button class="btn btn-outline-primary me-3" data-bs-toggle="modal" data-bs-target="#aiModal">
+                <i class="fas fa-robot me-1"></i>
+                AI Tutor
+            </button>
+
             <!-- Notifications -->
-            <div class="dropdown">
-                <button class="btn btn-link position-relative" data-bs-toggle="dropdown">
-                    <i class="fas fa-bell fa-lg text-muted"></i>
+            <div class="dropdown me-3">
+                <button class="btn btn-link text-dark position-relative" data-bs-toggle="dropdown">
+                    <i class="fas fa-bell text-xl"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        id="notificationBadge" style="display: none;">
-                        <span id="notificationCount">0</span>
+                        id="notificationBadge">
+                        0
                     </span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-end shadow" style="width: 300px;">
+                <div class="dropdown-menu dropdown-menu-end" style="width: 300px;">
                     <h6 class="dropdown-header">Notifications</h6>
-                    <div id="notificationList" class="max-height-300 overflow-auto">
-                        <div class="text-center py-3 text-muted">
-                            <i class="fas fa-bell-slash"></i>
-                            <p class="mb-0">No new notifications</p>
+                    <div id="notificationList">
+                        <div class="dropdown-item text-center text-muted">
+                            No new notifications
                         </div>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-center" href="#">View all notifications</a>
                 </div>
             </div>
 
             <!-- User Menu -->
             <div class="dropdown">
-                <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                    <img src="https://ui-avatars.com/api/?name=User&background=007bff&color=fff" alt="User"
-                        class="rounded-circle" width="32" height="32" id="userAvatar">
-                    <span class="d-none d-md-inline" id="userName">User</span>
-                    <i class="fas fa-chevron-down fa-sm"></i>
+                <button class="btn btn-link text-dark d-flex align-items-center" data-bs-toggle="dropdown">
+                    <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="Avatar" id="userAvatar">
+                    <span id="userName">User</span>
+                    <i class="fas fa-chevron-down ms-2"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-end shadow">
-                    <a class="dropdown-item" href="/profile">
-                        <i class="fas fa-user me-2"></i> Profile
-                    </a>
-                    <a class="dropdown-item" href="/profile#settings">
-                        <i class="fas fa-cog me-2"></i> Settings
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="#" onclick="logout()">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </div>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
+                                class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
             </div>
         </div>
     </div>
 </nav>
-
-<style>
-    .topbar {
-        height: 60px;
-        margin-left: 260px;
-        z-index: 999;
-    }
-
-    .search-box {
-        width: 300px;
-    }
-
-    .max-height-300 {
-        max-height: 300px;
-    }
-
-    @media (max-width: 768px) {
-        .topbar {
-            margin-left: 0;
-        }
-    }
-</style>
-
-<script>
-    // Toggle sidebar on mobile
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('show');
-    }
-
-    // Load user info
-    function loadUserInfo() {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user.name) {
-            document.getElementById('userName').textContent = user.name;
-            if (user.avatar_url) {
-                document.getElementById('userAvatar').src = user.avatar_url;
-            } else {
-                document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=007bff&color=fff`;
-            }
-        }
-    }
-
-    // Load notifications
-    async function loadNotifications() {
-        const token = localStorage.getItem('access_token');
-        if (!token) return;
-
-        try {
-            const response = await fetch('https://dsa-backend-gj8n.onrender.com/notifications?per_page=5', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const unreadCount = data.notifications.filter(n => !n.is_read).length;
-
-                if (unreadCount > 0) {
-                    document.getElementById('notificationBadge').style.display = 'block';
-                    document.getElementById('notificationCount').textContent = unreadCount;
-                }
-
-                if (data.notifications.length > 0) {
-                    const notificationList = document.getElementById('notificationList');
-                    notificationList.innerHTML = data.notifications.map(n => `
-                    <a class="dropdown-item ${n.is_read ? '' : 'bg-light'}" href="#" 
-                       onclick="markNotificationRead('${n.id}')">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">${n.title}</h6>
-                                <p class="mb-0 text-muted small">${n.message}</p>
-                            </div>
-                            ${!n.is_read ? '<span class="badge bg-primary">New</span>' : ''}
-                        </div>
-                    </a>
-                `).join('');
-                }
-            }
-        } catch (error) {
-            console.error('Failed to load notifications:', error);
-        }
-    }
-
-    // Mark notification as read
-    async function markNotificationRead(notificationId) {
-        const token = localStorage.getItem('access_token');
-        if (!token) return;
-
-        try {
-            await fetch(`https://dsa-backend-gj8n.onrender.com/notifications/${notificationId}/read`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            loadNotifications();
-        } catch (error) {
-            console.error('Failed to mark notification as read:', error);
-        }
-    }
-
-    // Global search
-    document.getElementById('globalSearch').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = e.target.value.trim();
-            if (query) {
-                window.location.href = `/roadmap?search=${encodeURIComponent(query)}`;
-            }
-        }
-    });
-
-    // Initialize
-    loadUserInfo();
-    loadNotifications();
-
-    // Refresh notifications every minute
-    setInterval(loadNotifications, 60000);
-</script>

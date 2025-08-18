@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roadmap - DSA Learning Platform</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
@@ -15,335 +15,613 @@
     <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
-    <!-- Sidebar -->
-    <div id="sidebarContainer"></div>
+<body>
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">Roadmap</h4>
+                <small class="text-muted" id="roadmapProgress">14-Week Journey</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-success btn-sm" onclick="toggleCompletedWeeks()">
+                    <i class="fas fa-filter" id="filterIcon"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/calendar">Calendar View</a></li>
+                        <li><a class="dropdown-item" href="/progress">Progress Report</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportProgress()">Export Progress</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Topbar -->
-    <div id="topbarContainer"></div>
+    <!-- Desktop Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div id="sidebarContainer"></div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container-fluid">
-            <!-- Header -->
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Section -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <h1 class="h3 mb-3">14-Week DSA Roadmap</h1>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        <button class="btn btn-outline-primary btn-sm" onclick="expandAll()">
-                            <i class="fas fa-expand"></i> Expand All
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="collapseAll()">
-                            <i class="fas fa-compress"></i> Collapse All
-                        </button>
-                        <button class="btn btn-outline-success btn-sm" onclick="showCompletedOnly()">
-                            <i class="fas fa-check"></i> Show Completed
-                        </button>
-                        <button class="btn btn-outline-warning btn-sm" onclick="showIncompleteOnly()">
-                            <i class="fas fa-clock"></i> Show Incomplete
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="resetFilters()">
-                            <i class="fas fa-redo"></i> Reset
-                        </button>
+                    <div class="card bg-gradient-to-r from-blue-500 to-purple-600 text-white animate-fade-in">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-lg-8">
+                                    <h2 class="mb-2"><i class="fas fa-road me-2"></i>14-Week DSA Mastery Roadmap</h2>
+                                    <p class="mb-0 opacity-75">Complete structured journey from basics to advanced
+                                        algorithms</p>
+                                </div>
+                                <div class="col-lg-4 text-lg-end">
+                                    <div
+                                        class="d-flex justify-content-lg-end justify-content-center mt-3 mt-lg-0 gap-2">
+                                        <button class="btn btn-light btn-sm" onclick="toggleView()">
+                                            <i class="fas fa-list" id="viewToggleIcon"></i>
+                                            <span id="viewToggleText">Compact View</span>
+                                        </button>
+                                        <button class="btn btn-outline-light btn-sm" onclick="resetProgress()">
+                                            <i class="fas fa-redo"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Progress Overview -->
             <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up">
                         <div class="card-body">
-                            <h5 class="card-title">Overall Progress</h5>
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar bg-success" id="overallProgress" style="width: 0%">
-                                    <span id="progressText">0%</span>
-                                </div>
+                            <div class="text-primary mb-2">
+                                <i class="fas fa-calendar-check text-3xl"></i>
                             </div>
-                            <div class="mt-2 d-flex justify-content-between text-muted">
-                                <span>Start</span>
-                                <span id="progressSummary">0 of 98 days completed</span>
-                                <span>Complete</span>
+                            <h4 class="mb-1" id="completedWeeks">0</h4>
+                            <small class="text-muted">Weeks Completed</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up animation-delay-100">
+                        <div class="card-body">
+                            <div class="text-success mb-2">
+                                <i class="fas fa-tasks text-3xl"></i>
                             </div>
+                            <h4 class="mb-1" id="completedDays">0</h4>
+                            <small class="text-muted">Days Completed</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up animation-delay-200">
+                        <div class="card-body">
+                            <div class="text-warning mb-2">
+                                <i class="fas fa-clock text-3xl"></i>
+                            </div>
+                            <h4 class="mb-1" id="totalTime">0h</h4>
+                            <small class="text-muted">Study Time</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card text-center animate-slide-up animation-delay-300">
+                        <div class="card-body">
+                            <div class="text-info mb-2">
+                                <i class="fas fa-percentage text-3xl"></i>
+                            </div>
+                            <h4 class="mb-1" id="overallProgress">0%</h4>
+                            <small class="text-muted">Overall Progress</small>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Roadmap Content -->
-            <div id="roadmapContent">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+            <div class="row">
+                <div class="col-12">
+                    <div id="roadmapContainer">
+                        <!-- Loading state -->
+                        <div class="text-center py-5" id="loadingState">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading roadmap...</span>
+                            </div>
+                            <p class="text-muted">Loading your learning roadmap...</p>
+                        </div>
                     </div>
-                    <p class="mt-3 text-muted">Loading roadmap...</p>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Mobile Navigation -->
     <div id="mobileNavContainer"></div>
 
-    <!-- Resource Modal -->
-    <div class="modal fade" id="resourceModal" tabindex="-1">
+    <!-- Day Details Modal -->
+    <div class="modal fade" id="dayModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="resourceModalTitle">Resources</h5>
+                    <h5 class="modal-title" id="dayModalTitle">Day Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="resourceModalBody">
-                    <!-- Resources will be loaded here -->
+                <div class="modal-body" id="dayModalBody">
+                    <!-- Day content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="markCompleteBtn" onclick="toggleDayCompletion()">
+                        Mark as Complete
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="../js/main.js"></script>
-    <script src="../js/components.js"></script>
+    <!-- Project Modal -->
+    <div class="modal fade" id="projectModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectModalTitle">Week Project</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="projectModalBody">
+                    <!-- Project content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="startProject()">Start Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let roadmapData = null;
-        let progressData = {};
-        let currentFilter = 'all';
 
-        // Initialize roadmap
-        async function initRoadmap() {
+        // Global variables
+        let currentUser = null;
+        let roadmapData = [];
+        let userProgress = {};
+        let currentView = 'detailed'; // detailed or compact
+        let showCompleted = true;
+        let selectedDay = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
             await loadComponents();
-            await loadRoadmap();
-            await loadProgress();
+            await loadRoadmapData();
+            setActivePage('roadmap');
 
             // Check for week parameter
             const urlParams = new URLSearchParams(window.location.search);
-            const week = urlParams.get('week');
-            if (week) {
-                setTimeout(() => scrollToWeek(week), 500);
+            const weekParam = urlParams.get('week');
+            if (weekParam) {
+                scrollToWeek(parseInt(weekParam));
+            }
+        });
+
+        // Authentication check
+        async function checkAuth() {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
+                }
+
+                const data = await response.json();
+                currentUser = data.user;
+            } catch (error) {
+                console.error('Auth error:', error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            }
+        }
+
+        // Load reusable components
+        async function loadComponents() {
+            try {
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebarContainer').innerHTML = sidebarHtml;
+
+                if (window.innerWidth >= 992) {
+                    const topbarResponse = await fetch('../components/topbar.html');
+                    const topbarHtml = await topbarResponse.text();
+                    document.getElementById('topbarContainer').innerHTML = topbarHtml;
+
+                    // Update page title
+                    setTimeout(() => {
+                        const pageTitle = document.getElementById('pageTitle');
+                        if (pageTitle) pageTitle.textContent = 'Roadmap';
+                    }, 100);
+                }
+
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = mobileNavHtml;
+
+            } catch (error) {
+                console.error('Error loading components:', error);
             }
         }
 
         // Load roadmap data
-        async function loadRoadmap() {
-            try {
-                const response = await fetch(`${API_BASE}/roadmap`);
-                const data = await response.json();
-                roadmapData = data.roadmap;
-                renderRoadmap();
-            } catch (error) {
-                console.error('Failed to load roadmap:', error);
-                showError('Failed to load roadmap. Please refresh the page.');
-            }
-        }
-
-        // Load progress data
-        async function loadProgress() {
-            const token = localStorage.getItem('access_token');
-            if (!token) return;
+        async function loadRoadmapData() {
+            const token = localStorage.getItem('accessToken');
 
             try {
-                const response = await fetch(`${API_BASE}/progress`, {
+                // Load roadmap structure
+                const roadmapResponse = await fetch(`${API_BASE}/roadmap`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    progressData = data.progress;
-                    updateProgressUI();
+                if (roadmapResponse.ok) {
+                    const data = await roadmapResponse.json();
+                    roadmapData = data.roadmap;
                 }
+
+                // Load user progress
+                const progressResponse = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (progressResponse.ok) {
+                    const progressData = await progressResponse.json();
+                    userProgress = progressData.progress;
+                    updateProgressStats(progressData.stats);
+                }
+
+                renderRoadmap();
+
             } catch (error) {
-                console.error('Failed to load progress:', error);
+                console.error('Roadmap error:', error);
+                showToast('Error loading roadmap', 'error');
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                        <p>Failed to load roadmap. Please refresh the page.</p>
+                    </div>
+                `;
             }
+        }
+
+        // Update progress statistics
+        function updateProgressStats(stats) {
+            document.getElementById('overallProgress').textContent = `${Math.round(stats.completion_percentage || 0)}%`;
+            document.getElementById('totalTime').textContent = `${Math.round((stats.total_study_time || 0) / 60)}h`;
+
+            // Calculate completed weeks and days
+            let completedWeeks = 0;
+            let completedDays = 0;
+
+            for (let week = 1; week <= 14; week++) {
+                const weekProgress = userProgress[week] || {};
+                const weekDays = roadmapData.find(w => w.week === week)?.days || [];
+                let weekCompleted = true;
+
+                weekDays.forEach(day => {
+                    const dayProgress = weekProgress[day.day];
+                    if (dayProgress?.completed) {
+                        completedDays++;
+                    } else {
+                        weekCompleted = false;
+                    }
+                });
+
+                if (weekCompleted && weekDays.length > 0) {
+                    completedWeeks++;
+                }
+            }
+
+            document.getElementById('completedWeeks').textContent = completedWeeks;
+            document.getElementById('completedDays').textContent = completedDays;
+            document.getElementById('roadmapProgress').textContent = `${completedWeeks}/14 weeks completed`;
         }
 
         // Render roadmap
         function renderRoadmap() {
-            const container = document.getElementById('roadmapContent');
+            const container = document.getElementById('roadmapContainer');
             container.innerHTML = '';
 
             roadmapData.forEach((week, index) => {
-                const weekElement = createWeekElement(week, index);
-                container.appendChild(weekElement);
+                const weekProgress = userProgress[week.week] || {};
+                const completedDays = week.days.filter(day => weekProgress[day.day]?.completed).length;
+                const totalDays = week.days.length;
+                const weekPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+                const isCompleted = completedDays === totalDays;
+
+                if (!showCompleted && isCompleted) return;
+
+                const weekCard = createWeekCard(week, weekProgress, completedDays, totalDays, weekPercentage, isCompleted, index);
+                container.appendChild(weekCard);
             });
+
+            document.getElementById('loadingState').style.display = 'none';
         }
 
-        // Create week element
-        function createWeekElement(week, index) {
-            const weekDiv = document.createElement('div');
-            weekDiv.className = 'roadmap-week animate-fade-in-up';
-            weekDiv.style.animationDelay = `${index * 50}ms`;
-            weekDiv.id = `week-${week.week}`;
+        // Create week card
+        function createWeekCard(week, weekProgress, completedDays, totalDays, weekPercentage, isCompleted, index) {
+            const card = document.createElement('div');
+            card.className = `card week-progress mb-4 animate-slide-up`;
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.id = `week-${week.week}`;
 
-            const weekProgress = progressData[week.week] || {};
-            const completedDays = Object.values(weekProgress).filter(d => d.completed).length;
-            const totalDays = week.days.length;
-            const percentage = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+            if (isCompleted) {
+                card.classList.add('completed');
+            }
 
-            weekDiv.innerHTML = `
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="flex-grow-1">
-                        <h4 class="mb-1">
-                            Week ${week.week}: ${week.title}
-                            ${percentage === 100 ? '<i class="fas fa-check-circle text-success ms-2"></i>' : ''}
-                        </h4>
-                        <p class="text-muted mb-2">${week.goal}</p>
-                        <div class="progress mb-2" style="height: 8px; max-width: 300px;">
-                            <div class="progress-bar ${percentage === 100 ? 'bg-success' : 'bg-primary'}" 
-                                 style="width: ${percentage}%"></div>
-                        </div>
-                        <small class="text-muted">${completedDays} of ${totalDays} days completed</small>
-                    </div>
-                    <button class="btn btn-link text-decoration-none" onclick="toggleWeek(${week.week})">
-                        <i class="fas fa-chevron-down" id="week-chevron-${week.week}"></i>
-                    </button>
-                </div>
-                
-                <div class="week-content" id="week-content-${week.week}">
-                    ${week.project ? `
-                        <div class="alert alert-info mb-3">
-                            <h6 class="alert-heading">
-                                <i class="fas fa-project-diagram me-2"></i>Weekly Project: ${week.project.title}
-                            </h6>
-                            <p class="mb-2">${week.project.description}</p>
-                            <div class="d-flex flex-wrap gap-1">
-                                ${week.project.skills.map(skill =>
-                `<span class="badge bg-primary">${skill}</span>`
-            ).join('')}
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="week-number me-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px; font-weight: bold;">
+                                    ${week.week}
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">${week.title}</h5>
+                                <p class="mb-0 text-muted">${week.goal}</p>
                             </div>
                         </div>
-                    ` : ''}
-                    
-                    <div class="days-container">
-                        ${week.days.map(day => createDayElement(week.week, day, weekProgress[day.day])).join('')}
-                    </div>
-                </div>
-            `;
-
-            return weekDiv;
-        }
-
-        // Create day element
-        function createDayElement(weekNum, day, progress) {
-            const isCompleted = progress?.completed || false;
-            const timeSpent = progress?.time_spent || 0;
-
-            return `
-                <div class="day-card ${isCompleted ? 'completed' : ''}" data-week="${weekNum}" data-day="${day.day}">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">
-                                ${day.day}: ${day.topic}
-                                ${isCompleted ? '<i class="fas fa-check-circle text-success ms-2"></i>' : ''}
-                            </h6>
-                            <p class="text-muted small mb-2">${day.activities}</p>
-                            <div class="d-flex align-items-center gap-3 text-muted small">
-                                <span><i class="fas fa-clock me-1"></i>${day.time_estimate} min</span>
-                                ${timeSpent > 0 ? `<span><i class="fas fa-history me-1"></i>${timeSpent} min spent</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" 
-                                   id="check-${weekNum}-${day.day}" 
-                                   ${isCompleted ? 'checked' : ''}
-                                   onchange="toggleDayComplete(${weekNum}, '${day.day}')">
-                        </div>
-                    </div>
-                    
-                    ${day.resources && day.resources.length > 0 ? `
-                        <div class="mt-3">
-                            <button class="btn btn-sm btn-outline-primary" 
-                                    onclick="showResources(${weekNum}, '${day.day}', '${day.topic}')">
-                                <i class="fas fa-book me-1"></i> View Resources (${day.resources.length})
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge ${isCompleted ? 'bg-success' : 'bg-primary'}">${completedDays}/${totalDays}</span>
+                            <button class="btn btn-outline-primary btn-sm" onclick="toggleWeek(${week.week})">
+                                <i class="fas fa-chevron-down" id="chevron-${week.week}"></i>
                             </button>
                         </div>
-                    ` : ''}
+                    </div>
+                    <div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar ${isCompleted ? 'bg-success' : ''}" 
+                             style="width: ${weekPercentage}%"></div>
+                    </div>
+                </div>
+                <div class="collapse" id="week-content-${week.week}">
+                    <div class="card-body">
+                        ${createWeekContent(week, weekProgress)}
+                    </div>
                 </div>
             `;
+
+            return card;
+        }
+
+        // Create week content
+        function createWeekContent(week, weekProgress) {
+            let content = `
+                <div class="row mb-4">
+                    <div class="col-lg-8">
+                        <h6 class="mb-3"><i class="fas fa-calendar-week me-2"></i>Daily Schedule</h6>
+                        <div class="timeline">
+                            ${week.days.map(day => createDayItem(week.week, day, weekProgress[day.day])).join('')}
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card bg-light">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Week Project</h6>
+                            </div>
+                            <div class="card-body">
+                                <h6>${week.project.title}</h6>
+                                <p class="mb-3">${week.project.description}</p>
+                                <div class="mb-3">
+                                    <strong>Skills:</strong>
+                                    <div class="mt-1">
+                                        ${week.project.skills.map(skill => `<span class="badge bg-secondary me-1">${skill}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="showProject(${week.week})">
+                                    <i class="fas fa-play me-1"></i>View Project
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return content;
+        }
+
+        // Create day item
+        function createDayItem(weekNum, day, progress) {
+            const isCompleted = progress?.completed || false;
+            const timeSpent = progress?.time_spent || 0;
+            const completionDate = progress?.completion_date ? new Date(progress.completion_date).toLocaleDateString() : null;
+
+            return `
+                <div class="timeline-item">
+                    <div class="day-card ${isCompleted ? 'completed' : ''}" onclick="showDayDetails(${weekNum}, '${day.day}')">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">${day.day}</h6>
+                                <p class="mb-1 fw-semibold">${day.topic}</p>
+                                <p class="mb-0 text-muted small">${day.activities}</p>
+                            </div>
+                            <div class="text-end">
+                                ${isCompleted ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="far fa-circle text-muted"></i>'}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center text-sm">
+                            <span class="text-muted">
+                                <i class="fas fa-clock me-1"></i>${day.time_estimate} min
+                                ${timeSpent > 0 ? `(${timeSpent} min spent)` : ''}
+                            </span>
+                            ${completionDate ? `<span class="text-success">${completionDate}</span>` : ''}
+                        </div>
+                        <div class="mt-2">
+                            ${day.resources.map(resourceId => {
+                const resource = getResourceById(resourceId);
+                return resource ? `<span class="badge resource-type-${resource.type} me-1">${resource.title}</span>` : '';
+            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get resource by ID (simplified - in real app would fetch from API)
+        function getResourceById(resourceId) {
+            const resourceMap = {
+                'w3_python_getstarted': { title: 'Python Setup', type: 'text' },
+                'jt_cpp_tutorial': { title: 'C++ Tutorial', type: 'text' },
+                'galles_array_vis': { title: 'Array Visualization', type: 'interactive' },
+                'yt_neetcode_two_pointers': { title: 'Two Pointers Video', type: 'video' },
+                'lc_1_two_sum': { title: 'Two Sum Problem', type: 'practice' },
+                'w3_dsa_arrays': { title: 'Arrays - W3Schools', type: 'text' },
+                'programiz_two_pointers': { title: 'Two Pointers', type: 'text' },
+                'w3_ll': { title: 'Linked Lists', type: 'text' },
+                'galles_bst': { title: 'BST Visualization', type: 'interactive' },
+                'yt_abdul_bari_bst': { title: 'BST Video', type: 'video' },
+                'lc_206_reverse_ll': { title: 'Reverse LinkedList', type: 'practice' }
+            };
+            return resourceMap[resourceId] || null;
         }
 
         // Toggle week expansion
         function toggleWeek(weekNum) {
             const content = document.getElementById(`week-content-${weekNum}`);
-            const chevron = document.getElementById(`week-chevron-${weekNum}`);
+            const chevron = document.getElementById(`chevron-${weekNum}`);
 
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                chevron.classList.remove('fa-chevron-right');
-                chevron.classList.add('fa-chevron-down');
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                chevron.style.transform = 'rotate(0deg)';
             } else {
-                content.style.display = 'none';
-                chevron.classList.remove('fa-chevron-down');
-                chevron.classList.add('fa-chevron-right');
+                content.classList.add('show');
+                chevron.style.transform = 'rotate(180deg)';
             }
         }
 
-        // Expand all weeks
-        function expandAll() {
-            roadmapData.forEach(week => {
-                const content = document.getElementById(`week-content-${week.week}`);
-                const chevron = document.getElementById(`week-chevron-${week.week}`);
-                content.style.display = 'block';
-                chevron.classList.remove('fa-chevron-right');
-                chevron.classList.add('fa-chevron-down');
-            });
-        }
+        // Show day details
+        function showDayDetails(weekNum, dayName) {
+            const week = roadmapData.find(w => w.week === weekNum);
+            const day = week.days.find(d => d.day === dayName);
+            const progress = userProgress[weekNum]?.[dayName];
 
-        // Collapse all weeks
-        function collapseAll() {
-            roadmapData.forEach(week => {
-                const content = document.getElementById(`week-content-${week.week}`);
-                const chevron = document.getElementById(`week-chevron-${week.week}`);
-                content.style.display = 'none';
-                chevron.classList.remove('fa-chevron-down');
-                chevron.classList.add('fa-chevron-right');
-            });
-        }
+            selectedDay = { week: weekNum, day: dayName };
 
-        // Show completed only
-        function showCompletedOnly() {
-            currentFilter = 'completed';
-            document.querySelectorAll('.day-card').forEach(card => {
-                if (card.classList.contains('completed')) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
+            document.getElementById('dayModalTitle').textContent = `Week ${weekNum} - ${dayName}: ${day.topic}`;
 
-        // Show incomplete only
-        function showIncompleteOnly() {
-            currentFilter = 'incomplete';
-            document.querySelectorAll('.day-card').forEach(card => {
-                if (!card.classList.contains('completed')) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
+            document.getElementById('dayModalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h6>Activities</h6>
+                        <p>${day.activities}</p>
+                        
+                        <h6 class="mt-4">Learning Resources</h6>
+                        <div class="row">
+                            ${day.resources.map(resourceId => {
+                const resource = getResourceById(resourceId);
+                return resource ? `
+                                    <div class="col-md-6 mb-2">
+                                        <div class="resource-card p-3">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="mb-1">${resource.title}</h6>
+                                                <span class="badge resource-type-${resource.type}">${resource.type}</span>
+                                            </div>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="openResource('${resourceId}')">
+                                                <i class="fas fa-external-link-alt me-1"></i>Open
+                                            </button>
+                                        </div>
+                                    </div>
+                                ` : '';
+            }).join('')}
+                        </div>
+                        
+                        <h6 class="mt-4">Progress Notes</h6>
+                        <textarea class="form-control" rows="3" placeholder="Add your notes for this day..." 
+                                  id="dayNotes">${progress?.notes || ''}</textarea>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>Progress</h6>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="dayCompleted" 
+                                               ${progress?.completed ? 'checked' : ''}>
+                                        <label class="form-check-label" for="dayCompleted">
+                                            Mark as completed
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <h6>Time Tracking</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Estimated: ${day.time_estimate} minutes</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" placeholder="Actual time" 
+                                               id="timeSpent" value="${progress?.time_spent || ''}">
+                                        <span class="input-group-text">min</span>
+                                    </div>
+                                </div>
+                                
+                                ${progress?.completion_date ? `
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        Completed on ${new Date(progress.completion_date).toLocaleDateString()}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-        // Reset filters
-        function resetFilters() {
-            currentFilter = 'all';
-            document.querySelectorAll('.day-card').forEach(card => {
-                card.style.display = 'block';
-            });
+            // Update button text
+            const markCompleteBtn = document.getElementById('markCompleteBtn');
+            markCompleteBtn.textContent = progress?.completed ? 'Mark as Incomplete' : 'Mark as Complete';
+            markCompleteBtn.className = progress?.completed ? 'btn btn-warning' : 'btn btn-success';
+
+            new bootstrap.Modal(document.getElementById('dayModal')).show();
         }
 
         // Toggle day completion
-        async function toggleDayComplete(weekNum, day) {
-            const checkbox = document.getElementById(`check-${weekNum}-${day}`);
-            const isCompleted = checkbox.checked;
-            const token = localStorage.getItem('access_token');
+        async function toggleDayCompletion() {
+            if (!selectedDay) return;
 
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
+            const isCompleted = document.getElementById('dayCompleted').checked;
+            const timeSpent = parseInt(document.getElementById('timeSpent').value) || 0;
+            const notes = document.getElementById('dayNotes').value;
+            const token = localStorage.getItem('accessToken');
 
             try {
                 const response = await fetch(`${API_BASE}/progress`, {
@@ -353,174 +631,271 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        week: weekNum,
-                        day: day,
+                        week: selectedDay.week,
+                        day: selectedDay.day,
                         completed: isCompleted,
-                        time_spent: roadmapData.find(w => w.week === weekNum)
-                            ?.days.find(d => d.day === day)?.time_estimate || 0
+                        time_spent: timeSpent,
+                        notes: notes
                     })
                 });
 
                 if (response.ok) {
-                    // Update local progress data
-                    if (!progressData[weekNum]) progressData[weekNum] = {};
-                    progressData[weekNum][day] = { completed: isCompleted };
+                    showToast('Progress updated successfully!', 'success');
 
-                    // Update UI
-                    const dayCard = document.querySelector(`[data-week="${weekNum}"][data-day="${day}"]`);
+                    // Trigger confetti if completed
                     if (isCompleted) {
-                        dayCard.classList.add('completed');
-                        showCompletionAnimation();
-                    } else {
-                        dayCard.classList.remove('completed');
+                        triggerConfetti();
                     }
 
-                    // Reload to update progress
-                    await loadProgress();
+                    // Refresh data
+                    await loadRoadmapData();
+
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('dayModal')).hide();
                 } else {
-                    checkbox.checked = !isCompleted;
-                    showError('Failed to update progress');
+                    throw new Error('Failed to update progress');
                 }
+
             } catch (error) {
-                checkbox.checked = !isCompleted;
-                showError('Network error. Please try again.');
+                console.error('Progress update error:', error);
+                showToast('Failed to update progress', 'error');
             }
         }
 
-        // Show resources
-        async function showResources(weekNum, day, topic) {
+        // Show project details
+        function showProject(weekNum) {
             const week = roadmapData.find(w => w.week === weekNum);
-            const dayData = week.days.find(d => d.day === day);
+            const project = week.project;
 
-            if (!dayData.resources || dayData.resources.length === 0) return;
+            document.getElementById('projectModalTitle').textContent = `Week ${weekNum} Project: ${project.title}`;
 
-            // Load resources
-            try {
-                const response = await fetch(`${API_BASE}/resources`);
-                const data = await response.json();
-                const allResources = data.resources;
-
-                // Filter relevant resources
-                const relevantResources = dayData.resources.map(resourceId =>
-                    allResources.find(r => r.id === resourceId)
-                ).filter(r => r);
-
-                // Show in modal
-                document.getElementById('resourceModalTitle').textContent = `Resources: ${topic}`;
-                document.getElementById('resourceModalBody').innerHTML = `
-                    <div class="row g-3">
-                        ${relevantResources.map(resource => `
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h6 class="card-title">
-                                            <i class="fas fa-${getResourceIcon(resource.type)} me-2"></i>
-                                            ${resource.title}
-                                        </h6>
-                                        <p class="card-text">
-                                            <span class="badge bg-${getResourceBadgeColor(resource.type)} me-2">
-                                                ${resource.type}
-                                            </span>
-                                            <a href="${resource.url}" target="_blank" class="btn btn-sm btn-primary">
-                                                Open Resource <i class="fas fa-external-link-alt ms-1"></i>
-                                            </a>
-                                        </p>
-                                    </div>
+            document.getElementById('projectModalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h5>${project.title}</h5>
+                        <p class="lead">${project.description}</p>
+                        
+                        <h6 class="mt-4">Skills You'll Practice</h6>
+                        <div class="mb-3">
+                            ${project.skills.map(skill => `<span class="badge bg-primary me-1 mb-1">${skill}</span>`).join('')}
+                        </div>
+                        
+                        <h6 class="mt-4">Project Requirements</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Implement core functionality using week's concepts</li>
+                            <li class="list-group-item">Include error handling and edge cases</li>
+                            <li class="list-group-item">Write clean, documented code</li>
+                            <li class="list-group-item">Test with sample inputs</li>
+                            <li class="list-group-item">Document your approach and learnings</li>
+                        </ul>
+                        
+                        <h6 class="mt-4">Suggested Implementation Steps</h6>
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item">Plan your data structures</li>
+                            <li class="list-group-item">Implement basic functionality</li>
+                            <li class="list-group-item">Add advanced features</li>
+                            <li class="list-group-item">Optimize performance</li>
+                            <li class="list-group-item">Document and test</li>
+                        </ol>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>Resources</h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-code me-1"></i>Code Template
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-video me-1"></i>Demo Video
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-lightbulb me-1"></i>Hints & Tips
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm">
+                                        <i class="fas fa-users me-1"></i>Discussion Forum
+                                    </button>
+                                </div>
+                                
+                                <hr>
+                                
+                                <h6>Submission</h6>
+                                <p class="small text-muted">Upload your completed project or share your code repository.</p>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-upload me-1"></i>Submit Project
+                                    </button>
                                 </div>
                             </div>
-                        `).join('')}
+                        </div>
                     </div>
-                `;
+                </div>
+            `;
 
-                const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
-                modal.show();
-            } catch (error) {
-                showError('Failed to load resources');
+            new bootstrap.Modal(document.getElementById('projectModal')).show();
+        }
+
+        // Utility functions
+        function toggleView() {
+            currentView = currentView === 'detailed' ? 'compact' : 'detailed';
+            const icon = document.getElementById('viewToggleIcon');
+            const text = document.getElementById('viewToggleText');
+
+            if (currentView === 'compact') {
+                icon.className = 'fas fa-expand-alt';
+                text.textContent = 'Detailed View';
+            } else {
+                icon.className = 'fas fa-list';
+                text.textContent = 'Compact View';
             }
-        }
 
-        // Get resource icon
-        function getResourceIcon(type) {
-            const icons = {
-                'text': 'book',
-                'video': 'video',
-                'interactive': 'hand-pointer',
-                'practice': 'code'
-            };
-            return icons[type] || 'link';
-        }
-
-        // Get resource badge color
-        function getResourceBadgeColor(type) {
-            const colors = {
-                'text': 'primary',
-                'video': 'warning',
-                'interactive': 'success',
-                'practice': 'danger'
-            };
-            return colors[type] || 'secondary';
-        }
-
-        // Update progress UI
-        function updateProgressUI() {
-            let totalCompleted = 0;
-            let totalDays = 0;
-
-            roadmapData.forEach(week => {
-                totalDays += week.days.length;
-                const weekProgress = progressData[week.week] || {};
-                totalCompleted += Object.values(weekProgress).filter(d => d.completed).length;
-            });
-
-            const percentage = totalDays > 0 ? Math.round((totalCompleted / totalDays) * 100) : 0;
-
-            document.getElementById('overallProgress').style.width = `${percentage}%`;
-            document.getElementById('progressText').textContent = `${percentage}%`;
-            document.getElementById('progressSummary').textContent = `${totalCompleted} of ${totalDays} days completed`;
-
-            // Re-render roadmap to update week progress
             renderRoadmap();
         }
 
-        // Scroll to week
+        function toggleCompletedWeeks() {
+            showCompleted = !showCompleted;
+            const icon = document.getElementById('filterIcon');
+            icon.className = showCompleted ? 'fas fa-filter' : 'fas fa-filter-circle-xmark';
+            renderRoadmap();
+        }
+
         function scrollToWeek(weekNum) {
-            const weekElement = document.getElementById(`week-${weekNum}`);
-            if (weekElement) {
-                weekElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                // Expand the week
-                const content = document.getElementById(`week-content-${weekNum}`);
-                const chevron = document.getElementById(`week-chevron-${weekNum}`);
-                content.style.display = 'block';
-                chevron.classList.remove('fa-chevron-right');
-                chevron.classList.add('fa-chevron-down');
+            setTimeout(() => {
+                const weekElement = document.getElementById(`week-${weekNum}`);
+                if (weekElement) {
+                    weekElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Auto-expand the week
+                    toggleWeek(weekNum);
+                }
+            }, 500);
+        }
+
+        function openResource(resourceId) {
+            // In a real implementation, this would open the actual resource
+            const resourceUrls = {
+                'w3_python_getstarted': 'https://www.w3schools.com/python/python_getstarted.asp',
+                'jt_cpp_tutorial': 'https://www.javatpoint.com/cpp-tutorial',
+                'galles_array_vis': 'https://www.cs.usfca.edu/~galles/visualization/Array.html',
+                'yt_neetcode_two_pointers': 'https://www.youtube.com/watch?v=jzZsG8n2R9A',
+                'lc_1_two_sum': 'https://leetcode.com/problems/two-sum/'
+            };
+
+            const url = resourceUrls[resourceId];
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                showToast('Resource URL not found', 'warning');
             }
         }
 
-        // Show completion animation
-        function showCompletionAnimation() {
-            confetti({
-                particleCount: 50,
-                spread: 60,
-                origin: { y: 0.8 }
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This action cannot be undone.')) {
+                // In real implementation, would call API to reset progress
+                showToast('Progress reset functionality would be implemented here', 'info');
+            }
+        }
+
+        function exportProgress() {
+            // Simple export functionality
+            const progressData = {
+                user: currentUser.name,
+                exportDate: new Date().toISOString(),
+                progress: userProgress,
+                stats: {
+                    completedWeeks: document.getElementById('completedWeeks').textContent,
+                    completedDays: document.getElementById('completedDays').textContent,
+                    totalTime: document.getElementById('totalTime').textContent,
+                    overallProgress: document.getElementById('overallProgress').textContent
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(progressData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-progress-${currentUser.name}-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Progress exported successfully!', 'success');
+        }
+
+        function startProject() {
+            showToast('Project starter template would be provided here', 'info');
+            // In real implementation, would provide project template or redirect to coding environment
+        }
+
+        // Confetti animation
+        function triggerConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+
+            for (let i = 0; i < 50; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.animationDelay = Math.random() * 3 + 's';
+                piece.style.backgroundColor = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'][Math.floor(Math.random() * 5)];
+                confetti.appendChild(piece);
+            }
+
+            document.body.appendChild(confetti);
+
+            setTimeout(() => {
+                document.body.removeChild(confetti);
+            }, 3000);
+        }
+
+        // Set active page in navigation
+        function setActivePage(page) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
             });
         }
 
-        // Show error message
-        function showError(message) {
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3';
-            alert.style.zIndex = '9999';
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alert);
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
 
-            setTimeout(() => alert.remove(), 5000);
+            const toast = `
+                <div class="toast ${type}" role="alert" id="${toastId}">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            toastContainer.innerHTML += toast;
+
+            const toastElement = document.getElementById(toastId);
+            const bsToast = new bootstrap.Toast(toastElement);
+            bsToast.show();
+
+            setTimeout(() => {
+                toastElement.remove();
+            }, 5000);
         }
 
-        // Initialize on load
-        initRoadmap();
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
     </script>
 </body>
 

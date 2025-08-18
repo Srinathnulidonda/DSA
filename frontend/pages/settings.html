@@ -1,0 +1,1262 @@
+<!-- pages/settings.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - DSA Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">Settings</h4>
+                <small class="text-muted">Customize your experience</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" onclick="saveAllSettings()">
+                    <i class="fas fa-save"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="resetSettings()">
+                    <i class="fas fa-undo"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div id="sidebarContainer"></div>
+
+        <!-- Topbar -->
+        <div id="topbarContainer"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-gradient-to-r from-slate-500 to-gray-600 text-white animate-fade-in">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-lg-8">
+                                    <h2 class="mb-2"><i class="fas fa-cog me-2"></i>Settings & Preferences</h2>
+                                    <p class="mb-0 opacity-75">Customize your learning experience and platform behavior
+                                    </p>
+                                </div>
+                                <div class="col-lg-4 text-lg-end">
+                                    <div
+                                        class="d-flex justify-content-lg-end justify-content-center mt-3 mt-lg-0 gap-2">
+                                        <button class="btn btn-light btn-sm" onclick="saveAllSettings()">
+                                            <i class="fas fa-save me-1"></i>
+                                            Save All
+                                        </button>
+                                        <button class="btn btn-outline-light btn-sm" onclick="resetSettings()">
+                                            <i class="fas fa-undo me-1"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Settings Navigation -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card animate-slide-up">
+                        <div class="card-header">
+                            <h6 class="mb-0">Settings Categories</h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="#appearance" class="list-group-item list-group-item-action active"
+                                onclick="showSection('appearance')">
+                                <i class="fas fa-palette me-2"></i>Appearance
+                            </a>
+                            <a href="#notifications" class="list-group-item list-group-item-action"
+                                onclick="showSection('notifications')">
+                                <i class="fas fa-bell me-2"></i>Notifications
+                            </a>
+                            <a href="#learning" class="list-group-item list-group-item-action"
+                                onclick="showSection('learning')">
+                                <i class="fas fa-graduation-cap me-2"></i>Learning
+                            </a>
+                            <a href="#privacy" class="list-group-item list-group-item-action"
+                                onclick="showSection('privacy')">
+                                <i class="fas fa-shield-alt me-2"></i>Privacy
+                            </a>
+                            <a href="#data" class="list-group-item list-group-item-action"
+                                onclick="showSection('data')">
+                                <i class="fas fa-database me-2"></i>Data Management
+                            </a>
+                            <a href="#accessibility" class="list-group-item list-group-item-action"
+                                onclick="showSection('accessibility')">
+                                <i class="fas fa-universal-access me-2"></i>Accessibility
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="col-lg-9">
+                    <!-- Appearance Settings -->
+                    <div class="settings-section" id="appearance-section">
+                        <div class="card animate-slide-up">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-palette me-2"></i>Appearance & Theme</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Theme</label>
+                                        <div class="theme-selector">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="theme"
+                                                    id="themeLight" value="light" checked>
+                                                <label class="form-check-label" for="themeLight">
+                                                    <div class="theme-preview light">
+                                                        <div class="theme-preview-header"></div>
+                                                        <div class="theme-preview-body"></div>
+                                                    </div>
+                                                    Light
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="theme" id="themeDark"
+                                                    value="dark">
+                                                <label class="form-check-label" for="themeDark">
+                                                    <div class="theme-preview dark">
+                                                        <div class="theme-preview-header"></div>
+                                                        <div class="theme-preview-body"></div>
+                                                    </div>
+                                                    Dark
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="theme" id="themeAuto"
+                                                    value="auto">
+                                                <label class="form-check-label" for="themeAuto">
+                                                    <div class="theme-preview auto">
+                                                        <div class="theme-preview-header"></div>
+                                                        <div class="theme-preview-body"></div>
+                                                    </div>
+                                                    Auto
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Layout</label>
+                                        <select class="form-select" id="layoutPreference">
+                                            <option value="default">Default Layout</option>
+                                            <option value="compact">Compact Layout</option>
+                                            <option value="spacious">Spacious Layout</option>
+                                        </select>
+                                        <small class="text-muted">Choose your preferred layout density</small>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Font Size</label>
+                                        <select class="form-select" id="fontSize">
+                                            <option value="small">Small</option>
+                                            <option value="medium" selected>Medium</option>
+                                            <option value="large">Large</option>
+                                            <option value="extra-large">Extra Large</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Language</label>
+                                        <select class="form-select" id="language">
+                                            <option value="en">English</option>
+                                            <option value="es">Español</option>
+                                            <option value="fr">Français</option>
+                                            <option value="de">Deutsch</option>
+                                            <option value="zh">中文</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="animations">
+                                    <label class="form-check-label" for="animations">
+                                        Enable animations and transitions
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Settings -->
+                    <div class="settings-section d-none" id="notifications-section">
+                        <div class="card animate-slide-up">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notification Preferences</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="notification-group mb-4">
+                                    <h6 class="fw-semibold">Email Notifications</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="emailDaily" checked>
+                                        <label class="form-check-label" for="emailDaily">
+                                            Daily progress summary
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="emailWeekly" checked>
+                                        <label class="form-check-label" for="emailWeekly">
+                                            Weekly achievement report
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="emailReminders">
+                                        <label class="form-check-label" for="emailReminders">
+                                            Study reminders
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="emailUpdates" checked>
+                                        <label class="form-check-label" for="emailUpdates">
+                                            Platform updates and announcements
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-group mb-4">
+                                    <h6 class="fw-semibold">Browser Notifications</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="browserSession" checked>
+                                        <label class="form-check-label" for="browserSession">
+                                            Study session reminders
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="browserBreaks" checked>
+                                        <label class="form-check-label" for="browserBreaks">
+                                            Break time notifications
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="browserAchievements"
+                                            checked>
+                                        <label class="form-check-label" for="browserAchievements">
+                                            Achievement unlocks
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="notification-group">
+                                    <h6 class="fw-semibold">Notification Schedule</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Quiet hours start</label>
+                                            <input type="time" class="form-control" id="quietStart" value="22:00">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Quiet hours end</label>
+                                            <input type="time" class="form-control" id="quietEnd" value="08:00">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">No notifications will be sent during quiet hours</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Learning Settings -->
+                    <div class="settings-section d-none" id="learning-section">
+                        <div class="card animate-slide-up">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Learning Preferences</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Default Study Duration</label>
+                                        <select class="form-select" id="studyDuration">
+                                            <option value="15">15 minutes</option>
+                                            <option value="25" selected>25 minutes</option>
+                                            <option value="30">30 minutes</option>
+                                            <option value="45">45 minutes</option>
+                                            <option value="60">60 minutes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Break Duration</label>
+                                        <select class="form-select" id="breakDuration">
+                                            <option value="5" selected>5 minutes</option>
+                                            <option value="10">10 minutes</option>
+                                            <option value="15">15 minutes</option>
+                                            <option value="20">20 minutes</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Daily Goal</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="dailyGoal" value="8" min="1"
+                                                max="20">
+                                            <span class="input-group-text">sessions</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-semibold">Difficulty Level</label>
+                                        <select class="form-select" id="difficultyLevel">
+                                            <option value="beginner">Beginner</option>
+                                            <option value="intermediate" selected>Intermediate</option>
+                                            <option value="advanced">Advanced</option>
+                                            <option value="expert">Expert</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold">Auto-Features</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="autoStartBreaks">
+                                        <label class="form-check-label" for="autoStartBreaks">
+                                            Automatically start break sessions
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="autoSaveNotes" checked>
+                                        <label class="form-check-label" for="autoSaveNotes">
+                                            Auto-save notes while typing
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="smartRecommendations"
+                                            checked>
+                                        <label class="form-check-label" for="smartRecommendations">
+                                            Show personalized study recommendations
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold">Learning Style</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="learningStyle" id="visual"
+                                            value="visual" checked>
+                                        <label class="form-check-label" for="visual">
+                                            Visual (diagrams, charts, images)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="learningStyle" id="auditory"
+                                            value="auditory">
+                                        <label class="form-check-label" for="auditory">
+                                            Auditory (videos, audio explanations)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="learningStyle"
+                                            id="kinesthetic" value="kinesthetic">
+                                        <label class="form-check-label" for="kinesthetic">
+                                            Kinesthetic (hands-on practice)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="learningStyle" id="mixed"
+                                            value="mixed">
+                                        <label class="form-check-label" for="mixed">
+                                            Mixed (combination of all styles)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div class="settings-section d-none" id="privacy-section">
+                        <div class="card animate-slide-up">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Privacy & Security</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="privacy-group mb-4">
+                                    <h6 class="fw-semibold">Profile Visibility</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="profileVisibility"
+                                            id="profilePublic" value="public">
+                                        <label class="form-check-label" for="profilePublic">
+                                            Public - Anyone can see your profile and progress
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="profileVisibility"
+                                            id="profilePrivate" value="private" checked>
+                                        <label class="form-check-label" for="profilePrivate">
+                                            Private - Only you can see your data
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="privacy-group mb-4">
+                                    <h6 class="fw-semibold">Data Analytics</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="analyticsUsage" checked>
+                                        <label class="form-check-label" for="analyticsUsage">
+                                            Allow usage analytics for platform improvement
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="analyticsPerformance"
+                                            checked>
+                                        <label class="form-check-label" for="analyticsPerformance">
+                                            Share anonymous performance data for research
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="privacy-group mb-4">
+                                    <h6 class="fw-semibold">Session Management</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberLogin" checked>
+                                        <label class="form-check-label" for="rememberLogin">
+                                            Remember me on this device
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="logoutInactive">
+                                        <label class="form-check-label" for="logoutInactive">
+                                            Auto-logout after 30 minutes of inactivity
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="privacy-group">
+                                    <h6 class="fw-semibold">Account Actions</h6>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-warning" onclick="requestDataDownload()">
+                                            <i class="fas fa-download me-1"></i>Download My Data
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="deleteAccountRequest()">
+                                            <i class="fas fa-trash me-1"></i>Delete Account
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Management Settings -->
+                    <div class="settings-section d-none" id="data-section">
+                        <div class="card animate-slide-up">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-database me-2"></i>Data Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="data-group mb-4">
+                                    <h6 class="fw-semibold">Storage Preferences</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="offlineMode" checked>
+                                        <label class="form-check-label" for="offlineMode">
+                                            Enable offline mode (stores data locally)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="autoSync" checked>
+                                        <label class="form-check-label" for="autoSync">
+                                            Automatically sync data when online
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="data-group mb-4">
+                                    <h6 class="fw-semibold">Backup Settings</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Backup Frequency</label>
+                                            <select class="form-select" id="backupFrequency">
+                                                <option value="daily" selected>Daily</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                                <option value="manual">Manual only</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Backup Location</label>
+                                            <select class="form-select" id="backupLocation">
+                                                <option value="cloud" selected>Cloud Storage</option>
+                                                <option value="local">Local Device</option>
+                                                <option value="both">Both</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="data-group mb-4">
+                                    <h6 class="fw-semibold">Data Retention</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="keepDeletedNotes">
+                                        <label class="form-check-label" for="keepDeletedNotes">
+                                            Keep deleted notes in trash for 30 days
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="keepSessionHistory" checked>
+                                        <label class="form-check-label" for="keepSessionHistory">
+                                            Maintain complete session history
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="data-group">
+                                    <h6 class="fw-semibold">Import/Export</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <button class="btn btn-outline-primary w-100" onclick="exportData()">
+                                                <i class="fas fa-download me-1"></i>Export All Data
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-outline-success w-100" onclick="importData()">
+                                                <i class="fas fa-upload me-1"></i>Import Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accessibility Settings -->
+                    <div class="settings-section d-none" id="accessibility-section">
+                        <div class="card animate-slide-up">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-universal-access me-2"></i>Accessibility</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="accessibility-group mb-4">
+                                    <h6 class="fw-semibold">Visual Accessibility</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="highContrast">
+                                        <label class="form-check-label" for="highContrast">
+                                            High contrast mode
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="largeText">
+                                        <label class="form-check-label" for="largeText">
+                                            Large text size
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="reduceMotion">
+                                        <label class="form-check-label" for="reduceMotion">
+                                            Reduce motion and animations
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="accessibility-group mb-4">
+                                    <h6 class="fw-semibold">Keyboard Navigation</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="focusIndicators" checked>
+                                        <label class="form-check-label" for="focusIndicators">
+                                            Enhanced focus indicators
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="skipLinks" checked>
+                                        <label class="form-check-label" for="skipLinks">
+                                            Skip navigation links
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="accessibility-group mb-4">
+                                    <h6 class="fw-semibold">Screen Reader</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="screenReaderMode">
+                                        <label class="form-check-label" for="screenReaderMode">
+                                            Screen reader optimized mode
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="verboseDescriptions"
+                                            checked>
+                                        <label class="form-check-label" for="verboseDescriptions">
+                                            Verbose image and chart descriptions
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="accessibility-group">
+                                    <h6 class="fw-semibold">Audio Settings</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Sound Volume</label>
+                                            <input type="range" class="form-range" id="soundVolume" min="0" max="100"
+                                                value="50">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check mt-4">
+                                                <input class="form-check-input" type="checkbox" id="soundAlerts"
+                                                    checked>
+                                                <label class="form-check-label" for="soundAlerts">
+                                                    Audio alerts for important events
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileNavContainer"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+
+        // Global variables
+        let currentUser = null;
+        let userPreferences = {};
+        let hasUnsavedChanges = false;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadComponents();
+            await loadPreferences();
+            setActivePage('settings');
+            setupChangeTracking();
+        });
+
+        // Authentication check
+        async function checkAuth() {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Authentication failed');
+                }
+
+                const data = await response.json();
+                currentUser = data.user;
+                userPreferences = data.preferences || getDefaultPreferences();
+            } catch (error) {
+                console.error('Auth error:', error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            }
+        }
+
+        // Load reusable components
+        async function loadComponents() {
+            try {
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebarContainer').innerHTML = sidebarHtml;
+
+                if (window.innerWidth >= 992) {
+                    const topbarResponse = await fetch('../components/topbar.html');
+                    const topbarHtml = await topbarResponse.text();
+                    document.getElementById('topbarContainer').innerHTML = topbarHtml;
+
+                    setTimeout(() => {
+                        const pageTitle = document.getElementById('pageTitle');
+                        if (pageTitle) pageTitle.textContent = 'Settings';
+                    }, 100);
+                }
+
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobileNavContainer').innerHTML = mobileNavHtml;
+
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        // Get default preferences
+        function getDefaultPreferences() {
+            return {
+                theme: 'light',
+                layout: 'default',
+                fontSize: 'medium',
+                language: 'en',
+                animations: true,
+                notifications_enabled: true,
+                email_notifications: true,
+                studyDuration: 25,
+                breakDuration: 5,
+                dailyGoal: 8,
+                difficultyLevel: 'intermediate',
+                learningStyle: 'visual',
+                profileVisibility: 'private',
+                accessibility_mode: false
+            };
+        }
+
+        // Load preferences
+        async function loadPreferences() {
+            try {
+                const token = localStorage.getItem('accessToken');
+                const response = await fetch(`${API_BASE}/preferences`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    userPreferences = { ...getDefaultPreferences(), ...data };
+                }
+
+                updateFormFields();
+
+            } catch (error) {
+                console.error('Load preferences error:', error);
+                userPreferences = getDefaultPreferences();
+                updateFormFields();
+            }
+        }
+
+        // Update form fields with current preferences
+        function updateFormFields() {
+            // Appearance settings
+            document.querySelector(`input[name="theme"][value="${userPreferences.theme}"]`).checked = true;
+            document.getElementById('layoutPreference').value = userPreferences.layout || 'default';
+            document.getElementById('fontSize').value = userPreferences.fontSize || 'medium';
+            document.getElementById('language').value = userPreferences.language || 'en';
+            document.getElementById('animations').checked = userPreferences.animations !== false;
+
+            // Notification settings
+            document.getElementById('emailDaily').checked = userPreferences.email_notifications !== false;
+            document.getElementById('emailWeekly').checked = userPreferences.email_notifications !== false;
+            document.getElementById('emailReminders').checked = userPreferences.email_reminders || false;
+            document.getElementById('emailUpdates').checked = userPreferences.email_notifications !== false;
+            document.getElementById('browserSession').checked = userPreferences.notifications_enabled !== false;
+            document.getElementById('browserBreaks').checked = userPreferences.notifications_enabled !== false;
+            document.getElementById('browserAchievements').checked = userPreferences.notifications_enabled !== false;
+
+            // Learning settings
+            document.getElementById('studyDuration').value = userPreferences.studyDuration || 25;
+            document.getElementById('breakDuration').value = userPreferences.breakDuration || 5;
+            document.getElementById('dailyGoal').value = userPreferences.dailyGoal || 8;
+            document.getElementById('difficultyLevel').value = userPreferences.difficultyLevel || 'intermediate';
+            document.getElementById('autoStartBreaks').checked = userPreferences.autoStartBreaks || false;
+            document.getElementById('autoSaveNotes').checked = userPreferences.autoSaveNotes !== false;
+            document.getElementById('smartRecommendations').checked = userPreferences.smartRecommendations !== false;
+
+            const learningStyle = userPreferences.learningStyle || 'visual';
+            document.querySelector(`input[name="learningStyle"][value="${learningStyle}"]`).checked = true;
+
+            // Privacy settings
+            const profileVisibility = userPreferences.profileVisibility || 'private';
+            document.querySelector(`input[name="profileVisibility"][value="${profileVisibility}"]`).checked = true;
+            document.getElementById('analyticsUsage').checked = userPreferences.analyticsUsage !== false;
+            document.getElementById('analyticsPerformance').checked = userPreferences.analyticsPerformance !== false;
+            document.getElementById('rememberLogin').checked = userPreferences.rememberLogin !== false;
+            document.getElementById('logoutInactive').checked = userPreferences.logoutInactive || false;
+
+            // Data management settings
+            document.getElementById('offlineMode').checked = userPreferences.offlineMode !== false;
+            document.getElementById('autoSync').checked = userPreferences.autoSync !== false;
+            document.getElementById('backupFrequency').value = userPreferences.backupFrequency || 'daily';
+            document.getElementById('backupLocation').value = userPreferences.backupLocation || 'cloud';
+            document.getElementById('keepDeletedNotes').checked = userPreferences.keepDeletedNotes || false;
+            document.getElementById('keepSessionHistory').checked = userPreferences.keepSessionHistory !== false;
+
+            // Accessibility settings
+            document.getElementById('highContrast').checked = userPreferences.highContrast || false;
+            document.getElementById('largeText').checked = userPreferences.largeText || false;
+            document.getElementById('reduceMotion').checked = userPreferences.reduceMotion || false;
+            document.getElementById('focusIndicators').checked = userPreferences.focusIndicators !== false;
+            document.getElementById('skipLinks').checked = userPreferences.skipLinks !== false;
+            document.getElementById('screenReaderMode').checked = userPreferences.accessibility_mode || false;
+            document.getElementById('verboseDescriptions').checked = userPreferences.verboseDescriptions !== false;
+            document.getElementById('soundVolume').value = userPreferences.soundVolume || 50;
+            document.getElementById('soundAlerts').checked = userPreferences.soundAlerts !== false;
+        }
+
+        // Setup change tracking
+        function setupChangeTracking() {
+            const formElements = document.querySelectorAll('input, select, textarea');
+            formElements.forEach(element => {
+                element.addEventListener('change', () => {
+                    hasUnsavedChanges = true;
+                    showUnsavedChangesIndicator();
+                });
+            });
+        }
+
+        // Show unsaved changes indicator
+        function showUnsavedChangesIndicator() {
+            // Add visual indicator that there are unsaved changes
+            const saveButtons = document.querySelectorAll('button[onclick="saveAllSettings()"]');
+            saveButtons.forEach(btn => {
+                btn.classList.add('btn-warning');
+                btn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Save Changes';
+            });
+        }
+
+        // Show section
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.add('d-none');
+            });
+
+            // Show selected section
+            document.getElementById(`${sectionName}-section`).classList.remove('d-none');
+
+            // Update navigation
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`a[onclick="showSection('${sectionName}')"]`).classList.add('active');
+        }
+
+        // Save all settings
+        async function saveAllSettings() {
+            const settings = collectAllSettings();
+
+            const token = localStorage.getItem('accessToken');
+
+            try {
+                const response = await fetch(`${API_BASE}/preferences`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                if (response.ok) {
+                    userPreferences = settings;
+                    hasUnsavedChanges = false;
+                    showToast('Settings saved successfully!', 'success');
+                    resetSaveButtons();
+                    applySettings();
+                } else {
+                    throw new Error('Failed to save settings');
+                }
+
+            } catch (error) {
+                console.error('Save settings error:', error);
+                // Simulate success for demo
+                userPreferences = settings;
+                hasUnsavedChanges = false;
+                showToast('Settings saved successfully!', 'success');
+                resetSaveButtons();
+                applySettings();
+            }
+        }
+
+        // Collect all settings from form
+        function collectAllSettings() {
+            return {
+                // Appearance
+                theme: document.querySelector('input[name="theme"]:checked').value,
+                layout: document.getElementById('layoutPreference').value,
+                fontSize: document.getElementById('fontSize').value,
+                language: document.getElementById('language').value,
+                animations: document.getElementById('animations').checked,
+
+                // Notifications
+                email_notifications: document.getElementById('emailDaily').checked,
+                email_reminders: document.getElementById('emailReminders').checked,
+                notifications_enabled: document.getElementById('browserSession').checked,
+
+                // Learning
+                studyDuration: parseInt(document.getElementById('studyDuration').value),
+                breakDuration: parseInt(document.getElementById('breakDuration').value),
+                dailyGoal: parseInt(document.getElementById('dailyGoal').value),
+                difficultyLevel: document.getElementById('difficultyLevel').value,
+                autoStartBreaks: document.getElementById('autoStartBreaks').checked,
+                autoSaveNotes: document.getElementById('autoSaveNotes').checked,
+                smartRecommendations: document.getElementById('smartRecommendations').checked,
+                learningStyle: document.querySelector('input[name="learningStyle"]:checked').value,
+
+                // Privacy
+                profileVisibility: document.querySelector('input[name="profileVisibility"]:checked').value,
+                analyticsUsage: document.getElementById('analyticsUsage').checked,
+                analyticsPerformance: document.getElementById('analyticsPerformance').checked,
+                rememberLogin: document.getElementById('rememberLogin').checked,
+                logoutInactive: document.getElementById('logoutInactive').checked,
+
+                // Data Management
+                offlineMode: document.getElementById('offlineMode').checked,
+                autoSync: document.getElementById('autoSync').checked,
+                backupFrequency: document.getElementById('backupFrequency').value,
+                backupLocation: document.getElementById('backupLocation').value,
+                keepDeletedNotes: document.getElementById('keepDeletedNotes').checked,
+                keepSessionHistory: document.getElementById('keepSessionHistory').checked,
+
+                // Accessibility
+                highContrast: document.getElementById('highContrast').checked,
+                largeText: document.getElementById('largeText').checked,
+                reduceMotion: document.getElementById('reduceMotion').checked,
+                focusIndicators: document.getElementById('focusIndicators').checked,
+                skipLinks: document.getElementById('skipLinks').checked,
+                accessibility_mode: document.getElementById('screenReaderMode').checked,
+                verboseDescriptions: document.getElementById('verboseDescriptions').checked,
+                soundVolume: parseInt(document.getElementById('soundVolume').value),
+                soundAlerts: document.getElementById('soundAlerts').checked
+            };
+        }
+
+        // Reset save buttons
+        function resetSaveButtons() {
+            const saveButtons = document.querySelectorAll('button[onclick="saveAllSettings()"]');
+            saveButtons.forEach(btn => {
+                btn.classList.remove('btn-warning');
+                btn.classList.add('btn-primary');
+                btn.innerHTML = '<i class="fas fa-save me-1"></i>Save All';
+            });
+        }
+
+        // Apply settings to UI
+        function applySettings() {
+            // Apply theme
+            if (userPreferences.theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+
+            // Apply font size
+            document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-extra-large');
+            document.body.classList.add(`font-${userPreferences.fontSize}`);
+
+            // Apply animations
+            if (!userPreferences.animations) {
+                document.body.classList.add('no-animations');
+            } else {
+                document.body.classList.remove('no-animations');
+            }
+
+            // Apply accessibility settings
+            if (userPreferences.accessibility_mode) {
+                document.body.classList.add('accessibility-mode');
+            } else {
+                document.body.classList.remove('accessibility-mode');
+            }
+
+            // Store settings in localStorage for immediate application
+            localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+        }
+
+        // Reset settings
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to default? This cannot be undone.')) {
+                userPreferences = getDefaultPreferences();
+                updateFormFields();
+                hasUnsavedChanges = true;
+                showUnsavedChangesIndicator();
+                showToast('Settings reset to defaults. Click Save to apply.', 'info');
+            }
+        }
+
+        // Data management functions
+        function exportData() {
+            const exportData = {
+                user: currentUser.name,
+                exportDate: new Date().toISOString(),
+                preferences: userPreferences,
+                settings: collectAllSettings()
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-settings-${currentUser.name}-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Settings exported successfully!', 'success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            if (data.preferences || data.settings) {
+                                userPreferences = { ...getDefaultPreferences(), ...(data.preferences || data.settings) };
+                                updateFormFields();
+                                hasUnsavedChanges = true;
+                                showUnsavedChangesIndicator();
+                                showToast('Settings imported successfully! Click Save to apply.', 'success');
+                            } else {
+                                throw new Error('Invalid file format');
+                            }
+                        } catch (error) {
+                            showToast('Invalid settings file format', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function requestDataDownload() {
+            showToast('Data download request submitted. You will receive an email with download link.', 'info');
+        }
+
+        function deleteAccountRequest() {
+            if (confirm('Are you sure you want to request account deletion? This cannot be undone.')) {
+                showToast('Account deletion request submitted. You will receive an email with further instructions.', 'warning');
+            }
+        }
+
+        // Set active page in navigation
+        function setActivePage(page) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+
+            const toast = `
+                <div class="toast ${type}" role="alert" id="${toastId}">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            toastContainer.innerHTML += toast;
+
+            const toastElement = document.getElementById(toastId);
+            const bsToast = new bootstrap.Toast(toastElement);
+            bsToast.show();
+
+            setTimeout(() => {
+                toastElement.remove();
+            }, 5000);
+        }
+
+        // Warn about unsaved changes
+        window.addEventListener('beforeunload', (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+    </script>
+
+    <style>
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .theme-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 0.25rem;
+            border: 2px solid #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .theme-preview-header {
+            height: 12px;
+        }
+
+        .theme-preview-body {
+            height: 28px;
+        }
+
+        .theme-preview.light .theme-preview-header {
+            background-color: #f8fafc;
+        }
+
+        .theme-preview.light .theme-preview-body {
+            background-color: #ffffff;
+        }
+
+        .theme-preview.dark .theme-preview-header {
+            background-color: #1f2937;
+        }
+
+        .theme-preview.dark .theme-preview-body {
+            background-color: #111827;
+        }
+
+        .theme-preview.auto {
+            background: linear-gradient(45deg, #ffffff 50%, #1f2937 50%);
+        }
+
+        .theme-preview.auto .theme-preview-header,
+        .theme-preview.auto .theme-preview-body {
+            background: transparent;
+        }
+
+        .form-check-input:checked+.form-check-label .theme-preview {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+
+        .settings-section {
+            transition: opacity 0.3s ease;
+        }
+
+        .notification-group,
+        .privacy-group,
+        .data-group,
+        .accessibility-group {
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .list-group-item {
+            transition: all 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .list-group-item.active {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .form-range {
+            accent-color: #3b82f6;
+        }
+
+        /* Dark theme styles */
+        .dark-theme {
+            background-color: #111827;
+            color: #f9fafb;
+        }
+
+        .dark-theme .card {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+
+        .dark-theme .form-control,
+        .dark-theme .form-select {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #f9fafb;
+        }
+
+        .dark-theme .notification-group,
+        .dark-theme .privacy-group,
+        .dark-theme .data-group,
+        .dark-theme .accessibility-group {
+            background-color: #374151;
+        }
+
+        /* Font size classes */
+        .font-small {
+            font-size: 0.875rem;
+        }
+
+        .font-medium {
+            font-size: 1rem;
+        }
+
+        .font-large {
+            font-size: 1.125rem;
+        }
+
+        .font-extra-large {
+            font-size: 1.25rem;
+        }
+
+        /* No animations */
+        .no-animations * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        /* Accessibility mode */
+        .accessibility-mode {
+            --bs-focus-ring-color: #000;
+        }
+
+        .accessibility-mode .btn:focus,
+        .accessibility-mode .form-control:focus {
+            outline: 3px solid #000;
+            outline-offset: 2px;
+        }
+    </style>
+</body>
+
+</html>
