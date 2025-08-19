@@ -1,67 +1,100 @@
-<!-- pages/roadmap.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roadmap - DSA Learning Path</title>
+    <title>Learning Roadmap - DSA Path</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animation.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="main-wrapper">
-        <!-- Sidebar -->
+    <div class="main-layout">
+        <!-- Include Sidebar -->
         <div id="sidebar-container"></div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Topbar -->
+        <div class="main-content">
+            <!-- Include Topbar -->
             <div id="topbar-container"></div>
 
-            <!-- Roadmap Content -->
-            <div class="container-fluid mt-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0">14-Week DSA Roadmap</h1>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="collapseAll()">
-                            <i class="fas fa-compress"></i> Collapse All
-                        </button>
-                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="expandAll()">
-                            <i class="fas fa-expand"></i> Expand All
-                        </button>
+            <div class="content-area">
+                <!-- Header Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div
+                            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                            <div class="animate-fadeInLeft">
+                                <h2 class="fw-bold text-dark mb-1">14-Week DSA Roadmap</h2>
+                                <p class="text-muted mb-0">Your structured journey to DSA mastery</p>
+                            </div>
+                            <div class="d-flex gap-2 animate-fadeInRight">
+                                <button class="btn btn-outline-primary btn-sm" onclick="expandAllWeeks()">
+                                    <i class="fas fa-expand-arrows-alt me-1"></i>Expand All
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="collapseAllWeeks()">
+                                    <i class="fas fa-compress-arrows-alt me-1"></i>Collapse All
+                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-info btn-sm dropdown-toggle"
+                                        data-bs-toggle="dropdown">
+                                        <i class="fas fa-filter me-1"></i>Filter
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="filterWeeks('all')">All Weeks</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#"
+                                                onclick="filterWeeks('completed')">Completed</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="filterWeeks('in-progress')">In
+                                                Progress</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="filterWeeks('not-started')">Not
+                                                Started</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Progress Overview -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <h5 class="card-title">Your Progress</h5>
-                                <div class="progress mb-2" style="height: 20px;">
-                                    <div class="progress-bar bg-success" role="progressbar" id="overallProgress"
-                                        style="width: 0%">0%</div>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stats-card animate-fadeInUp">
+                            <div class="row g-4">
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center">
+                                        <div class="circular-progress mb-2">
+                                            <svg>
+                                                <circle class="bg-circle" cx="50" cy="50" r="45"></circle>
+                                                <circle class="progress-circle" cx="50" cy="50" r="45"
+                                                    id="overall-progress-circle"></circle>
+                                            </svg>
+                                            <div class="progress-label" id="overall-progress-text">0%</div>
+                                        </div>
+                                        <small class="text-muted">Overall Progress</small>
+                                    </div>
                                 </div>
-                                <p class="text-muted mb-0">
-                                    <span id="completedWeeks">0</span> of 14 weeks completed
-                                </p>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="d-flex justify-content-center gap-3 mt-3 mt-md-0">
-                                    <div>
-                                        <h3 class="mb-0" id="totalCompleted">0</h3>
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center">
+                                        <h3 class="fw-bold text-primary mb-1" id="completed-weeks">0</h3>
+                                        <small class="text-muted">Weeks Completed</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center">
+                                        <h3 class="fw-bold text-success mb-1" id="completed-days">0</h3>
                                         <small class="text-muted">Days Completed</small>
                                     </div>
-                                    <div>
-                                        <h3 class="mb-0" id="totalRemaining">98</h3>
-                                        <small class="text-muted">Days Remaining</small>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center">
+                                        <h3 class="fw-bold text-info mb-1" id="current-streak">0</h3>
+                                        <small class="text-muted">Day Streak</small>
                                     </div>
                                 </div>
                             </div>
@@ -69,279 +102,1039 @@
                     </div>
                 </div>
 
-                <!-- Roadmap Weeks -->
-                <div id="roadmapContainer" data-accordion-group="roadmap">
+                <!-- Roadmap Content -->
+                <div id="roadmap-container">
                     <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading roadmap...</span>
-                        </div>
+                        <div class="loading-spinner mx-auto mb-3"></div>
+                        <p class="text-muted">Loading roadmap...</p>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+
+        <!-- Include Mobile Navigation -->
+        <div id="mobile-nav-container"></div>
     </div>
 
-    <!-- Mobile Navigation -->
-    <div id="mobile-nav-container"></div>
+    <!-- Resource Modal -->
+    <div class="modal fade" id="resourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content modal-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title">Resources</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-body-custom" id="resourceModalBody">
+                    <!-- Resources will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/main.js"></script>
-    <script src="/js/components.js"></script>
-    <script src="/js/animation.js"></script>
-
     <script>
-        // Load components
-        fetch('/components/sidebar.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar-container').innerHTML = html;
-            initSidebar();
-        });
-
-        fetch('/components/topbar.html').then(r => r.text()).then(html => {
-            document.getElementById('topbar-container').innerHTML = html;
-        });
-
-        fetch('/components/mobile-nav.html').then(r => r.text()).then(html => {
-            document.getElementById('mobile-nav-container').innerHTML = html;
-            initMobileNav();
-        });
-
-        // Roadmap functionality
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
         let roadmapData = [];
         let progressData = {};
+        let resourcesData = {};
 
-        async function loadRoadmap() {
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            loadComponents();
+            initializeRoadmap();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+        }
+
+        async function loadComponents() {
             try {
-                const [roadmapResponse, progressResponse] = await Promise.all([
-                    api.get('/roadmap'),
-                    api.get('/progress')
+                // Load sidebar
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+                // Load topbar
+                const topbarResponse = await fetch('../components/topbar.html');
+                const topbarHtml = await topbarResponse.text();
+                document.getElementById('topbar-container').innerHTML = topbarHtml;
+
+                // Load mobile nav
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobile-nav-container').innerHTML = mobileNavHtml;
+
+                // Execute scripts in loaded components
+                setActiveNavItem();
+                setActiveMobileNavItem();
+                updatePageTitle();
+                loadUserData();
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function initializeRoadmap() {
+            try {
+                await Promise.all([
+                    loadRoadmapData(),
+                    loadProgressData(),
+                    loadResourcesData()
                 ]);
 
-                roadmapData = roadmapResponse.roadmap;
-                progressData = progressResponse.progress;
-
                 renderRoadmap();
-                updateOverallProgress();
-
+                updateProgressOverview();
             } catch (error) {
-                console.error('Failed to load roadmap:', error);
-                showToast('Failed to load roadmap', 'danger');
+                console.error('Roadmap initialization error:', error);
+                showErrorMessage('Failed to load roadmap data');
+            }
+        }
+
+        async function loadRoadmapData() {
+            try {
+                const response = await fetch(`${API_BASE}/roadmap`);
+                if (response.ok) {
+                    const data = await response.json();
+                    roadmapData = data.roadmap;
+                } else {
+                    throw new Error('Failed to load roadmap');
+                }
+            } catch (error) {
+                console.error('Error loading roadmap:', error);
+                // Fallback roadmap data
+                roadmapData = [
+                    {
+                        "week": 1,
+                        "title": "Foundation & Environment",
+                        "goal": "Set up development environment and basic programming concepts",
+                        "project": { "title": "Scientific Calculator", "description": "Build a calculator with basic and advanced operations", "skills": ["Arrays", "Functions", "Error handling"] },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Environment Setup", "activities": "Install Python/C++, Git, IDE setup", "resources": ["w3_python_getstarted", "jt_cpp_tutorial"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Basic Syntax", "activities": "Variables, data types, operators", "resources": ["w3_python_syntax", "programiz_cpp_basics"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Input/Output", "activities": "File I/O, console I/O, formatting", "resources": ["w3_python_user_input", "jt_cpp_io"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Functions", "activities": "Function definition, parameters, scope", "resources": ["w3_python_functions", "tutsp_cpp_functions"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Arrays/Lists Basics", "activities": "Creation, indexing, basic operations", "resources": ["w3_python_lists", "programiz_cpp_arrays"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Scientific Calculator", "activities": "Plan features, basic arithmetic", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Scientific Calculator", "activities": "Advanced operations, error handling", "resources": [], "time_estimate": 180
+                            }
+                        ]
+                    },
+                    {
+                        "week": 2,
+                        "title": "Arrays & String Mastery",
+                        "goal": "Master array operations and string manipulation",
+                        "project": {
+                            "title": "Text Analyzer", "description": "Build a text analysis tool with word frequency and pattern detection", "skills": ["String processing", "Two pointers", "Sliding window"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Array Operations", "activities": "Iteration, searching, basic algorithms", "resources": ["w3_dsa_arrays", "galles_array_vis"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Two Pointers Technique", "activities": "Two Sum, reverse array, palindrome", "resources": ["programiz_two_pointers", "yt_neetcode_two_pointers"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "String Processing", "activities": "Manipulation, pattern matching basics", "resources": ["w3_python_strings", "jt_string_ds"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Sliding Window", "activities": "Maximum subarray, longest substring", "resources": ["gfg_sliding_window", "tutsp_sliding_window"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Two Sum, Longest Substring, Valid Palindrome", "resources": ["w3_dsa_exercises", "lc_1_two_sum"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Text Analyzer", "activities": "Word count, frequency analysis", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Text Analyzer", "activities": "Pattern detection, statistics", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 3,
+                        "title": "Linked Lists Deep Dive",
+                        "goal": "Master linked list operations and applications",
+                        "project": {
+                            "title": "Music Playlist Manager", "description": "Implement a playlist system using linked lists", "skills": ["Linked list operations", "Doubly linked lists", "Circular lists"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Linked List Basics", "activities": "Node structure, traversal", "resources": ["w3_ll", "jt_singly_ll"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Singly Linked Lists", "activities": "Insert, delete, search operations", "resources": ["programiz_ll", "tutsp_ll_algos"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Reverse & Manipulation", "activities": "Reverse list, merge, cycle detection", "resources": ["gfg_reverse_ll", "w3_reverse_ll_examples"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Doubly & Circular Lists", "activities": "Advanced variations and use cases", "resources": ["jt_doubly_ll", "programiz_circular_ll"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Reverse, Merge Two Lists, Cycle Detection", "resources": ["w3_ll_exercises", "lc_206_reverse_ll"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Music Playlist Manager", "activities": "Song management using linked lists", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Music Playlist Manager", "activities": "Shuffle, repeat, playlist operations", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 4,
+                        "title": "Stacks & Queues Applications",
+                        "goal": "Understand LIFO/FIFO operations and real-world applications",
+                        "project": {
+                            "title": "Code Editor", "description": "Build an editor with undo/redo and bracket matching", "skills": ["Stack operations", "Expression evaluation", "Queue applications"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Stack Fundamentals", "activities": "LIFO operations, implementation", "resources": ["w3_stacks", "jt_stack"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Stack Applications", "activities": "Expression evaluation, parentheses matching", "resources": ["programiz_stack", "tutsp_stack_algo"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Queue Fundamentals", "activities": "FIFO operations, circular queues", "resources": ["w3_queues", "jt_queue"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Advanced Queues", "activities": "Deque, priority queue introduction", "resources": ["gfg_deque_intro", "programiz_priority_queue"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Valid Parentheses, Min Stack", "resources": ["w3_stack_exercises", "lc_20_valid_parentheses"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Code Editor", "activities": "Undo/redo functionality using stacks", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Code Editor", "activities": "Bracket matching, syntax validation", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 5,
+                        "title": "Binary Trees Foundation",
+                        "goal": "Master tree traversals and basic tree operations",
+                        "project": {
+                            "title": "Family Tree", "description": "Create a genealogy tree with relationship queries", "skills": ["Tree traversals", "DFS/BFS", "Tree properties"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Tree Basics", "activities": "Terminology, node structure", "resources": ["w3_trees", "jt_binary_tree"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Tree Traversals (DFS)", "activities": "Preorder, inorder, postorder", "resources": ["programiz_tree_traversal", "gfg_tree_traversals"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Level Order (BFS)", "activities": "Breadth-first traversal using queues", "resources": ["tutsp_tree_traversal", "w3_bfs"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Tree Properties", "activities": "Height, depth, diameter calculations", "resources": ["jt_tree_ds", "programiz_binary_tree"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Max Depth, Same Tree, Symmetric Tree", "resources": ["w3_tree_exercises", "lc_104_max_depth"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Family Tree", "activities": "Genealogy tree with traversals", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Family Tree", "activities": "Relationship queries, tree visualization", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 6,
+                        "title": "Binary Search Trees",
+                        "goal": "Master BST operations and balanced tree concepts",
+                        "project": {
+                            "title": "Student Database", "description": "BST-based student record management system", "skills": ["BST operations", "Searching", "Tree balancing"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "BST Properties", "activities": "BST invariant, insertion, search", "resources": ["galles_bst", "yt_abdul_bari_bst"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "BST Operations", "activities": "Insert, delete, find operations", "resources": ["gfg_bst"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "BST Validation", "activities": "Validate BST, range checking", "resources": ["yt_neetcode_validate_bst"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Balanced Trees", "activities": "AVL introduction, rotation concepts", "resources": ["visualgo_avl"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Validate BST, Lowest Common Ancestor", "resources": ["lc_98_validate_bst", "lc_235_lca_bst"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Student Database", "activities": "BST-based student record system", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Student Database", "activities": "Search, grade analysis, reporting", "resources": [], "time_estimate": 180
+                            }
+                        ]
+                    },
+                    {
+                        "week": 7,
+                        "title": "Heaps & Priority Queues",
+                        "goal": "Master heap operations and priority-based algorithms",
+                        "project": {
+                            "title": "Task Scheduler", "description": "Priority-based task management system", "skills": ["Heap operations", "Priority queues", "Top-K problems"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Heap Fundamentals", "activities": "Min/max heap properties, heapify", "resources": ["galles_heap", "yt_abdul_bari_heap"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Heap Operations", "activities": "Insert, extract, build heap", "resources": ["gfg_binary_heap"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Priority Queue", "activities": "Implementation using heaps", "resources": ["python_heapq"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Heap Applications", "activities": "Top K elements, median finding", "resources": ["lc_215_kth_largest"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Kth Largest, Merge K Lists", "resources": ["lc_215_kth_largest", "lc_23_merge_k_sorted"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Task Scheduler", "activities": "Priority-based task management", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Task Scheduler", "activities": "Deadline handling, priority queues", "resources": [], "time_estimate": 180
+                            }
+                        ]
+                    },
+                    {
+                        "week": 8,
+                        "title": "Hashing & Hash Tables",
+                        "goal": "Master hash-based data structures and fast lookups",
+                        "project": {
+                            "title": "Spell Checker", "description": "Hash-based dictionary with word suggestions", "skills": ["Hash functions", "Collision handling", "String matching"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Hashing Basics", "activities": "Hash functions, collision handling", "resources": ["galles_open_hash", "yt_csdojo_hash"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Hash Table Operations", "activities": "Insert, search, delete with collisions", "resources": ["gfg_hashing"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Hash Applications", "activities": "Frequency counting, duplicate detection", "resources": ["py_dict"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Advanced Hashing", "activities": "Rolling hash, perfect hashing", "resources": ["gfg_rolling_hash"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Two Sum, Group Anagrams, Valid Anagram", "resources": ["lc_1_two_sum", "lc_49_group_anagrams"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Spell Checker", "activities": "Hash-based dictionary and suggestions", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Spell Checker", "activities": "Edit distance, word suggestions", "resources": [], "time_estimate": 180
+                            }
+                        ]
+                    },
+                    {
+                        "week": 9,
+                        "title": "Graph Fundamentals",
+                        "goal": "Master graph representations and basic algorithms",
+                        "project": {
+                            "title": "Social Network", "description": "Friend connections and suggestions system", "skills": ["Graph traversals", "BFS/DFS", "Connected components"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Graph Basics", "activities": "Representation, adjacency list/matrix", "resources": ["visualgo_graphds", "yt_csdojo_graph_theory"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "DFS Implementation", "activities": "Depth-first search, applications", "resources": ["galles_dfs"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "BFS Implementation", "activities": "Breadth-first search, shortest path", "resources": ["galles_bfs"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Graph Applications", "activities": "Connected components, cycle detection", "resources": ["gfg_graph_apps"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Key Problems", "activities": "Number of Islands, Clone Graph", "resources": ["lc_200_islands", "lc_133_clone_graph"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Social Network", "activities": "Friend connections using graphs", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Social Network", "activities": "Friend suggestions, mutual connections", "resources": [], "time_estimate": 180
+                            }
+                        ]
+                    },
+                    {
+                        "week": 10,
+                        "title": "Advanced Graph Algorithms",
+                        "goal": "Master shortest path and advanced graph algorithms",
+                        "project": {
+                            "title": "GPS Navigation", "description": "Route finding and optimization system", "skills": ["Dijkstra", "A*", "MST algorithms"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Dijkstra's Algorithm", "activities": "Shortest path in weighted graphs", "resources": ["galles_dijkstra", "yt_abdul_bari_dijkstra"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Bellman-Ford", "activities": "Negative weight handling", "resources": ["visualgo_sssp"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Floyd-Warshall", "activities": "All-pairs shortest path", "resources": ["gfg_floyd_warshall"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "MST Algorithms", "activities": "Kruskal's and Prim's algorithms", "resources": ["visualgo_mst"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Topological Sort", "activities": "Ordering in DAGs", "resources": ["gfg_toposort"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: GPS Navigation", "activities": "Shortest path finder", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: GPS Navigation", "activities": "Route optimization, traffic handling", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 11,
+                        "title": "Sorting & Searching Mastery",
+                        "goal": "Master all major sorting algorithms and binary search variations",
+                        "project": {
+                            "title": "Movie Database", "description": "Efficient sorting and searching system", "skills": ["Sorting algorithms", "Binary search", "Quick select"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Basic Sorting", "activities": "Bubble, selection, insertion sort", "resources": ["galles_sorting"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Merge Sort", "activities": "Divide and conquer approach", "resources": ["yt_mycodeschool_merge"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Quick Sort", "activities": "Partitioning and optimization", "resources": ["visualgo_sorting"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Binary Search", "activities": "Search variations, bounds", "resources": ["yt_neetcode_binary_search"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Advanced Searching", "activities": "Ternary search, exponential search", "resources": ["gfg_ternary_search"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Movie Database", "activities": "Sorting and searching optimization", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Movie Database", "activities": "Multi-criteria sorting, fast queries", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 12,
+                        "title": "Recursion & Backtracking",
+                        "goal": "Master recursive problem-solving and backtracking patterns",
+                        "project": { "title": "Sudoku Solver", "description": "Interactive puzzle solver with hints", "skills": ["Recursion", "Backtracking", "Constraint solving"] },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Recursion Basics", "activities": "Base cases, recursive thinking", "resources": ["yt_csdojo_recursion"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Recursive Patterns", "activities": "Tree recursion, memoization", "resources": ["pythontutor"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Backtracking Intro", "activities": "Template, decision trees", "resources": ["yt_neetcode_backtracking"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Classic Problems", "activities": "N-Queens, Sudoku solver", "resources": ["galles_nqueens"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "More Backtracking", "activities": "Subsets, permutations, combinations", "resources": ["lc_78_subsets", "lc_46_permutations"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Sudoku Solver", "activities": "Interactive puzzle solver", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Sudoku Solver", "activities": "Validation, hints, difficulty levels", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 13,
+                        "title": "Dynamic Programming",
+                        "goal": "Master DP patterns and optimization problems",
+                        "project": {
+                            "title": "Investment Calculator", "description": "Financial optimization using DP", "skills": ["DP patterns", "Optimization", "Memoization"]
+                        },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "DP Fundamentals", "activities": "Memoization vs tabulation", "resources": ["yt_neetcode_dp"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Classic DP", "activities": "Fibonacci, climbing stairs, coin change", "resources": ["leetcode_dp_patterns"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "String DP", "activities": "LCS, edit distance, palindromes", "resources": ["gfg_lcs"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Knapsack Problems", "activities": "0/1 and unbounded knapsack", "resources": ["yt_knapsack"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "Advanced DP", "activities": "LIS, maximum subarray, matrix chain", "resources": ["lc_300_lis"], "time_estimate": 120
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: Investment Calculator", "activities": "DP-based financial optimization", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Project Complete: Investment Calculator", "activities": "Portfolio optimization, risk analysis", "resources": [], "time_estimate": 180
+                            }]
+                    },
+                    {
+                        "week": 14, "title": "Advanced Topics & System Design", "goal": "Integrate all concepts into a comprehensive system",
+                        "project": { "title": "File Compressor & Mini Database", "description": "Apply multiple DSA concepts in real systems", "skills": ["System design", "Algorithm selection", "Optimization"] },
+                        "days": [
+                            {
+                                "day": "Monday", "topic": "Greedy Algorithms", "activities": "Activity selection, Huffman coding", "resources": ["gfg_greedy"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Tuesday", "topic": "Bit Manipulation", "activities": "Bitwise operations, bit tricks", "resources": ["yt_bit_manip"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Wednesday", "topic": "Trie Data Structure", "activities": "Prefix trees, autocomplete", "resources": ["galles_trie"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Thursday", "topic": "Union-Find", "activities": "Disjoint set operations", "resources": ["visualgo_ufds"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Friday", "topic": "System Design Prep", "activities": "Scalability, data structure choices", "resources": ["system_design_primer"], "time_estimate": 90
+                            },
+                            {
+                                "day": "Saturday", "topic": "Project Start: File Compressor", "activities": "Huffman coding implementation", "resources": [], "time_estimate": 180
+                            },
+                            {
+                                "day": "Sunday", "topic": "Final Project: Mini Database", "activities": "Complete system with all DSA concepts", "resources": [], "time_estimate": 180
+                            }
+                        ]
+                    }
+                ];
+            }
+        }
+
+        async function loadProgressData() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/progress`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    progressData = data.progress;
+                } else if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                } else {
+                    progressData = {};
+                }
+            } catch (error) {
+                console.error('Error loading progress:', error);
+                progressData = {};
+            }
+        }
+
+        async function loadResourcesData() {
+            try {
+                const response = await fetch(`${API_BASE}/resources`);
+                if (response.ok) {
+                    const data = await response.json();
+                    resourcesData = {};
+                    data.resources.forEach(resource => {
+                        resourcesData[resource.id] = resource;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                resourcesData = {};
             }
         }
 
         function renderRoadmap() {
-            const container = document.getElementById('roadmapContainer');
+            const container = document.getElementById('roadmap-container');
+            let html = '';
 
-            container.innerHTML = roadmapData.map(week => {
-                const weekProgress = progressData[week.week] || {};
-                const completedDays = Object.values(weekProgress).filter(d => d.completed).length;
+            roadmapData.forEach((week, index) => {
+                const weekProgress = getWeekProgress(week.week);
+                const completedDays = weekProgress.completed;
                 const totalDays = week.days.length;
-                const weekPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+                const progressPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
-                return `
-                    <div class="roadmap-week animate-fade-in">
-                        <div class="roadmap-week-header ${weekPercentage === 100 ? 'bg-success text-white' : ''}" 
-                             data-accordion onclick="toggleWeek(${week.week})">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">
-                                        Week ${week.week}: ${week.title}
-                                        ${weekPercentage === 100 ? '<i class="fas fa-check-circle ms-2"></i>' : ''}
-                                    </h5>
-                                    <p class="mb-0 ${weekPercentage === 100 ? '' : 'text-muted'}">
-                                        ${week.goal}
-                                    </p>
+                html += `
+                    <div class="roadmap-week animate-fadeInUp" data-week="${week.week}" style="animation-delay: ${index * 100}ms;">
+                        <div class="week-header" onclick="toggleWeek(${week.week})">
+                            <div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h4 class="fw-bold mb-0 me-3">Week ${week.week}: ${week.title}</h4>
+                                    <span class="badge ${progressPercentage === 100 ? 'bg-success' : progressPercentage > 0 ? 'bg-warning' : 'bg-light text-dark'}">
+                                        ${Math.round(progressPercentage)}%
+                                    </span>
                                 </div>
-                                <div class="text-end">
-                                    <div class="mb-1">${completedDays}/${totalDays} days</div>
-                                    <div class="progress" style="width: 100px; height: 8px;">
-                                        <div class="progress-bar bg-${weekPercentage === 100 ? 'white' : 'success'}" 
-                                             style="width: ${weekPercentage}%"></div>
+                                <p class="mb-1 opacity-90">${week.goal}</p>
+                                <small class="opacity-75">
+                                    <i class="fas fa-clock me-1"></i>
+                                    ${getTotalWeekTime(week)} hours • 
+                                    <i class="fas fa-tasks me-1"></i>
+                                    ${completedDays}/${totalDays} days completed
+                                </small>
+                            </div>
+                            <div>
+                                <i class="fas fa-chevron-down transition-transform" id="chevron-${week.week}"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="week-content" id="week-content-${week.week}">
+                            <!-- Project Section -->
+                            <div class="p-4 bg-light border-bottom">
+                                <h6 class="fw-bold text-primary mb-2">
+                                    <i class="fas fa-project-diagram me-2"></i>Week Project
+                                </h6>
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-semibold mb-1">${week.project.title}</h6>
+                                        <p class="text-muted mb-2">${week.project.description}</p>
+                                        <div class="d-flex gap-1 flex-wrap">
+                                            ${week.project.skills.map(skill =>
+                    `<span class="badge bg-primary">${skill}</span>`
+                ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Daily Topics -->
+                            <div class="p-0">
+                                ${renderWeekDays(week)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderWeekDays(week) {
+            let html = '';
+
+            week.days.forEach((day, index) => {
+                const dayProgress = getDayProgress(week.week, day.day);
+                const isCompleted = dayProgress.completed;
+                const timeSpent = dayProgress.time_spent || 0;
+
+                html += `
+                    <div class="day-item ${isCompleted ? 'completed' : ''}" data-week="${week.week}" data-day="${day.day}">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="completion-toggle ${isCompleted ? 'completed' : ''} me-3" 
+                                     onclick="toggleDayCompletion(${week.week}, '${day.day}')">
+                                    <i class="fas fa-check" style="display: ${isCompleted ? 'block' : 'none'};"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-semibold mb-1">${day.day}: ${day.topic}</h6>
+                                    <p class="text-muted mb-2">${day.activities}</p>
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>
+                                            ${day.time_estimate} min
+                                        </small>
+                                        ${timeSpent > 0 ? `
+                                            <small class="text-success">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                ${timeSpent} min spent
+                                            </small>
+                                        ` : ''}
+                                        ${day.resources.length > 0 ? `
+                                            <button class="btn btn-sm btn-outline-info" 
+                                                    onclick="showResources(${JSON.stringify(day.resources).replace(/"/g, '&quot;')})">
+                                                <i class="fas fa-book me-1"></i>
+                                                Resources (${day.resources.length})
+                                            </button>
+                                        ` : ''}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="roadmap-week-content accordion-content" id="week-${week.week}">
-                            ${week.days.map(day => {
-                    const dayProgress = weekProgress[day.day] || {};
-                    const isCompleted = dayProgress.completed;
-
-                    return `
-                                    <div class="roadmap-day ${isCompleted ? 'completed' : ''}">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-2">
-                                                    ${day.day}: ${day.topic}
-                                                    ${isCompleted ? '<i class="fas fa-check text-success ms-2"></i>' : ''}
-                                                </h6>
-                                                <p class="text-muted mb-2">${day.activities}</p>
-                                                <div class="d-flex flex-wrap gap-2 mb-2">
-                                                    ${day.resources.map(resourceId => {
-                        const resource = getResourceById(resourceId);
-                        if (!resource) return '';
-
-                        return `
-                                                            <a href="${resource.url}" target="_blank" 
-                                                               class="btn btn-sm btn-outline-primary">
-                                                                <i class="fas fa-${getResourceIcon(resource.type)} me-1"></i>
-                                                                ${resource.title}
-                                                            </a>
-                                                        `;
-                    }).join('')}
-                                                </div>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-clock me-1"></i>
-                                                        ${day.time_estimate} mins
-                                                    </small>
-                                                    ${dayProgress.time_spent ? `
-                                                        <small class="text-success">
-                                                            <i class="fas fa-check-circle me-1"></i>
-                                                            ${dayProgress.time_spent} mins completed
-                                                        </small>
-                                                    ` : ''}
-                                                </div>
-                                            </div>
-                                            <div class="form-check ms-3">
-                                                <input class="form-check-input progress-checkbox" 
-                                                       type="checkbox" 
-                                                       id="check-${week.week}-${day.day}"
-                                                       ${isCompleted ? 'checked' : ''}
-                                                       onchange="toggleDayCompletion(${week.week}, '${day.day}', this.checked)">
-                                                <label class="form-check-label" for="check-${week.week}-${day.day}">
-                                                    Mark Complete
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                }).join('')}
-                            
-                            ${week.project ? `
-                                <div class="mt-4 p-3 bg-light rounded">
-                                    <h6 class="mb-2">
-                                        <i class="fas fa-project-diagram me-2"></i>
-                                        Weekly Project: ${week.project.title}
-                                    </h6>
-                                    <p class="mb-2">${week.project.description}</p>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        ${week.project.skills.map(skill =>
-                    `<span class="badge bg-secondary">${skill}</span>`
-                ).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="startStudySession(${week.week}, '${day.day}', '${day.topic}')">
+                                <i class="fas fa-play me-1"></i>Study
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="startPomodoro('${day.topic}')">
+                                <i class="fas fa-clock me-1"></i>Timer
+                            </button>
                         </div>
                     </div>
                 `;
-            }).join('');
+            });
 
-            // Initialize accordions after rendering
-            initAccordions();
+            return html;
         }
 
-        function updateOverallProgress() {
+        function getWeekProgress(weekNumber) {
+            const weekData = progressData[weekNumber] || {};
+            const completed = Object.values(weekData).filter(day => day.completed).length;
+            return { completed };
+        }
+
+        function getDayProgress(weekNumber, dayName) {
+            return progressData[weekNumber]?.[dayName] || { completed: false, time_spent: 0 };
+        }
+
+        function getTotalWeekTime(week) {
+            const totalMinutes = week.days.reduce((sum, day) => sum + day.time_estimate, 0);
+            return Math.round(totalMinutes / 60 * 10) / 10;
+        }
+
+        function updateProgressOverview() {
             let totalCompleted = 0;
             let totalDays = 0;
             let completedWeeks = 0;
 
             roadmapData.forEach(week => {
-                const weekProgress = progressData[week.week] || {};
-                const weekDays = week.days.length;
-                const weekCompleted = Object.values(weekProgress).filter(d => d.completed).length;
+                const weekProgress = getWeekProgress(week.week);
+                totalCompleted += weekProgress.completed;
+                totalDays += week.days.length;
 
-                totalDays += weekDays;
-                totalCompleted += weekCompleted;
-
-                if (weekCompleted === weekDays && weekDays > 0) {
+                if (weekProgress.completed === week.days.length) {
                     completedWeeks++;
                 }
             });
 
-            const percentage = totalDays > 0 ? (totalCompleted / totalDays) * 100 : 0;
+            const overallProgress = totalDays > 0 ? (totalCompleted / totalDays) * 100 : 0;
 
-            document.getElementById('overallProgress').style.width = percentage + '%';
-            document.getElementById('overallProgress').textContent = Math.round(percentage) + '%';
-            document.getElementById('completedWeeks').textContent = completedWeeks;
-            document.getElementById('totalCompleted').textContent = totalCompleted;
-            document.getElementById('totalRemaining').textContent = totalDays - totalCompleted;
+            // Update circular progress
+            const progressCircle = document.getElementById('overall-progress-circle');
+            const circumference = 2 * Math.PI * 45;
+            const strokeDasharray = (overallProgress / 100) * circumference;
+            progressCircle.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+
+            // Update text values
+            document.getElementById('overall-progress-text').textContent = `${Math.round(overallProgress)}%`;
+            document.getElementById('completed-weeks').textContent = completedWeeks;
+            document.getElementById('completed-days').textContent = totalCompleted;
+
+            // Get current streak from progress data (you might want to fetch this from backend)
+            const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+            document.getElementById('current-streak').textContent = userData.current_streak || 0;
         }
 
-        async function toggleDayCompletion(week, day, completed) {
-            try {
-                await api.post('/progress', {
-                    week: week,
-                    day: day,
-                    completed: completed,
-                    time_spent: 60 // Default time, could be made dynamic
-                });
+        function toggleWeek(weekNumber) {
+            const content = document.getElementById(`week-content-${weekNumber}`);
+            const chevron = document.getElementById(`chevron-${weekNumber}`);
 
-                // Update local progress data
-                if (!progressData[week]) progressData[week] = {};
-                progressData[week][day] = { completed: completed };
-
-                // Re-render to update UI
-                renderRoadmap();
-                updateOverallProgress();
-
-                if (completed) {
-                    showAchievement('Day Completed!', `Great job completing ${day} of Week ${week}!`);
-                }
-
-            } catch (error) {
-                console.error('Failed to update progress:', error);
-                showToast('Failed to update progress', 'danger');
-
-                // Revert checkbox state
-                document.getElementById(`check-${week}-${day}`).checked = !completed;
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('expanded');
+                chevron.style.transform = 'rotate(180deg)';
             }
         }
 
-        function toggleWeek(weekNum) {
-            const content = document.getElementById(`week-${weekNum}`);
-            content.classList.toggle('show');
-        }
-
-        function expandAll() {
-            document.querySelectorAll('.accordion-content').forEach(content => {
-                content.classList.add('show');
+        function expandAllWeeks() {
+            roadmapData.forEach(week => {
+                const content = document.getElementById(`week-content-${week.week}`);
+                const chevron = document.getElementById(`chevron-${week.week}`);
+                if (content && !content.classList.contains('expanded')) {
+                    content.classList.add('expanded');
+                    chevron.style.transform = 'rotate(180deg)';
+                }
             });
         }
 
-        function collapseAll() {
-            document.querySelectorAll('.accordion-content').forEach(content => {
-                content.classList.remove('show');
+        function collapseAllWeeks() {
+            roadmapData.forEach(week => {
+                const content = document.getElementById(`week-content-${week.week}`);
+                const chevron = document.getElementById(`chevron-${week.week}`);
+                if (content && content.classList.contains('expanded')) {
+                    content.classList.remove('expanded');
+                    chevron.style.transform = 'rotate(0deg)';
+                }
             });
         }
 
-        // Resource helper functions
-        const resourcesMap = {
-            'w3_python_getstarted': { title: 'Python Setup - W3Schools', url: 'https://www.w3schools.com/python/python_getstarted.asp', type: 'text' },
-            'jt_cpp_tutorial': { title: 'C++ Setup - JavaTpoint', url: 'https://www.javatpoint.com/cpp-tutorial', type: 'text' },
-            'galles_array_vis': { title: 'Array Visualization', url: 'https://www.cs.usfca.edu/~galles/visualization/Array.html', type: 'interactive' },
-            'yt_neetcode_two_pointers': { title: 'Two Pointers - NeetCode', url: 'https://www.youtube.com/watch?v=jzZsG8n2R9A', type: 'video' },
-            'lc_1_two_sum': { title: 'Two Sum - LeetCode', url: 'https://leetcode.com/problems/two-sum/', type: 'practice' }
-            // Add more resources as needed
-        };
+        function filterWeeks(filter) {
+            const weeks = document.querySelectorAll('.roadmap-week');
 
-        function getResourceById(id) {
-            return resourcesMap[id];
+            weeks.forEach(weekElement => {
+                const weekNumber = parseInt(weekElement.dataset.week);
+                const weekProgress = getWeekProgress(weekNumber);
+                const week = roadmapData.find(w => w.week === weekNumber);
+                const totalDays = week ? week.days.length : 0;
+                const progressPercentage = totalDays > 0 ? (weekProgress.completed / totalDays) * 100 : 0;
+
+                let show = true;
+
+                switch (filter) {
+                    case 'completed':
+                        show = progressPercentage === 100;
+                        break;
+                    case 'in-progress':
+                        show = progressPercentage > 0 && progressPercentage < 100;
+                        break;
+                    case 'not-started':
+                        show = progressPercentage === 0;
+                        break;
+                    default:
+                        show = true;
+                }
+
+                weekElement.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        async function toggleDayCompletion(weekNumber, dayName) {
+            const toggle = event.currentTarget;
+            const icon = toggle.querySelector('i');
+            const dayItem = toggle.closest('.day-item');
+            const isCompleted = toggle.classList.contains('completed');
+
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        week: weekNumber,
+                        day: dayName,
+                        completed: !isCompleted
+                    })
+                });
+
+                if (response.ok) {
+                    toggle.classList.toggle('completed');
+                    dayItem.classList.toggle('completed');
+
+                    if (toggle.classList.contains('completed')) {
+                        icon.style.display = 'block';
+                        showSuccessToast('Great job! Keep up the momentum! 🎉');
+
+                        // Add confetti animation
+                        createConfetti(toggle);
+                    } else {
+                        icon.style.display = 'none';
+                    }
+
+                    // Update progress data and overview
+                    if (!progressData[weekNumber]) progressData[weekNumber] = {};
+                    progressData[weekNumber][dayName] = {
+                        completed: !isCompleted,
+                        time_spent: progressData[weekNumber][dayName]?.time_spent || 0
+                    };
+
+                    updateProgressOverview();
+                    updateWeekProgress(weekNumber);
+                }
+            } catch (error) {
+                console.error('Error toggling completion:', error);
+                showErrorToast('Failed to update progress. Please try again.');
+            }
+        }
+
+        function updateWeekProgress(weekNumber) {
+            const weekElement = document.querySelector(`[data-week="${weekNumber}"]`);
+            const week = roadmapData.find(w => w.week === weekNumber);
+            const weekProgress = getWeekProgress(weekNumber);
+            const progressPercentage = week ? (weekProgress.completed / week.days.length) * 100 : 0;
+
+            const badge = weekElement.querySelector('.badge');
+            badge.textContent = `${Math.round(progressPercentage)}%`;
+            badge.className = `badge ${progressPercentage === 100 ? 'bg-success' : progressPercentage > 0 ? 'bg-warning' : 'bg-light text-dark'}`;
+        }
+
+        function showResources(resourceIds) {
+            const modalBody = document.getElementById('resourceModalBody');
+            let html = '<div class="row g-3">';
+
+            resourceIds.forEach(resourceId => {
+                const resource = resourcesData[resourceId];
+                if (resource) {
+                    const typeIcon = getResourceIcon(resource.type);
+                    const typeColor = getResourceColor(resource.type);
+
+                    html += `
+                        <div class="col-md-6">
+                            <div class="card h-100 border hover-lift">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <i class="${typeIcon} ${typeColor} me-2 mt-1"></i>
+                                        <div class="flex-grow-1">
+                                            <h6 class="card-title mb-1">${resource.title}</h6>
+                                            <span class="badge bg-light text-dark">${resource.type}</span>
+                                        </div>
+                                    </div>
+                                    <a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-external-link-alt me-1"></i>Open Resource
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += '</div>';
+            modalBody.innerHTML = html;
+
+            new bootstrap.Modal(document.getElementById('resourceModal')).show();
         }
 
         function getResourceIcon(type) {
             const icons = {
-                'text': 'book',
-                'video': 'video',
-                'interactive': 'play-circle',
-                'practice': 'code'
+                'text': 'fas fa-book',
+                'video': 'fas fa-play-circle',
+                'interactive': 'fas fa-mouse-pointer',
+                'practice': 'fas fa-code'
             };
-            return icons[type] || 'link';
+            return icons[type] || 'fas fa-file';
         }
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function () {
-            loadRoadmap();
-        });
+        function getResourceColor(type) {
+            const colors = {
+                'text': 'text-primary',
+                'video': 'text-danger',
+                'interactive': 'text-success',
+                'practice': 'text-warning'
+            };
+            return colors[type] || 'text-muted';
+        }
+
+        function startStudySession(weekNumber, dayName, topic) {
+            // Store study session info and redirect to notes or resources
+            localStorage.setItem('current_study_session', JSON.stringify({
+                week: weekNumber,
+                day: dayName,
+                topic: topic,
+                startTime: new Date().toISOString()
+            }));
+
+            window.location.href = '/notes';
+        }
+
+        function startPomodoro(topic) {
+            // Store pomodoro session info and redirect to pomodoro timer
+            localStorage.setItem('pomodoro_topic', topic);
+            window.location.href = '/pomodoro';
+        }
+
+        function createConfetti(element) {
+            const rect = element.getBoundingClientRect();
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '8px';
+                    confetti.style.height = '8px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = (rect.left + rect.width / 2) + 'px';
+                    confetti.style.top = (rect.top + rect.height / 2) + 'px';
+                    confetti.style.zIndex = '9999';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.borderRadius = '50%';
+                    confetti.classList.add('confetti-animation');
+
+                    // Random movement
+                    const xVelocity = (Math.random() - 0.5) * 200;
+                    const yVelocity = Math.random() * -200 - 100;
+
+                    confetti.style.transform = `translate(${xVelocity}px, ${yVelocity}px)`;
+
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 2000);
+                }, i * 50);
+            }
+        }
+
+        function showSuccessToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-danger text-white">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong class="me-auto">Error</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorMessage(message) {
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle text-warning fs-1 mb-3"></i>
+                    <h4 class="text-muted mb-3">Unable to Load Roadmap</h4>
+                    <p class="text-muted mb-4">${message}</p>
+                    <button class="btn btn-primary" onclick="initializeRoadmap()">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                </div>
+            `;
+        }
     </script>
 </body>
 

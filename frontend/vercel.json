@@ -1,71 +1,71 @@
 {
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "redirects": [
+    "rewrites": [
+        {
+            "source": "/",
+            "destination": "/index.html"
+        },
         {
             "source": "/dashboard",
-            "destination": "/pages/dashboard.html",
-            "permanent": false
+            "destination": "/pages/dashboard.html"
         },
         {
             "source": "/roadmap",
-            "destination": "/pages/roadmap.html",
-            "permanent": false
+            "destination": "/pages/roadmap.html"
         },
         {
             "source": "/calendar",
-            "destination": "/pages/calendar.html",
-            "permanent": false
+            "destination": "/pages/calendar.html"
         },
         {
             "source": "/progress",
-            "destination": "/pages/progress.html",
-            "permanent": false
+            "destination": "/pages/progress.html"
         },
         {
             "source": "/notes",
-            "destination": "/pages/notes.html",
-            "permanent": false
+            "destination": "/pages/notes.html"
         },
         {
             "source": "/pomodoro",
-            "destination": "/pages/pomodoro.html",
-            "permanent": false
+            "destination": "/pages/pomodoro.html"
         },
         {
             "source": "/profile",
-            "destination": "/pages/profile.html",
-            "permanent": false
+            "destination": "/pages/profile.html"
         },
         {
             "source": "/settings",
-            "destination": "/pages/settings.html",
-            "permanent": false
+            "destination": "/pages/settings.html"
         },
         {
             "source": "/analytics",
-            "destination": "/pages/analytics.html",
-            "permanent": false
+            "destination": "/pages/analytics.html"
         },
         {
             "source": "/login",
-            "destination": "/auth/login.html",
-            "permanent": false
+            "destination": "/auth/login.html"
         },
         {
             "source": "/register",
-            "destination": "/auth/register.html",
-            "permanent": false
+            "destination": "/auth/register.html"
         },
         {
             "source": "/forgot-password",
-            "destination": "/auth/forgot-password.html",
-            "permanent": false
+            "destination": "/auth/forgot-password.html"
         },
         {
             "source": "/reset-password",
-            "destination": "/auth/reset-password.html",
-            "permanent": false
+            "destination": "/auth/reset-password.html"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
         }
     ]
 }

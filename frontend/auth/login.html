@@ -1,91 +1,80 @@
-<!-- auth/login.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - DSA Learning Path</title>
+    <title>Login - DSA Path</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animation.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
 </head>
 
-<body class="bg-light">
-    <div class="min-vh-100 d-flex align-items-center py-5">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="min-h-screen d-flex align-items-center justify-content-center py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-5">
-                    <div class="text-center mb-4">
-                        <a href="/" class="text-decoration-none">
-                            <h2 class="fw-bold text-primary">
-                                <i class="fas fa-code me-2"></i>DSA Path
-                            </h2>
-                        </a>
-                        <p class="text-muted mt-2">Welcome back! Login to continue learning</p>
-                    </div>
-
-                    <div class="card shadow-sm animate-fade-in">
+                    <div class="card border-0 shadow-lg animate-fadeInUp">
                         <div class="card-body p-5">
-                            <form id="loginForm">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-envelope text-muted"></i>
-                                        </span>
-                                        <input type="email" class="form-control" id="email" required>
-                                    </div>
+                            <div class="text-center mb-4">
+                                <i class="fas fa-code-branch text-primary fs-1 mb-3"></i>
+                                <h2 class="fw-bold text-dark">Welcome Back</h2>
+                                <p class="text-muted">Sign in to continue your DSA journey</p>
+                            </div>
+
+                            <div id="alert-container"></div>
+
+                            <form id="login-form">
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Email Address</label>
+                                    <input type="email" class="form-control-custom" id="email"
+                                        placeholder="Enter your email" required>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-lock text-muted"></i>
-                                        </span>
-                                        <input type="password" class="form-control" id="password" required>
-                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                            <i class="fas fa-eye"></i>
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Password</label>
+                                    <div class="position-relative">
+                                        <input type="password" class="form-control-custom" id="password"
+                                            placeholder="Enter your password" required>
+                                        <button type="button"
+                                            class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                                            onclick="togglePassword('password')">
+                                            <i class="fas fa-eye text-muted"></i>
                                         </button>
                                     </div>
                                 </div>
 
-                                <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="remember">
-                                        <label class="form-check-label" for="remember">
+                                        <label class="form-check-label text-muted" for="remember">
                                             Remember me
                                         </label>
                                     </div>
-                                    <a href="/forgot-password" class="text-decoration-none">Forgot password?</a>
+                                    <a href="/forgot-password" class="text-primary text-decoration-none">
+                                        Forgot password?
+                                    </a>
                                 </div>
 
-                                <div id="errorAlert" class="alert alert-danger d-none" role="alert"></div>
-
-                                <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
-                                    <span id="loginBtnText">Login</span>
-                                    <span id="loginBtnSpinner" class="d-none">
-                                        <span class="spinner-border spinner-border-sm me-2"></span>
-                                        Logging in...
-                                    </span>
+                                <button type="submit" class="btn btn-gradient w-100 btn-lg mb-3" id="login-btn">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    <span>Sign In</span>
+                                    <div class="loading-spinner ms-2" style="display: none;"></div>
                                 </button>
-
-                                <div class="text-center">
-                                    <span class="text-muted">Don't have an account?</span>
-                                    <a href="/register" class="text-decoration-none ms-1">Sign up</a>
-                                </div>
                             </form>
-                        </div>
-                    </div>
 
-                    <div class="text-center mt-4">
-                        <small class="text-muted">
-                            By logging in, you agree to our Terms of Service and Privacy Policy
-                        </small>
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    Don't have an account?
+                                    <a href="/register" class="text-primary text-decoration-none fw-semibold">Sign
+                                        up</a>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,45 +82,34 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/main.js"></script>
-
     <script>
         const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
 
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if user is already logged in
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                window.location.href = '/dashboard';
+                return;
             }
+
+            // Initialize form
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
         });
 
-        // Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        async function handleLogin(e) {
             e.preventDefault();
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const remember = document.getElementById('remember').checked;
 
-            const loginBtn = document.getElementById('loginBtn');
-            const loginBtnText = document.getElementById('loginBtnText');
-            const loginBtnSpinner = document.getElementById('loginBtnSpinner');
-            const errorAlert = document.getElementById('errorAlert');
+            if (!email || !password) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
 
-            // Show loading state
-            loginBtn.disabled = true;
-            loginBtnText.classList.add('d-none');
-            loginBtnSpinner.classList.remove('d-none');
-            errorAlert.classList.add('d-none');
+            setLoading(true);
 
             try {
                 const response = await fetch(`${API_BASE}/auth/login`, {
@@ -148,37 +126,88 @@
                     // Store tokens
                     localStorage.setItem('access_token', data.access_token);
                     localStorage.setItem('refresh_token', data.refresh_token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
 
                     if (remember) {
-                        localStorage.setItem('remember_email', email);
-                    } else {
-                        localStorage.removeItem('remember_email');
+                        localStorage.setItem('remember_login', 'true');
                     }
 
-                    // Redirect to dashboard
-                    window.location.href = '/dashboard';
+                    showAlert('Login successful! Redirecting...', 'success');
+
+                    // Add success animation
+                    document.querySelector('.card').classList.add('success-animation');
+
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
                 } else {
-                    errorAlert.textContent = data.error || 'Invalid credentials';
-                    errorAlert.classList.remove('d-none');
+                    showAlert(data.error || 'Login failed', 'error');
+                    // Add shake animation for error
+                    document.querySelector('.card').classList.add('error-animation');
+                    setTimeout(() => {
+                        document.querySelector('.card').classList.remove('error-animation');
+                    }, 500);
                 }
             } catch (error) {
-                errorAlert.textContent = 'Network error. Please try again.';
-                errorAlert.classList.remove('d-none');
+                console.error('Login error:', error);
+                showAlert('Network error. Please try again.', 'error');
             } finally {
-                // Reset button state
-                loginBtn.disabled = false;
-                loginBtnText.classList.remove('d-none');
-                loginBtnSpinner.classList.add('d-none');
+                setLoading(false);
             }
-        });
+        }
 
-        // Check for remembered email
-        document.addEventListener('DOMContentLoaded', function () {
-            const rememberedEmail = localStorage.getItem('remember_email');
-            if (rememberedEmail) {
-                document.getElementById('email').value = rememberedEmail;
-                document.getElementById('remember').checked = true;
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function setLoading(loading) {
+            const btn = document.getElementById('login-btn');
+            const spinner = btn.querySelector('.loading-spinner');
+            const text = btn.querySelector('span');
+
+            if (loading) {
+                btn.disabled = true;
+                spinner.style.display = 'block';
+                text.textContent = 'Signing In...';
+            } else {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                text.textContent = 'Sign In';
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alert-container');
+            const alertClass = type === 'success' ? 'alert-success-custom' : 'alert-error-custom';
+            const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+
+            container.innerHTML = `
+                <div class="alert-custom ${alertClass} animate-fadeInDown">
+                    <i class="${icon}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Add Enter key support
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('login-form').dispatchEvent(new Event('submit'));
             }
         });
     </script>

@@ -1,103 +1,109 @@
-<!-- components/sidebar.html -->
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <div class="d-flex align-items-center">
-            <img src="https://ui-avatars.com/api/?name=User&background=0d6efd&color=fff" alt="Avatar"
-                class="rounded-circle me-3" width="40" height="40" id="sidebarAvatar">
-            <div>
-                <h6 class="mb-0" id="sidebarUserName">Loading...</h6>
-                <small class="text-muted" id="sidebarUserEmail">...</small>
+<div class="sidebar" id="sidebar">
+    <div class="p-4">
+        <div class="d-flex align-items-center mb-4">
+            <i class="fas fa-code-branch text-white fs-2 me-3"></i>
+            <h4 class="text-white mb-0 fw-bold">DSA Path</h4>
+        </div>
+
+        <nav class="nav flex-column">
+            <a href="/dashboard" class="nav-item-custom" data-page="dashboard">
+                <i class="fas fa-tachometer-alt nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/roadmap" class="nav-item-custom" data-page="roadmap">
+                <i class="fas fa-route nav-icon"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="/calendar" class="nav-item-custom" data-page="calendar">
+                <i class="fas fa-calendar-alt nav-icon"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="/progress" class="nav-item-custom" data-page="progress">
+                <i class="fas fa-chart-line nav-icon"></i>
+                <span>Progress</span>
+            </a>
+            <a href="/notes" class="nav-item-custom" data-page="notes">
+                <i class="fas fa-sticky-note nav-icon"></i>
+                <span>Notes</span>
+            </a>
+            <a href="/pomodoro" class="nav-item-custom" data-page="pomodoro">
+                <i class="fas fa-clock nav-icon"></i>
+                <span>Pomodoro</span>
+            </a>
+            <a href="/analytics" class="nav-item-custom" data-page="analytics">
+                <i class="fas fa-chart-bar nav-icon"></i>
+                <span>Analytics</span>
+            </a>
+
+            <hr class="my-3" style="border-color: rgba(255,255,255,0.2);">
+
+            <a href="/profile" class="nav-item-custom" data-page="profile">
+                <i class="fas fa-user nav-icon"></i>
+                <span>Profile</span>
+            </a>
+            <a href="/settings" class="nav-item-custom" data-page="settings">
+                <i class="fas fa-cog nav-icon"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-4">
+            <div class="nav-item-custom" style="cursor: pointer;" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>
+                <span>Logout</span>
             </div>
         </div>
     </div>
-
-    <nav class="sidebar-menu">
-        <div class="sidebar-item">
-            <a href="/dashboard" class="sidebar-link">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/roadmap" class="sidebar-link">
-                <i class="fas fa-road"></i>
-                <span>Roadmap</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/calendar" class="sidebar-link">
-                <i class="fas fa-calendar"></i>
-                <span>Calendar</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/progress" class="sidebar-link">
-                <i class="fas fa-chart-line"></i>
-                <span>Progress</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/notes" class="sidebar-link">
-                <i class="fas fa-sticky-note"></i>
-                <span>Notes</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/pomodoro" class="sidebar-link">
-                <i class="fas fa-clock"></i>
-                <span>Pomodoro</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/analytics" class="sidebar-link">
-                <i class="fas fa-chart-bar"></i>
-                <span>Analytics</span>
-            </a>
-        </div>
-
-        <hr class="my-3">
-
-        <div class="sidebar-item">
-            <a href="/profile" class="sidebar-link">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="/settings" class="sidebar-link">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
-        </div>
-        <div class="sidebar-item">
-            <a href="#" class="sidebar-link" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </nav>
-</aside>
-
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+</div>
 
 <script>
-    // Load user info in sidebar
-    document.addEventListener('DOMContentLoaded', function () {
-        const user = auth.getUser();
-        if (user) {
-            document.getElementById('sidebarUserName').textContent = user.name || 'User';
-            document.getElementById('sidebarUserEmail').textContent = user.email || '';
-            if (user.avatar_url) {
-                document.getElementById('sidebarAvatar').src = user.avatar_url;
-            } else {
-                document.getElementById('sidebarAvatar').src =
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=0d6efd&color=fff`;
+    // Navigation logic
+    function setActiveNavItem() {
+        const currentPage = window.location.pathname.replace('/', '') || 'dashboard';
+        document.querySelectorAll('.nav-item-custom').forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.page === currentPage) {
+                item.classList.add('active');
             }
-        }
-    });
+        });
+    }
 
-    function logout() {
-        auth.clear();
-        window.location.href = '/login';
+    // Initialize navigation
+    document.addEventListener('DOMContentLoaded', setActiveNavItem);
+
+    // Logout function
+    async function logout() {
+        try {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user_data');
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Logout error:', error);
+            window.location.href = '/login';
+        }
+    }
+
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        sidebar.classList.toggle('show');
+        if (sidebar.classList.contains('show')) {
+            document.addEventListener('click', closeSidebarOnOutsideClick);
+        } else {
+            document.removeEventListener('click', closeSidebarOnOutsideClick);
+        }
+    }
+
+    function closeSidebarOnOutsideClick(event) {
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+
+        if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
+            sidebar.classList.remove('show');
+            document.removeEventListener('click', closeSidebarOnOutsideClick);
+        }
     }
 </script>

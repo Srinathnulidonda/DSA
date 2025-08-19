@@ -1,35 +1,50 @@
-<!-- components/mobile-nav.html -->
-<nav class="mobile-nav">
-    <div class="mobile-nav-menu">
-        <div class="mobile-nav-item">
-            <a href="/dashboard" class="mobile-nav-link">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-        </div>
-        <div class="mobile-nav-item">
-            <a href="/roadmap" class="mobile-nav-link">
-                <i class="fas fa-road"></i>
-                <span>Roadmap</span>
-            </a>
-        </div>
-        <div class="mobile-nav-item">
-            <a href="/notes" class="mobile-nav-link">
-                <i class="fas fa-sticky-note"></i>
-                <span>Notes</span>
-            </a>
-        </div>
-        <div class="mobile-nav-item">
-            <a href="/pomodoro" class="mobile-nav-link">
-                <i class="fas fa-clock"></i>
-                <span>Timer</span>
-            </a>
-        </div>
-        <div class="mobile-nav-item">
-            <a href="/profile" class="mobile-nav-link">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
-        </div>
+<div class="mobile-nav">
+    <div class="mobile-nav-content">
+        <a href="/dashboard" class="mobile-nav-item" data-page="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/roadmap" class="mobile-nav-item" data-page="roadmap">
+            <i class="fas fa-route"></i>
+            <span>Roadmap</span>
+        </a>
+        <a href="/calendar" class="mobile-nav-item" data-page="calendar">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Calendar</span>
+        </a>
+        <a href="/notes" class="mobile-nav-item" data-page="notes">
+            <i class="fas fa-sticky-note"></i>
+            <span>Notes</span>
+        </a>
+        <a href="/pomodoro" class="mobile-nav-item" data-page="pomodoro">
+            <i class="fas fa-clock"></i>
+            <span>Timer</span>
+        </a>
     </div>
-</nav>
+</div>
+
+<script>
+    // Mobile navigation logic
+    function setActiveMobileNavItem() {
+        const currentPage = window.location.pathname.replace('/', '') || 'dashboard';
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.page === currentPage) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    // Initialize mobile navigation
+    document.addEventListener('DOMContentLoaded', setActiveMobileNavItem);
+
+    // Handle mobile navigation clicks
+    document.querySelectorAll('.mobile-nav-item').forEach(item => {
+        item.addEventListener('click', function (e) {
+            // Remove active class from all items
+            document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+            // Add active class to clicked item
+            this.classList.add('active');
+        });
+    });
+</script>
