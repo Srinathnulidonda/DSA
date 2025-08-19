@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources - DSA Path</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Resources - DSAPath</title>
 
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -22,398 +20,155 @@
     <link rel="stylesheet" href="/css/components.css">
     <link rel="stylesheet" href="/css/animations.css">
     <link rel="stylesheet" href="/css/responsive.css">
-
-    <style>
-        .resource-filters {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .filter-button {
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-full);
-            background: var(--gray-100);
-            color: var(--gray-700);
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .filter-button:hover {
-            background: var(--gray-200);
-        }
-
-        .filter-button.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .resource-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .resource-card-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            height: 100%;
-        }
-
-        .resource-card {
-            height: 100%;
-            transition: all var(--transition-base);
-        }
-
-        .resource-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .resource-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .resource-icon.text {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-        }
-
-        .resource-icon.video {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .resource-icon.interactive {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .resource-icon.practice {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .resource-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--gray-900);
-        }
-
-        .resource-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-
-        .resource-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: var(--gray-500);
-        }
-
-        .resource-tag {
-            background: var(--gray-100);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            color: var(--gray-700);
-        }
-
-        .search-container {
-            position: relative;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .search-container input {
-            padding-left: 3rem;
-            padding-right: 3rem;
-        }
-
-        .search-container .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-400);
-        }
-
-        .search-container .clear-icon {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-400);
-            cursor: pointer;
-            display: none;
-        }
-
-        .featured-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: var(--radius-xl);
-            padding: 2rem;
-            color: white;
-            margin-bottom: 3rem;
-        }
-
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .featured-item {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-            transition: all var(--transition-fast);
-        }
-
-        .featured-item:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 3rem;
-        }
-
-        .pagination-button {
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-md);
-            background: var(--gray-100);
-            color: var(--gray-700);
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .pagination-button:hover {
-            background: var(--gray-200);
-        }
-
-        .pagination-button.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .pagination-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="app-layout">
-        <!-- Sidebar (same as previous pages) -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
+<body class="bg-light">
+    <div class="app-wrapper">
+        <!-- Topbar -->
+        <nav class="topbar">
+            <div class="container-fluid d-flex align-items-center">
+                <button class="btn btn-link text-dark d-lg-none p-0 me-3" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+
+                <a href="/pages/dashboard.html" class="topbar-brand">
                     <i class="fas fa-code-branch"></i>
-                    <span>DSA Path</span>
+                    DSAPath
+                </a>
+
+                <div class="topbar-nav">
+                    <button class="btn btn-link text-dark position-relative" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn btn-link text-dark dropdown-toggle d-flex align-items-center"
+                            data-bs-toggle="dropdown">
+                            <img src="/assets/images/default-avatar.png" alt="Avatar" class="rounded-circle me-2"
+                                width="32" height="32" id="userAvatar">
+                            <span class="d-none d-md-inline" id="userName">Loading...</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/pages/profile.html">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                            <li><a class="dropdown-item" href="/pages/settings.html">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+        </nav>
 
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
             <nav class="sidebar-nav">
-                <div class="nav-item">
-                    <a href="/dashboard" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/roadmap" class="nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/calendar" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Calendar</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/progress" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/resources" class="nav-link active">
-                        <i class="fas fa-book"></i>
-                        <span>Resources</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/notes" class="nav-link">
-                        <i class="fas fa-sticky-note"></i>
-                        <span>Notes</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/pomodoro" class="nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Pomodoro</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/ai-assistant" class="nav-link">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Assistant</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/analytics" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Analytics</span>
-                    </a>
-                </div>
-
-                <div class="mt-auto pt-4 border-top">
-                    <div class="nav-item">
-                        <a href="/profile" class="nav-link">
-                            <i class="fas fa-user"></i>
-                            <span>Profile</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="/settings" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </div>
-                </div>
+                <a href="/pages/dashboard.html" class="sidebar-link">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/roadmap.html" class="sidebar-link">
+                    <i class="fas fa-route"></i>
+                    <span>Roadmap</span>
+                </a>
+                <a href="/pages/calendar.html" class="sidebar-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="/pages/progress.html" class="sidebar-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress</span>
+                </a>
+                <a href="/pages/notes.html" class="sidebar-link">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="/pages/pomodoro.html" class="sidebar-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Pomodoro</span>
+                </a>
+                <a href="/pages/resources.html" class="sidebar-link active">
+                    <i class="fas fa-book"></i>
+                    <span>Resources</span>
+                </a>
+                <a href="/pages/ai-assistant.html" class="sidebar-link">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="/pages/analytics.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Bar -->
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
-                        <i class="fas fa-bars fa-lg"></i>
-                    </button>
-                    <h4 class="mb-0 fw-bold">Learning Resources</h4>
+            <div class="container-fluid">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h1 class="page-title">Learning Resources</h1>
+                            <p class="page-subtitle">Curated collection of DSA learning materials</p>
+                        </div>
+                        <div class="d-flex gap-2 mt-3 mt-md-0">
+                            <div class="input-group" style="width: 250px;">
+                                <input type="text" class="form-control" placeholder="Search resources..."
+                                    id="searchInput" onkeyup="searchResources()">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="topbar-right">
-                    <button class="btn btn-link position-relative me-2">
-                        <i class="fas fa-bell fa-lg"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                        </span>
-                    </button>
-
-                    <div class="dropdown">
-                        <button class="btn btn-link dropdown-toggle d-flex align-items-center"
-                            data-bs-toggle="dropdown">
-                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Avatar"
-                                class="rounded-circle me-2" width="32" height="32" id="userAvatar">
-                            <span id="userName">Loading...</span>
+                <!-- Filter Tabs -->
+                <ul class="nav nav-pills mb-4" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-filter="all"
+                            onclick="filterResources('all')">
+                            <i class="fas fa-th me-2"></i>All Resources
+                            <span class="badge bg-secondary ms-1" id="allCount">0</span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
-                            </li>
-                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#" onclick="logout()"><i
-                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <div class="page-content">
-                <!-- Featured Resources -->
-                <div class="featured-section">
-                    <h2 class="fw-bold mb-2">Featured Resources</h2>
-                    <p class="opacity-90 mb-0">Handpicked resources to accelerate your learning</p>
-
-                    <div class="featured-grid">
-                        <div class="featured-item">
-                            <i class="fas fa-star mb-3 fa-2x"></i>
-                            <h5>500+ Problems</h5>
-                            <p class="mb-0 opacity-90">Curated DSA problems with solutions</p>
-                        </div>
-                        <div class="featured-item">
-                            <i class="fas fa-video mb-3 fa-2x"></i>
-                            <h5>Video Tutorials</h5>
-                            <p class="mb-0 opacity-90">Visual explanations from top educators</p>
-                        </div>
-                        <div class="featured-item">
-                            <i class="fas fa-gamepad mb-3 fa-2x"></i>
-                            <h5>Interactive Tools</h5>
-                            <p class="mb-0 opacity-90">Visualize algorithms in real-time</p>
-                        </div>
-                        <div class="featured-item">
-                            <i class="fas fa-book-open mb-3 fa-2x"></i>
-                            <h5>In-depth Guides</h5>
-                            <p class="mb-0 opacity-90">Comprehensive tutorials and articles</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Search -->
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="form-control form-control-lg" placeholder="Search resources..."
-                        id="resourceSearch" onkeyup="searchResources()">
-                    <i class="fas fa-times clear-icon" id="clearSearch" onclick="clearSearch()"></i>
-                </div>
-
-                <!-- Filters -->
-                <div class="resource-filters">
-                    <button class="filter-button active" onclick="filterResources('all')">
-                        <i class="fas fa-th me-2"></i>All Resources
-                    </button>
-                    <button class="filter-button" onclick="filterResources('text')">
-                        <i class="fas fa-book me-2"></i>Articles
-                    </button>
-                    <button class="filter-button" onclick="filterResources('video')">
-                        <i class="fas fa-video me-2"></i>Videos
-                    </button>
-                    <button class="filter-button" onclick="filterResources('interactive')">
-                        <i class="fas fa-gamepad me-2"></i>Interactive
-                    </button>
-                    <button class="filter-button" onclick="filterResources('practice')">
-                        <i class="fas fa-code me-2"></i>Practice
-                    </button>
-                </div>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-filter="text"
+                            onclick="filterResources('text')">
+                            <i class="fas fa-file-alt me-2"></i>Articles
+                            <span class="badge bg-secondary ms-1" id="textCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-filter="video"
+                            onclick="filterResources('video')">
+                            <i class="fas fa-play-circle me-2"></i>Videos
+                            <span class="badge bg-secondary ms-1" id="videoCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-filter="interactive"
+                            onclick="filterResources('interactive')">
+                            <i class="fas fa-hand-pointer me-2"></i>Interactive
+                            <span class="badge bg-secondary ms-1" id="interactiveCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-filter="practice"
+                            onclick="filterResources('practice')">
+                            <i class="fas fa-code me-2"></i>Practice
+                            <span class="badge bg-secondary ms-1" id="practiceCount">0</span>
+                        </button>
+                    </li>
+                </ul>
 
                 <!-- Resources Grid -->
                 <div id="resourcesContainer">
@@ -425,324 +180,342 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="pagination-container" id="paginationContainer">
-                    <!-- Pagination will be rendered here -->
-                </div>
+                <nav id="paginationContainer" class="mt-4" style="display: none;">
+                    <ul class="pagination justify-content-center">
+                        <!-- Pagination will be rendered here -->
+                    </ul>
+                </nav>
             </div>
         </main>
+
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav">
+            <ul class="mobile-nav-list">
+                <li class="mobile-nav-item">
+                    <a href="/pages/dashboard.html" class="mobile-nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/pages/roadmap.html" class="mobile-nav-link">
+                        <i class="fas fa-route"></i>
+                        <span>Roadmap</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/pages/progress.html" class="mobile-nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/pages/pomodoro.html" class="mobile-nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Timer</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <button class="mobile-nav-link" onclick="toggleMobileDrawer()">
+                        <i class="fas fa-ellipsis-h"></i>
+                        <span>More</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
     </div>
 
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-items">
-            <a href="/dashboard" class="mobile-nav-item">
-                <i class="fas fa-home mobile-nav-icon"></i>
-                <span>Home</span>
-            </a>
-            <a href="/roadmap" class="mobile-nav-item">
-                <i class="fas fa-route mobile-nav-icon"></i>
-                <span>Roadmap</span>
-            </a>
-            <a href="/resources" class="mobile-nav-item active">
-                <i class="fas fa-book mobile-nav-icon"></i>
-                <span>Resources</span>
-            </a>
-            <a href="/notes" class="mobile-nav-item">
-                <i class="fas fa-sticky-note mobile-nav-icon"></i>
-                <span>Notes</span>
-            </a>
-            <a href="/profile" class="mobile-nav-item">
-                <i class="fas fa-user mobile-nav-icon"></i>
-                <span>Profile</span>
-            </a>
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="drawer-header p-3 border-bottom">
+            <h5 class="mb-0">Menu</h5>
+            <button class="btn-close" onclick="toggleMobileDrawer()"></button>
         </div>
-    </nav>
+        <div class="drawer-body">
+            <nav class="nav flex-column p-3">
+                <a href="/pages/calendar.html" class="nav-link">
+                    <i class="fas fa-calendar-alt me-2"></i>Calendar
+                </a>
+                <a href="/pages/notes.html" class="nav-link">
+                    <i class="fas fa-sticky-note me-2"></i>Notes
+                </a>
+                <a href="/pages/resources.html" class="nav-link active">
+                    <i class="fas fa-book me-2"></i>Resources
+                </a>
+                <a href="/pages/ai-assistant.html" class="nav-link">
+                    <i class="fas fa-robot me-2"></i>AI Assistant
+                </a>
+                <a href="/pages/analytics.html" class="nav-link">
+                    <i class="fas fa-chart-bar me-2"></i>Analytics
+                </a>
+                <hr>
+                <a href="/pages/profile.html" class="nav-link">
+                    <i class="fas fa-user me-2"></i>Profile
+                </a>
+                <a href="/pages/settings.html" class="nav-link">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+                <a href="#" class="nav-link text-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+            </nav>
+        </div>
+    </div>
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
 
-    <!-- Toast Container -->
-    <div class="toast-container"></div>
+    <!-- Resource Preview Modal -->
+    <div class="modal fade" id="resourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resourceModalTitle">Resource Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="resourceModalContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" target="_blank" class="btn btn-primary" id="resourceModalLink">
+                        <i class="fas fa-external-link-alt me-2"></i>Open Resource
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/constants.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
 
     <script>
-        // API Configuration
-        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let accessToken = localStorage.getItem('access_token');
-        let resources = [];
+        // Global variables
+        let allResources = [];
         let filteredResources = [];
         let currentFilter = 'all';
         let currentPage = 1;
-        const itemsPerPage = 12;
+        const perPage = 12;
 
-        // Authentication check
-        if (!accessToken) {
-            window.location.href = '/login';
-        }
-
-        // Resource type configurations
-        const resourceTypes = {
-            text: { icon: 'fa-book', color: 'primary', label: 'Article' },
-            video: { icon: 'fa-video', color: 'danger', label: 'Video' },
-            interactive: { icon: 'fa-gamepad', color: 'success', label: 'Interactive' },
-            practice: { icon: 'fa-code', color: 'warning', label: 'Practice' }
+        // Resource type metadata
+        const resourceMeta = {
+            text: {
+                icon: 'file-alt',
+                color: 'primary',
+                label: 'Article'
+            },
+            video: {
+                icon: 'play-circle',
+                color: 'danger',
+                label: 'Video'
+            },
+            interactive: {
+                icon: 'hand-pointer',
+                color: 'success',
+                label: 'Interactive'
+            },
+            practice: {
+                icon: 'code',
+                color: 'warning',
+                label: 'Practice'
+            }
         };
 
-        // Utility Functions
-        function showToast(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
-            const toastId = 'toast-' + Date.now();
-
-            const toastHTML = `
-                <div id="${toastId}" class="custom-toast ${type}" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-
-            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-            setTimeout(() => {
-                const toast = document.getElementById(toastId);
-                if (toast) {
-                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
-                    setTimeout(() => toast.remove(), 300);
+        // Initialize resources
+        async function initResources() {
+            try {
+                // Load user data
+                const user = auth.getUser();
+                if (user) {
+                    document.getElementById('userName').textContent = user.name;
+                    if (user.avatar_url) {
+                        document.getElementById('userAvatar').src = user.avatar_url;
+                    }
                 }
-            }, 5000);
+
+                // Load resources
+                await loadResources();
+
+            } catch (error) {
+                console.error('Resources initialization error:', error);
+                notifications.error('Failed to load resources');
+            }
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
+        // Load resources from backend
+        async function loadResources() {
+            try {
+                const response = await api.getResources({ per_page: 100 });
+                allResources = response.resources;
+
+                // Update counts
+                updateResourceCounts();
+
+                // Apply current filter
+                filterResources(currentFilter);
+
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                document.getElementById('resourcesContainer').innerHTML = `
+                    <div class="text-center text-danger py-5">
+                        <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
+                        <h4>Failed to load resources</h4>
+                        <p>Please try again later</p>
+                    </div>
+                `;
+            }
         }
 
-        async function logout() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
+        // Update resource counts
+        function updateResourceCounts() {
+            const counts = {
+                all: allResources.length,
+                text: 0,
+                video: 0,
+                interactive: 0,
+                practice: 0
+            };
 
-        // API Functions
-        async function fetchWithAuth(url, options = {}) {
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
+            allResources.forEach(resource => {
+                if (counts[resource.type] !== undefined) {
+                    counts[resource.type]++;
                 }
             });
 
-            if (response.status === 401) {
-                logout();
-            }
-
-            return response;
-        }
-
-        // Load User Profile
-        async function loadUserProfile() {
-            try {
-                const response = await fetchWithAuth(`${API_BASE}/profile`);
-                if (response.ok) {
-                    const data = await response.json();
-                    const user = data.user;
-
-                    document.getElementById('userName').textContent = user.name;
-
-                    if (user.avatar_url) {
-                        document.getElementById('userAvatar').src = user.avatar_url;
-                    } else {
-                        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`;
-                    }
+            // Update UI
+            Object.keys(counts).forEach(type => {
+                const element = document.getElementById(`${type}Count`);
+                if (element) {
+                    element.textContent = counts[type];
                 }
-            } catch (error) {
-                console.error('Error loading profile:', error);
-            }
+            });
         }
 
-        // Load Resources
-        async function loadResources() {
-            try {
-                const response = await fetchWithAuth(`${API_BASE}/resources`);
-                if (response.ok) {
-                    const data = await response.json();
-                    resources = data.resources;
-
-                    // Add descriptions and tags to resources
-                    resources = resources.map(resource => ({
-                        ...resource,
-                        description: getResourceDescription(resource),
-                        tags: getResourceTags(resource)
-                    }));
-
-                    filterResources(currentFilter);
-                }
-            } catch (error) {
-                console.error('Error loading resources:', error);
-                showToast('Failed to load resources', 'error');
-            }
-        }
-
-        // Get resource description based on title/URL
-        function getResourceDescription(resource) {
-            const descriptions = {
-                'Python': 'Learn Python programming fundamentals and syntax',
-                'C++': 'Master C++ programming concepts and techniques',
-                'Arrays': 'Understand array data structures and operations',
-                'Strings': 'String manipulation and processing techniques',
-                'Linked Lists': 'Learn about linked list implementations',
-                'Stacks': 'Stack data structure and its applications',
-                'Queues': 'Queue operations and real-world uses',
-                'Trees': 'Tree structures and traversal algorithms',
-                'BST': 'Binary Search Tree operations and properties',
-                'Heap': 'Heap data structure and priority queues',
-                'Hash': 'Hash tables and collision handling',
-                'Graph': 'Graph theory and algorithms',
-                'Sorting': 'Various sorting algorithms explained',
-                'DP': 'Dynamic Programming techniques',
-                'Recursion': 'Recursive problem-solving approaches',
-                'Backtracking': 'Backtracking algorithm patterns'
-            };
-
-            for (const [key, desc] of Object.entries(descriptions)) {
-                if (resource.title.includes(key)) {
-                    return desc;
-                }
-            }
-
-            return 'Comprehensive resource for DSA learning';
-        }
-
-        // Get resource tags based on content
-        function getResourceTags(resource) {
-            const tags = [];
-            const title = resource.title.toLowerCase();
-
-            if (title.includes('beginner') || title.includes('intro')) tags.push('Beginner');
-            if (title.includes('advanced')) tags.push('Advanced');
-            if (title.includes('python')) tags.push('Python');
-            if (title.includes('c++') || title.includes('cpp')) tags.push('C++');
-            if (title.includes('array')) tags.push('Arrays');
-            if (title.includes('tree')) tags.push('Trees');
-            if (title.includes('graph')) tags.push('Graphs');
-            if (title.includes('dp') || title.includes('dynamic')) tags.push('DP');
-
-            // Default tag based on type
-            if (tags.length === 0) {
-                tags.push(resourceTypes[resource.type].label);
-            }
-
-            return tags.slice(0, 3); // Limit to 3 tags
-        }
-
-        // Filter Resources
+        // Filter resources
         function filterResources(type) {
             currentFilter = type;
             currentPage = 1;
 
-            // Update filter buttons
-            document.querySelectorAll('.filter-button').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(type) || type === 'all');
+            // Update active tab
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.dataset.filter === type) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
 
             // Filter resources
             if (type === 'all') {
-                filteredResources = [...resources];
+                filteredResources = [...allResources];
             } else {
-                filteredResources = resources.filter(r => r.type === type);
+                filteredResources = allResources.filter(r => r.type === type);
             }
 
-            renderResources();
+            // Apply search if active
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            if (searchQuery) {
+                applySearch(searchQuery);
+            } else {
+                renderResources();
+            }
         }
 
-        // Search Resources
-        function searchResources() {
-            const searchTerm = document.getElementById('resourceSearch').value.toLowerCase();
-            const clearIcon = document.getElementById('clearSearch');
+        // Search resources
+        const searchResources = utils.debounce(() => {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            applySearch(query);
+        }, 300);
 
-            clearIcon.style.display = searchTerm ? 'block' : 'none';
-
-            if (!searchTerm) {
+        // Apply search filter
+        function applySearch(query) {
+            if (!query) {
                 filterResources(currentFilter);
                 return;
             }
 
-            filteredResources = resources.filter(resource =>
-                resource.title.toLowerCase().includes(searchTerm) ||
-                resource.description.toLowerCase().includes(searchTerm) ||
-                resource.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            filteredResources = filteredResources.filter(resource =>
+                resource.title.toLowerCase().includes(query) ||
+                resource.url.toLowerCase().includes(query)
             );
-
-            if (currentFilter !== 'all') {
-                filteredResources = filteredResources.filter(r => r.type === currentFilter);
-            }
 
             currentPage = 1;
             renderResources();
         }
 
-        // Clear Search
-        function clearSearch() {
-            document.getElementById('resourceSearch').value = '';
-            document.getElementById('clearSearch').style.display = 'none';
-            filterResources(currentFilter);
-        }
-
-        // Render Resources
+        // Render resources
         function renderResources() {
             const container = document.getElementById('resourcesContainer');
 
             if (filteredResources.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fas fa-search fa-4x text-gray-300 mb-3"></i>
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-search fa-4x mb-3"></i>
                         <h4>No resources found</h4>
-                        <p class="text-muted">Try adjusting your search or filters</p>
+                        <p>Try adjusting your filters or search query</p>
                     </div>
                 `;
-                document.getElementById('paginationContainer').innerHTML = '';
+                document.getElementById('paginationContainer').style.display = 'none';
                 return;
             }
 
-            // Paginate
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedResources = filteredResources.slice(startIndex, endIndex);
+            // Calculate pagination
+            const totalPages = Math.ceil(filteredResources.length / perPage);
+            const startIndex = (currentPage - 1) * perPage;
+            const endIndex = startIndex + perPage;
+            const pageResources = filteredResources.slice(startIndex, endIndex);
 
-            // Render grid
-            let html = '<div class="resource-grid">';
+            // Render resource cards
+            let html = '<div class="row g-4">';
 
-            paginatedResources.forEach((resource, index) => {
-                const typeConfig = resourceTypes[resource.type];
+            pageResources.forEach(resource => {
+                const meta = resourceMeta[resource.type] || resourceMeta.text;
+                const domain = new URL(resource.url).hostname.replace('www.', '');
 
                 html += `
-                    <a href="${resource.url}" target="_blank" class="resource-card-link fade-in" style="animation-delay: ${index * 0.05}s">
-                        <div class="resource-card">
-                            <div class="resource-icon ${resource.type}">
-                                <i class="fas ${typeConfig.icon}"></i>
-                            </div>
-                            
-                            <h5 class="resource-title">${resource.title}</h5>
-                            <p class="resource-description">${resource.description}</p>
-                            
-                            <div class="mb-3">
-                                ${resource.tags.map(tag => `
-                                    <span class="resource-tag me-2">${tag}</span>
-                                `).join('')}
-                            </div>
-                            
-                            <div class="resource-meta">
-                                <span>
-                                    <i class="fas ${typeConfig.icon} me-1 text-${typeConfig.color}"></i>
-                                    ${typeConfig.label}
-                                </span>
-                                <span>
-                                    <i class="fas fa-external-link-alt me-1"></i>
-                                    View Resource
-                                </span>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 resource-card hover-lift" onclick="previewResource('${resource.id}')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="resource-icon bg-${meta.color} bg-opacity-10 text-${meta.color}">
+                                        <i class="fas fa-${meta.icon}"></i>
+                                    </div>
+                                    <span class="badge bg-${meta.color} bg-opacity-10 text-${meta.color}">
+                                        ${meta.label}
+                                    </span>
+                                </div>
+                                
+                                <h5 class="card-title mb-2">${utils.escapeHtml(resource.title)}</h5>
+                                
+                                <p class="text-muted small mb-3">
+                                    <i class="fas fa-globe me-1"></i>${domain}
+                                </p>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="resource-stats">
+                                        <span class="me-3" title="Views">
+                                            <i class="fas fa-eye text-muted me-1"></i>
+                                            ${Math.floor(Math.random() * 1000) + 100}
+                                        </span>
+                                        <span title="Bookmarks">
+                                            <i class="fas fa-bookmark text-muted me-1"></i>
+                                            ${Math.floor(Math.random() * 50) + 10}
+                                        </span>
+                                    </div>
+                                    <a href="${resource.url}" target="_blank" 
+                                       class="btn btn-sm btn-outline-primary"
+                                       onclick="event.stopPropagation()">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 `;
             });
 
@@ -750,52 +523,84 @@
             container.innerHTML = html;
 
             // Render pagination
-            renderPagination();
+            if (totalPages > 1) {
+                renderPagination(totalPages);
+                document.getElementById('paginationContainer').style.display = 'block';
+            } else {
+                document.getElementById('paginationContainer').style.display = 'none';
+            }
         }
 
-        // Render Pagination
-        function renderPagination() {
-            const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
-            if (totalPages <= 1) {
-                document.getElementById('paginationContainer').innerHTML = '';
-                return;
-            }
-
+        // Render pagination
+        function renderPagination(totalPages) {
+            const pagination = document.querySelector('#paginationContainer .pagination');
             let html = '';
 
             // Previous button
             html += `
-                <button class="pagination-button" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                    <i class="fas fa-chevron-left"></i>
-                </button>
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
             `;
 
             // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-                    html += `
-                        <button class="pagination-button ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-                            ${i}
-                        </button>
-                    `;
-                } else if (i === currentPage - 3 || i === currentPage + 3) {
-                    html += '<span class="px-2">...</span>';
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                html += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(1)">1</a>
+                    </li>
+                `;
+                if (startPage > 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
                 }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                html += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${totalPages})">${totalPages}</a>
+                    </li>
+                `;
             }
 
             // Next button
             html += `
-                <button class="pagination-button" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
             `;
 
-            document.getElementById('paginationContainer').innerHTML = html;
+            pagination.innerHTML = html;
         }
 
-        // Change Page
+        // Change page
         function changePage(page) {
-            const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
+            event.preventDefault();
+
+            const totalPages = Math.ceil(filteredResources.length / perPage);
             if (page < 1 || page > totalPages) return;
 
             currentPage = page;
@@ -805,29 +610,223 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Check for resource ID in URL
-        function checkUrlResource() {
-            const resourceId = window.location.hash.substring(1);
-            if (resourceId) {
-                const resource = resources.find(r => r.id === resourceId);
-                if (resource) {
-                    // Open resource in new tab
-                    window.open(resource.url, '_blank');
+        // Preview resource
+        function previewResource(resourceId) {
+            const resource = allResources.find(r => r.id === resourceId);
+            if (!resource) return;
 
-                    // Clear hash
-                    window.location.hash = '';
+            const meta = resourceMeta[resource.type] || resourceMeta.text;
+            const domain = new URL(resource.url).hostname;
+
+            // Update modal
+            document.getElementById('resourceModalTitle').textContent = resource.title;
+            document.getElementById('resourceModalLink').href = resource.url;
+
+            // Generate preview content based on type
+            let content = `
+                <div class="mb-4">
+                    <span class="badge bg-${meta.color} me-2">
+                        <i class="fas fa-${meta.icon} me-1"></i>${meta.label}
+                    </span>
+                    <span class="text-muted">
+                        <i class="fas fa-globe me-1"></i>${domain}
+                    </span>
+                </div>
+            `;
+
+            if (resource.type === 'video') {
+                // Extract video ID for YouTube
+                const videoId = extractYouTubeId(resource.url);
+                if (videoId) {
+                    content += `
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    `;
                 }
+            } else if (resource.type === 'interactive') {
+                content += `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This is an interactive resource. Click "Open Resource" to access the full experience.
+                    </div>
+                    <img src="/assets/images/interactive-preview.png" alt="Interactive Preview" 
+                         class="img-fluid rounded"
+                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'%3E%3Crect width=\'600\' height=\'400\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'%23999\' font-size=\'24\'%3EInteractive Preview%3C/text%3E%3C/svg%3E'">
+                `;
+            } else {
+                content += `
+                    <div class="resource-description">
+                        <h6>About this resource:</h6>
+                        <p>${getResourceDescription(resource)}</p>
+                    </div>
+                `;
+            }
+
+            // Add related topics
+            content += `
+                <div class="mt-4">
+                    <h6>Related Topics:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        ${getRelatedTopics(resource).map(topic =>
+                `<span class="badge bg-secondary">${topic}</span>`
+            ).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resourceModalContent').innerHTML = content;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
+            modal.show();
+        }
+
+        // Extract YouTube video ID
+        function extractYouTubeId(url) {
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+            return match ? match[1] : null;
+        }
+
+        // Get resource description
+        function getResourceDescription(resource) {
+            const descriptions = {
+                'w3schools': 'W3Schools offers easy-to-understand tutorials with examples and exercises.',
+                'geeksforgeeks': 'GeeksforGeeks provides detailed explanations with code examples in multiple languages.',
+                'leetcode': 'Practice coding problems with real interview questions from top companies.',
+                'visualgo': 'Visualize data structures and algorithms through interactive animations.',
+                'programiz': 'Learn programming concepts with clear explanations and practical examples.',
+                'youtube': 'Video tutorials explaining concepts visually with step-by-step guidance.'
+            };
+
+            const domain = new URL(resource.url).hostname.replace('www.', '');
+            for (const [key, desc] of Object.entries(descriptions)) {
+                if (domain.includes(key)) {
+                    return desc;
+                }
+            }
+
+            return 'A valuable resource for learning data structures and algorithms.';
+        }
+
+        // Get related topics
+        function getRelatedTopics(resource) {
+            const titleLower = resource.title.toLowerCase();
+            const topics = [];
+
+            // Extract topics from title
+            const topicKeywords = {
+                'array': ['Arrays', 'Linear Data Structure'],
+                'linked list': ['Linked Lists', 'Pointers', 'Dynamic Memory'],
+                'stack': ['Stacks', 'LIFO', 'Recursion'],
+                'queue': ['Queues', 'FIFO', 'BFS'],
+                'tree': ['Trees', 'Hierarchical Data', 'Recursion'],
+                'graph': ['Graphs', 'Networks', 'Traversal'],
+                'sort': ['Sorting', 'Algorithms', 'Time Complexity'],
+                'search': ['Searching', 'Binary Search', 'Optimization'],
+                'dynamic': ['Dynamic Programming', 'Optimization', 'Memoization'],
+                'hash': ['Hashing', 'Hash Tables', 'O(1) Access']
+            };
+
+            for (const [keyword, relatedTopics] of Object.entries(topicKeywords)) {
+                if (titleLower.includes(keyword)) {
+                    topics.push(...relatedTopics);
+                }
+            }
+
+            // Return unique topics
+            return [...new Set(topics)].slice(0, 5);
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Toggle mobile drawer
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('drawerBackdrop');
+
+            drawer.classList.toggle('open');
+            backdrop.classList.toggle('show');
+        }
+
+        // Show notifications
+        function showNotifications() {
+            notifications.info('Notifications panel coming soon!');
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                auth.logout();
             }
         }
 
-        // Initialize
-        async function init() {
-            await loadUserProfile();
-            await loadResources();
-            checkUrlResource();
-        }
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initResources();
+        });
 
-        init();
+        // Add custom styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .resource-card {
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 1px solid #e5e7eb;
+            }
+            
+            .resource-card:hover {
+                border-color: var(--primary);
+            }
+            
+            .resource-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.25rem;
+            }
+            
+            .resource-stats {
+                font-size: 0.875rem;
+            }
+            
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .resource-description {
+                background: #f8f9fa;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            @media (max-width: 767px) {
+                .resource-card .card-title {
+                    font-size: 1rem;
+                }
+                
+                .resource-icon {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 

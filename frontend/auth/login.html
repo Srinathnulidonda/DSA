@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - DSA Path</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Login - DSAPath</title>
 
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/components.css">
     <link rel="stylesheet" href="/css/animations.css">
     <link rel="stylesheet" href="/css/responsive.css">
 
@@ -27,24 +24,19 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
         }
 
         .auth-card {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 2rem;
             width: 100%;
             max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .auth-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+            animation: slideInUp 0.5s ease-out;
         }
 
         .form-floating label {
@@ -53,15 +45,26 @@
 
         .form-control:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .social-login-btn {
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .social-login-btn:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .password-toggle {
+            cursor: pointer;
             position: absolute;
-            right: 12px;
+            right: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            cursor: pointer;
             color: #6b7280;
             z-index: 10;
         }
@@ -70,218 +73,204 @@
 
 <body>
     <div class="auth-container">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-5">
-                    <div class="auth-card fade-in">
-                        <div class="auth-header">
-                            <a href="/" class="text-white text-decoration-none">
-                                <h3 class="mb-2">
-                                    <i class="fas fa-code-branch me-2"></i>DSA Path
-                                </h3>
-                            </a>
-                            <p class="mb-0 opacity-75">Welcome back!</p>
-                        </div>
-
-                        <div class="p-4">
-                            <form id="loginForm">
-                                <div class="form-floating mb-3">
-                                    <input type="email" class="form-control" id="email" placeholder="name@example.com"
-                                        required>
-                                    <label for="email">Email address</label>
-                                </div>
-
-                                <div class="form-floating mb-3 position-relative">
-                                    <input type="password" class="form-control" id="password" placeholder="Password"
-                                        required>
-                                    <label for="password">Password</label>
-                                    <span class="password-toggle" onclick="togglePassword()">
-                                        <i class="fas fa-eye" id="passwordToggle"></i>
-                                    </span>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="remember">
-                                        <label class="form-check-label" for="remember">
-                                            Remember me
-                                        </label>
-                                    </div>
-                                    <a href="/forgot-password" class="text-primary text-decoration-none">
-                                        Forgot password?
-                                    </a>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary w-100 py-3 mb-3" id="loginBtn">
-                                    <span id="loginBtnText">Sign In</span>
-                                    <span id="loginBtnLoader" class="d-none">
-                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                                        Signing in...
-                                    </span>
-                                </button>
-
-                                <div class="text-center mb-3">
-                                    <span class="text-muted">or continue with</span>
-                                </div>
-
-                                <div class="d-grid gap-2">
-                                    <button type="button" class="btn btn-outline-secondary">
-                                        <i class="fab fa-google me-2"></i>Google
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary">
-                                        <i class="fab fa-github me-2"></i>GitHub
-                                    </button>
-                                </div>
-                            </form>
-
-                            <div class="text-center mt-4">
-                                <p class="mb-0">
-                                    Don't have an account?
-                                    <a href="/register" class="text-primary text-decoration-none fw-semibold">Sign
-                                        up</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="auth-card">
+            <!-- Logo -->
+            <div class="text-center mb-4">
+                <a href="/" class="text-decoration-none">
+                    <h2 class="text-primary fw-bold">
+                        <i class="fas fa-code-branch me-2"></i>DSAPath
+                    </h2>
+                </a>
+                <p class="text-muted mt-2">Welcome back! Please login to continue.</p>
             </div>
+
+            <!-- Error Alert -->
+            <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span id="errorMessage"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" novalidate>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com"
+                        required autofocus>
+                    <label for="email">Email address</label>
+                </div>
+
+                <div class="form-floating mb-3 position-relative">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password"
+                        required>
+                    <label for="password">Password</label>
+                    <span class="password-toggle" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                    </span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+                    <a href="/auth/forgot-password.html" class="text-decoration-none">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
+                    <span id="loginBtnText">Login</span>
+                    <span id="loginBtnSpinner" class="d-none">
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Logging in...
+                    </span>
+                </button>
+
+                <div class="text-center mb-3">
+                    <span class="text-muted">or continue with</span>
+                </div>
+
+                <!-- Social Login -->
+                <div class="d-grid gap-2 mb-4">
+                    <button type="button" class="btn social-login-btn" onclick="socialLogin('google')">
+                        <img src="https://www.google.com/favicon.ico" alt="Google" width="20" class="me-2">
+                        Continue with Google
+                    </button>
+                    <button type="button" class="btn social-login-btn" onclick="socialLogin('github')">
+                        <i class="fab fa-github me-2"></i>
+                        Continue with GitHub
+                    </button>
+                </div>
+
+                <!-- Register Link -->
+                <div class="text-center">
+                    <span class="text-muted">Don't have an account?</span>
+                    <a href="/auth/register.html" class="text-decoration-none fw-semibold">
+                        Sign up
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container"></div>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/constants.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/validators.js"></script>
+    <script src="/js/notifications.js"></script>
 
     <script>
-        // API Base URL
-        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-
         // Toggle password visibility
         function togglePassword() {
             const passwordInput = document.getElementById('password');
-            const passwordToggle = document.getElementById('passwordToggle');
+            const toggleIcon = document.getElementById('passwordToggleIcon');
 
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                passwordToggle.classList.remove('fa-eye');
-                passwordToggle.classList.add('fa-eye-slash');
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
                 passwordInput.type = 'password';
-                passwordToggle.classList.remove('fa-eye-slash');
-                passwordToggle.classList.add('fa-eye');
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
-        // Show toast notification
-        function showToast(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
-            const toastId = 'toast-' + Date.now();
+        // Show error
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
 
-            const toastHTML = `
-                <div id="${toastId}" class="custom-toast ${type}" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
+            errorMessage.textContent = message;
+            errorAlert.classList.remove('d-none');
 
-            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
+            // Auto hide after 5 seconds
             setTimeout(() => {
-                const toast = document.getElementById(toastId);
-                if (toast) {
-                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }
+                errorAlert.classList.add('d-none');
             }, 5000);
+        }
+
+        // Social login placeholder
+        function socialLogin(provider) {
+            notifications.info(`${provider} login coming soon!`);
         }
 
         // Handle login form submission
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
+            const form = e.target;
+            const formData = new FormData(form);
+            const email = formData.get('email').trim();
+            const password = formData.get('password');
+
+            // Validate
+            const validator = FormValidator.validateLogin(email, password);
+            if (validator.hasErrors()) {
+                validator.showFormErrors(form);
+                return;
+            }
+
+            // Clear previous errors
+            validator.clearFormErrors(form);
+            document.getElementById('errorAlert').classList.add('d-none');
 
             // Show loading state
             const loginBtn = document.getElementById('loginBtn');
             const loginBtnText = document.getElementById('loginBtnText');
-            const loginBtnLoader = document.getElementById('loginBtnLoader');
+            const loginBtnSpinner = document.getElementById('loginBtnSpinner');
 
             loginBtn.disabled = true;
             loginBtnText.classList.add('d-none');
-            loginBtnLoader.classList.remove('d-none');
+            loginBtnSpinner.classList.remove('d-none');
 
             try {
-                const response = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+                // Attempt login
+                await auth.login(email, password);
 
-                const data = await response.json();
+                // Success - redirect to dashboard
+                notifications.success('Login successful! Redirecting...');
 
-                if (response.ok) {
-                    // Store tokens
-                    localStorage.setItem('access_token', data.access_token);
-                    localStorage.setItem('refresh_token', data.refresh_token);
+                // Check if there's a redirect URL
+                const params = utils.parseQueryParams();
+                const redirectUrl = params.redirect || APP_CONFIG.ROUTES.DASHBOARD;
 
-                    if (remember) {
-                        localStorage.setItem('user_email', email);
-                    } else {
-                        localStorage.removeItem('user_email');
-                    }
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000);
 
-                    // Store user info
-                    localStorage.setItem('user', JSON.stringify(data.user));
-
-                    showToast('Login successful! Redirecting...', 'success');
-
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 1000);
-                } else {
-                    showToast(data.error || 'Invalid credentials', 'error');
-                }
             } catch (error) {
                 console.error('Login error:', error);
-                showToast('Network error. Please try again.', 'error');
-            } finally {
+
+                // Show error message
+                let errorMsg = 'Login failed. Please try again.';
+                if (error.status === 401) {
+                    errorMsg = 'Invalid email or password.';
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+
+                showError(errorMsg);
+
                 // Reset button state
                 loginBtn.disabled = false;
                 loginBtnText.classList.remove('d-none');
-                loginBtnLoader.classList.add('d-none');
-            }
-        });
-
-        // Check for remembered email
-        window.addEventListener('DOMContentLoaded', () => {
-            const rememberedEmail = localStorage.getItem('user_email');
-            if (rememberedEmail) {
-                document.getElementById('email').value = rememberedEmail;
-                document.getElementById('remember').checked = true;
+                loginBtnSpinner.classList.add('d-none');
             }
         });
 
         // Check if already logged in
-        const accessToken = localStorage.getItem('access_token');
-        if (accessToken) {
-            // Verify token is still valid
-            fetch(`${API_BASE}/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            }).then(response => {
-                if (response.ok) {
-                    window.location.href = '/dashboard';
-                }
-            });
+        if (auth.isAuthenticated()) {
+            window.location.href = APP_CONFIG.ROUTES.DASHBOARD;
         }
+
+        // Auto-focus email field
+        window.addEventListener('load', () => {
+            document.getElementById('email').focus();
+        });
     </script>
 </body>
 

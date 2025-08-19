@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - DSA Path</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Dashboard - DSAPath</title>
 
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -27,605 +24,462 @@
     <link rel="stylesheet" href="/css/responsive.css">
 </head>
 
-<body>
-    <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
+<body class="bg-light">
+    <div class="app-wrapper">
+        <!-- Topbar -->
+        <nav class="topbar">
+            <div class="container-fluid d-flex align-items-center">
+                <button class="btn btn-link text-dark d-lg-none p-0 me-3" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+
+                <a href="/pages/dashboard.html" class="topbar-brand">
                     <i class="fas fa-code-branch"></i>
-                    <span>DSA Path</span>
+                    DSAPath
+                </a>
+
+                <div class="topbar-nav">
+                    <button class="btn btn-link text-dark position-relative" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            id="notificationBadge" style="display: none;">
+                            <span id="notificationCount">0</span>
+                        </span>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn btn-link text-dark dropdown-toggle d-flex align-items-center"
+                            data-bs-toggle="dropdown">
+                            <img src="/assets/images/default-avatar.png" alt="Avatar" class="rounded-circle me-2"
+                                width="32" height="32" id="userAvatar">
+                            <span class="d-none d-md-inline" id="userName">Loading...</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/pages/profile.html">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                            <li><a class="dropdown-item" href="/pages/settings.html">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+        </nav>
 
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
             <nav class="sidebar-nav">
-                <div class="nav-item">
-                    <a href="/dashboard" class="nav-link active">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/roadmap" class="nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/calendar" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Calendar</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/progress" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/resources" class="nav-link">
-                        <i class="fas fa-book"></i>
-                        <span>Resources</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/notes" class="nav-link">
-                        <i class="fas fa-sticky-note"></i>
-                        <span>Notes</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/pomodoro" class="nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Pomodoro</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/ai-assistant" class="nav-link">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Assistant</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/analytics" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Analytics</span>
-                    </a>
-                </div>
-
-                <div class="mt-auto pt-4 border-top">
-                    <div class="nav-item">
-                        <a href="/profile" class="nav-link">
-                            <i class="fas fa-user"></i>
-                            <span>Profile</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="/settings" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </div>
-                </div>
+                <a href="/pages/dashboard.html" class="sidebar-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/roadmap.html" class="sidebar-link">
+                    <i class="fas fa-route"></i>
+                    <span>Roadmap</span>
+                </a>
+                <a href="/pages/calendar.html" class="sidebar-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="/pages/progress.html" class="sidebar-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress</span>
+                </a>
+                <a href="/pages/notes.html" class="sidebar-link">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="/pages/pomodoro.html" class="sidebar-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Pomodoro</span>
+                </a>
+                <a href="/pages/resources.html" class="sidebar-link">
+                    <i class="fas fa-book"></i>
+                    <span>Resources</span>
+                </a>
+                <a href="/pages/ai-assistant.html" class="sidebar-link">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="/pages/analytics.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Bar -->
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
-                        <i class="fas fa-bars fa-lg"></i>
-                    </button>
-                    <h4 class="mb-0 fw-bold">Dashboard</h4>
-                </div>
-
-                <div class="topbar-right">
-                    <div class="search-bar me-3">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-input" placeholder="Search..." id="searchInput">
-                    </div>
-
-                    <button class="btn btn-link position-relative me-2">
-                        <i class="fas fa-bell fa-lg"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                        </span>
-                    </button>
-
-                    <div class="dropdown">
-                        <button class="btn btn-link dropdown-toggle d-flex align-items-center"
-                            data-bs-toggle="dropdown">
-                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Avatar"
-                                class="rounded-circle me-2" width="32" height="32" id="userAvatar">
-                            <span id="userName">Loading...</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
-                            </li>
-                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#" onclick="logout()"><i
-                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <div class="page-content">
-                <!-- Welcome Section -->
+            <div class="container-fluid">
+                <!-- Page Header -->
                 <div class="page-header mb-4">
-                    <h1 class="page-title">Welcome back, <span id="welcomeName">User</span>! 👋</h1>
+                    <h1 class="page-title">Welcome back, <span id="welcomeName">there</span>! 👋</h1>
                     <p class="page-subtitle">Here's your learning progress overview</p>
                 </div>
 
-                <!-- Stats Grid -->
-                <div class="stats-grid mb-4">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-primary bg-opacity-10">
-                            <i class="fas fa-fire text-primary"></i>
-                        </div>
-                        <div class="stat-value" id="currentStreak">0</div>
-                        <div class="stat-label">Day Streak</div>
-                        <div class="stat-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>Keep it up!</span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success bg-opacity-10">
-                            <i class="fas fa-check-circle text-success"></i>
-                        </div>
-                        <div class="stat-value"><span id="completionPercentage">0</span>%</div>
-                        <div class="stat-label">Course Progress</div>
-                        <div class="progress mt-2" style="height: 6px;">
-                            <div class="progress-bar bg-success" id="progressBar" style="width: 0%"></div>
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                                        <i class="fas fa-fire text-primary fa-lg"></i>
+                                    </div>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                                        <i class="fas fa-arrow-up me-1"></i>Active
+                                    </span>
+                                </div>
+                                <h3 class="fw-bold mb-1" id="currentStreak">0</h3>
+                                <p class="text-muted mb-0">Day Streak</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon bg-info bg-opacity-10">
-                            <i class="fas fa-clock text-info"></i>
-                        </div>
-                        <div class="stat-value"><span id="studyHours">0</span>h</div>
-                        <div class="stat-label">Study Time (7 days)</div>
-                        <div class="stat-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>20% from last week</span>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                                        <i class="fas fa-check-circle text-success fa-lg"></i>
+                                    </div>
+                                    <span class="text-muted small" id="completionPercentage">0%</span>
+                                </div>
+                                <h3 class="fw-bold mb-1" id="completedDays">0</h3>
+                                <p class="text-muted mb-0">Days Completed</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon bg-warning bg-opacity-10">
-                            <i class="fas fa-trophy text-warning"></i>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                                        <i class="fas fa-clock text-warning fa-lg"></i>
+                                    </div>
+                                    <span class="text-muted small">This week</span>
+                                </div>
+                                <h3 class="fw-bold mb-1" id="studyTimeWeek">0h</h3>
+                                <p class="text-muted mb-0">Study Time</p>
+                            </div>
                         </div>
-                        <div class="stat-value" id="longestStreak">0</div>
-                        <div class="stat-label">Longest Streak</div>
-                        <div class="stat-change">
-                            <span class="text-muted">Personal best</span>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100 hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="rounded-circle bg-info bg-opacity-10 p-3">
+                                        <i class="fas fa-trophy text-info fa-lg"></i>
+                                    </div>
+                                    <span class="text-muted small">Best</span>
+                                </div>
+                                <h3 class="fw-bold mb-1" id="longestStreak">0</h3>
+                                <p class="text-muted mb-0">Longest Streak</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Dashboard Grid -->
-                <div class="dashboard-grid">
-                    <!-- Weekly Progress -->
-                    <div class="custom-card">
-                        <h5 class="fw-bold mb-3">Weekly Progress</h5>
-                        <div id="weeklyProgressContainer">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
+                <!-- Progress Chart & Recent Activity -->
+                <div class="row g-4 mb-4">
+                    <!-- Weekly Progress Chart -->
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white border-0 pb-0">
+                                <h5 class="card-title mb-0">Weekly Progress</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="weeklyProgressChart" height="300"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Recent Activity -->
-                    <div class="custom-card">
-                        <h5 class="fw-bold mb-3">Recent Activity</h5>
-                        <div id="recentActivityContainer">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white border-0 pb-0">
+                                <h5 class="card-title mb-0">Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="recentActivity" class="recent-activity-list">
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Week & Quick Actions -->
+                <div class="row g-4">
+                    <!-- Current Week Overview -->
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">Current Week</h5>
+                                    <a href="/pages/roadmap.html" class="btn btn-sm btn-outline-primary">
+                                        View Roadmap
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="currentWeekContent">
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Study Time Chart -->
-                    <div class="custom-card">
-                        <h5 class="fw-bold mb-3">Study Time (Last 7 Days)</h5>
-                        <canvas id="studyTimeChart" height="200"></canvas>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="custom-card">
-                        <h5 class="fw-bold mb-3">Quick Actions</h5>
-                        <div class="d-grid gap-2">
-                            <a href="/roadmap" class="btn btn-outline-primary">
-                                <i class="fas fa-book-open me-2"></i>Continue Learning
-                            </a>
-                            <a href="/pomodoro" class="btn btn-outline-info">
-                                <i class="fas fa-play me-2"></i>Start Pomodoro Session
-                            </a>
-                            <a href="/notes" class="btn btn-outline-success">
-                                <i class="fas fa-plus me-2"></i>Create New Note
-                            </a>
-                            <a href="/ai-assistant" class="btn btn-outline-warning">
-                                <i class="fas fa-robot me-2"></i>Ask AI Assistant
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Recent Notes -->
-                    <div class="custom-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold mb-0">Recent Notes</h5>
-                            <a href="/notes" class="text-primary text-decoration-none">View all</a>
-                        </div>
-                        <div id="recentNotesContainer">
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                    <!-- Quick Actions & Motivational Quote -->
+                    <div class="col-lg-5">
+                        <!-- Quick Actions -->
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-0">
+                                <h5 class="card-title mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" onclick="startTodayLesson()">
+                                        <i class="fas fa-play me-2"></i>Start Today's Lesson
+                                    </button>
+                                    <button class="btn btn-outline-primary"
+                                        onclick="window.location.href='/pages/pomodoro.html'">
+                                        <i class="fas fa-clock me-2"></i>Start Pomodoro Session
+                                    </button>
+                                    <button class="btn btn-outline-primary"
+                                        onclick="window.location.href='/pages/notes.html'">
+                                        <i class="fas fa-plus me-2"></i>Create New Note
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Motivational Quote -->
-                    <div class="custom-card bg-gradient bg-primary text-white">
-                        <div class="d-flex align-items-start">
-                            <i class="fas fa-quote-left fa-2x me-3 opacity-50"></i>
-                            <div>
-                                <p class="mb-2" id="dailyQuote">"The only way to learn a new programming language is by
-                                    writing programs in it."</p>
-                                <p class="mb-0 opacity-75">- Dennis Ritchie</p>
+                        <!-- Motivational Quote -->
+                        <div class="card border-0 shadow-sm bg-gradient-primary text-white">
+                            <div class="card-body">
+                                <h6 class="text-white-50 mb-2">Daily Motivation</h6>
+                                <p class="mb-2" id="dailyQuote">"The expert in anything was once a beginner."</p>
+                                <small class="text-white-50" id="quoteAuthor">- Helen Hayes</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav">
+            <ul class="mobile-nav-list">
+                <li class="mobile-nav-item">
+                    <a href="/pages/dashboard.html" class="mobile-nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/pages/roadmap.html" class="mobile-nav-link">
+                        <i class="fas fa-route"></i>
+                        <span>Roadmap</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/pages/progress.html" class="mobile-nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/pages/pomodoro.html" class="mobile-nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Timer</span>
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <button class="mobile-nav-link" onclick="toggleMobileDrawer()">
+                        <i class="fas fa-ellipsis-h"></i>
+                        <span>More</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
     </div>
 
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-items">
-            <a href="/dashboard" class="mobile-nav-item active">
-                <i class="fas fa-home mobile-nav-icon"></i>
-                <span>Home</span>
-            </a>
-            <a href="/roadmap" class="mobile-nav-item">
-                <i class="fas fa-route mobile-nav-icon"></i>
-                <span>Roadmap</span>
-            </a>
-            <a href="/resources" class="mobile-nav-item">
-                <i class="fas fa-book mobile-nav-icon"></i>
-                <span>Resources</span>
-            </a>
-            <a href="/notes" class="mobile-nav-item">
-                <i class="fas fa-sticky-note mobile-nav-icon"></i>
-                <span>Notes</span>
-            </a>
-            <a href="/profile" class="mobile-nav-item">
-                <i class="fas fa-user mobile-nav-icon"></i>
-                <span>Profile</span>
-            </a>
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="drawer-header p-3 border-bottom">
+            <h5 class="mb-0">Menu</h5>
+            <button class="btn-close" onclick="toggleMobileDrawer()"></button>
         </div>
-    </nav>
-
-    <!-- Toast Container -->
-    <div class="toast-container"></div>
+        <div class="drawer-body">
+            <nav class="nav flex-column p-3">
+                <a href="/pages/calendar.html" class="nav-link">
+                    <i class="fas fa-calendar-alt me-2"></i>Calendar
+                </a>
+                <a href="/pages/notes.html" class="nav-link">
+                    <i class="fas fa-sticky-note me-2"></i>Notes
+                </a>
+                <a href="/pages/resources.html" class="nav-link">
+                    <i class="fas fa-book me-2"></i>Resources
+                </a>
+                <a href="/pages/ai-assistant.html" class="nav-link">
+                    <i class="fas fa-robot me-2"></i>AI Assistant
+                </a>
+                <a href="/pages/analytics.html" class="nav-link">
+                    <i class="fas fa-chart-bar me-2"></i>Analytics
+                </a>
+                <hr>
+                <a href="/pages/profile.html" class="nav-link">
+                    <i class="fas fa-user me-2"></i>Profile
+                </a>
+                <a href="/pages/settings.html" class="nav-link">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+                <a href="#" class="nav-link text-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+            </nav>
+        </div>
+    </div>
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/constants.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
 
     <script>
-        // API Configuration
-        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let accessToken = localStorage.getItem('access_token');
-        let currentUser = null;
+        // Global variables
+        let dashboardData = null;
+        let weeklyProgressChart = null;
 
-        // Authentication check
-        if (!accessToken) {
-            window.location.href = '/login';
-        }
+        // Daily quotes
+        const quotes = [
+            { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+            { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+            { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+            { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+            { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
+            { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+            { text: "Make it work, make it right, make it fast.", author: "Kent Beck" }
+        ];
 
-        // Utility Functions
-        function showToast(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
-            const toastId = 'toast-' + Date.now();
+        // Initialize dashboard
+        async function initDashboard() {
+            try {
+                // Load user data
+                const user = auth.getUser();
+                if (user) {
+                    document.getElementById('userName').textContent = user.name;
+                    document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
 
-            const toastHTML = `
-                <div id="${toastId}" class="custom-toast ${type}" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-
-            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-            setTimeout(() => {
-                const toast = document.getElementById(toastId);
-                if (toast) {
-                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 5000);
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        async function logout() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
-
-        // API Functions
-        async function fetchWithAuth(url, options = {}) {
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.status === 401) {
-                // Try to refresh token
-                const refreshToken = localStorage.getItem('refresh_token');
-                if (refreshToken) {
-                    const refreshResponse = await fetch(`${API_BASE}/auth/refresh`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${refreshToken}`
-                        }
-                    });
-
-                    if (refreshResponse.ok) {
-                        const data = await refreshResponse.json();
-                        accessToken = data.access_token;
-                        localStorage.setItem('access_token', accessToken);
-
-                        // Retry original request
-                        return fetch(url, {
-                            ...options,
-                            headers: {
-                                ...options.headers,
-                                'Authorization': `Bearer ${accessToken}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
+                    if (user.avatar_url) {
+                        document.getElementById('userAvatar').src = user.avatar_url;
                     }
                 }
 
-                // Refresh failed, redirect to login
-                logout();
-            }
+                // Load dashboard data
+                dashboardData = await api.getDashboard();
 
-            return response;
-        }
+                // Update stats
+                updateStats();
 
-        // Load User Profile
-        async function loadUserProfile() {
-            try {
-                const response = await fetchWithAuth(`${API_BASE}/profile`);
-                if (response.ok) {
-                    const data = await response.json();
-                    currentUser = data.user;
+                // Load charts
+                loadWeeklyProgressChart();
 
-                    // Update UI
-                    document.getElementById('userName').textContent = currentUser.name;
-                    document.getElementById('welcomeName').textContent = currentUser.name.split(' ')[0];
+                // Load recent activity
+                loadRecentActivity();
 
-                    // Update avatar
-                    if (currentUser.avatar_url) {
-                        document.getElementById('userAvatar').src = currentUser.avatar_url;
-                    } else {
-                        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=6366f1&color=fff`;
-                    }
-                }
+                // Load current week
+                loadCurrentWeek();
+
+                // Set daily quote
+                setDailyQuote();
+
             } catch (error) {
-                console.error('Error loading profile:', error);
+                console.error('Dashboard initialization error:', error);
+                notifications.error('Failed to load dashboard data');
             }
         }
 
-        // Load Dashboard Data
-        async function loadDashboardData() {
-            try {
-                const response = await fetchWithAuth(`${API_BASE}/dashboard`);
-                if (response.ok) {
-                    const data = await response.json();
+        // Update stats cards
+        function updateStats() {
+            if (!dashboardData) return;
 
-                    // Update stats
-                    document.getElementById('currentStreak').textContent = data.stats.current_streak || 0;
-                    document.getElementById('longestStreak').textContent = data.stats.longest_streak || 0;
-                    document.getElementById('completionPercentage').textContent = Math.round(data.stats.completion_percentage || 0);
-                    document.getElementById('progressBar').style.width = `${data.stats.completion_percentage || 0}%`;
-                    document.getElementById('studyHours').textContent = Math.round((data.stats.study_time_last_7_days || 0) / 60);
+            const { stats } = dashboardData;
 
-                    // Load weekly progress
-                    loadWeeklyProgress(data.weekly_progress);
+            // Update streak
+            document.getElementById('currentStreak').textContent = stats.current_streak;
+            document.getElementById('longestStreak').textContent = stats.longest_streak;
 
-                    // Load recent activity
-                    loadRecentActivity(data.recent_sessions);
+            // Update completion
+            document.getElementById('completedDays').textContent = stats.completed_days;
+            document.getElementById('completionPercentage').textContent =
+                `${Math.round(stats.completion_percentage)}%`;
 
-                    // Load recent notes
-                    loadRecentNotes(data.recent_notes);
-
-                    // Create study time chart
-                    createStudyTimeChart();
-                }
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-                showToast('Failed to load dashboard data', 'error');
-            }
+            // Update study time
+            const weeklyHours = Math.round(stats.study_time_last_7_days / 60);
+            document.getElementById('studyTimeWeek').textContent = `${weeklyHours}h`;
         }
 
-        // Load Weekly Progress
-        function loadWeeklyProgress(weeklyProgress) {
-            const container = document.getElementById('weeklyProgressContainer');
+        // Load weekly progress chart
+        function loadWeeklyProgressChart() {
+            const ctx = document.getElementById('weeklyProgressChart').getContext('2d');
 
-            if (!weeklyProgress || Object.keys(weeklyProgress).length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-chart-line fa-3x mb-3"></i>
-                        <p>No progress data yet. Start learning!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '<div class="space-y-3">';
-
-            // Show last 4 weeks
-            const weeks = Object.keys(weeklyProgress).sort((a, b) => b - a).slice(0, 4);
-
-            weeks.forEach(week => {
-                const data = weeklyProgress[week];
-                const percentage = Math.round(data.percentage || 0);
-
-                html += `
-                    <div class="progress-card p-3 border rounded">
-                        <div class="progress-header mb-2">
-                            <span class="progress-title">Week ${week}: ${data.title}</span>
-                            <span class="progress-percentage">${percentage}%</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-primary" style="width: ${percentage}%"></div>
-                        </div>
-                        <small class="text-muted mt-1 d-block">${data.completed}/${data.total} days completed</small>
-                    </div>
-                `;
-            });
-
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        // Load Recent Activity
-        function loadRecentActivity(sessions) {
-            const container = document.getElementById('recentActivityContainer');
-
-            if (!sessions || sessions.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-history fa-3x mb-3"></i>
-                        <p>No recent activity</p>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '<div class="timeline">';
-
-            sessions.forEach(session => {
-                const date = new Date(session.start_time);
-                const timeAgo = getTimeAgo(date);
-
-                html += `
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="flex-shrink-0">
-                            <div class="rounded-circle bg-primary bg-opacity-10 p-2">
-                                <i class="fas fa-clock text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <p class="mb-1">
-                                <strong>Pomodoro Session</strong>
-                                ${session.topic ? `- ${session.topic}` : ''}
-                            </p>
-                            <small class="text-muted">
-                                ${session.duration} minutes • ${timeAgo}
-                            </small>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        // Load Recent Notes
-        function loadRecentNotes(notes) {
-            const container = document.getElementById('recentNotesContainer');
-
-            if (!notes || notes.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="fas fa-sticky-note fa-3x mb-3"></i>
-                        <p>No notes yet</p>
-                        <a href="/notes" class="btn btn-sm btn-primary">Create your first note</a>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '<div class="space-y-2">';
-
-            notes.forEach(note => {
-                const date = new Date(note.updated_at);
-                const timeAgo = getTimeAgo(date);
-
-                html += `
-                    <a href="/notes#${note.id}" class="d-block p-3 border rounded text-decoration-none hover-lift">
-                        <h6 class="mb-1 text-dark">${note.title}</h6>
-                        <small class="text-muted">${timeAgo}</small>
-                    </a>
-                `;
-            });
-
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        // Create Study Time Chart
-        function createStudyTimeChart() {
-            const ctx = document.getElementById('studyTimeChart').getContext('2d');
-
-            // Generate last 7 days
+            // Prepare data for the last 14 weeks
             const labels = [];
             const data = [];
+            const backgroundColors = [];
 
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
-                data.push(Math.floor(Math.random() * 120) + 30); // Random data for demo
-            }
+            Object.entries(dashboardData.weekly_progress).forEach(([week, progress]) => {
+                labels.push(`Week ${week}`);
+                data.push(progress.percentage);
 
-            new Chart(ctx, {
-                type: 'line',
+                // Color based on completion
+                if (progress.percentage === 100) {
+                    backgroundColors.push(CHART_COLORS.SUCCESS);
+                } else if (progress.percentage > 50) {
+                    backgroundColors.push(CHART_COLORS.WARNING);
+                } else if (progress.percentage > 0) {
+                    backgroundColors.push(CHART_COLORS.INFO);
+                } else {
+                    backgroundColors.push(CHART_COLORS.GRAY);
+                }
+            });
+
+            weeklyProgressChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: labels.slice(-14), // Show last 14 weeks
                     datasets: [{
-                        label: 'Study Time (minutes)',
-                        data: data,
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
+                        label: 'Completion %',
+                        data: data.slice(-14),
+                        backgroundColor: backgroundColors.slice(-14),
+                        borderRadius: 8,
+                        maxBarThickness: 40
                     }]
                 },
                 options: {
@@ -634,19 +488,23 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.parsed.y}% completed`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: {
-                                display: true,
-                                drawBorder: false
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
+                            max: 100,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + '%';
+                                }
                             }
                         }
                     }
@@ -654,96 +512,301 @@
             });
         }
 
-        // Utility function to get time ago
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
+        // Load recent activity
+        function loadRecentActivity() {
+            const recentActivity = document.getElementById('recentActivity');
 
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + " years ago";
+            if (!dashboardData.recent_sessions || dashboardData.recent_sessions.length === 0) {
+                recentActivity.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-history fa-3x mb-3"></i>
+                        <p>No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
 
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + " months ago";
+            let html = '<div class="activity-timeline">';
 
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + " days ago";
+            dashboardData.recent_sessions.forEach((session, index) => {
+                const time = utils.getRelativeTime(session.start_time);
+                const icon = session.completed ? 'check-circle' : 'clock';
+                const color = session.completed ? 'success' : 'warning';
 
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + " hours ago";
+                html += `
+                    <div class="activity-item ${index === dashboardData.recent_sessions.length - 1 ? 'last' : ''}">
+                        <div class="activity-icon bg-${color} bg-opacity-10 text-${color}">
+                            <i class="fas fa-${icon}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-1">${session.topic || 'Study Session'}</p>
+                            <small class="text-muted">${session.duration} min • ${time}</small>
+                        </div>
+                    </div>
+                `;
+            });
 
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + " minutes ago";
-
-            return "Just now";
+            html += '</div>';
+            recentActivity.innerHTML = html;
         }
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const query = e.target.value.trim();
-                if (query) {
-                    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        // Load current week
+        async function loadCurrentWeek() {
+            const currentWeekContent = document.getElementById('currentWeekContent');
+
+            try {
+                // Get current week number based on progress
+                const completedWeeks = Object.keys(dashboardData.weekly_progress)
+                    .filter(week => dashboardData.weekly_progress[week].percentage === 100);
+                const currentWeekNum = completedWeeks.length + 1;
+
+                if (currentWeekNum > 14) {
+                    currentWeekContent.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                            <h5>Congratulations!</h5>
+                            <p class="text-muted">You've completed the entire roadmap!</p>
+                            <a href="/pages/roadmap.html" class="btn btn-primary mt-2">
+                                Review Your Journey
+                            </a>
+                        </div>
+                    `;
+                    return;
                 }
+
+                // Get roadmap data for current week
+                const roadmapResponse = await api.getRoadmap(currentWeekNum);
+                const weekData = roadmapResponse;
+
+                const weekProgress = dashboardData.weekly_progress[currentWeekNum] || { completed: 0, total: 7, percentage: 0 };
+
+                let html = `
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-1">Week ${currentWeekNum} of 14</h6>
+                        <h4 class="fw-bold mb-2">${weekData.title}</h4>
+                        <p class="text-muted mb-3">${weekData.goal}</p>
+                        
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                 style="width: ${weekProgress.percentage}%">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between text-muted small mb-4">
+                            <span>${weekProgress.completed} of ${weekProgress.total} days completed</span>
+                            <span>${weekProgress.percentage}%</span>
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mb-3">This Week's Topics:</h6>
+                    <div class="day-list">
+                `;
+
+                weekData.days.forEach(day => {
+                    const isCompleted = dashboardData.weekly_progress[currentWeekNum] &&
+                        dashboardData.weekly_progress[currentWeekNum].completed > 0;
+
+                    html += `
+                        <div class="day-item d-flex align-items-center mb-2">
+                            <div class="day-icon ${isCompleted ? 'text-success' : 'text-muted'} me-3">
+                                <i class="fas fa-${isCompleted ? 'check-circle' : 'circle'}"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>${day.day}:</strong> ${day.topic}
+                                    </div>
+                                    <small class="text-muted">${day.time_estimate} min</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="fw-bold mb-2">Week Project:</h6>
+                        <div class="card bg-light border-0">
+                            <div class="card-body py-2">
+                                <h6 class="mb-1">${weekData.project.title}</h6>
+                                <p class="text-muted small mb-0">${weekData.project.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                currentWeekContent.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading current week:', error);
+                currentWeekContent.innerHTML = `
+                    <div class="text-center text-danger py-4">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                        <p>Failed to load current week data</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Set daily quote
+        function setDailyQuote() {
+            // Use date as seed for consistent daily quote
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+            const quoteIndex = dayOfYear % quotes.length;
+            const quote = quotes[quoteIndex];
+
+            document.getElementById('dailyQuote').textContent = `"${quote.text}"`;
+            document.getElementById('quoteAuthor').textContent = `- ${quote.author}`;
+        }
+
+        // Start today's lesson
+        async function startTodayLesson() {
+            try {
+                // Get current week and day
+                const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+                const completedWeeks = Object.keys(dashboardData.weekly_progress)
+                    .filter(week => dashboardData.weekly_progress[week].percentage === 100);
+                const currentWeek = completedWeeks.length + 1;
+
+                if (currentWeek > 14) {
+                    notifications.info('You have completed all lessons!');
+                    return;
+                }
+
+                // Redirect to roadmap with current week highlighted
+                window.location.href = `/pages/roadmap.html?week=${currentWeek}&day=${today}`;
+
+            } catch (error) {
+                console.error('Error starting lesson:', error);
+                notifications.error('Failed to start lesson');
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Toggle mobile drawer
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('drawerBackdrop');
+
+            drawer.classList.toggle('open');
+            backdrop.classList.toggle('show');
+
+            // Prevent body scroll when drawer is open
+            if (drawer.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Show notifications (placeholder)
+        function showNotifications() {
+            notifications.info('Notifications panel coming soon!');
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                auth.logout();
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+
+            // Check for pomodoro timer state
+            const pomodoroState = storage.getPomodoroState();
+            if (pomodoroState && pomodoroState.isRunning) {
+                notifications.info('Pomodoro timer is running in the background', {
+                    action: {
+                        text: 'View',
+                        handler: () => window.location.href = '/pages/pomodoro.html'
+                    }
+                });
             }
         });
 
-        // Daily motivational quotes
-        const quotes = [
-            { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
-            { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
-            { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
-            { text: "In order to be irreplaceable, one must always be different.", author: "Coco Chanel" },
-            { text: "Java is to JavaScript what car is to Carpet.", author: "Chris Heilmann" },
-            { text: "Knowledge is power.", author: "Francis Bacon" },
-            { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
-            { text: "Fix the cause, not the symptom.", author: "Steve Maguire" },
-            { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
-            { text: "Before software can be reusable it first has to be usable.", author: "Ralph Johnson" }
-        ];
-
-        // Set daily quote (deterministic based on date)
-        const today = new Date();
-        const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
-        const quote = quotes[dayOfYear % quotes.length];
-        document.getElementById('dailyQuote').textContent = `"${quote.text}"`;
-        document.getElementById('dailyQuote').nextElementSibling.textContent = `- ${quote.author}`;
-
-        // Initialize dashboard
-        async function initDashboard() {
-            await loadUserProfile();
-            await loadDashboardData();
-
-            // Check for achievements
-            const currentStreak = parseInt(document.getElementById('currentStreak').textContent);
-            if (currentStreak > 0 && currentStreak % 7 === 0) {
-                showAchievement(`🎉 ${currentStreak} Day Streak!`, 'Keep up the amazing work!');
+        // Add custom styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-        }
-
-        // Show achievement with confetti
-        function showAchievement(title, message) {
-            showToast(`${title} ${message}`, 'success');
-
-            // Create confetti effect
-            const colors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b'];
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                    document.body.appendChild(confetti);
-
-                    setTimeout(() => confetti.remove(), 3500);
-                }, i * 30);
+            
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
             }
-        }
-
-        // Initialize on page load
-        initDashboard();
-
-        // Refresh data every 5 minutes
-        setInterval(loadDashboardData, 5 * 60 * 1000);
+            
+            .activity-timeline {
+                position: relative;
+            }
+            
+            .activity-item {
+                display: flex;
+                align-items: start;
+                gap: 1rem;
+                padding-bottom: 1.5rem;
+                position: relative;
+            }
+            
+            .activity-item:not(.last)::before {
+                content: '';
+                position: absolute;
+                left: 19px;
+                top: 40px;
+                bottom: 0;
+                width: 2px;
+                background: #e5e7eb;
+            }
+            
+            .activity-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            
+            .activity-content {
+                flex: 1;
+            }
+            
+            .bg-gradient-primary {
+                background: var(--gradient-primary) !important;
+            }
+            
+            .recent-activity-list {
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            
+            .day-list {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            
+            @media (max-width: 767px) {
+                .page-title {
+                    font-size: 1.5rem;
+                }
+                
+                .card-body {
+                    padding: 1rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 

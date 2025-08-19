@@ -1,40 +1,53 @@
-/* Fade Animations */
+/* Animations and Transitions */
+
+/* Keyframes */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 @keyframes fadeOut {
     from {
         opacity: 1;
-        transform: translateY(0);
     }
 
     to {
         opacity: 0;
-        transform: translateY(10px);
     }
 }
 
-.fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-.fade-out {
-    animation: fadeOut 0.3s ease-out forwards;
+@keyframes slideInDown {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-/* Slide Animations */
 @keyframes slideInLeft {
     from {
-        transform: translateX(-100%);
+        transform: translateX(-30px);
         opacity: 0;
     }
 
@@ -46,7 +59,7 @@
 
 @keyframes slideInRight {
     from {
-        transform: translateX(100%);
+        transform: translateX(30px);
         opacity: 0;
     }
 
@@ -56,31 +69,40 @@
     }
 }
 
-@keyframes slideInUp {
+@keyframes scaleIn {
     from {
-        transform: translateY(100%);
+        transform: scale(0.8);
         opacity: 0;
     }
 
     to {
-        transform: translateY(0);
+        transform: scale(1);
         opacity: 1;
     }
 }
 
-.slide-in-left {
-    animation: slideInLeft 0.3s ease-out forwards;
+@keyframes scaleOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0.8);
+        opacity: 0;
+    }
 }
 
-.slide-in-right {
-    animation: slideInRight 0.3s ease-out forwards;
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.slide-in-up {
-    animation: slideInUp 0.3s ease-out forwards;
-}
-
-/* Pulse Animation */
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -98,26 +120,6 @@
     }
 }
 
-.pulse {
-    animation: pulse 2s infinite;
-}
-
-/* Spin Animation */
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.spin {
-    animation: spin 1s linear infinite;
-}
-
-/* Bounce Animation */
 @keyframes bounce {
 
     0%,
@@ -126,30 +128,10 @@
     }
 
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-20px);
     }
 }
 
-.bounce {
-    animation: bounce 1s ease-in-out infinite;
-}
-
-/* Progress Animation */
-@keyframes progressFill {
-    from {
-        width: 0;
-    }
-
-    to {
-        width: var(--progress-width, 100%);
-    }
-}
-
-.progress-fill {
-    animation: progressFill 1s ease-out forwards;
-}
-
-/* Shake Animation */
 @keyframes shake {
 
     0%,
@@ -162,145 +144,348 @@
     50%,
     70%,
     90% {
-        transform: translateX(-5px);
+        transform: translateX(-10px);
     }
 
     20%,
     40%,
     60%,
     80% {
-        transform: translateX(5px);
+        transform: translateX(10px);
     }
 }
 
-.shake {
-    animation: shake 0.5s ease-in-out;
-}
-
-/* Confetti Animation */
-@keyframes confetti-fall {
-    0% {
-        transform: translateY(-100vh) rotate(0deg);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(100vh) rotate(720deg);
+@keyframes ripple {
+    to {
+        transform: scale(4);
         opacity: 0;
     }
 }
 
-.confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background: var(--primary);
-    animation: confetti-fall 3s linear forwards;
+/* Animation Classes */
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
 }
 
-.confetti:nth-child(2n) {
-    background: var(--secondary);
-    animation-duration: 2.5s;
+.animate-fadeOut {
+    animation: fadeOut 0.3s ease-in-out;
 }
 
-.confetti:nth-child(3n) {
-    background: var(--success);
-    animation-duration: 3.5s;
+.animate-slideInUp {
+    animation: slideInUp 0.3s ease-out;
 }
 
-.confetti:nth-child(4n) {
-    background: var(--warning);
-    animation-duration: 2.8s;
+.animate-slideInDown {
+    animation: slideInDown 0.3s ease-out;
 }
 
-/* Streak Fire Animation */
-@keyframes fire {
-    0% {
-        transform: scaleY(1) rotate(-2deg);
-    }
-
-    50% {
-        transform: scaleY(1.1) rotate(2deg);
-    }
-
-    100% {
-        transform: scaleY(1) rotate(-2deg);
-    }
+.animate-slideInLeft {
+    animation: slideInLeft 0.3s ease-out;
 }
 
-.fire-animation {
-    animation: fire 1s ease-in-out infinite;
-    transform-origin: bottom center;
+.animate-slideInRight {
+    animation: slideInRight 0.3s ease-out;
 }
 
-/* Check Animation */
-@keyframes checkmark {
-    0% {
-        stroke-dashoffset: 100;
-    }
-
-    100% {
-        stroke-dashoffset: 0;
-    }
+.animate-scaleIn {
+    animation: scaleIn 0.3s ease-out;
 }
 
-.checkmark-animation {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: checkmark 0.5s ease-out forwards;
+.animate-scaleOut {
+    animation: scaleOut 0.3s ease-out;
 }
 
-/* Notification Bell */
-@keyframes ring {
-
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-        transform: rotate(-10deg);
-    }
-
-    20%,
-    40%,
-    60%,
-    80% {
-        transform: rotate(10deg);
-    }
+.animate-rotate {
+    animation: rotate 1s linear infinite;
 }
 
-.ring {
-    animation: ring 0.5s ease-in-out;
-    transform-origin: top center;
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-bounce {
+    animation: bounce 1s ease-in-out infinite;
+}
+
+.animate-shake {
+    animation: shake 0.5s ease-in-out;
 }
 
 /* Hover Effects */
 .hover-grow {
-    transition: transform var(--transition-fast);
+    transition: transform var(--transition-base);
 }
 
 .hover-grow:hover {
     transform: scale(1.05);
 }
 
+.hover-shrink {
+    transition: transform var(--transition-base);
+}
+
+.hover-shrink:hover {
+    transform: scale(0.95);
+}
+
+.hover-rotate {
+    transition: transform var(--transition-base);
+}
+
+.hover-rotate:hover {
+    transform: rotate(5deg);
+}
+
 .hover-lift {
-    transition: all var(--transition-fast);
+    transition: all var(--transition-base);
 }
 
 .hover-lift:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
 }
 
-.hover-glow {
-    transition: all var(--transition-fast);
+/* Ripple Effect */
+.ripple {
+    position: relative;
+    overflow: hidden;
 }
 
-.hover-glow:hover {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+.ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Loading Animations */
+.loading-dots {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+.loading-dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: loadingDots 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes loadingDots {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Progress Ring */
+.progress-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.progress-ring-circle {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.progress-ring-circle-bg {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 10;
+}
+
+.progress-ring-circle-progress {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.35s;
+}
+
+/* Confetti Animation */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    animation: confetti-fall 3s linear;
+    z-index: var(--z-tooltip);
+}
+
+@keyframes confetti-fall {
+    to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Smooth Scroll Indicator */
+.scroll-indicator {
+    position: fixed;
+    top: var(--topbar-height);
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.1s linear;
+    z-index: var(--z-fixed);
+}
+
+/* Page Transitions */
+.page-transition-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease-out;
+}
+
+.page-transition-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-transition-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease-in;
+}
+
+/* Skeleton Loading */
+.skeleton-box {
+    display: inline-block;
+    height: 1em;
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.skeleton-box::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0,
+            rgba(255, 255, 255, 0.2) 20%,
+            rgba(255, 255, 255, 0.5) 60%,
+            rgba(255, 255, 255, 0));
+    animation: shimmer 2s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Notification Badge Animation */
+.notification-badge {
+    position: relative;
+}
+
+.notification-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--danger);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+/* Success Checkmark */
+.checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: var(--success);
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px var(--success);
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    margin: 0 auto;
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: var(--success);
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+
+    0%,
+    100% {
+        transform: none;
+    }
+
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px var(--success);
+    }
 }
