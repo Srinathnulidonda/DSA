@@ -1,81 +1,71 @@
 {
     "cleanUrls": true,
     "trailingSlash": false,
-    "headers": [
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                }
-            ]
-        }
-    ],
-    "rewrites": [
-        {
-            "source": "/",
-            "destination": "/index.html"
-        },
+    "redirects": [
         {
             "source": "/dashboard",
-            "destination": "/pages/dashboard.html"
+            "destination": "/pages/dashboard.html",
+            "permanent": false
         },
         {
             "source": "/roadmap",
-            "destination": "/pages/roadmap.html"
+            "destination": "/pages/roadmap.html",
+            "permanent": false
         },
         {
             "source": "/calendar",
-            "destination": "/pages/calendar.html"
+            "destination": "/pages/calendar.html",
+            "permanent": false
         },
         {
             "source": "/progress",
-            "destination": "/pages/progress.html"
+            "destination": "/pages/progress.html",
+            "permanent": false
         },
         {
             "source": "/notes",
-            "destination": "/pages/notes.html"
+            "destination": "/pages/notes.html",
+            "permanent": false
         },
         {
             "source": "/pomodoro",
-            "destination": "/pages/pomodoro.html"
+            "destination": "/pages/pomodoro.html",
+            "permanent": false
         },
         {
             "source": "/profile",
-            "destination": "/pages/profile.html"
+            "destination": "/pages/profile.html",
+            "permanent": false
         },
         {
             "source": "/settings",
-            "destination": "/pages/settings.html"
+            "destination": "/pages/settings.html",
+            "permanent": false
         },
         {
             "source": "/analytics",
-            "destination": "/pages/analytics.html"
+            "destination": "/pages/analytics.html",
+            "permanent": false
         },
         {
             "source": "/login",
-            "destination": "/auth/login.html"
+            "destination": "/auth/login.html",
+            "permanent": false
         },
         {
             "source": "/register",
-            "destination": "/auth/register.html"
+            "destination": "/auth/register.html",
+            "permanent": false
         },
         {
             "source": "/forgot-password",
-            "destination": "/auth/forgot-password.html"
+            "destination": "/auth/forgot-password.html",
+            "permanent": false
         },
         {
             "source": "/reset-password",
-            "destination": "/auth/reset-password.html"
+            "destination": "/auth/reset-password.html",
+            "permanent": false
         }
     ]
 }
