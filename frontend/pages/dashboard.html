@@ -1,9 +1,750 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>dashboard.html</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DSA Path</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/responsive.css">
 </head>
+
 <body>
-<h1>dashboard.html</h1>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-code-branch"></i>
+                    <span>DSA Path</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="/dashboard" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/roadmap" class="nav-link">
+                        <i class="fas fa-route"></i>
+                        <span>Roadmap</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/calendar" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendar</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/progress" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/resources" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Resources</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/notes" class="nav-link">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/pomodoro" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Pomodoro</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/ai-assistant" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Assistant</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/analytics" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="mt-auto pt-4 border-top">
+                    <div class="nav-item">
+                        <a href="/profile" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <h4 class="mb-0 fw-bold">Dashboard</h4>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="search-bar me-3">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search..." id="searchInput">
+                    </div>
+
+                    <button class="btn btn-link position-relative me-2">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle d-flex align-items-center"
+                            data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Avatar"
+                                class="rounded-circle me-2" width="32" height="32" id="userAvatar">
+                            <span id="userName">Loading...</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
+                            </li>
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Welcome Section -->
+                <div class="page-header mb-4">
+                    <h1 class="page-title">Welcome back, <span id="welcomeName">User</span>! 👋</h1>
+                    <p class="page-subtitle">Here's your learning progress overview</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary bg-opacity-10">
+                            <i class="fas fa-fire text-primary"></i>
+                        </div>
+                        <div class="stat-value" id="currentStreak">0</div>
+                        <div class="stat-label">Day Streak</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Keep it up!</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success bg-opacity-10">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <div class="stat-value"><span id="completionPercentage">0</span>%</div>
+                        <div class="stat-label">Course Progress</div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-success" id="progressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info bg-opacity-10">
+                            <i class="fas fa-clock text-info"></i>
+                        </div>
+                        <div class="stat-value"><span id="studyHours">0</span>h</div>
+                        <div class="stat-label">Study Time (7 days)</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>20% from last week</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning bg-opacity-10">
+                            <i class="fas fa-trophy text-warning"></i>
+                        </div>
+                        <div class="stat-value" id="longestStreak">0</div>
+                        <div class="stat-label">Longest Streak</div>
+                        <div class="stat-change">
+                            <span class="text-muted">Personal best</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Weekly Progress -->
+                    <div class="custom-card">
+                        <h5 class="fw-bold mb-3">Weekly Progress</h5>
+                        <div id="weeklyProgressContainer">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="custom-card">
+                        <h5 class="fw-bold mb-3">Recent Activity</h5>
+                        <div id="recentActivityContainer">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Study Time Chart -->
+                    <div class="custom-card">
+                        <h5 class="fw-bold mb-3">Study Time (Last 7 Days)</h5>
+                        <canvas id="studyTimeChart" height="200"></canvas>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="custom-card">
+                        <h5 class="fw-bold mb-3">Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <a href="/roadmap" class="btn btn-outline-primary">
+                                <i class="fas fa-book-open me-2"></i>Continue Learning
+                            </a>
+                            <a href="/pomodoro" class="btn btn-outline-info">
+                                <i class="fas fa-play me-2"></i>Start Pomodoro Session
+                            </a>
+                            <a href="/notes" class="btn btn-outline-success">
+                                <i class="fas fa-plus me-2"></i>Create New Note
+                            </a>
+                            <a href="/ai-assistant" class="btn btn-outline-warning">
+                                <i class="fas fa-robot me-2"></i>Ask AI Assistant
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Recent Notes -->
+                    <div class="custom-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Recent Notes</h5>
+                            <a href="/notes" class="text-primary text-decoration-none">View all</a>
+                        </div>
+                        <div id="recentNotesContainer">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Motivational Quote -->
+                    <div class="custom-card bg-gradient bg-primary text-white">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-quote-left fa-2x me-3 opacity-50"></i>
+                            <div>
+                                <p class="mb-2" id="dailyQuote">"The only way to learn a new programming language is by
+                                    writing programs in it."</p>
+                                <p class="mb-0 opacity-75">- Dennis Ritchie</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item active">
+                <i class="fas fa-home mobile-nav-icon"></i>
+                <span>Home</span>
+            </a>
+            <a href="/roadmap" class="mobile-nav-item">
+                <i class="fas fa-route mobile-nav-icon"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="/resources" class="mobile-nav-item">
+                <i class="fas fa-book mobile-nav-icon"></i>
+                <span>Resources</span>
+            </a>
+            <a href="/notes" class="mobile-nav-item">
+                <i class="fas fa-sticky-note mobile-nav-icon"></i>
+                <span>Notes</span>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <i class="fas fa-user mobile-nav-icon"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let accessToken = localStorage.getItem('access_token');
+        let currentUser = null;
+
+        // Authentication check
+        if (!accessToken) {
+            window.location.href = '/login';
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+
+            const toastHTML = `
+                <div id="${toastId}" class="custom-toast ${type}" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        // API Functions
+        async function fetchWithAuth(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                // Try to refresh token
+                const refreshToken = localStorage.getItem('refresh_token');
+                if (refreshToken) {
+                    const refreshResponse = await fetch(`${API_BASE}/auth/refresh`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${refreshToken}`
+                        }
+                    });
+
+                    if (refreshResponse.ok) {
+                        const data = await refreshResponse.json();
+                        accessToken = data.access_token;
+                        localStorage.setItem('access_token', accessToken);
+
+                        // Retry original request
+                        return fetch(url, {
+                            ...options,
+                            headers: {
+                                ...options.headers,
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                    }
+                }
+
+                // Refresh failed, redirect to login
+                logout();
+            }
+
+            return response;
+        }
+
+        // Load User Profile
+        async function loadUserProfile() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/profile`);
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+
+                    // Update UI
+                    document.getElementById('userName').textContent = currentUser.name;
+                    document.getElementById('welcomeName').textContent = currentUser.name.split(' ')[0];
+
+                    // Update avatar
+                    if (currentUser.avatar_url) {
+                        document.getElementById('userAvatar').src = currentUser.avatar_url;
+                    } else {
+                        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=6366f1&color=fff`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/dashboard`);
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Update stats
+                    document.getElementById('currentStreak').textContent = data.stats.current_streak || 0;
+                    document.getElementById('longestStreak').textContent = data.stats.longest_streak || 0;
+                    document.getElementById('completionPercentage').textContent = Math.round(data.stats.completion_percentage || 0);
+                    document.getElementById('progressBar').style.width = `${data.stats.completion_percentage || 0}%`;
+                    document.getElementById('studyHours').textContent = Math.round((data.stats.study_time_last_7_days || 0) / 60);
+
+                    // Load weekly progress
+                    loadWeeklyProgress(data.weekly_progress);
+
+                    // Load recent activity
+                    loadRecentActivity(data.recent_sessions);
+
+                    // Load recent notes
+                    loadRecentNotes(data.recent_notes);
+
+                    // Create study time chart
+                    createStudyTimeChart();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showToast('Failed to load dashboard data', 'error');
+            }
+        }
+
+        // Load Weekly Progress
+        function loadWeeklyProgress(weeklyProgress) {
+            const container = document.getElementById('weeklyProgressContainer');
+
+            if (!weeklyProgress || Object.keys(weeklyProgress).length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-chart-line fa-3x mb-3"></i>
+                        <p>No progress data yet. Start learning!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="space-y-3">';
+
+            // Show last 4 weeks
+            const weeks = Object.keys(weeklyProgress).sort((a, b) => b - a).slice(0, 4);
+
+            weeks.forEach(week => {
+                const data = weeklyProgress[week];
+                const percentage = Math.round(data.percentage || 0);
+
+                html += `
+                    <div class="progress-card p-3 border rounded">
+                        <div class="progress-header mb-2">
+                            <span class="progress-title">Week ${week}: ${data.title}</span>
+                            <span class="progress-percentage">${percentage}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: ${percentage}%"></div>
+                        </div>
+                        <small class="text-muted mt-1 d-block">${data.completed}/${data.total} days completed</small>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Load Recent Activity
+        function loadRecentActivity(sessions) {
+            const container = document.getElementById('recentActivityContainer');
+
+            if (!sessions || sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-history fa-3x mb-3"></i>
+                        <p>No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="timeline">';
+
+            sessions.forEach(session => {
+                const date = new Date(session.start_time);
+                const timeAgo = getTimeAgo(date);
+
+                html += `
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2">
+                                <i class="fas fa-clock text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <p class="mb-1">
+                                <strong>Pomodoro Session</strong>
+                                ${session.topic ? `- ${session.topic}` : ''}
+                            </p>
+                            <small class="text-muted">
+                                ${session.duration} minutes • ${timeAgo}
+                            </small>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Load Recent Notes
+        function loadRecentNotes(notes) {
+            const container = document.getElementById('recentNotesContainer');
+
+            if (!notes || notes.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-sticky-note fa-3x mb-3"></i>
+                        <p>No notes yet</p>
+                        <a href="/notes" class="btn btn-sm btn-primary">Create your first note</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="space-y-2">';
+
+            notes.forEach(note => {
+                const date = new Date(note.updated_at);
+                const timeAgo = getTimeAgo(date);
+
+                html += `
+                    <a href="/notes#${note.id}" class="d-block p-3 border rounded text-decoration-none hover-lift">
+                        <h6 class="mb-1 text-dark">${note.title}</h6>
+                        <small class="text-muted">${timeAgo}</small>
+                    </a>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Create Study Time Chart
+        function createStudyTimeChart() {
+            const ctx = document.getElementById('studyTimeChart').getContext('2d');
+
+            // Generate last 7 days
+            const labels = [];
+            const data = [];
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                data.push(Math.floor(Math.random() * 120) + 30); // Random data for demo
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Study Time (minutes)',
+                        data: data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Utility function to get time ago
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
+
+            return "Just now";
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query) {
+                    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+
+        // Daily motivational quotes
+        const quotes = [
+            { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
+            { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+            { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+            { text: "In order to be irreplaceable, one must always be different.", author: "Coco Chanel" },
+            { text: "Java is to JavaScript what car is to Carpet.", author: "Chris Heilmann" },
+            { text: "Knowledge is power.", author: "Francis Bacon" },
+            { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+            { text: "Fix the cause, not the symptom.", author: "Steve Maguire" },
+            { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+            { text: "Before software can be reusable it first has to be usable.", author: "Ralph Johnson" }
+        ];
+
+        // Set daily quote (deterministic based on date)
+        const today = new Date();
+        const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+        const quote = quotes[dayOfYear % quotes.length];
+        document.getElementById('dailyQuote').textContent = `"${quote.text}"`;
+        document.getElementById('dailyQuote').nextElementSibling.textContent = `- ${quote.author}`;
+
+        // Initialize dashboard
+        async function initDashboard() {
+            await loadUserProfile();
+            await loadDashboardData();
+
+            // Check for achievements
+            const currentStreak = parseInt(document.getElementById('currentStreak').textContent);
+            if (currentStreak > 0 && currentStreak % 7 === 0) {
+                showAchievement(`🎉 ${currentStreak} Day Streak!`, 'Keep up the amazing work!');
+            }
+        }
+
+        // Show achievement with confetti
+        function showAchievement(title, message) {
+            showToast(`${title} ${message}`, 'success');
+
+            // Create confetti effect
+            const colors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 3500);
+                }, i * 30);
+            }
+        }
+
+        // Initialize on page load
+        initDashboard();
+
+        // Refresh data every 5 minutes
+        setInterval(loadDashboardData, 5 * 60 * 1000);
+    </script>
 </body>
+
 </html>

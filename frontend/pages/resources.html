@@ -1,9 +1,834 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>resources.html</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - DSA Path</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <style>
+        .resource-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .filter-button {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-button:hover {
+            background: var(--gray-200);
+        }
+
+        .filter-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .resource-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        .resource-card {
+            height: 100%;
+            transition: all var(--transition-base);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .resource-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .resource-icon.text {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .resource-icon.video {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .resource-icon.interactive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .resource-icon.practice {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .resource-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .resource-description {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .resource-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .resource-tag {
+            background: var(--gray-100);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            color: var(--gray-700);
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-container input {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+        .search-container .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+
+        .search-container .clear-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            cursor: pointer;
+            display: none;
+        }
+
+        .featured-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .featured-item {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-fast);
+        }
+
+        .featured-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .pagination-button {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .pagination-button:hover {
+            background: var(--gray-200);
+        }
+
+        .pagination-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
+
 <body>
-<h1>resources.html</h1>
+    <div class="app-layout">
+        <!-- Sidebar (same as previous pages) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-code-branch"></i>
+                    <span>DSA Path</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/roadmap" class="nav-link">
+                        <i class="fas fa-route"></i>
+                        <span>Roadmap</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/calendar" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendar</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/progress" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/resources" class="nav-link active">
+                        <i class="fas fa-book"></i>
+                        <span>Resources</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/notes" class="nav-link">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/pomodoro" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Pomodoro</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/ai-assistant" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Assistant</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/analytics" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="mt-auto pt-4 border-top">
+                    <div class="nav-item">
+                        <a href="/profile" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <h4 class="mb-0 fw-bold">Learning Resources</h4>
+                </div>
+
+                <div class="topbar-right">
+                    <button class="btn btn-link position-relative me-2">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle d-flex align-items-center"
+                            data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Avatar"
+                                class="rounded-circle me-2" width="32" height="32" id="userAvatar">
+                            <span id="userName">Loading...</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
+                            </li>
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Featured Resources -->
+                <div class="featured-section">
+                    <h2 class="fw-bold mb-2">Featured Resources</h2>
+                    <p class="opacity-90 mb-0">Handpicked resources to accelerate your learning</p>
+
+                    <div class="featured-grid">
+                        <div class="featured-item">
+                            <i class="fas fa-star mb-3 fa-2x"></i>
+                            <h5>500+ Problems</h5>
+                            <p class="mb-0 opacity-90">Curated DSA problems with solutions</p>
+                        </div>
+                        <div class="featured-item">
+                            <i class="fas fa-video mb-3 fa-2x"></i>
+                            <h5>Video Tutorials</h5>
+                            <p class="mb-0 opacity-90">Visual explanations from top educators</p>
+                        </div>
+                        <div class="featured-item">
+                            <i class="fas fa-gamepad mb-3 fa-2x"></i>
+                            <h5>Interactive Tools</h5>
+                            <p class="mb-0 opacity-90">Visualize algorithms in real-time</p>
+                        </div>
+                        <div class="featured-item">
+                            <i class="fas fa-book-open mb-3 fa-2x"></i>
+                            <h5>In-depth Guides</h5>
+                            <p class="mb-0 opacity-90">Comprehensive tutorials and articles</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control form-control-lg" placeholder="Search resources..."
+                        id="resourceSearch" onkeyup="searchResources()">
+                    <i class="fas fa-times clear-icon" id="clearSearch" onclick="clearSearch()"></i>
+                </div>
+
+                <!-- Filters -->
+                <div class="resource-filters">
+                    <button class="filter-button active" onclick="filterResources('all')">
+                        <i class="fas fa-th me-2"></i>All Resources
+                    </button>
+                    <button class="filter-button" onclick="filterResources('text')">
+                        <i class="fas fa-book me-2"></i>Articles
+                    </button>
+                    <button class="filter-button" onclick="filterResources('video')">
+                        <i class="fas fa-video me-2"></i>Videos
+                    </button>
+                    <button class="filter-button" onclick="filterResources('interactive')">
+                        <i class="fas fa-gamepad me-2"></i>Interactive
+                    </button>
+                    <button class="filter-button" onclick="filterResources('practice')">
+                        <i class="fas fa-code me-2"></i>Practice
+                    </button>
+                </div>
+
+                <!-- Resources Grid -->
+                <div id="resourcesContainer">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading resources...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container" id="paginationContainer">
+                    <!-- Pagination will be rendered here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item">
+                <i class="fas fa-home mobile-nav-icon"></i>
+                <span>Home</span>
+            </a>
+            <a href="/roadmap" class="mobile-nav-item">
+                <i class="fas fa-route mobile-nav-icon"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="/resources" class="mobile-nav-item active">
+                <i class="fas fa-book mobile-nav-icon"></i>
+                <span>Resources</span>
+            </a>
+            <a href="/notes" class="mobile-nav-item">
+                <i class="fas fa-sticky-note mobile-nav-icon"></i>
+                <span>Notes</span>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <i class="fas fa-user mobile-nav-icon"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let accessToken = localStorage.getItem('access_token');
+        let resources = [];
+        let filteredResources = [];
+        let currentFilter = 'all';
+        let currentPage = 1;
+        const itemsPerPage = 12;
+
+        // Authentication check
+        if (!accessToken) {
+            window.location.href = '/login';
+        }
+
+        // Resource type configurations
+        const resourceTypes = {
+            text: { icon: 'fa-book', color: 'primary', label: 'Article' },
+            video: { icon: 'fa-video', color: 'danger', label: 'Video' },
+            interactive: { icon: 'fa-gamepad', color: 'success', label: 'Interactive' },
+            practice: { icon: 'fa-code', color: 'warning', label: 'Practice' }
+        };
+
+        // Utility Functions
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+
+            const toastHTML = `
+                <div id="${toastId}" class="custom-toast ${type}" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        // API Functions
+        async function fetchWithAuth(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                logout();
+            }
+
+            return response;
+        }
+
+        // Load User Profile
+        async function loadUserProfile() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/profile`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+
+                    document.getElementById('userName').textContent = user.name;
+
+                    if (user.avatar_url) {
+                        document.getElementById('userAvatar').src = user.avatar_url;
+                    } else {
+                        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Load Resources
+        async function loadResources() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/resources`);
+                if (response.ok) {
+                    const data = await response.json();
+                    resources = data.resources;
+
+                    // Add descriptions and tags to resources
+                    resources = resources.map(resource => ({
+                        ...resource,
+                        description: getResourceDescription(resource),
+                        tags: getResourceTags(resource)
+                    }));
+
+                    filterResources(currentFilter);
+                }
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                showToast('Failed to load resources', 'error');
+            }
+        }
+
+        // Get resource description based on title/URL
+        function getResourceDescription(resource) {
+            const descriptions = {
+                'Python': 'Learn Python programming fundamentals and syntax',
+                'C++': 'Master C++ programming concepts and techniques',
+                'Arrays': 'Understand array data structures and operations',
+                'Strings': 'String manipulation and processing techniques',
+                'Linked Lists': 'Learn about linked list implementations',
+                'Stacks': 'Stack data structure and its applications',
+                'Queues': 'Queue operations and real-world uses',
+                'Trees': 'Tree structures and traversal algorithms',
+                'BST': 'Binary Search Tree operations and properties',
+                'Heap': 'Heap data structure and priority queues',
+                'Hash': 'Hash tables and collision handling',
+                'Graph': 'Graph theory and algorithms',
+                'Sorting': 'Various sorting algorithms explained',
+                'DP': 'Dynamic Programming techniques',
+                'Recursion': 'Recursive problem-solving approaches',
+                'Backtracking': 'Backtracking algorithm patterns'
+            };
+
+            for (const [key, desc] of Object.entries(descriptions)) {
+                if (resource.title.includes(key)) {
+                    return desc;
+                }
+            }
+
+            return 'Comprehensive resource for DSA learning';
+        }
+
+        // Get resource tags based on content
+        function getResourceTags(resource) {
+            const tags = [];
+            const title = resource.title.toLowerCase();
+
+            if (title.includes('beginner') || title.includes('intro')) tags.push('Beginner');
+            if (title.includes('advanced')) tags.push('Advanced');
+            if (title.includes('python')) tags.push('Python');
+            if (title.includes('c++') || title.includes('cpp')) tags.push('C++');
+            if (title.includes('array')) tags.push('Arrays');
+            if (title.includes('tree')) tags.push('Trees');
+            if (title.includes('graph')) tags.push('Graphs');
+            if (title.includes('dp') || title.includes('dynamic')) tags.push('DP');
+
+            // Default tag based on type
+            if (tags.length === 0) {
+                tags.push(resourceTypes[resource.type].label);
+            }
+
+            return tags.slice(0, 3); // Limit to 3 tags
+        }
+
+        // Filter Resources
+        function filterResources(type) {
+            currentFilter = type;
+            currentPage = 1;
+
+            // Update filter buttons
+            document.querySelectorAll('.filter-button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(type) || type === 'all');
+            });
+
+            // Filter resources
+            if (type === 'all') {
+                filteredResources = [...resources];
+            } else {
+                filteredResources = resources.filter(r => r.type === type);
+            }
+
+            renderResources();
+        }
+
+        // Search Resources
+        function searchResources() {
+            const searchTerm = document.getElementById('resourceSearch').value.toLowerCase();
+            const clearIcon = document.getElementById('clearSearch');
+
+            clearIcon.style.display = searchTerm ? 'block' : 'none';
+
+            if (!searchTerm) {
+                filterResources(currentFilter);
+                return;
+            }
+
+            filteredResources = resources.filter(resource =>
+                resource.title.toLowerCase().includes(searchTerm) ||
+                resource.description.toLowerCase().includes(searchTerm) ||
+                resource.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            );
+
+            if (currentFilter !== 'all') {
+                filteredResources = filteredResources.filter(r => r.type === currentFilter);
+            }
+
+            currentPage = 1;
+            renderResources();
+        }
+
+        // Clear Search
+        function clearSearch() {
+            document.getElementById('resourceSearch').value = '';
+            document.getElementById('clearSearch').style.display = 'none';
+            filterResources(currentFilter);
+        }
+
+        // Render Resources
+        function renderResources() {
+            const container = document.getElementById('resourcesContainer');
+
+            if (filteredResources.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-4x text-gray-300 mb-3"></i>
+                        <h4>No resources found</h4>
+                        <p class="text-muted">Try adjusting your search or filters</p>
+                    </div>
+                `;
+                document.getElementById('paginationContainer').innerHTML = '';
+                return;
+            }
+
+            // Paginate
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedResources = filteredResources.slice(startIndex, endIndex);
+
+            // Render grid
+            let html = '<div class="resource-grid">';
+
+            paginatedResources.forEach((resource, index) => {
+                const typeConfig = resourceTypes[resource.type];
+
+                html += `
+                    <a href="${resource.url}" target="_blank" class="resource-card-link fade-in" style="animation-delay: ${index * 0.05}s">
+                        <div class="resource-card">
+                            <div class="resource-icon ${resource.type}">
+                                <i class="fas ${typeConfig.icon}"></i>
+                            </div>
+                            
+                            <h5 class="resource-title">${resource.title}</h5>
+                            <p class="resource-description">${resource.description}</p>
+                            
+                            <div class="mb-3">
+                                ${resource.tags.map(tag => `
+                                    <span class="resource-tag me-2">${tag}</span>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="resource-meta">
+                                <span>
+                                    <i class="fas ${typeConfig.icon} me-1 text-${typeConfig.color}"></i>
+                                    ${typeConfig.label}
+                                </span>
+                                <span>
+                                    <i class="fas fa-external-link-alt me-1"></i>
+                                    View Resource
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+
+            // Render pagination
+            renderPagination();
+        }
+
+        // Render Pagination
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
+            if (totalPages <= 1) {
+                document.getElementById('paginationContainer').innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // Previous button
+            html += `
+                <button class="pagination-button" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `
+                        <button class="pagination-button ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += '<span class="px-2">...</span>';
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="pagination-button" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            document.getElementById('paginationContainer').innerHTML = html;
+        }
+
+        // Change Page
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+
+            currentPage = page;
+            renderResources();
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Check for resource ID in URL
+        function checkUrlResource() {
+            const resourceId = window.location.hash.substring(1);
+            if (resourceId) {
+                const resource = resources.find(r => r.id === resourceId);
+                if (resource) {
+                    // Open resource in new tab
+                    window.open(resource.url, '_blank');
+
+                    // Clear hash
+                    window.location.hash = '';
+                }
+            }
+        }
+
+        // Initialize
+        async function init() {
+            await loadUserProfile();
+            await loadResources();
+            checkUrlResource();
+        }
+
+        init();
+    </script>
 </body>
+
 </html>

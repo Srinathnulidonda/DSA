@@ -1,9 +1,999 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>analytics.html</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - DSA Path</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <style>
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .date-range-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.25rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .date-range-option {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .date-range-option:hover {
+            background: var(--gray-100);
+        }
+
+        .date-range-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+
+        .analytics-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .analytics-card-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .metric-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1;
+        }
+
+        .metric-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .metric-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: var(--success);
+        }
+
+        .metric-change.negative {
+            color: var(--danger);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+
+        .heatmap-calendar {
+            display: grid;
+            grid-template-columns: auto repeat(7, 1fr);
+            gap: 3px;
+            font-size: 0.75rem;
+        }
+
+        .heatmap-month {
+            grid-column: 1;
+            padding: 0.25rem;
+            text-align: right;
+            color: var(--gray-600);
+        }
+
+        .heatmap-day-label {
+            padding: 0.25rem;
+            text-align: center;
+            color: var(--gray-600);
+            font-weight: 600;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            background: var(--gray-200);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .heatmap-cell.level-1 {
+            background: #c6e48b;
+        }
+
+        .heatmap-cell.level-2 {
+            background: #7bc96f;
+        }
+
+        .heatmap-cell.level-3 {
+            background: #239a3b;
+        }
+
+        .heatmap-cell.level-4 {
+            background: #196127;
+        }
+
+        .heatmap-cell:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-900);
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .topic-progress-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .topic-progress-item:last-child {
+            border-bottom: none;
+        }
+
+        .topic-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .topic-progress-bar {
+            flex: 1;
+            margin: 0 1rem;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .topic-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            transition: width 1s ease-out;
+        }
+
+        .topic-percentage {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .export-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            color: var(--gray-700);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .export-button:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+    </style>
 </head>
+
 <body>
-<h1>analytics.html</h1>
+    <div class="app-layout">
+        <!-- Sidebar (same as previous pages) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-code-branch"></i>
+                    <span>DSA Path</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/roadmap" class="nav-link">
+                        <i class="fas fa-route"></i>
+                        <span>Roadmap</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/calendar" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendar</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/progress" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/resources" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Resources</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/notes" class="nav-link">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/pomodoro" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Pomodoro</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/ai-assistant" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Assistant</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/analytics" class="nav-link active">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="mt-auto pt-4 border-top">
+                    <div class="nav-item">
+                        <a href="/profile" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <h4 class="mb-0 fw-bold">Learning Analytics</h4>
+                </div>
+
+                <div class="topbar-right">
+                    <button class="export-button" onclick="exportAnalytics()">
+                        <i class="fas fa-download"></i>
+                        <span>Export Report</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Analytics Header -->
+                <div class="analytics-header">
+                    <div>
+                        <h1 class="page-title">Your Learning Analytics</h1>
+                        <p class="page-subtitle">Track your progress and identify areas for improvement</p>
+                    </div>
+
+                    <div class="date-range-selector">
+                        <div class="date-range-option" onclick="setDateRange('7d')">7 Days</div>
+                        <div class="date-range-option active" onclick="setDateRange('30d')">30 Days</div>
+                        <div class="date-range-option" onclick="setDateRange('90d')">90 Days</div>
+                        <div class="date-range-option" onclick="setDateRange('all')">All Time</div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="totalHours">0</div>
+                            <div class="metric-label">Total Hours</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>12% from last period</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="completedLessons">0</div>
+                            <div class="metric-label">Lessons Completed</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>8% from last period</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="avgSessionTime">0m</div>
+                            <div class="metric-label">Avg Session Time</div>
+                            <div class="metric-change negative">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>5% from last period</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="consistencyScore">0%</div>
+                            <div class="metric-label">Consistency Score</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>15% from last period</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="row mb-4">
+                    <div class="col-lg-8 mb-4">
+                        <div class="analytics-card">
+                            <div class="analytics-card-header">
+                                <h3 class="analytics-card-title">Study Time Trend</h3>
+                                <select class="form-select form-select-sm" style="width: auto;"
+                                    onchange="updateStudyChart(this.value)">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly" selected>Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="studyTimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-4">
+                        <div class="analytics-card">
+                            <div class="analytics-card-header">
+                                <h3 class="analytics-card-title">Topic Distribution</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="topicDistributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Heatmap -->
+                <div class="analytics-card mb-4">
+                    <div class="analytics-card-header">
+                        <h3 class="analytics-card-title">Activity Heatmap</h3>
+                        <span class="text-muted">Last 12 weeks</span>
+                    </div>
+                    <div class="heatmap-calendar" id="heatmapCalendar">
+                        <!-- Heatmap will be generated here -->
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-3">
+                        <span class="text-muted small">Less</span>
+                        <div class="d-flex gap-1">
+                            <div class="heatmap-cell" style="width: 12px; height: 12px;"></div>
+                            <div class="heatmap-cell level-1" style="width: 12px; height: 12px;"></div>
+                            <div class="heatmap-cell level-2" style="width: 12px; height: 12px;"></div>
+                            <div class="heatmap-cell level-3" style="width: 12px; height: 12px;"></div>
+                            <div class="heatmap-cell level-4" style="width: 12px; height: 12px;"></div>
+                        </div>
+                        <span class="text-muted small">More</span>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 mb-4">
+                        <div class="analytics-card">
+                            <div class="analytics-card-header">
+                                <h3 class="analytics-card-title">Topic Progress</h3>
+                            </div>
+                            <div id="topicProgressList">
+                                <!-- Topic progress will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 mb-4">
+                        <div class="analytics-card">
+                            <div class="analytics-card-header">
+                                <h3 class="analytics-card-title">Learning Patterns</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="learningPatternsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="analytics-card">
+                    <div class="analytics-card-header">
+                        <h3 class="analytics-card-title">Recent Learning Activity</h3>
+                        <a href="#" class="text-primary text-decoration-none">View All</a>
+                    </div>
+                    <div id="recentActivityList">
+                        <!-- Recent activity will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item">
+                <i class="fas fa-home mobile-nav-icon"></i>
+                <span>Home</span>
+            </a>
+            <a href="/roadmap" class="mobile-nav-item">
+                <i class="fas fa-route mobile-nav-icon"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="/resources" class="mobile-nav-item">
+                <i class="fas fa-book mobile-nav-icon"></i>
+                <span>Resources</span>
+            </a>
+            <a href="/notes" class="mobile-nav-item">
+                <i class="fas fa-sticky-note mobile-nav-icon"></i>
+                <span>Notes</span>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <i class="fas fa-user mobile-nav-icon"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let accessToken = localStorage.getItem('access_token');
+        let currentDateRange = '30d';
+        let charts = {};
+
+        // Authentication check
+        if (!accessToken) {
+            window.location.href = '/login';
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+
+            const toastHTML = `
+                <div id="${toastId}" class="custom-toast ${type}" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        // API Functions
+        async function fetchWithAuth(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                logout();
+            }
+
+            return response;
+        }
+
+        // Date Range Selection
+        function setDateRange(range) {
+            currentDateRange = range;
+
+            // Update UI
+            document.querySelectorAll('.date-range-option').forEach(option => {
+                option.classList.toggle('active', option.textContent.toLowerCase().includes(range));
+            });
+
+            // Reload data
+            loadAnalyticsData();
+        }
+
+        // Load Analytics Data
+        async function loadAnalyticsData() {
+            try {
+                // In a real app, this would fetch data based on date range
+                updateMetrics();
+                createStudyTimeChart();
+                createTopicDistributionChart();
+                createLearningPatternsChart();
+                generateHeatmap();
+                loadTopicProgress();
+                loadRecentActivity();
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showToast('Failed to load analytics data', 'error');
+            }
+        }
+
+        // Update Metrics
+        function updateMetrics() {
+            // Simulate data based on date range
+            const multiplier = currentDateRange === '7d' ? 0.3 : currentDateRange === '30d' ? 1 : currentDateRange === '90d' ? 3 : 5;
+
+            document.getElementById('totalHours').textContent = Math.round(45 * multiplier);
+            document.getElementById('completedLessons').textContent = Math.round(28 * multiplier);
+            document.getElementById('avgSessionTime').textContent = '52m';
+            document.getElementById('consistencyScore').textContent = '78%';
+        }
+
+        // Create Study Time Chart
+        function createStudyTimeChart() {
+            const ctx = document.getElementById('studyTimeChart').getContext('2d');
+
+            // Destroy existing chart
+            if (charts.studyTime) {
+                charts.studyTime.destroy();
+            }
+
+            // Generate data
+            const labels = [];
+            const data = [];
+            const days = currentDateRange === '7d' ? 7 : currentDateRange === '30d' ? 30 : 90;
+
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                data.push(Math.floor(Math.random() * 120) + 30);
+            }
+
+            charts.studyTime = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Study Time (minutes)',
+                        data: data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#6366f1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.parsed.y} minutes`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Topic Distribution Chart
+        function createTopicDistributionChart() {
+            const ctx = document.getElementById('topicDistributionChart').getContext('2d');
+
+            // Destroy existing chart
+            if (charts.topicDistribution) {
+                charts.topicDistribution.destroy();
+            }
+
+            charts.topicDistribution = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Arrays & Strings', 'Trees & Graphs', 'Dynamic Programming', 'Algorithms', 'System Design'],
+                    datasets: [{
+                        data: [25, 20, 15, 25, 15],
+                        backgroundColor: [
+                            '#6366f1',
+                            '#ec4899',
+                            '#10b981',
+                            '#f59e0b',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Learning Patterns Chart
+        function createLearningPatternsChart() {
+            const ctx = document.getElementById('learningPatternsChart').getContext('2d');
+
+            // Destroy existing chart
+            if (charts.learningPatterns) {
+                charts.learningPatterns.destroy();
+            }
+
+            // Study hours by day of week
+            charts.learningPatterns = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    datasets: [{
+                        label: 'Study Hours',
+                        data: [2, 3, 2.5, 3.5, 2, 4, 3],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Generate Heatmap
+        function generateHeatmap() {
+            const container = document.getElementById('heatmapCalendar');
+            const weeks = 12;
+            const today = new Date();
+
+            let html = '';
+
+            // Day labels
+            html += '<div></div>'; // Empty corner
+            const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            dayLabels.forEach(day => {
+                html += `<div class="heatmap-day-label">${day}</div>`;
+            });
+
+            // Generate cells
+            for (let week = weeks - 1; week >= 0; week--) {
+                // Month label (show only for first week of month)
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - (week * 7));
+
+                if (weekStart.getDate() <= 7 || week === weeks - 1) {
+                    html += `<div class="heatmap-month">${weekStart.toLocaleDateString('en-US', { month: 'short' })}</div>`;
+                } else {
+                    html += '<div></div>';
+                }
+
+                // Week cells
+                for (let day = 0; day < 7; day++) {
+                    const cellDate = new Date(weekStart);
+                    cellDate.setDate(weekStart.getDate() + day);
+
+                    if (cellDate <= today) {
+                        const level = Math.floor(Math.random() * 5);
+                        const dateStr = cellDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const hours = level > 0 ? Math.floor(Math.random() * 3) + 1 : 0;
+
+                        html += `<div class="heatmap-cell ${level > 0 ? `level-${level}` : ''}" 
+                                      data-tooltip="${dateStr}: ${hours}h studied"></div>`;
+                    } else {
+                        html += '<div></div>';
+                    }
+                }
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Load Topic Progress
+        function loadTopicProgress() {
+            const topics = [
+                { name: 'Arrays & Strings', progress: 85 },
+                { name: 'Linked Lists', progress: 70 },
+                { name: 'Trees & Graphs', progress: 60 },
+                { name: 'Dynamic Programming', progress: 45 },
+                { name: 'Sorting & Searching', progress: 90 },
+                { name: 'System Design', progress: 30 }
+            ];
+
+            const container = document.getElementById('topicProgressList');
+            let html = '';
+
+            topics.forEach((topic, index) => {
+                html += `
+                    <div class="topic-progress-item fade-in" style="animation-delay: ${index * 0.1}s">
+                        <span class="topic-name">${topic.name}</span>
+                        <div class="topic-progress-bar">
+                            <div class="topic-progress-fill" style="width: ${topic.progress}%"></div>
+                        </div>
+                        <span class="topic-percentage">${topic.progress}%</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Load Recent Activity
+        function loadRecentActivity() {
+            const activities = [
+                {
+                    icon: 'fa-check-circle',
+                    color: 'text-success',
+                    title: 'Completed Binary Search Trees',
+                    time: '2 hours ago'
+                },
+                {
+                    icon: 'fa-book',
+                    color: 'text-primary',
+                    title: 'Started Dynamic Programming',
+                    time: '5 hours ago'
+                },
+                {
+                    icon: 'fa-trophy',
+                    color: 'text-warning',
+                    title: 'Achieved 7-day streak',
+                    time: '1 day ago'
+                },
+                {
+                    icon: 'fa-clock',
+                    color: 'text-info',
+                    title: 'Completed 3 Pomodoro sessions',
+                    time: '1 day ago'
+                },
+                {
+                    icon: 'fa-sticky-note',
+                    color: 'text-secondary',
+                    title: 'Created note on Graph Algorithms',
+                    time: '2 days ago'
+                }
+            ];
+
+            const container = document.getElementById('recentActivityList');
+            let html = '';
+
+            activities.forEach((activity, index) => {
+                html += `
+                    <div class="activity-item fade-in" style="animation-delay: ${index * 0.1}s">
+                        <div class="activity-icon">
+                            <i class="fas ${activity.icon} ${activity.color}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.title}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Update Study Chart
+        function updateStudyChart(view) {
+            // Recreate chart with new view
+            createStudyTimeChart();
+        }
+
+        // Export Analytics
+        function exportAnalytics() {
+            showToast('Generating analytics report...', 'info');
+
+            // In a real app, this would generate a PDF report
+            setTimeout(() => {
+                showToast('Analytics report downloaded successfully!', 'success');
+            }, 2000);
+        }
+
+        // Initialize
+        loadAnalyticsData();
+    </script>
 </body>
+
 </html>

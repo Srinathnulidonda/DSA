@@ -1,9 +1,553 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>index.html</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Path - Master Data Structures & Algorithms</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <style>
+        /* Landing Page Specific Styles */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 4rem 0;
+            color: white;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
-<h1>index.html</h1>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="/">
+                <i class="fas fa-code-branch me-2"></i>DSA Path
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#roadmap">Roadmap</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-outline-primary" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-primary" href="/register">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <canvas class="hero-bg-animation" id="bgCanvas"></canvas>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-white">
+                    <h1 class="display-3 fw-bold mb-4 fade-in">Master DSA in 14 Weeks</h1>
+                    <p class="lead mb-4 fade-in" style="animation-delay: 0.2s">
+                        Join thousands of developers on their journey to mastering Data Structures & Algorithms with our
+                        structured roadmap and AI-powered assistance.
+                    </p>
+                    <div class="d-flex gap-3 fade-in" style="animation-delay: 0.4s">
+                        <a href="/register" class="btn btn-light btn-lg px-4">
+                            Start Free Trial <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                        <a href="#demo" class="btn btn-outline-light btn-lg px-4">
+                            Watch Demo <i class="fas fa-play-circle ms-2"></i>
+                        </a>
+                    </div>
+                    <div class="mt-4 fade-in" style="animation-delay: 0.6s">
+                        <div class="d-flex align-items-center gap-4">
+                            <div>
+                                <h4 class="mb-0">10K+</h4>
+                                <small>Active Learners</small>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">500+</h4>
+                                <small>DSA Problems</small>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">98%</h4>
+                                <small>Success Rate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=DSA+Learning" alt="DSA Learning"
+                        class="img-fluid rounded-3 shadow-lg fade-in" style="animation-delay: 0.3s">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Everything You Need to Master DSA</h2>
+                <p class="lead text-muted">Comprehensive tools and resources for your learning journey</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="text-center p-4 h-100 hover-lift">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <h4>Structured Roadmap</h4>
+                        <p class="text-muted">14-week comprehensive curriculum covering all essential DSA topics</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="text-center p-4 h-100 hover-lift">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h4>AI Assistant</h4>
+                        <p class="text-muted">Get instant help and explanations from our intelligent AI tutor</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="text-center p-4 h-100 hover-lift">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Progress Tracking</h4>
+                        <p class="text-muted">Monitor your learning progress with detailed analytics and insights</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="text-center p-4 h-100 hover-lift">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h4>Pomodoro Timer</h4>
+                        <p class="text-muted">Built-in timer to help you maintain focus and productivity</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="text-center p-4 h-100 hover-lift">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>Rich Resources</h4>
+                        <p class="text-muted">Curated collection of tutorials, videos, and practice problems</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="text-center p-4 h-100 hover-lift">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h4>Streak Tracking</h4>
+                        <p class="text-muted">Stay motivated with daily streaks and achievement badges</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Preview -->
+    <section id="roadmap" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">14-Week Learning Path</h2>
+                <p class="lead text-muted">From basics to advanced concepts, step by step</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-foundation"></i>
+                                </div>
+                                <h5 class="mb-0">Weeks 1-4</h5>
+                            </div>
+                            <h6>Foundation</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li><i class="fas fa-check text-success me-2"></i>Arrays & Strings</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Linked Lists</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Stacks & Queues</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-info text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <h5 class="mb-0">Weeks 5-8</h5>
+                            </div>
+                            <h6>Trees & Graphs</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li><i class="fas fa-check text-success me-2"></i>Binary Trees</li>
+                                <li><i class="fas fa-check text-success me-2"></i>BST & Heaps</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Graph Algorithms</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-warning text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-sort"></i>
+                                </div>
+                                <h5 class="mb-0">Weeks 9-12</h5>
+                            </div>
+                            <h6>Algorithms</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li><i class="fas fa-check text-success me-2"></i>Sorting & Searching</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Recursion</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Dynamic Programming</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <h5 class="mb-0">Weeks 13-14</h5>
+                            </div>
+                            <h6>Advanced</h6>
+                            <ul class="list-unstyled text-muted small">
+                                <li><i class="fas fa-check text-success me-2"></i>System Design</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Real Projects</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Interview Prep</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">What Our Learners Say</h2>
+                <p class="lead text-muted">Join thousands of successful developers</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial-card h-100">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="mb-3">"The structured roadmap and AI assistant made learning DSA so much easier. I
+                            landed my dream job at a FAANG company!"</p>
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/50" alt="User" class="rounded-circle me-3">
+                            <div>
+                                <h6 class="mb-0">Sarah Chen</h6>
+                                <small class="text-muted">Software Engineer at Google</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial-card h-100">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="mb-3">"The progress tracking and daily streaks kept me motivated throughout my
+                            learning journey. Highly recommend!"</p>
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/50" alt="User" class="rounded-circle me-3">
+                            <div>
+                                <h6 class="mb-0">Michael Rodriguez</h6>
+                                <small class="text-muted">Full Stack Developer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial-card h-100">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Best investment in my career! The weekly projects helped me apply concepts in
+                            real-world scenarios."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/50" alt="User" class="rounded-circle me-3">
+                            <div>
+                                <h6 class="mb-0">Priya Patel</h6>
+                                <small class="text-muted">Data Engineer at Amazon</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-4">Ready to Start Your DSA Journey?</h2>
+            <p class="lead mb-4">Join thousands of developers mastering algorithms and data structures</p>
+            <a href="/register" class="btn btn-light btn-lg px-5">
+                Get Started Free <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-code-branch me-2"></i>DSA Path
+                    </h5>
+                    <p class="text-muted">Your companion for mastering Data Structures and Algorithms through structured
+                        learning.</p>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6 class="mb-3">Product</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#features" class="text-muted text-decoration-none">Features</a></li>
+                        <li><a href="#roadmap" class="text-muted text-decoration-none">Roadmap</a></li>
+                        <li><a href="#pricing" class="text-muted text-decoration-none">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6 class="mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">About</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Blog</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6 class="mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Contact</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6 class="mb-3">Connect</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-linkedin fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center text-muted">
+                <p class="mb-0">&copy; 2024 DSA Path. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Background Animation
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 50;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.size > 0.2) this.size -= 0.01;
+
+                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                // Connect particles
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 - distance / 500})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        createParticles();
+        animateParticles();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.hover-lift').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
 </body>
+
 </html>

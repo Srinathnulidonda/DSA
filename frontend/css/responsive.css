@@ -1,1 +1,361 @@
-/* responsive.css */
+/* Tablet Styles (768px - 1024px) */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .topbar {
+        padding: 1rem;
+    }
+
+    .search-bar {
+        width: 300px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Mobile Styles (< 768px) */
+@media (max-width: 767px) {
+
+    /* Hide desktop elements */
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        display: none;
+    }
+
+    /* Show mobile navigation */
+    .mobile-nav {
+        display: block;
+    }
+
+    /* Adjust main content */
+    .main-content {
+        margin-left: 0;
+        padding-bottom: 60px;
+        /* Space for mobile nav */
+    }
+
+    .page-content {
+        padding: 1rem;
+    }
+
+    /* Mobile typography */
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+    }
+
+    h5 {
+        font-size: 1.125rem;
+    }
+
+    h6 {
+        font-size: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    /* Mobile grids */
+    .dashboard-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Mobile cards */
+    .custom-card,
+    .stat-card,
+    .progress-card,
+    .week-card,
+    .note-card,
+    .resource-card {
+        padding: 1rem;
+    }
+
+    /* Mobile stat cards */
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    /* Mobile week cards */
+    .week-header {
+        padding: 1rem;
+    }
+
+    .week-title {
+        font-size: 1.125rem;
+    }
+
+    .week-content {
+        padding: 1rem;
+    }
+
+    /* Mobile timer */
+    .timer-display {
+        font-size: 3.5rem;
+    }
+
+    .timer-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .timer-button {
+        width: 100%;
+    }
+
+    /* Mobile modals */
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+
+    /* Mobile forms */
+    .form-control-custom {
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
+
+    /* Mobile buttons */
+    .btn-custom {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Mobile note editor */
+    .note-editor {
+        font-size: 16px;
+    }
+
+    /* Mobile AI chat */
+    .chat-container {
+        height: calc(100vh - 120px);
+    }
+
+    .chat-input-container {
+        padding: 1rem;
+    }
+
+    /* Mobile search */
+    .search-results {
+        padding: 1rem;
+    }
+
+    /* Mobile profile */
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .avatar-large {
+        width: 100px;
+        height: 100px;
+    }
+
+    /* Mobile settings */
+    .settings-section {
+        padding: 1rem;
+    }
+
+    /* Mobile analytics */
+    .chart-container {
+        height: 250px;
+    }
+
+    /* Mobile resources */
+    .resource-filters {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-button {
+        width: 100%;
+    }
+
+    /* Mobile calendar */
+    .calendar-grid {
+        font-size: 0.875rem;
+    }
+
+    .calendar-day {
+        padding: 0.5rem;
+        min-height: 60px;
+    }
+
+    /* Mobile roadmap */
+    .roadmap-timeline {
+        padding-left: 1rem;
+    }
+
+    .timeline-marker {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Mobile progress */
+    .progress-chart {
+        height: 200px;
+    }
+
+    /* Mobile auth pages */
+    .auth-container {
+        padding: 1rem;
+    }
+
+    .auth-card {
+        padding: 1.5rem;
+    }
+
+    /* Mobile utilities */
+    .hide-mobile {
+        display: none !important;
+    }
+
+    .show-mobile {
+        display: block !important;
+    }
+}
+
+/* Small mobile (< 375px) */
+@media (max-width: 374px) {
+    .page-title {
+        font-size: 1.25rem;
+    }
+
+    .timer-display {
+        font-size: 3rem;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    .mobile-nav-item {
+        font-size: 0.625rem;
+    }
+
+    .mobile-nav-icon {
+        font-size: 1rem;
+    }
+}
+
+/* Desktop only styles */
+@media (min-width: 1025px) {
+    .mobile-menu-toggle {
+        display: none;
+    }
+
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    .sidebar,
+    .topbar,
+    .mobile-nav,
+    .no-print {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0;
+    }
+
+    .page-content {
+        padding: 0;
+    }
+
+    body {
+        background: white;
+    }
+
+    .custom-card,
+    .stat-card,
+    .week-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+    }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+    .sidebar,
+    .topbar {
+        border-width: 0.5px;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark mode preference */
+@media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+        --primary: #818cf8;
+        --primary-dark: #6366f1;
+        --primary-light: #a5b4fc;
+        --dark: #f9fafb;
+        --light: #1f2937;
+        --white: #111827;
+        --gray-50: #111827;
+        --gray-100: #1f2937;
+        --gray-200: #374151;
+        --gray-300: #4b5563;
+        --gray-400: #6b7280;
+        --gray-500: #9ca3af;
+        --gray-600: #d1d5db;
+        --gray-700: #e5e7eb;
+        --gray-800: #f3f4f6;
+        --gray-900: #f9fafb;
+    }
+}

@@ -1,9 +1,812 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>calendar.html</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - DSA Path</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <style>
+        .calendar-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--gray-200);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .calendar-day-header {
+            background: var(--gray-100);
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 100px;
+            padding: 0.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .calendar-day:hover {
+            background: var(--gray-50);
+        }
+
+        .calendar-day.other-month {
+            background: var(--gray-50);
+            color: var(--gray-400);
+        }
+
+        .calendar-day.today {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .calendar-day-number {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-day.completed {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .calendar-day.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 0.25rem;
+            right: 0.5rem;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .calendar-day.has-study {
+            border-left: 3px solid var(--primary);
+        }
+
+        .study-badge {
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            background: var(--primary);
+            color: white;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+
+        .week-summary {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: var(--radius-sm);
+        }
+    </style>
 </head>
+
 <body>
-<h1>calendar.html</h1>
+    <div class="app-layout">
+        <!-- Sidebar (same as previous pages) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-code-branch"></i>
+                    <span>DSA Path</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/roadmap" class="nav-link">
+                        <i class="fas fa-route"></i>
+                        <span>Roadmap</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/calendar" class="nav-link active">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendar</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/progress" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/resources" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>Resources</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/notes" class="nav-link">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/pomodoro" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        <span>Pomodoro</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/ai-assistant" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Assistant</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="/analytics" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="mt-auto pt-4 border-top">
+                    <div class="nav-item">
+                        <a href="/profile" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <h4 class="mb-0 fw-bold">Study Calendar</h4>
+                </div>
+
+                <div class="topbar-right">
+                    <button class="btn btn-link position-relative me-2">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle d-flex align-items-center"
+                            data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Avatar"
+                                class="rounded-circle me-2" width="32" height="32" id="userAvatar">
+                            <span id="userName">Loading...</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
+                            </li>
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <!-- Calendar View -->
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="btn btn-sm btn-outline-primary" onclick="previousMonth()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+
+                                <h4 class="mb-0" id="currentMonth">Loading...</h4>
+
+                                <button class="btn btn-sm btn-outline-primary" onclick="nextMonth()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar will be rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Week Details -->
+                        <div class="mt-4">
+                            <h5 class="fw-bold mb-3">Current Week Overview</h5>
+                            <div id="weekOverview">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <!-- Study Stats -->
+                        <div class="custom-card mb-4">
+                            <h5 class="fw-bold mb-3">This Month</h5>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted">Days Studied</span>
+                                    <span class="fw-bold" id="monthDaysStudied">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted">Total Hours</span>
+                                    <span class="fw-bold" id="monthHours">0h</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Completion Rate</span>
+                                    <span class="fw-bold text-success" id="monthCompletion">0%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="goToToday()">
+                                <i class="fas fa-calendar-day me-2"></i>Go to Today
+                            </button>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="custom-card mb-4">
+                            <h5 class="fw-bold mb-3">Legend</h5>
+                            <div class="space-y-2">
+                                <div class="legend-item">
+                                    <div class="legend-color"
+                                        style="background: rgba(99, 102, 241, 0.1); border: 2px solid var(--primary);">
+                                    </div>
+                                    <span>Today</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: rgba(16, 185, 129, 0.1);"></div>
+                                    <span>Completed</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color"
+                                        style="border-left: 3px solid var(--primary); padding-left: 17px;"></div>
+                                    <span>Has Study Plan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="custom-card">
+                            <h5 class="fw-bold mb-3">Quick Actions</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="exportCalendar()">
+                                    <i class="fas fa-download me-2"></i>Export Calendar
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="syncWithGoogle()">
+                                    <i class="fab fa-google me-2"></i>Sync with Google
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item">
+                <i class="fas fa-home mobile-nav-icon"></i>
+                <span>Home</span>
+            </a>
+            <a href="/roadmap" class="mobile-nav-item">
+                <i class="fas fa-route mobile-nav-icon"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="/resources" class="mobile-nav-item">
+                <i class="fas fa-book mobile-nav-icon"></i>
+                <span>Resources</span>
+            </a>
+            <a href="/notes" class="mobile-nav-item">
+                <i class="fas fa-sticky-note mobile-nav-icon"></i>
+                <span>Notes</span>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <i class="fas fa-user mobile-nav-icon"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Day Detail Modal -->
+    <div class="modal fade" id="dayDetailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDate">Day Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="navigateToRoadmap()">
+                        <i class="fas fa-route me-2"></i>Go to Roadmap
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let accessToken = localStorage.getItem('access_token');
+        let currentDate = new Date();
+        let roadmapData = [];
+        let progressData = {};
+        let currentViewWeek = null;
+
+        // Authentication check
+        if (!accessToken) {
+            window.location.href = '/login';
+        }
+
+        // Calendar state
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        // Utility Functions
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+
+            const toastHTML = `
+                <div id="${toastId}" class="custom-toast ${type}" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        // API Functions
+        async function fetchWithAuth(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                logout();
+            }
+
+            return response;
+        }
+
+        // Load User Profile
+        async function loadUserProfile() {
+            try {
+                const response = await fetchWithAuth(`${API_BASE}/profile`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+
+                    document.getElementById('userName').textContent = user.name;
+
+                    if (user.avatar_url) {
+                        document.getElementById('userAvatar').src = user.avatar_url;
+                    } else {
+                        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Load Calendar Data
+        async function loadCalendarData() {
+            try {
+                // Load roadmap
+                const roadmapResponse = await fetchWithAuth(`${API_BASE}/roadmap`);
+                if (roadmapResponse.ok) {
+                    const data = await roadmapResponse.json();
+                    roadmapData = data.roadmap;
+                }
+
+                // Load progress
+                const progressResponse = await fetchWithAuth(`${API_BASE}/progress`);
+                if (progressResponse.ok) {
+                    const data = await progressResponse.json();
+                    progressData = data.progress || {};
+                }
+
+                // Render calendar
+                renderCalendar();
+                updateMonthStats();
+
+            } catch (error) {
+                console.error('Error loading calendar data:', error);
+                showToast('Failed to load calendar data', 'error');
+            }
+        }
+
+        // Render Calendar
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Update month display
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            let html = '';
+
+            // Day headers
+            dayNames.forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                html += `<div class="calendar-day other-month">${day}</div>`;
+            }
+
+            // Current month days
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = formatDate(date);
+                const isToday = date.toDateString() === today.toDateString();
+
+                // Check if this day has any progress
+                const dayData = getDayData(date);
+
+                let classes = 'calendar-day';
+                if (isToday) classes += ' today';
+                if (dayData.completed) classes += ' completed';
+                if (dayData.hasStudy) classes += ' has-study';
+
+                html += `
+                    <div class="${classes}" onclick="showDayDetails('${dateStr}', ${dayData.week}, '${dayData.weekDay}')">
+                        <div class="calendar-day-number">${day}</div>
+                        ${dayData.topic ? `<small class="text-muted">${dayData.topic.substring(0, 20)}...</small>` : ''}
+                        ${dayData.studyTime ? `<div class="study-badge">${dayData.studyTime}h</div>` : ''}
+                    </div>
+                `;
+            }
+
+            // Next month days
+            const remainingDays = 42 - (firstDay + daysInMonth);
+            for (let day = 1; day <= remainingDays; day++) {
+                html += `<div class="calendar-day other-month">${day}</div>`;
+            }
+
+            document.getElementById('calendarGrid').innerHTML = html;
+        }
+
+        // Get day data from roadmap and progress
+        function getDayData(date) {
+            // Calculate which week and day this corresponds to in the roadmap
+            const startDate = new Date('2024-01-01'); // Assuming roadmap starts from a Monday
+            const daysSinceStart = Math.floor((date - startDate) / (1000 * 60 * 60 * 24));
+            const weekNumber = Math.floor(daysSinceStart / 7) + 1;
+            const dayOfWeek = date.getDay();
+            const weekDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const weekDay = weekDayNames[dayOfWeek];
+
+            let dayData = {
+                completed: false,
+                hasStudy: false,
+                topic: '',
+                studyTime: 0,
+                week: weekNumber,
+                weekDay: weekDay
+            };
+
+            // Find corresponding week in roadmap
+            const week = roadmapData.find(w => w.week === weekNumber);
+            if (week) {
+                const day = week.days.find(d => d.day === weekDay);
+                if (day) {
+                    dayData.hasStudy = true;
+                    dayData.topic = day.topic;
+
+                    // Check progress
+                    if (progressData[weekNumber] && progressData[weekNumber][weekDay]) {
+                        dayData.completed = progressData[weekNumber][weekDay].completed;
+                        dayData.studyTime = Math.round((progressData[weekNumber][weekDay].time_spent || 0) / 60);
+                    }
+                }
+            }
+
+            return dayData;
+        }
+
+        // Format date for display
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Navigation functions
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+            updateMonthStats();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+            updateMonthStats();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+            updateMonthStats();
+        }
+
+        // Show day details
+        function showDayDetails(dateStr, weekNumber, weekDay) {
+            const date = new Date(dateStr);
+            const week = roadmapData.find(w => w.week === weekNumber);
+
+            if (!week) {
+                showToast('No study plan for this day', 'info');
+                return;
+            }
+
+            const day = week.days.find(d => d.day === weekDay);
+            if (!day) {
+                showToast('No study plan for this day', 'info');
+                return;
+            }
+
+            currentViewWeek = weekNumber;
+
+            // Update modal content
+            document.getElementById('modalDate').textContent = `${weekDay}, ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+            let content = `
+                <h6 class="mb-3">Week ${weekNumber}: ${week.title}</h6>
+                <div class="mb-3">
+                    <strong>Topic:</strong> ${day.topic}
+                </div>
+                <div class="mb-3">
+                    <strong>Activities:</strong> ${day.activities}
+                </div>
+                ${day.time_estimate ? `
+                    <div class="mb-3">
+                        <strong>Estimated Time:</strong> ${day.time_estimate} minutes
+                    </div>
+                ` : ''}
+            `;
+
+            // Check if completed
+            if (progressData[weekNumber] && progressData[weekNumber][weekDay] && progressData[weekNumber][weekDay].completed) {
+                content += `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Completed! Great job! 🎉
+                    </div>
+                `;
+            }
+
+            document.getElementById('modalContent').innerHTML = content;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('dayDetailModal'));
+            modal.show();
+        }
+
+        // Navigate to roadmap
+        function navigateToRoadmap() {
+            if (currentViewWeek) {
+                window.location.href = `/roadmap#week-${currentViewWeek}`;
+            } else {
+                window.location.href = '/roadmap';
+            }
+        }
+
+        // Update month statistics
+        function updateMonthStats() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let studiedDays = 0;
+            let totalHours = 0;
+            let completedDays = 0;
+            let plannedDays = 0;
+
+            // Calculate stats for the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dayData = getDayData(date);
+
+                if (dayData.hasStudy) {
+                    plannedDays++;
+                    if (dayData.completed) {
+                        completedDays++;
+                        studiedDays++;
+                    }
+                    totalHours += dayData.studyTime;
+                }
+            }
+
+            document.getElementById('monthDaysStudied').textContent = studiedDays;
+            document.getElementById('monthHours').textContent = `${totalHours}h`;
+            document.getElementById('monthCompletion').textContent = plannedDays > 0 ?
+                `${Math.round((completedDays / plannedDays) * 100)}%` : '0%';
+
+            // Load week overview
+            loadWeekOverview();
+        }
+
+        // Load current week overview
+        function loadWeekOverview() {
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+
+            let html = '<div class="week-summary">';
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + i);
+                const dayData = getDayData(date);
+                const isToday = date.toDateString() === today.toDateString();
+
+                html += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>${dayNames[i]}</strong>
+                            ${isToday ? '<span class="badge bg-primary ms-2">Today</span>' : ''}
+                            ${dayData.topic ? `<br><small class="text-muted">${dayData.topic}</small>` : ''}
+                        </div>
+                        <div>
+                            ${dayData.completed ? '<i class="fas fa-check-circle text-success"></i>' :
+                        dayData.hasStudy ? '<i class="fas fa-circle text-muted"></i>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            document.getElementById('weekOverview').innerHTML = html;
+        }
+
+        // Export calendar
+        function exportCalendar() {
+            showToast('Calendar export feature coming soon!', 'info');
+        }
+
+        // Sync with Google Calendar
+        function syncWithGoogle() {
+            showToast('Google Calendar sync coming soon!', 'info');
+        }
+
+        // Initialize
+        async function init() {
+            await loadUserProfile();
+            await loadCalendarData();
+        }
+
+        init();
+    </script>
 </body>
+
 </html>
