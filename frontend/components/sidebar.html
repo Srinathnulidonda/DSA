@@ -1,58 +1,103 @@
 <!-- components/sidebar.html -->
-<div class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <h5 class="mb-0">
-            <i class="fas fa-code me-2"></i>
-            DSA Path
-        </h5>
-        <button class="btn btn-link text-white d-lg-none" id="closeSidebar">
-            <i class="fas fa-times"></i>
-        </button>
+        <div class="d-flex align-items-center">
+            <img src="https://ui-avatars.com/api/?name=User&background=0d6efd&color=fff" alt="Avatar"
+                class="rounded-circle me-3" width="40" height="40" id="sidebarAvatar">
+            <div>
+                <h6 class="mb-0" id="sidebarUserName">Loading...</h6>
+                <small class="text-muted" id="sidebarUserEmail">...</small>
+            </div>
+        </div>
     </div>
 
-    <div class="sidebar-nav">
-        <a href="/dashboard" class="nav-item" data-page="dashboard">
-            <i class="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="/roadmap" class="nav-item" data-page="roadmap">
-            <i class="fas fa-map-marked-alt"></i>
-            <span>Roadmap</span>
-        </a>
-        <a href="/calendar" class="nav-item" data-page="calendar">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Calendar</span>
-        </a>
-        <a href="/progress" class="nav-item" data-page="progress">
-            <i class="fas fa-chart-line"></i>
-            <span>Progress</span>
-        </a>
-        <a href="/notes" class="nav-item" data-page="notes">
-            <i class="fas fa-sticky-note"></i>
-            <span>Notes</span>
-        </a>
-        <a href="/pomodoro" class="nav-item" data-page="pomodoro">
-            <i class="fas fa-clock"></i>
-            <span>Pomodoro</span>
-        </a>
-        <a href="/analytics" class="nav-item" data-page="analytics">
-            <i class="fas fa-chart-bar"></i>
-            <span>Analytics</span>
-        </a>
-    </div>
+    <nav class="sidebar-menu">
+        <div class="sidebar-item">
+            <a href="/dashboard" class="sidebar-link">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/roadmap" class="sidebar-link">
+                <i class="fas fa-road"></i>
+                <span>Roadmap</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/calendar" class="sidebar-link">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/progress" class="sidebar-link">
+                <i class="fas fa-chart-line"></i>
+                <span>Progress</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/notes" class="sidebar-link">
+                <i class="fas fa-sticky-note"></i>
+                <span>Notes</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/pomodoro" class="sidebar-link">
+                <i class="fas fa-clock"></i>
+                <span>Pomodoro</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/analytics" class="sidebar-link">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </a>
+        </div>
 
-    <div class="sidebar-footer">
-        <a href="/profile" class="nav-item" data-page="profile">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-        <a href="/settings" class="nav-item" data-page="settings">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </a>
-        <button class="nav-item logout-btn" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-        </button>
-    </div>
-</div>
+        <hr class="my-3">
+
+        <div class="sidebar-item">
+            <a href="/profile" class="sidebar-link">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="/settings" class="sidebar-link">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+        <div class="sidebar-item">
+            <a href="#" class="sidebar-link" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </nav>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script>
+    // Load user info in sidebar
+    document.addEventListener('DOMContentLoaded', function () {
+        const user = auth.getUser();
+        if (user) {
+            document.getElementById('sidebarUserName').textContent = user.name || 'User';
+            document.getElementById('sidebarUserEmail').textContent = user.email || '';
+            if (user.avatar_url) {
+                document.getElementById('sidebarAvatar').src = user.avatar_url;
+            } else {
+                document.getElementById('sidebarAvatar').src =
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=0d6efd&color=fff`;
+            }
+        }
+    });
+
+    function logout() {
+        auth.clear();
+        window.location.href = '/login';
+    }
+</script>

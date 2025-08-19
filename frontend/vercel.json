@@ -1,24 +1,29 @@
 {
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                }
+            ]
+        }
+    ],
     "rewrites": [
         {
             "source": "/",
             "destination": "/index.html"
-        },
-        {
-            "source": "/login",
-            "destination": "/auth/login.html"
-        },
-        {
-            "source": "/register",
-            "destination": "/auth/register.html"
-        },
-        {
-            "source": "/forgot-password",
-            "destination": "/auth/forgot-password.html"
-        },
-        {
-            "source": "/reset-password",
-            "destination": "/auth/reset-password.html"
         },
         {
             "source": "/dashboard",
@@ -55,25 +60,22 @@
         {
             "source": "/analytics",
             "destination": "/pages/analytics.html"
-        }
-    ],
-    "headers": [
+        },
         {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                }
-            ]
+            "source": "/login",
+            "destination": "/auth/login.html"
+        },
+        {
+            "source": "/register",
+            "destination": "/auth/register.html"
+        },
+        {
+            "source": "/forgot-password",
+            "destination": "/auth/forgot-password.html"
+        },
+        {
+            "source": "/reset-password",
+            "destination": "/auth/reset-password.html"
         }
     ]
 }

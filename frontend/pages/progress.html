@@ -8,996 +8,361 @@
     <title>Progress - DSA Learning Path</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="../css/main.css" rel="stylesheet">
-    <link href="../css/components.css" rel="stylesheet">
-    <link href="../css/animation.css" rel="stylesheet">
-    <link href="../css/responsive.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animation.css">
+    <link rel="stylesheet" href="/css/responsive.css">
 </head>
 
-<body class="app-layout">
-    <!-- Sidebar -->
-    <div id="sidebarContainer"></div>
+<body>
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container"></div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Topbar -->
-        <div id="topbarContainer"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div id="topbar-container"></div>
 
-        <!-- Progress Content -->
-        <div class="content-area">
-            <!-- Header -->
-            <div class="page-header">
-                <div class="row align-items-center mb-4">
-                    <div class="col-lg-8">
-                        <h1 class="page-title">
-                            <i class="fas fa-chart-line me-3"></i>
-                            Progress Tracking
-                        </h1>
-                        <p class="page-subtitle">Monitor your learning journey and achievements</p>
-                    </div>
-                    <div class="col-lg-4 text-lg-end">
-                        <div class="progress-overview">
-                            <div class="progress-circle-large" id="overallProgressLarge">
-                                <div class="progress-text">0%</div>
-                            </div>
-                            <div class="progress-label">Overall Completion</div>
-                        </div>
-                    </div>
+            <!-- Progress Content -->
+            <div class="container-fluid mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">Progress Tracking</h1>
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        <i class="fas fa-download me-2"></i>Download Report
+                    </button>
                 </div>
-            </div>
 
-            <!-- Progress Stats -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-primary">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="totalCompleted">0</h3>
-                            <p>Days Completed</p>
-                            <small class="text-muted">Out of 98 total</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="currentStreakDisplay">0</h3>
-                            <p>Current Streak</p>
-                            <small class="text-muted" id="streakSubtext">Keep it up!</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-warning">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="totalStudyTime">0h</h3>
-                            <p>Study Time</p>
-                            <small class="text-muted">Total accumulated</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-info">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="weeksCompleted">0</h3>
-                            <p>Weeks Completed</p>
-                            <small class="text-muted">Out of 14 weeks</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Progress Grid -->
-            <div class="row g-4">
-                <!-- Weekly Progress Chart -->
-                <div class="col-lg-8">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-chart-bar me-2"></i>
-                                    Weekly Progress
-                                </h5>
-                                <div class="chart-controls">
-                                    <button class="btn btn-sm btn-outline-primary active"
-                                        data-chart="completion">Completion</button>
-                                    <button class="btn btn-sm btn-outline-primary" data-chart="time">Study Time</button>
+                <!-- Overall Progress -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Overall Progress</h5>
+                                <div class="position-relative d-inline-flex">
+                                    <svg class="progress-ring" width="200" height="200">
+                                        <circle class="progress-ring-circle" stroke="#e9ecef" stroke-width="10"
+                                            fill="transparent" r="90" cx="100" cy="100" />
+                                        <circle class="progress-ring-circle" id="progressRing" stroke="#0d6efd"
+                                            stroke-width="10" fill="transparent" r="90" cx="100" cy="100"
+                                            style="stroke-dasharray: 565.48; stroke-dashoffset: 565.48;" />
+                                    </svg>
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <h2 class="mb-0" id="overallPercentage">0%</h2>
+                                        <small class="text-muted">Complete</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <canvas id="weeklyProgressChart" height="300"></canvas>
-                        </div>
                     </div>
-                </div>
 
-                <!-- Achievements & Milestones -->
-                <div class="col-lg-4">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-medal me-2"></i>
-                                Achievements
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="achievementsList">
-                                <!-- Achievements will be loaded here -->
+                    <div class="col-md-8">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Key Metrics</h5>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
+                                                <i class="fas fa-calendar-check"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="mb-0" id="totalDaysCompleted">0</h4>
+                                                <small class="text-muted">Days Completed</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <div class="stat-icon bg-success bg-opacity-10 text-success me-3">
+                                                <i class="fas fa-fire"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="mb-0" id="currentStreakStat">0</h4>
+                                                <small class="text-muted">Day Streak</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="mb-0" id="totalHours">0</h4>
+                                                <small class="text-muted">Hours Studied</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <div class="stat-icon bg-info bg-opacity-10 text-info me-3">
+                                                <i class="fas fa-trophy"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="mb-0" id="longestStreakStat">0</h4>
+                                                <small class="text-muted">Longest Streak</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Study Habits Chart -->
-                <div class="col-lg-6">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-calendar-alt me-2"></i>
-                                Study Patterns
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="studyPatternsChart" height="250"></canvas>
-                        </div>
+                <!-- Weekly Breakdown -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Weekly Breakdown</h5>
                     </div>
-                </div>
-
-                <!-- Topic Mastery -->
-                <div class="col-lg-6">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-brain me-2"></i>
-                                Topic Mastery
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="topicMasteryList">
-                                <!-- Topic mastery will be loaded here -->
+                    <div class="card-body">
+                        <div id="weeklyBreakdown">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Detailed Week Breakdown -->
-                <div class="col-12">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-list me-2"></i>
-                                Detailed Progress Breakdown
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="week-breakdown" id="weekBreakdown">
-                                <!-- Week breakdown will be loaded here -->
+                <!-- Topic Progress -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Topic Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="topicProgress">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Mobile Navigation -->
-    <div id="mobileNavContainer"></div>
-
-    <!-- Achievement Modal -->
-    <div class="modal fade" id="achievementModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-warning text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-trophy me-2"></i>
-                        Achievement Unlocked!
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="achievement-icon mb-3">
-                        <i class="fas fa-medal text-warning" style="font-size: 4rem;"></i>
-                    </div>
-                    <h4 id="achievementTitle">Achievement Title</h4>
-                    <p id="achievementDescription">Achievement description</p>
-                    <div class="confetti-container" id="modalConfetti"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Awesome!</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="mobile-nav-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/main.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/animation.js"></script>
+
     <script>
-        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let progressData = {};
-        let roadmapData = [];
-        let charts = {};
-
         // Load components
-        async function loadComponents() {
+        fetch('/components/sidebar.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar-container').innerHTML = html;
+            initSidebar();
+        });
+
+        fetch('/components/topbar.html').then(r => r.text()).then(html => {
+            document.getElementById('topbar-container').innerHTML = html;
+        });
+
+        fetch('/components/mobile-nav.html').then(r => r.text()).then(html => {
+            document.getElementById('mobile-nav-container').innerHTML = html;
+            initMobileNav();
+        });
+
+        // Progress functionality
+        async function loadProgress() {
             try {
-                const [sidebarResponse, topbarResponse, mobileNavResponse] = await Promise.all([
-                    fetch('../components/sidebar.html'),
-                    fetch('../components/topbar.html'),
-                    fetch('../components/mobile-nav.html')
+                const [progressResponse, roadmapResponse, dashboardResponse] = await Promise.all([
+                    api.get('/progress'),
+                    api.get('/roadmap'),
+                    api.get('/dashboard')
                 ]);
 
-                document.getElementById('sidebarContainer').innerHTML = await sidebarResponse.text();
-                document.getElementById('topbarContainer').innerHTML = await topbarResponse.text();
-                document.getElementById('mobileNavContainer').innerHTML = await mobileNavResponse.text();
+                const progressData = progressResponse.progress;
+                const roadmapData = roadmapResponse.roadmap;
+                const stats = dashboardResponse.stats;
 
-                initializeComponents();
-                setActiveNavItem('progress');
-                document.getElementById('pageTitle').textContent = 'Progress';
+                // Update overall stats
+                updateOverallStats(stats);
+
+                // Update progress ring
+                updateProgressRing(document.getElementById('progressRing').parentElement, stats.completion_percentage);
+                document.getElementById('overallPercentage').textContent = Math.round(stats.completion_percentage) + '%';
+
+                // Render weekly breakdown
+                renderWeeklyBreakdown(roadmapData, progressData);
+
+                // Render topic progress
+                renderTopicProgress(roadmapData, progressData);
+
             } catch (error) {
-                console.error('Error loading components:', error);
+                console.error('Failed to load progress:', error);
+                showToast('Failed to load progress data', 'danger');
             }
         }
 
-        // Load progress data
-        async function loadProgressData() {
-            try {
-                const token = localStorage.getItem('access_token');
-
-                const [progressResponse, roadmapResponse] = await Promise.all([
-                    fetch(`${API_BASE}/progress`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    }),
-                    fetch(`${API_BASE}/roadmap`)
-                ]);
-
-                if (progressResponse.ok && roadmapResponse.ok) {
-                    progressData = await progressResponse.json();
-                    const roadmapResult = await roadmapResponse.json();
-                    roadmapData = roadmapResult.roadmap;
-
-                    updateProgressStats();
-                    renderCharts();
-                    renderAchievements();
-                    renderTopicMastery();
-                    renderWeekBreakdown();
-                } else {
-                    throw new Error('Failed to load progress data');
-                }
-            } catch (error) {
-                console.error('Progress error:', error);
-                showError('Failed to load progress data');
-            }
+        function updateOverallStats(stats) {
+            animateNumber(document.getElementById('totalDaysCompleted'), 0, stats.completed_days, 1000);
+            animateNumber(document.getElementById('currentStreakStat'), 0, stats.current_streak, 1000);
+            animateNumber(document.getElementById('totalHours'), 0, Math.round(stats.total_study_time / 60), 1000);
+            animateNumber(document.getElementById('longestStreakStat'), 0, stats.longest_streak, 1000);
         }
 
-        // Update progress statistics
-        function updateProgressStats() {
-            const stats = progressData.stats;
-            const progress = progressData.progress;
-
-            // Calculate total completed days
-            let totalCompleted = 0;
-            let totalStudyTime = 0;
-            let weeksCompleted = 0;
-
-            for (const week of roadmapData) {
-                const weekProgress = progress[week.week] || {};
-                const weekCompletedDays = Object.values(weekProgress).filter(day => day.completed).length;
-
-                totalCompleted += weekCompletedDays;
-
-                // Calculate study time for this week
-                Object.values(weekProgress).forEach(day => {
-                    totalStudyTime += day.time_spent || 0;
-                });
-
-                // Check if week is fully completed
-                if (weekCompletedDays === week.days.length) {
-                    weeksCompleted++;
-                }
-            }
-
-            // Update UI
-            document.getElementById('totalCompleted').textContent = totalCompleted;
-            document.getElementById('currentStreakDisplay').textContent = stats.current_streak;
-            document.getElementById('totalStudyTime').textContent = Math.round(totalStudyTime / 60) + 'h';
-            document.getElementById('weeksCompleted').textContent = weeksCompleted;
-
-            // Update overall progress circle
-            const overallPercentage = (totalCompleted / (roadmapData.length * 7)) * 100;
-            updateProgressCircle('overallProgressLarge', overallPercentage);
-
-            // Update streak subtext
-            const streakSubtext = document.getElementById('streakSubtext');
-            if (stats.current_streak === 0) {
-                streakSubtext.textContent = 'Start your streak!';
-            } else if (stats.current_streak < 7) {
-                streakSubtext.textContent = 'Building momentum!';
-            } else if (stats.current_streak < 30) {
-                streakSubtext.textContent = 'Great consistency!';
-            } else {
-                streakSubtext.textContent = 'Amazing dedication!';
-            }
-        }
-
-        // Update progress circle
-        function updateProgressCircle(elementId, percentage) {
-            const element = document.getElementById(elementId);
-            const progressText = element.querySelector('.progress-text');
-
-            progressText.textContent = Math.round(percentage) + '%';
-
-            // Update CSS conic gradient
-            element.style.background = `conic-gradient(#007bff ${percentage * 3.6}deg, #e9ecef 0deg)`;
-        }
-
-        // Render charts
-        function renderCharts() {
-            renderWeeklyProgressChart();
-            renderStudyPatternsChart();
-        }
-
-        // Render weekly progress chart
-        function renderWeeklyProgressChart() {
-            const ctx = document.getElementById('weeklyProgressChart').getContext('2d');
-
-            const weekLabels = roadmapData.map(week => `Week ${week.week}`);
-            const completionData = roadmapData.map(week => {
-                const weekProgress = progressData.progress[week.week] || {};
-                const completed = Object.values(weekProgress).filter(day => day.completed).length;
-                return (completed / week.days.length) * 100;
-            });
-
-            const timeData = roadmapData.map(week => {
-                const weekProgress = progressData.progress[week.week] || {};
-                const totalTime = Object.values(weekProgress).reduce((sum, day) => sum + (day.time_spent || 0), 0);
-                return totalTime / 60; // Convert to hours
-            });
-
-            if (charts.weeklyProgress) {
-                charts.weeklyProgress.destroy();
-            }
-
-            charts.weeklyProgress = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: weekLabels,
-                    datasets: [{
-                        label: 'Completion %',
-                        data: completionData,
-                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function (value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return `Completion: ${context.parsed.y.toFixed(1)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Chart control handlers
-            document.querySelectorAll('[data-chart]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('[data-chart]').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-
-                    const chartType = e.target.dataset.chart;
-                    if (chartType === 'time') {
-                        charts.weeklyProgress.data.datasets[0].data = timeData;
-                        charts.weeklyProgress.data.datasets[0].label = 'Study Time (hours)';
-                        charts.weeklyProgress.options.scales.y.max = Math.max(...timeData) * 1.2;
-                        charts.weeklyProgress.options.plugins.tooltip.callbacks.label = function (context) {
-                            return `Study Time: ${context.parsed.y.toFixed(1)}h`;
-                        };
-                    } else {
-                        charts.weeklyProgress.data.datasets[0].data = completionData;
-                        charts.weeklyProgress.data.datasets[0].label = 'Completion %';
-                        charts.weeklyProgress.options.scales.y.max = 100;
-                        charts.weeklyProgress.options.plugins.tooltip.callbacks.label = function (context) {
-                            return `Completion: ${context.parsed.y.toFixed(1)}%`;
-                        };
-                    }
-                    charts.weeklyProgress.update();
-                });
-            });
-        }
-
-        // Render study patterns chart
-        function renderStudyPatternsChart() {
-            const ctx = document.getElementById('studyPatternsChart').getContext('2d');
-
-            // Calculate study patterns by day of week
-            const dayPatterns = {
-                'Sunday': 0, 'Monday': 0, 'Tuesday': 0, 'Wednesday': 0,
-                'Thursday': 0, 'Friday': 0, 'Saturday': 0
-            };
-
-            for (const week of roadmapData) {
-                const weekProgress = progressData.progress[week.week] || {};
-
-                for (const day of week.days) {
-                    const dayProgress = weekProgress[day.day] || {};
-                    if (dayProgress.completed) {
-                        dayPatterns[day.day]++;
-                    }
-                }
-            }
-
-            if (charts.studyPatterns) {
-                charts.studyPatterns.destroy();
-            }
-
-            charts.studyPatterns = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(dayPatterns),
-                    datasets: [{
-                        data: Object.values(dayPatterns),
-                        backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                            '#9966FF', '#FF9F40', '#FF6384'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                    return `${context.label}: ${context.parsed} days (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Render achievements
-        function renderAchievements() {
-            const container = document.getElementById('achievementsList');
-            const achievements = calculateAchievements();
-
-            if (achievements.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="fas fa-trophy text-muted mb-3" style="font-size: 3rem;"></i>
-                        <h6 class="text-muted">No achievements yet</h6>
-                        <p class="text-muted mb-0">Complete your first day to start earning achievements!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = achievements.map(achievement => `
-                <div class="achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}">
-                    <div class="achievement-icon">
-                        <i class="fas ${achievement.icon} ${achievement.unlocked ? 'text-warning' : 'text-muted'}"></i>
-                    </div>
-                    <div class="achievement-content">
-                        <h6 class="mb-1">${achievement.title}</h6>
-                        <p class="text-muted mb-0">${achievement.description}</p>
-                        ${achievement.progress !== undefined ? `
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar" style="width: ${achievement.progress}%"></div>
-                            </div>
-                        ` : ''}
-                    </div>
-                    ${achievement.unlocked ? `
-                        <div class="achievement-badge">
-                            <i class="fas fa-check text-success"></i>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
-
-        // Calculate achievements based on progress
-        function calculateAchievements() {
-            const stats = progressData.stats;
-            const progress = progressData.progress;
-
-            let totalCompleted = 0;
-            let weeksCompleted = 0;
-
-            for (const week of roadmapData) {
-                const weekProgress = progress[week.week] || {};
-                const weekCompletedDays = Object.values(weekProgress).filter(day => day.completed).length;
-                totalCompleted += weekCompletedDays;
-
-                if (weekCompletedDays === week.days.length) {
-                    weeksCompleted++;
-                }
-            }
-
-            const achievements = [
-                {
-                    title: "First Step",
-                    description: "Complete your first day",
-                    icon: "fa-baby",
-                    unlocked: totalCompleted >= 1
-                },
-                {
-                    title: "Week Warrior",
-                    description: "Complete your first week",
-                    icon: "fa-calendar-week",
-                    unlocked: weeksCompleted >= 1
-                },
-                {
-                    title: "Streak Starter",
-                    description: "Maintain a 7-day streak",
-                    icon: "fa-fire",
-                    unlocked: stats.current_streak >= 7 || stats.longest_streak >= 7
-                },
-                {
-                    title: "Month Master",
-                    description: "Complete 4 weeks",
-                    icon: "fa-calendar-alt",
-                    unlocked: weeksCompleted >= 4
-                },
-                {
-                    title: "Consistency King",
-                    description: "Maintain a 30-day streak",
-                    icon: "fa-crown",
-                    unlocked: stats.current_streak >= 30 || stats.longest_streak >= 30
-                },
-                {
-                    title: "Halfway Hero",
-                    description: "Complete 7 weeks (50% of the course)",
-                    icon: "fa-medal",
-                    unlocked: weeksCompleted >= 7,
-                    progress: (weeksCompleted / 7) * 100
-                },
-                {
-                    title: "DSA Master",
-                    description: "Complete all 14 weeks",
-                    icon: "fa-trophy",
-                    unlocked: weeksCompleted >= 14
-                },
-                {
-                    title: "Time Keeper",
-                    description: "Study for 100+ hours total",
-                    icon: "fa-clock",
-                    unlocked: stats.total_study_time >= 6000, // 100 hours in minutes
-                    progress: Math.min((stats.total_study_time / 6000) * 100, 100)
-                }
-            ];
-
-            return achievements;
-        }
-
-        // Render topic mastery
-        function renderTopicMastery() {
-            const container = document.getElementById('topicMasteryList');
-            const topics = calculateTopicMastery();
-
-            container.innerHTML = topics.map(topic => `
-                <div class="topic-mastery-item">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="mb-0">${topic.name}</h6>
-                        <span class="badge bg-${getMasteryColor(topic.percentage)}">${topic.percentage}%</span>
-                    </div>
-                    <div class="progress mb-1" style="height: 6px;">
-                        <div class="progress-bar bg-${getMasteryColor(topic.percentage)}" 
-                             style="width: ${topic.percentage}%"></div>
-                    </div>
-                    <small class="text-muted">${topic.completed}/${topic.total} concepts</small>
-                </div>
-            `).join('');
-        }
-
-        // Calculate topic mastery
-        function calculateTopicMastery() {
-            const topicGroups = {
-                'Arrays & Strings': { completed: 0, total: 0 },
-                'Linked Lists': { completed: 0, total: 0 },
-                'Stacks & Queues': { completed: 0, total: 0 },
-                'Trees': { completed: 0, total: 0 },
-                'Graphs': { completed: 0, total: 0 },
-                'Dynamic Programming': { completed: 0, total: 0 },
-                'Advanced Topics': { completed: 0, total: 0 }
-            };
-
-            const topicMapping = {
-                1: 'Arrays & Strings', 2: 'Arrays & Strings', 3: 'Linked Lists',
-                4: 'Stacks & Queues', 5: 'Trees', 6: 'Trees', 7: 'Stacks & Queues',
-                8: 'Arrays & Strings', 9: 'Graphs', 10: 'Graphs', 11: 'Advanced Topics',
-                12: 'Advanced Topics', 13: 'Dynamic Programming', 14: 'Advanced Topics'
-            };
-
-            for (const week of roadmapData) {
-                const topicGroup = topicMapping[week.week] || 'Advanced Topics';
-                const weekProgress = progressData.progress[week.week] || {};
-                const completed = Object.values(weekProgress).filter(day => day.completed).length;
-
-                topicGroups[topicGroup].completed += completed;
-                topicGroups[topicGroup].total += week.days.length;
-            }
-
-            return Object.entries(topicGroups).map(([name, data]) => ({
-                name,
-                completed: data.completed,
-                total: data.total,
-                percentage: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0
-            })).sort((a, b) => b.percentage - a.percentage);
-        }
-
-        // Get mastery color based on percentage
-        function getMasteryColor(percentage) {
-            if (percentage >= 80) return 'success';
-            if (percentage >= 60) return 'info';
-            if (percentage >= 40) return 'warning';
-            return 'danger';
-        }
-
-        // Render week breakdown
-        function renderWeekBreakdown() {
-            const container = document.getElementById('weekBreakdown');
+        function renderWeeklyBreakdown(roadmapData, progressData) {
+            const container = document.getElementById('weeklyBreakdown');
 
             container.innerHTML = roadmapData.map(week => {
-                const weekProgress = progressData.progress[week.week] || {};
-                const completed = Object.values(weekProgress).filter(day => day.completed).length;
-                const percentage = (completed / week.days.length) * 100;
+                const weekProgress = progressData[week.week] || {};
+                const completedDays = Object.values(weekProgress).filter(d => d.completed).length;
+                const totalDays = week.days.length;
+                const percentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
                 return `
-                    <div class="week-breakdown-item">
-                        <div class="week-header">
-                            <div class="week-info">
-                                <h6 class="mb-1">Week ${week.week}: ${week.title}</h6>
-                                <p class="text-muted mb-0">${week.goal}</p>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <h6 class="mb-0">Week ${week.week}: ${week.title}</h6>
+                                <small class="text-muted">${week.goal}</small>
                             </div>
-                            <div class="week-progress">
-                                <div class="progress-circle-small">
-                                    <svg viewBox="0 0 36 36">
-                                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                        <path class="circle" stroke-dasharray="${percentage}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                    </svg>
-                                    <div class="percentage">${Math.round(percentage)}%</div>
-                                </div>
+                            <div class="text-end">
+                                <span class="badge bg-${percentage === 100 ? 'success' : 'primary'}">
+                                    ${completedDays}/${totalDays} days
+                                </span>
                             </div>
                         </div>
-                        <div class="week-details">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="day-grid">
-                                        ${week.days.map(day => {
-                    const dayProgress = weekProgress[day.day] || {};
-                    const isCompleted = dayProgress.completed;
-
-                    return `
-                                                <div class="day-cell ${isCompleted ? 'completed' : ''}">
-                                                    <div class="day-name">${day.day.substring(0, 3)}</div>
-                                                    <div class="day-status">
-                                                        ${isCompleted ? '<i class="fas fa-check"></i>' : '<i class="fas fa-circle"></i>'}
-                                                    </div>
-                                                </div>
-                                            `;
-                }).join('')}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="week-stats">
-                                        <small class="text-muted">
-                                            ${completed}/${week.days.length} days completed<br>
-                                            Project: ${week.project.title}
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-${percentage === 100 ? 'success' : 'primary'}" 
+                                 role="progressbar" 
+                                 style="width: ${percentage}%"></div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Show achievement modal
-        function showAchievementModal(achievement) {
-            document.getElementById('achievementTitle').textContent = achievement.title;
-            document.getElementById('achievementDescription').textContent = achievement.description;
+        function renderTopicProgress(roadmapData, progressData) {
+            const container = document.getElementById('topicProgress');
+            const topics = {};
 
-            const modal = new bootstrap.Modal(document.getElementById('achievementModal'));
-            modal.show();
+            // Group by topics
+            roadmapData.forEach(week => {
+                week.days.forEach(day => {
+                    const topic = extractMainTopic(day.topic);
+                    if (!topics[topic]) {
+                        topics[topic] = { total: 0, completed: 0 };
+                    }
+                    topics[topic].total++;
 
-            // Add confetti effect
-            setTimeout(() => {
-                showConfetti();
-            }, 500);
+                    const weekProgress = progressData[week.week] || {};
+                    const dayProgress = weekProgress[day.day] || {};
+                    if (dayProgress.completed) {
+                        topics[topic].completed++;
+                    }
+                });
+            });
+
+            // Render topic cards
+            container.innerHTML = Object.entries(topics).map(([topic, data]) => {
+                const percentage = data.total > 0 ? (data.completed / data.total) * 100 : 0;
+                const icon = getTopicIcon(topic);
+
+                return `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
+                                        <i class="fas fa-${icon}"></i>
+                                    </div>
+                                    <h6 class="mb-0">${topic}</h6>
+                                </div>
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div class="progress-bar" role="progressbar" 
+                                         style="width: ${percentage}%"></div>
+                                </div>
+                                <small class="text-muted">${data.completed}/${data.total} lessons</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="row">${container.innerHTML}</div>`;
         }
 
-        // Check for new achievements
-        function checkNewAchievements() {
-            const achievements = calculateAchievements();
-            const unlockedAchievements = achievements.filter(a => a.unlocked);
+        function extractMainTopic(topicString) {
+            // Extract main topic category from lesson topic
+            if (topicString.includes('Array')) return 'Arrays';
+            if (topicString.includes('String')) return 'Strings';
+            if (topicString.includes('Linked List')) return 'Linked Lists';
+            if (topicString.includes('Stack')) return 'Stacks';
+            if (topicString.includes('Queue')) return 'Queues';
+            if (topicString.includes('Tree')) return 'Trees';
+            if (topicString.includes('Graph')) return 'Graphs';
+            if (topicString.includes('Hash')) return 'Hashing';
+            if (topicString.includes('Sort')) return 'Sorting';
+            if (topicString.includes('Search')) return 'Searching';
+            if (topicString.includes('Dynamic')) return 'Dynamic Programming';
+            if (topicString.includes('Recursion')) return 'Recursion';
+            return 'Other';
+        }
 
-            // This would typically check against previously stored achievements
-            // For demo purposes, we'll show the latest achievement if any exist
-            if (unlockedAchievements.length > 0) {
-                const latestAchievement = unlockedAchievements[unlockedAchievements.length - 1];
+        function getTopicIcon(topic) {
+            const icons = {
+                'Arrays': 'list',
+                'Strings': 'font',
+                'Linked Lists': 'link',
+                'Stacks': 'layer-group',
+                'Queues': 'bars',
+                'Trees': 'tree',
+                'Graphs': 'project-diagram',
+                'Hashing': 'hashtag',
+                'Sorting': 'sort',
+                'Searching': 'search',
+                'Dynamic Programming': 'brain',
+                'Recursion': 'redo',
+                'Other': 'code'
+            };
+            return icons[topic] || 'code';
+        }
 
-                // Only show if this is a new session or achievement was just unlocked
-                const lastShownAchievement = localStorage.getItem('lastShownAchievement');
-                if (lastShownAchievement !== latestAchievement.title) {
-                    setTimeout(() => {
-                        showAchievementModal(latestAchievement);
-                        localStorage.setItem('lastShownAchievement', latestAchievement.title);
-                    }, 2000);
-                }
+        async function generateReport() {
+            showToast('Generating progress report...', 'info');
+
+            try {
+                // In a real app, this would generate a PDF or export data
+                const data = await api.get('/progress');
+
+                // Create a simple text report
+                let report = '=== DSA Learning Progress Report ===\n\n';
+                report += `Generated on: ${new Date().toLocaleString()}\n\n`;
+                report += `Overall Progress: ${Math.round(data.stats.completion_percentage)}%\n`;
+                report += `Days Completed: ${data.stats.completed_days}\n`;
+                report += `Current Streak: ${data.stats.current_streak} days\n`;
+                report += `Total Study Time: ${Math.round(data.stats.total_study_time / 60)} hours\n\n`;
+
+                // Download as text file
+                const blob = new Blob([report], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showToast('Report downloaded successfully!', 'success');
+            } catch (error) {
+                showToast('Failed to generate report', 'danger');
             }
         }
 
-        // Initialize progress page
-        document.addEventListener('DOMContentLoaded', async () => {
-            checkAuth();
-            await loadComponents();
-            await loadProgressData();
-            checkNewAchievements();
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadProgress();
         });
     </script>
-
-    <style>
-        .progress-overview {
-            text-align: center;
-        }
-
-        .progress-circle-large {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: conic-gradient(var(--primary-color) 0deg, #e9ecef 0deg);
-            margin: 0 auto;
-        }
-
-        .progress-circle-large::before {
-            content: '';
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: white;
-        }
-
-        .progress-circle-large .progress-text {
-            position: relative;
-            z-index: 2;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .chart-controls {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .chart-controls .btn {
-            padding: 0.25rem 0.75rem;
-        }
-
-        .achievement-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 1rem;
-            transition: var(--transition);
-            border: 1px solid #e5e7eb;
-        }
-
-        .achievement-item.unlocked {
-            background: linear-gradient(135deg, #fff8e1 0%, #f3e5ab 100%);
-            border-color: #ffc107;
-        }
-
-        .achievement-item.locked {
-            background: #f8f9fa;
-            opacity: 0.7;
-        }
-
-        .achievement-icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: white;
-            margin-right: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .achievement-content {
-            flex: 1;
-        }
-
-        .achievement-badge {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: var(--success-color);
-            color: white;
-        }
-
-        .topic-mastery-item {
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .topic-mastery-item:last-child {
-            border-bottom: none;
-        }
-
-        .week-breakdown-item {
-            border: 1px solid #e5e7eb;
-            border-radius: var(--border-radius);
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-
-        .week-header {
-            padding: 1.5rem;
-            background: #f8f9fa;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .week-details {
-            padding: 1.5rem;
-        }
-
-        .progress-circle-small {
-            width: 60px;
-            height: 60px;
-            position: relative;
-        }
-
-        .progress-circle-small svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-
-        .progress-circle-small .circle-bg {
-            fill: none;
-            stroke: #e5e7eb;
-            stroke-width: 3;
-        }
-
-        .progress-circle-small .circle {
-            fill: none;
-            stroke: var(--primary-color);
-            stroke-width: 3;
-            stroke-linecap: round;
-            transition: stroke-dasharray 0.6s ease;
-        }
-
-        .progress-circle-small .percentage {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: var(--primary-color);
-        }
-
-        .day-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-        }
-
-        .day-cell {
-            text-align: center;
-            padding: 0.5rem;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
-            background: white;
-        }
-
-        .day-cell.completed {
-            background: var(--success-color);
-            color: white;
-            border-color: var(--success-color);
-        }
-
-        .day-name {
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .day-status i {
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 767.98px) {
-            .progress-circle-large {
-                width: 100px;
-                height: 100px;
-            }
-
-            .progress-circle-large::before {
-                width: 70px;
-                height: 70px;
-            }
-
-            .progress-circle-large .progress-text {
-                font-size: 1.25rem;
-            }
-
-            .chart-controls {
-                flex-direction: column;
-                gap: 0.25rem;
-            }
-
-            .achievement-item {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .achievement-icon {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-
-            .day-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-    </style>
 </body>
 
 </html>

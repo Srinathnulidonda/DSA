@@ -1,114 +1,100 @@
 /* css/animation.css */
-/* Loading Animations */
+/* Fade Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.5s ease;
+}
+
+/* Slide Animations */
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
         transform: translateY(0);
+        opacity: 1;
     }
 }
 
-@keyframes slideInLeft {
+@keyframes slideDown {
     from {
+        transform: translateY(-30px);
         opacity: 0;
-        transform: translateX(-30px);
     }
 
     to {
+        transform: translateY(0);
         opacity: 1;
-        transform: translateX(0);
     }
 }
 
-@keyframes slideInRight {
+@keyframes slideIn {
     from {
+        transform: translateX(100%);
         opacity: 0;
-        transform: translateX(30px);
     }
 
     to {
-        opacity: 1;
         transform: translateX(0);
-    }
-}
-
-@keyframes bounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-
-    50% {
         opacity: 1;
-        transform: scale(1.05);
-    }
-
-    70% {
-        transform: scale(0.9);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
     }
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-        transform: translateX(-10px);
-    }
-
-    20%,
-    40%,
-    60%,
-    80% {
-        transform: translateX(10px);
-    }
-}
-
-@keyframes spin {
+@keyframes slideOut {
     from {
-        transform: rotate(0deg);
+        transform: translateX(0);
+        opacity: 1;
     }
 
     to {
-        transform: rotate(360deg);
+        transform: translateX(100%);
+        opacity: 0;
     }
 }
 
+.animate-slide-up {
+    animation: slideUp 0.5s ease;
+}
+
+.animate-slide-down {
+    animation: slideDown 0.5s ease;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.5s ease;
+}
+
+/* Float Animation */
 @keyframes float {
 
     0%,
     100% {
-        transform: translateY(0px);
+        transform: translateY(0);
     }
 
     50% {
@@ -116,142 +102,54 @@
     }
 }
 
-/* Page Transitions */
-.page-enter {
-    animation: fadeIn 0.5s ease-out;
+.animate-float {
+    animation: float 3s ease-in-out infinite;
 }
 
-.card-enter {
-    animation: slideInLeft 0.6s ease-out;
-}
-
-.stat-card {
-    animation: bounceIn 0.8s ease-out;
-}
-
-.stat-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.stat-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.stat-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.stat-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-/* Button Animations */
-.btn {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transition: width 0.6s, height 0.6s;
-    transform: translate(-50%, -50%);
-}
-
-.btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-/* Hover Effects */
-.dashboard-card,
-.stat-card,
-.feature-card {
-    transition: all 0.3s ease;
-}
-
-.dashboard-card:hover {
-    transform: translateY(-5px) scale(1.02);
-}
-
-.quick-action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-/* Progress Animations */
-.progress-bar {
-    animation: progressFill 1.5s ease-out;
-}
-
-@keyframes progressFill {
-    from {
-        width: 0;
-    }
-}
-
-.week-progress-circle .circle {
-    transition: stroke-dasharray 1s ease-out;
-}
-
-/* Loading States */
-.loading-skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
+/* Pulse Animation */
+@keyframes pulse {
     0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-.spinner {
-    animation: spin 1s linear infinite;
-}
-
-/* Notification Animations */
-.notification-enter {
-    animation: slideInRight 0.5s ease-out;
-}
-
-.notification-exit {
-    animation: slideInRight 0.3s ease-in reverse;
-}
-
-/* Success Animations */
-.success-checkmark {
-    animation: checkmark 0.6s ease-out;
-}
-
-@keyframes checkmark {
-    0% {
-        transform: scale(0) rotate(45deg);
+        transform: scale(1);
+        opacity: 1;
     }
 
     50% {
-        transform: scale(1.2) rotate(45deg);
+        transform: scale(1.05);
+        opacity: 0.8;
     }
 
     100% {
-        transform: scale(1) rotate(45deg);
+        transform: scale(1);
+        opacity: 1;
     }
 }
 
-/* Error Animations */
-.error-shake {
-    animation: shake 0.5s ease-in-out;
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-20px);
+    }
+
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-bounce {
+    animation: bounce 2s ease infinite;
 }
 
 /* Confetti Animation */
@@ -271,272 +169,237 @@
     position: fixed;
     width: 10px;
     height: 10px;
-    background: #f0c040;
-    border-radius: 2px;
-    animation: confetti-fall 3s linear infinite;
+    background: var(--primary-color);
+    animation: confetti-fall 3s linear;
     z-index: 9999;
 }
 
-.confetti:nth-child(odd) {
-    background: #4CAF50;
-    animation-delay: -0.5s;
+.confetti:nth-child(2n) {
+    background: var(--success-color);
+    width: 8px;
+    height: 8px;
     animation-duration: 2.5s;
 }
 
-.confetti:nth-child(even) {
-    background: #2196F3;
-    animation-delay: -1s;
+.confetti:nth-child(3n) {
+    background: var(--warning-color);
+    width: 12px;
+    height: 12px;
     animation-duration: 3.5s;
 }
 
-/* Streak Fire Animation */
-.streak-fire {
-    animation: fireFlicker 1s ease-in-out infinite alternate;
+.confetti:nth-child(4n) {
+    background: var(--danger-color);
+    animation-duration: 2.8s;
 }
 
-@keyframes fireFlicker {
-    0% {
-        transform: scale(1) rotate(-1deg);
-    }
-
-    100% {
-        transform: scale(1.1) rotate(1deg);
-    }
-}
-
-/* Typing Animation for AI */
-.typing-dots {
-    display: inline-flex;
-    gap: 2px;
-}
-
-.typing-dots span {
+.confetti:nth-child(5n) {
+    background: var(--info-color);
     width: 6px;
     height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: typingDots 1.4s infinite ease-in-out;
+    animation-duration: 3.2s;
 }
 
-.typing-dots span:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.typing-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.typing-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-@keyframes typingDots {
-
-    0%,
-    60%,
-    100% {
-        transform: translateY(0);
-        opacity: 0.4;
-    }
-
-    30% {
-        transform: translateY(-10px);
-        opacity: 1;
-    }
-}
-
-/* Sidebar Slide Animation */
-.sidebar {
-    transition: transform 0.3s ease;
-}
-
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 1040;
-}
-
-.sidebar-overlay.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Mobile Nav Slide Up */
-.mobile-nav {
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-}
-
-.mobile-nav.show {
-    transform: translateY(0);
-}
-
-/* Roadmap Timeline Animation */
-.roadmap-week {
-    opacity: 0;
-    animation: roadmapEnter 0.6s ease-out forwards;
-}
-
-.roadmap-week:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.roadmap-week:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.roadmap-week:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.roadmap-week:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-.roadmap-week:nth-child(5) {
-    animation-delay: 0.5s;
-}
-
-@keyframes roadmapEnter {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Week Content Slide */
-.week-content {
-    overflow: hidden;
-    transition: all 0.4s ease;
-}
-
-.week-content.expanded {
-    animation: expandContent 0.4s ease-out;
-}
-
-@keyframes expandContent {
-    from {
-        max-height: 0;
-        opacity: 0;
-    }
-
-    to {
-        max-height: 1000px;
-        opacity: 1;
-    }
-}
-
-/* Day Completion Animation */
-.day-item.completed {
-    animation: completionCelebration 0.6s ease-out;
-}
-
-@keyframes completionCelebration {
+/* Progress Ring Animation */
+@keyframes progress-ring-fill {
     0% {
-        transform: scale(1);
+        stroke-dashoffset: 314;
     }
+}
 
-    50% {
-        transform: scale(1.05);
+/* Loading Spinner */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
     }
 
     100% {
-        transform: scale(1);
+        transform: rotate(360deg);
     }
 }
 
-/* Focus Animations */
-.form-control:focus {
-    animation: focusGlow 0.3s ease-out;
-}
-
-@keyframes focusGlow {
-    from {
-        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.5);
-    }
-
-    to {
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-}
-
-/* Hover Scale Effects */
-.scale-hover {
-    transition: transform 0.2s ease;
-}
-
-.scale-hover:hover {
-    transform: scale(1.05);
-}
-
-/* Floating Elements */
-.float-animation {
-    animation: float 6s ease-in-out infinite;
-}
-
-/* Page Loading */
-.page-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.page-loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loader-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--primary-color);
-    border-radius: 50%;
+.spinner {
     animation: spin 1s linear infinite;
 }
 
-/* Smooth Scrolling */
-html {
-    scroll-behavior: smooth;
-}
+/* Shake Animation */
+@keyframes shake {
 
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
     }
 }
 
-/* Print Animations Disabled */
-@media print {
-    * {
-        animation: none !important;
-        transition: none !important;
+.animate-shake {
+    animation: shake 0.5s ease;
+}
+
+/* Glow Animation */
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(13, 110, 253, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+    }
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* Scale Animation */
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.3s ease;
+}
+
+.animate-scale-out {
+    animation: scaleOut 0.3s ease;
+}
+
+/* Rotate Animation */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-rotate {
+    animation: rotate 2s linear infinite;
+}
+
+/* Success Check Animation */
+@keyframes success-check {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-success-check {
+    animation: success-check 0.5s ease;
+}
+
+/* Page Transitions */
+.page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+.page-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+/* Hover Transitions */
+.hover-grow {
+    transition: transform 0.3s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+.hover-shadow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Accordion Animation */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.accordion-content.show {
+    max-height: 1000px;
+}
+
+/* Progress Bar Animation */
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 1rem 0;
+    }
+
+    to {
+        background-position: 0 0;
     }
 }
