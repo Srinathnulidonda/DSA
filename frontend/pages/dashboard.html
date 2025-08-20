@@ -3,390 +3,703 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Dashboard - DSAPath</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DSA Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/layouts.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body data-requires-auth="true">
-    <div class="app-layout">
-        <div id="topbar"></div>
-        <div id="sidebar"></div>
+<body>
+    <div class="main-layout">
+        <!-- Include Sidebar -->
+        <div id="sidebar-container"></div>
 
-        <div class="app-content">
-            <main class="app-main">
-                <div class="page-header">
-                    <h1 class="page-title">Dashboard</h1>
-                    <p class="page-subtitle">Welcome back! Here's your learning overview.</p>
+        <div class="main-content">
+            <!-- Include Topbar -->
+            <div id="topbar-container"></div>
+
+            <div class="content-area">
+                <!-- Welcome Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="animate-fadeInLeft">
+                                <h2 class="fw-bold text-dark mb-1">Good <span id="greeting-time">morning</span>, <span
+                                        id="user-greeting">there</span>! 👋</h2>
+                                <p class="text-muted mb-0">Ready to continue your DSA journey today?</p>
+                            </div>
+                            <div class="d-none d-md-block animate-fadeInRight">
+                                <div class="text-end">
+                                    <div class="badge-streak badge-custom">
+                                        <i class="fas fa-fire me-1"></i>
+                                        <span id="current-streak">0</span> day streak
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Stats Grid -->
-                <div class="stats-grid mb-4" id="stats-container">
-                    <div class="skeleton-box stat-card">
-                        <div class="skeleton skeleton-text mb-2"></div>
-                        <div class="skeleton skeleton-title"></div>
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card hover-lift animate-fadeInUp">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="text-muted mb-1">Overall Progress</div>
+                                    <h3 class="fw-bold text-primary mb-2" id="overall-progress">0%</h3>
+                                    <div class="progress-bar-custom">
+                                        <div class="progress-fill progress-fill-animation" id="progress-bar"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="text-primary">
+                                    <i class="fas fa-chart-line fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skeleton-box stat-card">
-                        <div class="skeleton skeleton-text mb-2"></div>
-                        <div class="skeleton skeleton-title"></div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card hover-lift animate-fadeInUp animation-delay-100">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="text-muted mb-1">Current Streak</div>
+                                    <h3 class="fw-bold text-warning mb-2">
+                                        <i class="fas fa-fire me-1"></i>
+                                        <span id="streak-days">0</span> days
+                                    </h3>
+                                    <small class="text-muted">Longest: <span id="longest-streak">0</span> days</small>
+                                </div>
+                                <div class="text-warning">
+                                    <i class="fas fa-fire fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skeleton-box stat-card">
-                        <div class="skeleton skeleton-text mb-2"></div>
-                        <div class="skeleton skeleton-title"></div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card hover-lift animate-fadeInUp animation-delay-200">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="text-muted mb-1">Study Time</div>
+                                    <h3 class="fw-bold text-success mb-2" id="total-study-time">0h</h3>
+                                    <small class="text-muted">This week: <span id="week-study-time">0h</span></small>
+                                </div>
+                                <div class="text-success">
+                                    <i class="fas fa-clock fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skeleton-box stat-card">
-                        <div class="skeleton skeleton-text mb-2"></div>
-                        <div class="skeleton skeleton-title"></div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card hover-lift animate-fadeInUp animation-delay-300">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="text-muted mb-1">Completed Topics</div>
+                                    <h3 class="fw-bold text-info mb-2" id="completed-topics">0/98</h3>
+                                    <small class="text-muted">Daily topics</small>
+                                </div>
+                                <div class="text-info">
+                                    <i class="fas fa-check-circle fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Main Dashboard Grid -->
-                <div class="grid-dashboard">
-                    <!-- Weekly Progress -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-graph-up me-2 text-primary"></i>
-                                Weekly Progress
-                            </h5>
+                <!-- Progress Overview & Quick Actions -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-8">
+                        <div class="stats-card animate-fadeInLeft">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Weekly Progress</h5>
+                                <a href="/progress" class="btn btn-sm btn-outline-primary">
+                                    View All <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
                             <div id="weekly-progress-container">
-                                <div class="skeleton skeleton-box" style="height: 200px;"></div>
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner mx-auto mb-2"></div>
+                                    <p class="text-muted">Loading progress...</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Current Week -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-calendar-week me-2 text-primary"></i>
-                                Current Week
-                            </h5>
-                            <div id="current-week-container">
-                                <div class="skeleton skeleton-box" style="height: 200px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Sessions -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-clock-history me-2 text-primary"></i>
-                                Recent Study Sessions
-                            </h5>
-                            <div id="recent-sessions-container">
-                                ${Skeleton.list(3)}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-lightning me-2 text-primary"></i>
-                                Quick Actions
-                            </h5>
-                            <div class="d-grid gap-2">
-                                <a href="/pages/roadmap" class="btn btn-primary">
-                                    <i class="bi bi-play-circle me-2"></i>Continue Learning
+                    <div class="col-lg-4">
+                        <div class="stats-card animate-fadeInRight">
+                            <h5 class="fw-bold mb-4">Quick Actions</h5>
+                            <div class="d-grid gap-3">
+                                <a href="/roadmap" class="btn btn-outline-primary btn-icon">
+                                    <i class="fas fa-route"></i>
+                                    <span>Continue Learning</span>
                                 </a>
-                                <a href="/pages/pomodoro" class="btn btn-outline-primary">
-                                    <i class="bi bi-clock me-2"></i>Start Timer
+                                <a href="/pomodoro" class="btn btn-outline-success btn-icon">
+                                    <i class="fas fa-play"></i>
+                                    <span>Start Pomodoro</span>
                                 </a>
-                                <a href="/pages/notes" class="btn btn-outline-primary">
-                                    <i class="bi bi-journal-plus me-2"></i>Add Note
-                                </a>
-                                <a href="/pages/ai-assistant" class="btn btn-outline-primary">
-                                    <i class="bi bi-robot me-2"></i>Ask AI
+                                <a href="/notes" class="btn btn-outline-info btn-icon">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Add Note</span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Motivational Widget -->
-                <div class="card mt-4">
-                    <div class="card-body text-center py-4" id="motivation-widget">
-                        <div class="spinner-border text-primary mb-3" role="status"></div>
-                        <p class="text-muted">Loading motivation...</p>
+                <!-- Today's Focus & Recent Activity -->
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="stats-card animate-fadeInUp">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Today's Focus</h5>
+                                <span class="badge bg-primary" id="current-week-badge">Week 1</span>
+                            </div>
+                            <div id="today-focus-container">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner mx-auto mb-2"></div>
+                                    <p class="text-muted">Loading today's focus...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="stats-card animate-fadeInUp animation-delay-200">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Recent Activity</h5>
+                                <a href="/analytics" class="btn btn-sm btn-outline-primary">View More</a>
+                            </div>
+                            <div id="recent-activity-container">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner mx-auto mb-2"></div>
+                                    <p class="text-muted">Loading recent activity...</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </main>
+
+                <!-- Motivational Quote -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="stats-card text-center animate-fadeInUp"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <div class="py-3">
+                                <i class="fas fa-quote-left fs-3 mb-3 opacity-75"></i>
+                                <h4 class="fw-light mb-3" id="daily-quote">Loading motivational quote...</h4>
+                                <p class="mb-0 opacity-75" id="quote-author">- Anonymous</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="mobile-nav"></div>
+        <!-- Include Mobile Navigation -->
+        <div id="mobile-nav-container"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
-    <script src="/js/lib.js"></script>
-    <script src="/js/components.js"></script>
-    <script src="/js/loader.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Load dashboard data
-        async function loadDashboard() {
-            try {
-                const data = await api.get('/dashboard');
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let dashboardData = {};
 
-                // Update stats
-                updateStats(data.stats);
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            loadComponents();
+            initializeDashboard();
+        });
 
-                // Update weekly progress
-                updateWeeklyProgress(data.weekly_progress);
-
-                // Update recent sessions
-                updateRecentSessions(data.recent_sessions);
-
-                // Load motivational quote
-                loadMotivation();
-
-                // Check for achievements
-                checkAchievements(data.stats);
-
-            } catch (error) {
-                notifications.error('Failed to load dashboard data');
-                console.error('Dashboard error:', error);
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
             }
         }
 
-        function updateStats(stats) {
-            const container = document.getElementById('stats-container');
-            container.innerHTML = `
-                <div class="stat-card animate-fade-in-up">
-                    <div class="stat-value">${stats.current_streak}</div>
-                    <div class="stat-label">
-                        <i class="bi bi-fire text-warning"></i> Day Streak
-                    </div>
-                </div>
-                <div class="stat-card animate-fade-in-up" style="animation-delay: 0.1s">
-                    <div class="stat-value">${Math.round(stats.completion_percentage)}%</div>
-                    <div class="stat-label">
-                        <i class="bi bi-check-circle text-success"></i> Complete
-                    </div>
-                </div>
-                <div class="stat-card animate-fade-in-up" style="animation-delay: 0.2s">
-                    <div class="stat-value">${Math.round(stats.total_study_time / 60)}h</div>
-                    <div class="stat-label">
-                        <i class="bi bi-clock text-info"></i> Study Time
-                    </div>
-                </div>
-                <div class="stat-card animate-fade-in-up" style="animation-delay: 0.3s">
-                    <div class="stat-value">${stats.completed_days}/98</div>
-                    <div class="stat-label">
-                        <i class="bi bi-calendar-check text-primary"></i> Days
-                    </div>
-                </div>
-            `;
+        async function loadComponents() {
+            try {
+                // Load sidebar
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+                // Load topbar
+                const topbarResponse = await fetch('../components/topbar.html');
+                const topbarHtml = await topbarResponse.text();
+                document.getElementById('topbar-container').innerHTML = topbarHtml;
+
+                // Load mobile nav
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobile-nav-container').innerHTML = mobileNavHtml;
+
+                // Execute scripts in loaded components
+                executeScripts();
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
         }
 
-        function updateWeeklyProgress(weeklyProgress) {
+        function executeScripts() {
+            // Re-execute navigation scripts
+            setActiveNavItem();
+            setActiveMobileNavItem();
+            updatePageTitle();
+            loadUserData();
+        }
+
+        async function initializeDashboard() {
+            try {
+                setGreeting();
+                await loadDashboardData();
+                updateStats();
+                loadWeeklyProgress();
+                loadTodaysFocus();
+                loadRecentActivity();
+                loadDailyQuote();
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+                showErrorMessage('Failed to load dashboard data');
+            }
+        }
+
+        function setGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            const greetingElement = document.getElementById('greeting-time');
+            const userElement = document.getElementById('user-greeting');
+
+            let greeting = 'morning';
+            if (hour >= 12 && hour < 17) greeting = 'afternoon';
+            else if (hour >= 17) greeting = 'evening';
+
+            greetingElement.textContent = greeting;
+
+            // Get user name from localStorage
+            const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+            userElement.textContent = userData.name ? userData.name.split(' ')[0] : 'there';
+        }
+
+        async function loadDashboardData() {
+            const token = localStorage.getItem('access_token');
+
+            try {
+                const response = await fetch(`${API_BASE}/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    dashboardData = await response.json();
+                } else if (response.status === 401) {
+                    // Token expired, redirect to login
+                    localStorage.clear();
+                    window.location.href = '/login';
+                } else {
+                    throw new Error('Failed to load dashboard data');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                // Show fallback data
+                dashboardData = {
+                    stats: {
+                        completion_percentage: 0,
+                        current_streak: 0,
+                        longest_streak: 0,
+                        total_study_time: 0,
+                        study_time_last_7_days: 0,
+                        completed_days: 0,
+                        total_days: 98
+                    },
+                    weekly_progress: {},
+                    recent_sessions: [],
+                    recent_notes: []
+                };
+            }
+        }
+
+        function updateStats() {
+            const stats = dashboardData.stats;
+
+            // Overall progress with animation
+            const progressElement = document.getElementById('overall-progress');
+            const progressBar = document.getElementById('progress-bar');
+            const completionPercentage = Math.round(stats.completion_percentage || 0);
+
+            animateNumber(progressElement, 0, completionPercentage, '%');
+            progressBar.style.width = `${completionPercentage}%`;
+
+            // Streak
+            const streakElement = document.getElementById('streak-days');
+            const longestStreakElement = document.getElementById('longest-streak');
+            const currentStreakElement = document.getElementById('current-streak');
+
+            animateNumber(streakElement, 0, stats.current_streak || 0);
+            longestStreakElement.textContent = stats.longest_streak || 0;
+            currentStreakElement.textContent = stats.current_streak || 0;
+
+            // Study time
+            const totalTimeElement = document.getElementById('total-study-time');
+            const weekTimeElement = document.getElementById('week-study-time');
+
+            totalTimeElement.textContent = formatTime(stats.total_study_time || 0);
+            weekTimeElement.textContent = formatTime(stats.study_time_last_7_days || 0);
+
+            // Completed topics
+            const completedTopicsElement = document.getElementById('completed-topics');
+            completedTopicsElement.textContent = `${stats.completed_days || 0}/${stats.total_days || 98}`;
+        }
+
+        function animateNumber(element, start, end, suffix = '') {
+            const duration = 1000;
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(current) + suffix;
+            }, 16);
+        }
+
+        function formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+
+            if (hours > 0) {
+                return `${hours}h ${remainingMinutes}m`;
+            }
+            return `${minutes}m`;
+        }
+
+        async function loadWeeklyProgress() {
             const container = document.getElementById('weekly-progress-container');
 
-            // Prepare data for chart
-            const weeks = Object.keys(weeklyProgress).slice(0, 7);
-            const data = {
-                labels: weeks.map(w => `Week ${w}`),
-                values: weeks.map(w => weeklyProgress[w].percentage)
-            };
-
-            // Create chart
-            container.innerHTML = '<canvas id="progress-chart" height="200"></canvas>';
-            const canvas = document.getElementById('progress-chart');
-            ChartHelper.createProgressChart(canvas, data);
-
-            // Add current week details below
-            const currentWeek = Math.max(...weeks.map(Number));
-            if (weeklyProgress[currentWeek]) {
-                container.innerHTML += `
-                    <div class="mt-3 text-center">
-                        <small class="text-muted">
-                            Week ${currentWeek}: ${weeklyProgress[currentWeek].completed}/${weeklyProgress[currentWeek].total} days
-                        </small>
-                    </div>
-                `;
-            }
-        }
-
-        function updateRecentSessions(sessions) {
-            const container = document.getElementById('recent-sessions-container');
-
-            if (sessions.length === 0) {
+            if (!dashboardData.weekly_progress || Object.keys(dashboardData.weekly_progress).length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state py-3">
-                        <p class="text-muted text-center mb-0">No recent sessions</p>
-                        <div class="text-center mt-2">
-                            <a href="/pages/pomodoro" class="btn btn-sm btn-primary">Start Session</a>
-                        </div>
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-line fs-2 text-muted mb-3"></i>
+                        <p class="text-muted">Start your learning journey to see progress here!</p>
+                        <a href="/roadmap" class="btn btn-primary">Start Learning</a>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = sessions.map(session => {
-                const date = new Date(session.start_time);
-                const timeAgo = getTimeAgo(date);
+            let html = '<div class="row g-3">';
 
-                return `
-                    <div class="d-flex align-items-center mb-3 animate-fade-in">
-                        <div class="flex-shrink-0">
-                            <div class="rounded-circle bg-primary bg-opacity-10 p-2">
-                                <i class="bi bi-clock text-primary"></i>
+            Object.entries(dashboardData.weekly_progress).forEach(([week, data]) => {
+                const progress = data.percentage || 0;
+                const isActive = progress > 0 && progress < 100;
+
+                html += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="p-3 border rounded hover-lift ${isActive ? 'border-primary' : ''}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-semibold mb-0">Week ${week}</h6>
+                                <span class="badge ${progress === 100 ? 'bg-success' : progress > 0 ? 'bg-primary' : 'bg-light text-dark'}">${Math.round(progress)}%</span>
                             </div>
+                            <p class="text-muted small mb-2">${data.title}</p>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <small class="text-muted">${data.completed}/${data.total} days completed</small>
                         </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="fw-medium">${session.topic || 'Study Session'}</div>
-                            <small class="text-muted">${session.duration} min • ${timeAgo}</small>
-                        </div>
-                        ${session.completed ?
-                        '<i class="bi bi-check-circle text-success"></i>' :
-                        '<i class="bi bi-x-circle text-danger"></i>'
-                    }
                     </div>
                 `;
-            }).join('');
-        }
-
-        function loadMotivation() {
-            const quotes = [
-                "The expert in anything was once a beginner.",
-                "Success is the sum of small efforts repeated day in and day out.",
-                "Don't watch the clock; do what it does. Keep going.",
-                "The only way to do great work is to love what you do.",
-                "Every master was once a disaster.",
-                "Progress, not perfection.",
-                "The journey of a thousand miles begins with one step."
-            ];
-
-            // Deterministic quote based on day
-            const today = new Date().toDateString();
-            const index = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % quotes.length;
-            const quote = quotes[index];
-
-            const container = document.getElementById('motivation-widget');
-            container.innerHTML = `
-                <i class="bi bi-quote display-6 text-primary mb-3"></i>
-                <h5 class="fw-light fst-italic">"${quote}"</h5>
-                <button class="btn btn-sm btn-outline-primary mt-3" onclick="shareQuote('${quote}')">
-                    <i class="bi bi-share me-1"></i>Share
-                </button>
-            `;
-        }
-
-        function checkAchievements(stats) {
-            // Check for streak milestones
-            const streakMilestones = [3, 7, 14, 30, 60, 100];
-            const currentStreak = stats.current_streak;
-
-            streakMilestones.forEach(milestone => {
-                if (currentStreak === milestone) {
-                    notifications.achievement(
-                        `${milestone} Day Streak!`,
-                        `Amazing dedication! Keep up the great work!`
-                    );
-                }
             });
 
-            // Check for completion milestones
-            const completionMilestones = [25, 50, 75, 100];
-            const completion = Math.round(stats.completion_percentage);
-
-            completionMilestones.forEach(milestone => {
-                if (completion === milestone) {
-                    notifications.achievement(
-                        `${milestone}% Complete!`,
-                        `You're making incredible progress!`
-                    );
-                }
-            });
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
+        async function loadTodaysFocus() {
+            const container = document.getElementById('today-focus-container');
 
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + " years ago";
-
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + " months ago";
-
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + " days ago";
-
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + " hours ago";
-
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + " minutes ago";
-
-            return "Just now";
-        }
-
-        function shareQuote(quote) {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'DSAPath Motivation',
-                    text: quote,
-                    url: window.location.href
-                });
-            } else {
-                // Copy to clipboard
-                navigator.clipboard.writeText(quote);
-                notifications.success('Quote copied to clipboard!');
-            }
-        }
-
-        // Update current week section
-        async function updateCurrentWeek() {
             try {
-                // Get current week based on progress
-                const progress = await api.get('/progress');
-                const completedWeeks = Object.keys(progress.progress).filter(week => {
-                    const days = progress.progress[week];
-                    return Object.values(days).filter(d => d.completed).length === 7;
-                });
+                // Get current week/day based on progress
+                const currentWeek = getCurrentWeek();
+                const currentDay = getCurrentDay();
 
-                const currentWeek = completedWeeks.length + 1;
-                const roadmap = await api.get(`/roadmap?week=${currentWeek}`);
-
-                const container = document.getElementById('current-week-container');
-                container.innerHTML = `
-                    <div class="week-overview">
-                        <h6 class="text-primary mb-2">Week ${currentWeek}: ${roadmap.title}</h6>
-                        <p class="text-muted small mb-3">${roadmap.goal}</p>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" style="width: ${roadmap.progress * 100}%"></div>
+                if (!currentWeek || !currentDay) {
+                    container.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-trophy fs-2 text-success mb-3"></i>
+                            <h6 class="fw-semibold">Congratulations!</h6>
+                            <p class="text-muted mb-0">You've completed your learning journey!</p>
                         </div>
-                        <a href="/pages/roadmap#week-${currentWeek}" class="btn btn-sm btn-primary w-100">
-                            Continue Learning <i class="bi bi-arrow-right ms-1"></i>
+                    `;
+                    return;
+                }
+
+                document.getElementById('current-week-badge').textContent = `Week ${currentWeek}`;
+
+                container.innerHTML = `
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <div class="completion-toggle" onclick="quickToggleCompletion(${currentWeek}, '${currentDay}')">
+                                <i class="fas fa-check" style="display: none;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-semibold mb-1">${currentDay}: Arrays & String Fundamentals</h6>
+                            <p class="text-muted mb-2">Focus on basic array operations and string manipulation</p>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-light text-dark">Arrays</span>
+                                <span class="badge bg-light text-dark">Strings</span>
+                                <span class="badge bg-light text-dark">90 min</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-top">
+                        <a href="/roadmap" class="btn btn-sm btn-primary">
+                            <i class="fas fa-play me-1"></i>Start Learning
+                        </a>
+                        <a href="/pomodoro" class="btn btn-sm btn-outline-success ms-2">
+                            <i class="fas fa-clock me-1"></i>Pomodoro
                         </a>
                     </div>
                 `;
             } catch (error) {
-                console.error('Failed to load current week:', error);
+                console.error('Error loading today\'s focus:', error);
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle text-warning mb-2"></i>
+                        <p class="text-muted mb-0">Unable to load today's focus</p>
+                    </div>
+                `;
             }
         }
 
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard();
-            updateCurrentWeek();
+        function getCurrentWeek() {
+            // Logic to determine current week based on progress
+            const weeklyProgress = dashboardData.weekly_progress || {};
 
-            // Refresh data every 5 minutes
-            setInterval(loadDashboard, 5 * 60 * 1000);
-        });
+            for (let week = 1; week <= 14; week++) {
+                const weekData = weeklyProgress[week];
+                if (!weekData || weekData.percentage < 100) {
+                    return week;
+                }
+            }
+
+            return null; // All weeks completed
+        }
+
+        function getCurrentDay() {
+            // Return current day of the week for focus
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const today = new Date().getDay();
+            return days[today === 0 ? 6 : today - 1]; // Convert Sunday (0) to Saturday (6)
+        }
+
+        function loadRecentActivity() {
+            const container = document.getElementById('recent-activity-container');
+            const recentSessions = dashboardData.recent_sessions || [];
+            const recentNotes = dashboardData.recent_notes || [];
+
+            if (recentSessions.length === 0 && recentNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-history fs-2 text-muted mb-3"></i>
+                        <p class="text-muted">No recent activity</p>
+                        <small class="text-muted">Start studying to see your activity here</small>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="activity-list">';
+
+            // Combine and sort activities
+            const activities = [];
+
+            recentSessions.forEach(session => {
+                activities.push({
+                    type: 'session',
+                    time: session.start_time,
+                    data: session
+                });
+            });
+
+            recentNotes.forEach(note => {
+                activities.push({
+                    type: 'note',
+                    time: note.updated_at,
+                    data: note
+                });
+            });
+
+            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+            activities.slice(0, 5).forEach(activity => {
+                const timeAgo = getTimeAgo(activity.time);
+
+                if (activity.type === 'session') {
+                    const session = activity.data;
+                    html += `
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-clock text-success"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">Pomodoro Session</div>
+                                <small class="text-muted">${session.topic || 'Study session'} • ${session.duration} min • ${timeAgo}</small>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const note = activity.data;
+                    html += `
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-sticky-note text-info"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">${note.title}</div>
+                                <small class="text-muted">Note updated • ${timeAgo}</small>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function getTimeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        function loadDailyQuote() {
+            const quotes = [
+                { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+                { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+                { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+                { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
+                { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+                { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" },
+                { text: "The best error message is the one that never shows up.", author: "Thomas Fuchs" },
+                { text: "Debugging is twice as hard as writing the code in the first place.", author: "Brian Kernighan" }
+            ];
+
+            // Deterministic quote based on date
+            const today = new Date().toDateString();
+            const quoteIndex = hashCode(today) % quotes.length;
+            const quote = quotes[Math.abs(quoteIndex)];
+
+            document.getElementById('daily-quote').textContent = quote.text;
+            document.getElementById('quote-author').textContent = `- ${quote.author}`;
+        }
+
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            return hash;
+        }
+
+        async function quickToggleCompletion(week, day) {
+            const toggle = event.currentTarget;
+            const icon = toggle.querySelector('i');
+
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        week: week,
+                        day: day,
+                        completed: !toggle.classList.contains('completed')
+                    })
+                });
+
+                if (response.ok) {
+                    toggle.classList.toggle('completed');
+                    if (toggle.classList.contains('completed')) {
+                        icon.style.display = 'block';
+                        showSuccessToast('Great job! Keep up the momentum! 🎉');
+                    } else {
+                        icon.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling completion:', error);
+            }
+        }
+
+        function showSuccessToast(message) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorMessage(message) {
+            const container = document.querySelector('.content-area');
+            const alert = document.createElement('div');
+            alert.className = 'alert-custom alert-error-custom animate-fadeInDown';
+            alert.innerHTML = `
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${message}</span>
+            `;
+
+            container.insertBefore(alert, container.firstChild);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
     </script>
 </body>
 

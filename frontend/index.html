@@ -3,229 +3,151 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>DSAPath - Master Data Structures & Algorithms</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Path - Master Data Structures & Algorithms</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/animations.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/components.css" rel="stylesheet">
+    <link href="css/animation.css" rel="stylesheet">
+    <link href="css/responsive.css" rel="stylesheet">
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-code-square me-2"></i>DSAPath
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#roadmap">Roadmap</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/auth/login" class="btn btn-outline-light">Login</a>
-                    </li>
-                    <li class="nav-item ms-2">
-                        <a class="btn btn-primary" href="/auth/register">Get Started</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <section class="hero-section min-vh-100 d-flex align-items-center bg-gradient">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0">
-                    <h1 class="display-4 fw-bold mb-4 animate-fade-in">
-                        Master DSA in <span class="text-primary">14 Weeks</span>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100">
+    <!-- Hero Section -->
+    <div class="hero-section min-h-screen flex items-center justify-center">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="animate-fadeInUp">
+                    <h1 class="display-3 fw-bold text-dark mb-4">
+                        Master <span class="text-primary">Data Structures</span> &
+                        <span class="text-success">Algorithms</span>
                     </h1>
-                    <p class="lead mb-4 text-muted animate-slide-up">
-                        Structured learning path with hands-on projects, AI assistance, and progress tracking to ace
-                        your coding interviews.
+                    <p class="lead text-muted mb-5">
+                        14-week structured roadmap to become a DSA expert. Track progress,
+                        take notes, and practice with our comprehensive platform.
                     </p>
-                    <div class="d-flex gap-3 animate-slide-up">
-                        <a href="/auth/register" class="btn btn-primary btn-lg">
-                            Start Learning <i class="bi bi-arrow-right ms-2"></i>
+                </div>
+
+                <div class="animate-fadeInUp animation-delay-200">
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mb-5">
+                        <a href="/login" class="btn btn-primary btn-lg px-5 py-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
                         </a>
-                        <a href="#demo" class="btn btn-outline-primary btn-lg">
-                            Watch Demo <i class="bi bi-play-circle ms-2"></i>
+                        <a href="/register" class="btn btn-outline-primary btn-lg px-5 py-3">
+                            <i class="fas fa-user-plus me-2"></i>Get Started Free
                         </a>
                     </div>
-                    <div class="mt-4 d-flex gap-4 text-muted animate-fade-in">
-                        <div><i class="bi bi-check-circle text-success"></i> 14-Week Curriculum</div>
-                        <div><i class="bi bi-check-circle text-success"></i> AI Assistant</div>
-                        <div><i class="bi bi-check-circle text-success"></i> Progress Tracking</div>
-                    </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="position-relative animate-float">
-                        <img src="/assets/images/hero-illustration.svg" alt="DSA Learning" class="img-fluid">
+
+                <!-- Feature Cards -->
+                <div class="row g-4 mt-5 animate-fadeInUp animation-delay-400">
+                    <div class="col-md-4">
+                        <div class="feature-card card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon text-primary mb-3">
+                                    <i class="fas fa-route fa-3x"></i>
+                                </div>
+                                <h5 class="card-title fw-bold">Structured Roadmap</h5>
+                                <p class="card-text text-muted">
+                                    14-week comprehensive curriculum covering all essential DSA topics
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon text-success mb-3">
+                                    <i class="fas fa-chart-line fa-3x"></i>
+                                </div>
+                                <h5 class="card-title fw-bold">Progress Tracking</h5>
+                                <p class="card-text text-muted">
+                                    Monitor your learning journey with detailed analytics and streaks
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon text-info mb-3">
+                                    <i class="fas fa-clock fa-3x"></i>
+                                </div>
+                                <h5 class="card-title fw-bold">Pomodoro Timer</h5>
+                                <p class="card-text text-muted">
+                                    Built-in study timer to maximize focus and productivity
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section id="features" class="py-5">
+    <!-- Stats Section -->
+    <section class="py-5 bg-primary text-white">
         <div class="container">
-            <h2 class="text-center mb-5">Everything You Need to Master DSA</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card p-4 h-100">
-                        <div class="feature-icon mb-3">
-                            <i class="bi bi-calendar-week text-primary fs-1"></i>
-                        </div>
-                        <h4>Structured Roadmap</h4>
-                        <p class="text-muted">14-week curriculum covering all essential DSA topics with hands-on
-                            projects.</p>
-                    </div>
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-3">
+                    <h3 class="display-6 fw-bold">14</h3>
+                    <p class="mb-0">Weeks of Content</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 h-100">
-                        <div class="feature-icon mb-3">
-                            <i class="bi bi-robot text-primary fs-1"></i>
-                        </div>
-                        <h4>AI Assistant</h4>
-                        <p class="text-muted">Get instant help with concepts, code explanations, and personalized study
-                            plans.</p>
-                    </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <h3 class="display-6 fw-bold">98</h3>
+                    <p class="mb-0">Daily Topics</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 h-100">
-                        <div class="feature-icon mb-3">
-                            <i class="bi bi-graph-up text-primary fs-1"></i>
-                        </div>
-                        <h4>Progress Tracking</h4>
-                        <p class="text-muted">Track your learning journey with streaks, analytics, and achievement
-                            badges.</p>
-                    </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <h3 class="display-6 fw-bold">200+</h3>
+                    <p class="mb-0">Practice Problems</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 h-100">
-                        <div class="feature-icon mb-3">
-                            <i class="bi bi-clock-history text-primary fs-1"></i>
-                        </div>
-                        <h4>Pomodoro Timer</h4>
-                        <p class="text-muted">Built-in productivity timer to maintain focus during study sessions.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 h-100">
-                        <div class="feature-icon mb-3">
-                            <i class="bi bi-journal-code text-primary fs-1"></i>
-                        </div>
-                        <h4>Smart Notes</h4>
-                        <p class="text-muted">Take notes with Markdown support and organize by topics and weeks.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 h-100">
-                        <div class="feature-icon mb-3">
-                            <i class="bi bi-collection text-primary fs-1"></i>
-                        </div>
-                        <h4>Curated Resources</h4>
-                        <p class="text-muted">Access handpicked tutorials, visualizations, and practice problems.</p>
-                    </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <h3 class="display-6 fw-bold">∞</h3>
+                    <p class="mb-0">AI Assistance</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="roadmap" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center mb-5">Your 14-Week Journey</h2>
-            <div class="row">
-                <div class="col-lg-10 mx-auto">
-                    <div class="roadmap-preview">
-                        <div class="roadmap-item mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="week-number">1</div>
-                                <div class="ms-3">
-                                    <h5 class="mb-1">Foundation & Environment</h5>
-                                    <p class="text-muted mb-0">Set up development environment and basic programming
-                                        concepts</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="roadmap-item mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="week-number">2</div>
-                                <div class="ms-3">
-                                    <h5 class="mb-1">Arrays & String Mastery</h5>
-                                    <p class="text-muted mb-0">Master array operations and string manipulation</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="roadmap-item mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="week-number">3</div>
-                                <div class="ms-3">
-                                    <h5 class="mb-1">Linked Lists Deep Dive</h5>
-                                    <p class="text-muted mb-0">Master linked list operations and applications</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-4">
-                            <a href="/auth/register" class="btn btn-primary">View Full Roadmap</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Call to Action -->
+    <section class="py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Ready to Start Your DSA Journey?</h2>
+            <p class="lead text-muted mb-4">Join thousands of developers mastering algorithms</p>
+            <a href="/register" class="btn btn-success btn-lg px-5 py-3">
+                <i class="fas fa-rocket me-2"></i>Start Learning Now
+            </a>
         </div>
     </section>
 
-    <section class="cta-section py-5 bg-primary text-white">
-        <div class="container text-center">
-            <h2 class="mb-4">Ready to Start Your DSA Journey?</h2>
-            <p class="lead mb-4">Join thousands of learners mastering algorithms and data structures</p>
-            <a href="/auth/register" class="btn btn-light btn-lg">Get Started Free</a>
-        </div>
-    </section>
-
-    <footer class="bg-dark text-white py-4">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2024 DSAPath. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                window.location.href = '/dashboard';
+            }
+
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-fadeInUp').forEach(el => {
+                observer.observe(el);
             });
-        });
-
-        // Add animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.feature-card, .roadmap-item').forEach(el => {
-            observer.observe(el);
         });
     </script>
 </body>

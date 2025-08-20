@@ -1,477 +1,660 @@
-/* Mobile First Responsive Design */
+/* Responsive Design System */
 
-/* Extra Small Devices (phones, less than 576px) */
-@media (max-width: 575.98px) {
+/* Container Sizes */
+.container-custom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
 
-    /* Typography */
-    .display-1 {
-        font-size: 3rem;
+/* Grid System */
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.grid-cols-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* Flexbox Utilities */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+/* Spacing */
+.gap-1 {
+    gap: 0.25rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-3 {
+    gap: 0.75rem;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.gap-5 {
+    gap: 1.25rem;
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+/* Typography Responsive */
+.text-responsive {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.heading-responsive {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+.subheading-responsive {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+}
+
+/* Large Desktop (1400px and up) */
+@media (min-width: 1400px) {
+    .container-custom {
+        padding: 0 2rem;
     }
 
-    .display-2 {
-        font-size: 2.5rem;
+    .content-area {
+        padding: 3rem;
     }
 
-    .display-3 {
-        font-size: 2rem;
+    .stats-card {
+        padding: 2rem;
     }
 
-    .display-4 {
-        font-size: 1.75rem;
-    }
-
-    h1 {
-        font-size: 1.75rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
-
-    h3 {
-        font-size: 1.25rem;
-    }
-
-    /* Layout */
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    /* Navigation */
-    .sidebar {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    /* Grid Adjustments */
-    .grid-dashboard,
-    .grid-cards,
-    .grid-resources {
-        grid-template-columns: 1fr;
-    }
-
-    /* Roadmap */
-    .roadmap-timeline {
-        padding-left: 1rem;
-    }
-
-    .roadmap-timeline::before {
-        left: 0;
-    }
-
-    .roadmap-item::before {
-        left: -0.5rem;
-        width: 0.75rem;
-        height: 0.75rem;
-    }
-
-    /* Timer Display */
     .timer-display {
-        font-size: 2rem;
+        font-size: 5rem;
     }
 
-    /* Stats */
-    .stat-value {
-        font-size: 1.5rem;
+    .lg-grid-cols-5 {
+        grid-template-columns: repeat(5, 1fr);
     }
 
-    /* Modal */
-    .modal-dialog {
-        margin: 0.5rem;
-    }
-
-    /* Calendar */
-    .calendar-cell {
-        min-height: 60px;
-        font-size: 0.875rem;
-    }
-
-    /* AI Chat */
-    .ai-message-content {
-        font-size: 0.875rem;
-    }
-
-    /* Forms */
-    .form-control {
-        font-size: 16px;
-        /* Prevent zoom on iOS */
-    }
-
-    /* Buttons */
-    .btn-group-vertical {
-        width: 100%;
-    }
-
-    .btn-group>.btn {
-        width: 100%;
+    .lg-grid-cols-6 {
+        grid-template-columns: repeat(6, 1fr);
     }
 }
 
-/* Small Devices (landscape phones, 576px and up) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-
-    /* Container */
-    .container {
-        max-width: 540px;
-    }
-
-    /* Grid Adjustments */
-    .grid-dashboard {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Calendar */
-    .calendar-cell {
-        min-height: 70px;
-    }
-}
-
-/* Medium Devices (tablets, 768px and up) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-
-    /* Container */
-    .container {
-        max-width: 720px;
-    }
-
-    /* Layout */
-    .app-content {
-        margin-left: var(--sidebar-width);
-    }
-
-    .mobile-nav {
-        display: none;
-    }
-
+/* Desktop (1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
     .sidebar {
-        transform: translateX(0);
+        width: 260px;
     }
 
-    /* Grid Adjustments */
-    .grid-dashboard {
-        grid-template-columns: repeat(2, 1fr);
+    .main-content {
+        margin-left: 260px;
     }
 
-    .grid-resources {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Large Devices (desktops, 992px and up) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-
-    /* Container */
-    .container {
-        max-width: 960px;
+    .xl-grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
     }
 
-    /* Grid Adjustments */
-    .grid-dashboard {
+    .xl-grid-cols-3 {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
-/* Extra Large Devices (large desktops, 1200px and up) */
-@media (min-width: 1200px) {
-
-    /* Container */
-    .container {
-        max-width: 1140px;
+/* Large Tablet (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .sidebar {
+        width: 240px;
     }
 
-    /* Grid Adjustments */
-    .grid-dashboard {
-        grid-template-columns: repeat(4, 1fr);
+    .main-content {
+        margin-left: 240px;
+    }
+
+    .content-area {
+        padding: 1.5rem;
+    }
+
+    .lg-grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .lg-grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .timer-display {
+        font-size: 3.5rem;
+    }
+
+    .calendar-day {
+        min-height: 90px;
     }
 }
 
-/* Touch Device Adjustments */
-@media (hover: none) and (pointer: coarse) {
+/* Tablet (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1050;
+    }
 
-    /* Increase touch targets */
-    .btn,
-    .form-control,
-    .sidebar-item,
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        margin-bottom: var(--mobile-nav-height);
+    }
+
+    .mobile-nav {
+        display: block;
+    }
+
+    .content-area {
+        padding: 1.5rem;
+    }
+
+    .md-grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .md-grid-cols-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .stats-card {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .timer-display {
+        font-size: 3rem;
+    }
+
+    .timer-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 1.3rem;
+    }
+
+    .roadmap-week {
+        margin-bottom: 1.2rem;
+    }
+
+    .week-header {
+        padding: 1.2rem;
+    }
+
+    .day-item {
+        padding: 1rem;
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        padding: 0.75rem;
+    }
+
+    .notes-editor {
+        min-height: 300px;
+    }
+
+    .modal-body-custom {
+        padding: 1.5rem;
+    }
+}
+
+/* Large Mobile (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    .content-area {
+        padding: 1rem;
+    }
+
+    .sm-grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sm-grid-cols-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .stats-card {
+        padding: 1.2rem;
+        text-align: center;
+    }
+
+    .timer-display {
+        font-size: 2.5rem;
+    }
+
+    .timer-btn {
+        width: 65px;
+        height: 65px;
+        font-size: 1.1rem;
+    }
+
+    .week-header {
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .day-item {
+        padding: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .calendar-day {
+        min-height: 70px;
+        padding: 0.5rem;
+    }
+
+    .day-number {
+        font-size: 0.9rem;
+    }
+
+    .mobile-nav-item i {
+        font-size: 1.1rem;
+    }
+
+    .mobile-nav-item span {
+        font-size: 0.7rem;
+    }
+
+    .form-control-custom {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+/* Small Mobile (up to 575px) */
+@media (max-width: 575px) {
+    .container-custom {
+        padding: 0 0.5rem;
+    }
+
+    .content-area {
+        padding: 0.75rem;
+    }
+
+    /* Force single column on small screens */
+    .grid-cols-2,
+    .grid-cols-3,
+    .grid-cols-4,
+    .md-grid-cols-2,
+    .sm-grid-cols-2 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .stats-card {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+
+    .stats-card h3 {
+        font-size: 1.5rem;
+    }
+
+    .timer-display {
+        font-size: 2rem;
+        margin: 1rem 0;
+    }
+
+    .timer-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 1rem;
+    }
+
+    .timer-controls {
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .roadmap-week {
+        margin-bottom: 1rem;
+    }
+
+    .week-header {
+        padding: 0.8rem;
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .week-header h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .day-item {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .day-item .day-info {
+        width: 100%;
+    }
+
+    .day-item .day-controls {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 0.4rem;
+    }
+
+    .day-number {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .day-indicator {
+        width: 8px;
+        height: 8px;
+    }
+
+    .mobile-nav {
+        height: 60px;
+    }
+
     .mobile-nav-item {
-        min-height: 44px;
+        padding: 0.3rem;
     }
 
-    /* Remove hover effects on touch devices */
-    .hover-lift:hover,
-    .hover-scale:hover,
-    .hover-shadow:hover {
-        transform: none;
-        box-shadow: none;
+    .mobile-nav-item i {
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
     }
 
-    /* Adjust tooltips for touch */
-    .tooltip {
+    .mobile-nav-item span {
+        font-size: 0.65rem;
+    }
+
+    .notes-editor {
+        min-height: 250px;
+        font-size: 0.9rem;
+    }
+
+    .notes-toolbar {
+        padding: 0.4rem;
+        gap: 0.3rem;
+    }
+
+    .toolbar-btn {
+        padding: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    .form-control-custom {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-header-custom,
+    .modal-body-custom,
+    .modal-footer-custom {
+        padding: 1rem;
+    }
+
+    .alert-custom {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .badge-custom {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+    }
+
+    .circular-progress {
+        width: 70px;
+        height: 70px;
+    }
+
+    .progress-label {
+        font-size: 0.9rem;
+    }
+}
+
+/* Ultra Small Mobile (up to 320px) */
+@media (max-width: 320px) {
+    .content-area {
+        padding: 0.5rem;
+    }
+
+    .stats-card {
+        padding: 0.75rem;
+    }
+
+    .timer-display {
+        font-size: 1.8rem;
+    }
+
+    .timer-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 0.9rem;
+    }
+
+    .week-header {
+        padding: 0.6rem;
+    }
+
+    .day-item {
+        padding: 0.6rem;
+    }
+
+    .calendar-day {
+        min-height: 50px;
+        padding: 0.3rem;
+    }
+
+    .mobile-nav {
+        height: 55px;
+    }
+
+    .mobile-nav-item span {
         display: none;
     }
+
+    .form-control-custom {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
 }
 
-/* High Resolution Displays */
-@media (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
+/* Landscape Orientation */
+@media (orientation: landscape) and (max-height: 500px) {
+    .mobile-nav {
+        height: 50px;
+    }
 
-    /* Use higher resolution images */
-    .logo {
-        background-image: url('/assets/images/logo@2x.png');
-        background-size: contain;
+    .mobile-nav-item {
+        padding: 0.25rem;
+    }
+
+    .mobile-nav-item span {
+        display: none;
+    }
+
+    .timer-display {
+        font-size: 2rem;
+        margin: 0.5rem 0;
+    }
+
+    .timer-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .content-area {
+        padding: 1rem;
+    }
+}
+
+/* High DPI Screens */
+@media (min-resolution: 2dppx) {
+    .stats-card {
+        border: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control-custom {
+        border-width: 1px;
+    }
+
+    .completion-toggle {
+        border-width: 1px;
+    }
+}
+
+/* Dark Mode Responsive Adjustments */
+@media (prefers-color-scheme: dark) {
+    .stats-card {
+        background: #1f2937;
+        color: white;
+    }
+
+    .calendar-day {
+        background: #374151;
+        color: white;
+    }
+
+    .calendar-day:hover {
+        background: #4b5563;
+    }
+
+    .form-control-custom {
+        background: #374151;
+        border-color: #4b5563;
+        color: white;
+    }
+
+    .modal-custom {
+        background: #1f2937;
+        color: white;
     }
 }
 
 /* Print Styles */
 @media print {
 
-    /* Hide navigation elements */
-    .topbar,
     .sidebar,
     .mobile-nav,
-    .btn,
-    .form-control {
+    .timer-controls,
+    .btn {
         display: none !important;
     }
 
-    /* Adjust layout for print */
-    .app-content {
-        margin: 0;
-        padding: 0;
+    .main-content {
+        margin-left: 0 !important;
+        margin-bottom: 0 !important;
     }
 
-    .app-main {
-        padding: 0;
+    .content-area {
+        padding: 0 !important;
     }
 
-    /* Force background colors */
-    * {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    .stats-card,
+    .roadmap-week {
+        break-inside: avoid;
     }
 
-    /* Page breaks */
-    .page-break {
-        page-break-after: always;
+    body {
+        background: white !important;
+        color: black !important;
     }
 
-    .no-break {
-        page-break-inside: avoid;
-    }
-}
-
-/* Landscape Orientation */
-@media (orientation: landscape) and (max-width: 767.98px) {
-
-    /* Adjust mobile nav for landscape */
-    .mobile-nav {
-        height: 56px;
-    }
-
-    .mobile-nav-item {
-        font-size: 0.7rem;
-    }
-
-    /* Reduce vertical spacing */
-    .app-main {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-    }
-}
-
-/* Accessibility - Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-}
-
-/* Accessibility - High Contrast */
-@media (prefers-contrast: high) {
-    :root {
-        --primary: #0051f5;
-        --border-color: #000000;
-        --text-primary: #000000;
-        --bg-primary: #ffffff;
-    }
-
-    [data-theme="dark"] {
-        --primary: #5c9eff;
-        --border-color: #ffffff;
-        --text-primary: #ffffff;
-        --bg-primary: #000000;
-    }
-
-    .btn-primary {
-        border: 2px solid currentColor;
-    }
-
-    .form-control {
-        border-width: 2px;
-    }
-}
-
-/* Dark Mode Preferences */
-@media (prefers-color-scheme: dark) {
-
-    /* Auto dark mode for users who haven't set a preference */
-    body:not([data-theme]) {
-        --bg-primary: #111827;
-        --bg-secondary: #1f2937;
-        --bg-tertiary: #374151;
-        --text-primary: #f9fafb;
-        --text-secondary: #d1d5db;
-        --text-tertiary: #9ca3af;
-        --border-color: #374151;
-    }
-}
-
-/* Safe Area Insets (for devices with notches) */
-@supports (padding: max(0px)) {
-    .topbar {
-        padding-top: max(0px, env(safe-area-inset-top));
-        height: calc(var(--topbar-height) + env(safe-area-inset-top));
-    }
-
-    .sidebar {
-        padding-left: env(safe-area-inset-left);
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .mobile-nav {
-        padding-bottom: env(safe-area-inset-bottom);
-        height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
-    }
-
-    .app-main {
-        padding-left: max(1rem, env(safe-area-inset-left));
-        padding-right: max(1rem, env(safe-area-inset-right));
-    }
-}
-
-/* Foldable Devices */
-@media (screen-spanning: single-fold-vertical) {
-    .app-layout {
-        display: grid;
-        grid-template-columns: env(fold-left) 1fr;
-    }
-
-    .sidebar {
-        width: env(fold-left);
-    }
-}
-
-/* Custom Scrollbar for Different Screen Sizes */
-@media (max-width: 767.98px) {
-    ::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-    }
-}
-
-/* Responsive Table */
-@media (max-width: 767.98px) {
-    .table-responsive table {
-        font-size: 0.875rem;
-    }
-
-    .table-responsive th,
-    .table-responsive td {
-        padding: 0.5rem;
-    }
-}
-
-/* Responsive Utilities */
-.d-none {
-    display: none !important;
-}
-
-.d-block {
-    display: block !important;
-}
-
-.d-flex {
-    display: flex !important;
-}
-
-.d-grid {
-    display: grid !important;
-}
-
-@media (min-width: 576px) {
-    .d-sm-none {
-        display: none !important;
-    }
-
-    .d-sm-block {
-        display: block !important;
-    }
-
-    .d-sm-flex {
-        display: flex !important;
-    }
-
-    .d-sm-grid {
-        display: grid !important;
-    }
-}
-
-@media (min-width: 768px) {
-    .d-md-none {
-        display: none !important;
-    }
-
-    .d-md-block {
-        display: block !important;
-    }
-
-    .d-md-flex {
-        display: flex !important;
-    }
-
-    .d-md-grid {
-        display: grid !important;
-    }
-}
-
-@media (min-width: 992px) {
-    .d-lg-none {
-        display: none !important;
-    }
-
-    .d-lg-block {
-        display: block !important;
-    }
-
-    .d-lg-flex {
-        display: flex !important;
-    }
-
-    .d-lg-grid {
-        display: grid !important;
-    }
-}
-
-@media (min-width: 1200px) {
-    .d-xl-none {
-        display: none !important;
-    }
-
-    .d-xl-block {
-        display: block !important;
-    }
-
-    .d-xl-flex {
-        display: flex !important;
-    }
-
-    .d-xl-grid {
-        display: grid !important;
+    .progress-bar-custom {
+        border: 1px solid #000;
     }
 }

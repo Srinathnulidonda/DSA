@@ -3,845 +3,1343 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Analytics - DSAPath</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - DSA Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/layouts.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body data-requires-auth="true">
-    <div class="app-layout">
-        <div id="topbar"></div>
-        <div id="sidebar"></div>
+<body>
+    <div class="main-layout">
+        <!-- Include Sidebar -->
+        <div id="sidebar-container"></div>
 
-        <div class="app-content">
-            <main class="app-main">
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h1 class="page-title">Study Analytics</h1>
-                            <p class="page-subtitle">Deep insights into your learning journey</p>
-                        </div>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
-                                <i class="bi bi-calendar-range me-2"></i>
-                                <span id="date-range-label">Last 30 Days</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" onclick="setDateRange(7)">Last 7 Days</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="setDateRange(30)">Last 30 Days</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="setDateRange(90)">Last 90 Days</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="setDateRange(365)">Last Year</a></li>
-                            </ul>
+        <div class="main-content">
+            <!-- Include Topbar -->
+            <div id="topbar-container"></div>
+
+            <div class="content-area">
+                <!-- Header Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div
+                            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                            <div class="animate-fadeInLeft">
+                                <h2 class="fw-bold text-dark mb-1">Learning Analytics</h2>
+                                <p class="text-muted mb-0">Deep insights into your study patterns and performance</p>
+                            </div>
+                            <div class="d-flex gap-2 animate-fadeInRight">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                        data-bs-toggle="dropdown">
+                                        <i class="fas fa-calendar me-1"></i>Last 30 Days
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="setDateRange(7)">Last 7 Days</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#" onclick="setDateRange(30)">Last 30
+                                                Days</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="setDateRange(90)">Last 3
+                                                Months</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="setDateRange(365)">Last Year</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline-success btn-sm" onclick="exportAnalytics()">
+                                    <i class="fas fa-download me-1"></i>Export Report
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Key Metrics -->
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="card analytics-metric">
-                            <div class="card-body text-center">
-                                <div class="metric-icon mb-2">
-                                    <i class="bi bi-clock-history text-primary"></i>
-                                </div>
-                                <h3 class="metric-value mb-1" id="total-study-time">0h</h3>
-                                <p class="metric-label text-muted mb-0">Total Study Time</p>
-                                <small class="metric-change text-success" id="time-change">+0%</small>
-                            </div>
+                <div class="row mb-4">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp">
+                            <i class="fas fa-chart-line text-primary fs-1 mb-3"></i>
+                            <h3 class="fw-bold text-primary mb-1" id="productivity-score">85%</h3>
+                            <h6 class="fw-bold text-primary mb-1">Productivity Score</h6>
+                            <small class="text-muted">Based on consistency and completion rate</small>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card analytics-metric">
-                            <div class="card-body text-center">
-                                <div class="metric-icon mb-2">
-                                    <i class="bi bi-target text-success"></i>
-                                </div>
-                                <h3 class="metric-value mb-1" id="completion-rate">0%</h3>
-                                <p class="metric-label text-muted mb-0">Completion Rate</p>
-                                <small class="metric-change text-success" id="completion-change">+0%</small>
-                            </div>
+
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp animation-delay-100">
+                            <i class="fas fa-brain text-success fs-1 mb-3"></i>
+                            <h3 class="fw-bold text-success mb-1" id="focus-score">92%</h3>
+                            <h6 class="fw-bold text-success mb-1">Focus Score</h6>
+                            <small class="text-muted">Session completion rate</small>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card analytics-metric">
-                            <div class="card-body text-center">
-                                <div class="metric-icon mb-2">
-                                    <i class="bi bi-fire text-warning"></i>
-                                </div>
-                                <h3 class="metric-value mb-1" id="avg-streak">0</h3>
-                                <p class="metric-label text-muted mb-0">Average Streak</p>
-                                <small class="metric-change text-success" id="streak-change">+0%</small>
-                            </div>
+
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp animation-delay-200">
+                            <i class="fas fa-bullseye text-warning fs-1 mb-3"></i>
+                            <h3 class="fw-bold text-warning mb-1" id="accuracy-score">78%</h3>
+                            <h6 class="fw-bold text-warning mb-1">Learning Efficiency</h6>
+                            <small class="text-muted">Time per topic completion</small>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card analytics-metric">
-                            <div class="card-body text-center">
-                                <div class="metric-icon mb-2">
-                                    <i class="bi bi-calendar-check text-info"></i>
-                                </div>
-                                <h3 class="metric-value mb-1" id="active-days">0</h3>
-                                <p class="metric-label text-muted mb-0">Active Days</p>
-                                <small class="metric-change text-success" id="active-change">+0%</small>
-                            </div>
+
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp animation-delay-300">
+                            <i class="fas fa-rocket text-info fs-1 mb-3"></i>
+                            <h3 class="fw-bold text-info mb-1" id="growth-rate">+15%</h3>
+                            <h6 class="fw-bold text-info mb-1">Growth Rate</h6>
+                            <small class="text-muted">Improvement over last month</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Charts Row 1 -->
-                <div class="row g-4 mb-4">
+                <!-- Study Patterns -->
+                <div class="row mb-4">
                     <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">Study Activity Trend</h5>
-                                <div class="chart-container">
-                                    <canvas id="activity-chart"></canvas>
+                        <div class="stats-card animate-fadeInLeft">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fas fa-clock me-2"></i>Study Patterns
+                                </h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="radio" class="btn-check" name="patternView" id="daily-pattern" checked>
+                                    <label class="btn btn-outline-primary" for="daily-pattern">Daily</label>
+
+                                    <input type="radio" class="btn-check" name="patternView" id="weekly-pattern">
+                                    <label class="btn btn-outline-primary" for="weekly-pattern">Weekly</label>
+
+                                    <input type="radio" class="btn-check" name="patternView" id="monthly-pattern">
+                                    <label class="btn btn-outline-primary" for="monthly-pattern">Monthly</label>
                                 </div>
+                            </div>
+                            <div id="study-patterns-chart">
+                                <!-- Heatmap will be rendered here -->
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">Weekly Distribution</h5>
-                                <div class="chart-container">
-                                    <canvas id="weekly-chart"></canvas>
+                        <div class="stats-card animate-fadeInRight">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-trophy me-2"></i>Performance Metrics
+                            </h5>
+
+                            <div class="metric-item mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-semibold">Average Session Length</span>
+                                    <span class="text-primary fw-bold" id="avg-session">28m</span>
                                 </div>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <small class="text-muted">Target: 25m</small>
+                            </div>
+
+                            <div class="metric-item mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-semibold">Completion Rate</span>
+                                    <span class="text-success fw-bold" id="completion-rate">94%</span>
+                                </div>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill" style="width: 94%; background-color: #10b981;"></div>
+                                </div>
+                                <small class="text-muted">Above average</small>
+                            </div>
+
+                            <div class="metric-item mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-semibold">Study Consistency</span>
+                                    <span class="text-warning fw-bold" id="consistency">87%</span>
+                                </div>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill" style="width: 87%; background-color: #f59e0b;"></div>
+                                </div>
+                                <small class="text-muted">Very good</small>
+                            </div>
+
+                            <div class="metric-item">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-semibold">Peak Performance</span>
+                                    <span class="text-info fw-bold" id="peak-time">10:00 AM</span>
+                                </div>
+                                <small class="text-muted">Your most productive time</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Charts Row 2 -->
-                <div class="row g-4 mb-4">
+                <!-- Topic Performance -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stats-card animate-fadeInUp">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fas fa-chart-bar me-2"></i>Topic Performance Analysis
+                                </h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="radio" class="btn-check" name="topicMetric" id="completion-metric"
+                                        checked>
+                                    <label class="btn btn-outline-secondary" for="completion-metric">Completion</label>
+
+                                    <input type="radio" class="btn-check" name="topicMetric" id="time-metric">
+                                    <label class="btn btn-outline-secondary" for="time-metric">Time Spent</label>
+
+                                    <input type="radio" class="btn-check" name="topicMetric" id="difficulty-metric">
+                                    <label class="btn btn-outline-secondary" for="difficulty-metric">Difficulty</label>
+                                </div>
+                            </div>
+                            <div id="topic-performance-chart">
+                                <!-- Topic performance chart will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Insights -->
+                <div class="row mb-4">
                     <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">Topic Breakdown</h5>
-                                <div class="chart-container">
-                                    <canvas id="topics-chart"></canvas>
-                                </div>
+                        <div class="stats-card animate-fadeInLeft">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-lightbulb me-2"></i>Learning Insights
+                            </h5>
+                            <div class="insights-container" id="learning-insights">
+                                <!-- AI-generated insights will be displayed here -->
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">Session Duration Analysis</h5>
-                                <div class="chart-container">
-                                    <canvas id="duration-chart"></canvas>
-                                </div>
+                        <div class="stats-card animate-fadeInRight">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-target me-2"></i>Recommendations
+                            </h5>
+                            <div class="recommendations-container" id="recommendations">
+                                <!-- Personalized recommendations will be displayed here -->
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Heat Map -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Activity Heatmap</h5>
-                        <div id="heatmap-container">
-                            <div class="text-center py-5">
-                                <div class="spinner-border text-primary"></div>
-                                <p class="text-muted mt-3">Loading heatmap...</p>
+                <!-- Comparative Analysis -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="stats-card animate-fadeInLeft">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-chart-area me-2"></i>Progress Trend Analysis
+                            </h5>
+                            <div id="progress-trend-chart">
+                                <!-- Progress trend chart will be rendered here -->
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Insights -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">
-                            <i class="bi bi-lightbulb me-2 text-warning"></i>
-                            Insights & Recommendations
-                        </h5>
-                        <div id="insights-container">
-                            <div class="text-center py-3">
-                                <div class="spinner-border spinner-border-sm"></div>
+                    <div class="col-lg-4">
+                        <div class="stats-card animate-fadeInRight">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-medal me-2"></i>Achievements Timeline
+                            </h5>
+                            <div class="achievements-timeline" id="achievements-timeline">
+                                <!-- Achievement timeline will be displayed here -->
                             </div>
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
 
-        <div id="mobile-nav"></div>
+        <!-- Include Mobile Navigation -->
+        <div id="mobile-nav-container"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
-    <script src="/js/lib.js"></script>
-    <script src="/js/components.js"></script>
-    <script src="/js/loader.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let currentDateRange = 30;
-        let charts = {};
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
         let analyticsData = {};
+        let currentDateRange = 30;
 
-        async function loadAnalytics() {
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            loadComponents();
+            initializeAnalytics();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+        }
+
+        async function loadComponents() {
             try {
-                // Load data from multiple endpoints
-                const [progress, sessions, dashboard] = await Promise.all([
-                    api.get('/progress'),
-                    api.get(`/pomodoro/history?per_page=200`),
-                    api.get('/dashboard')
+                // Load sidebar
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+                // Load topbar
+                const topbarResponse = await fetch('../components/topbar.html');
+                const topbarHtml = await topbarResponse.text();
+                document.getElementById('topbar-container').innerHTML = topbarHtml;
+
+                // Load mobile nav
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobile-nav-container').innerHTML = mobileNavHtml;
+
+                // Execute scripts in loaded components
+                setActiveNavItem();
+                setActiveMobileNavItem();
+                updatePageTitle();
+                loadUserData();
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function initializeAnalytics() {
+            try {
+                await loadAnalyticsData();
+                renderStudyPatterns();
+                renderTopicPerformance();
+                generateInsights();
+                generateRecommendations();
+                renderProgressTrend();
+                renderAchievementsTimeline();
+                setupEventListeners();
+            } catch (error) {
+                console.error('Analytics initialization error:', error);
+                showErrorMessage('Failed to load analytics data');
+            }
+        }
+
+        async function loadAnalyticsData() {
+            try {
+                const token = localStorage.getItem('access_token');
+
+                // Load multiple data sources
+                const [progressRes, pomodoroRes, notesRes] = await Promise.all([
+                    fetch(`${API_BASE}/progress`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    }),
+                    fetch(`${API_BASE}/pomodoro/history?per_page=1000`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    }),
+                    fetch(`${API_BASE}/notes?per_page=1000`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    })
                 ]);
 
+                if (!progressRes.ok || !pomodoroRes.ok || !notesRes.ok) {
+                    throw new Error('Failed to fetch analytics data');
+                }
+
+                const progressData = await progressRes.json();
+                const pomodoroData = await pomodoroRes.json();
+                const notesData = await notesRes.json();
+
+                // Process and store analytics data
                 analyticsData = {
-                    progress: progress.progress,
-                    sessions: sessions.sessions,
-                    stats: dashboard.stats,
-                    weeklyProgress: dashboard.weekly_progress
+                    progress: progressData,
+                    pomodoro: pomodoroData.items || [],
+                    notes: notesData.notes || [],
+                    dateRange: currentDateRange
                 };
 
-                // Process and update all visualizations
-                updateMetrics();
-                createCharts();
-                createHeatmap();
-                generateInsights();
+                // Calculate metrics
+                calculateMetrics();
 
             } catch (error) {
-                notifications.error('Failed to load analytics data');
-                console.error('Analytics error:', error);
+                console.error('Error loading analytics data:', error);
+                throw error;
             }
         }
 
-        function updateMetrics() {
-            const { sessions, stats } = analyticsData;
+        function calculateMetrics() {
+            const recentData = filterDataByDateRange(analyticsData.pomodoro, currentDateRange);
 
-            // Filter sessions by date range
+            // Calculate productivity score
+            const completedSessions = recentData.filter(s => s.status === 'completed').length;
+            const totalSessions = recentData.length;
+            const productivityScore = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
+            document.getElementById('productivity-score').textContent = `${productivityScore}%`;
+
+            // Calculate focus score
+            const focusScore = calculateFocusScore(recentData);
+            document.getElementById('focus-score').textContent = `${focusScore}%`;
+
+            // Calculate learning efficiency
+            const efficiency = calculateLearningEfficiency();
+            document.getElementById('accuracy-score').textContent = `${efficiency}%`;
+
+            // Calculate growth rate
+            const growthRate = calculateGrowthRate();
+            document.getElementById('growth-rate').textContent = growthRate > 0 ? `+${growthRate}%` : `${growthRate}%`;
+
+            // Calculate average session length
+            const avgSession = calculateAverageSessionLength(recentData);
+            document.getElementById('avg-session').textContent = `${avgSession}m`;
+
+            // Calculate completion rate
+            const completionRate = calculateCompletionRate();
+            document.getElementById('completion-rate').textContent = `${completionRate}%`;
+
+            // Calculate consistency
+            const consistency = calculateStudyConsistency(recentData);
+            document.getElementById('consistency').textContent = `${consistency}%`;
+
+            // Find peak performance time
+            const peakTime = findPeakPerformanceTime(recentData);
+            document.getElementById('peak-time').textContent = peakTime;
+        }
+
+        function filterDataByDateRange(data, days) {
             const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - currentDateRange);
+            cutoffDate.setDate(cutoffDate.getDate() - days);
 
-            const filteredSessions = sessions.filter(session =>
-                new Date(session.start_time) >= cutoffDate
-            );
-
-            // Calculate metrics
-            const totalStudyTime = filteredSessions
-                .filter(s => s.completed)
-                .reduce((sum, s) => sum + s.duration, 0);
-
-            const completedSessions = filteredSessions.filter(s => s.completed).length;
-            const completionRate = filteredSessions.length > 0
-                ? Math.round((completedSessions / filteredSessions.length) * 100)
-                : 0;
-
-            // Get unique active days
-            const activeDays = new Set(
-                filteredSessions.map(s => new Date(s.start_time).toDateString())
-            ).size;
-
-            // Calculate average streak (simplified)
-            const avgStreak = Math.round(stats.longest_streak * 0.7); // Rough estimate
-
-            // Update UI
-            document.getElementById('total-study-time').textContent = formatTime(totalStudyTime);
-            document.getElementById('completion-rate').textContent = completionRate + '%';
-            document.getElementById('avg-streak').textContent = avgStreak;
-            document.getElementById('active-days').textContent = activeDays;
-
-            // Calculate changes (mock data for demo)
-            document.getElementById('time-change').textContent = '+12%';
-            document.getElementById('completion-change').textContent = '+8%';
-            document.getElementById('streak-change').textContent = '+5%';
-            document.getElementById('active-change').textContent = '+15%';
+            return data.filter(item => {
+                const itemDate = new Date(item.created_at || item.started_at);
+                return itemDate >= cutoffDate;
+            });
         }
 
-        function createCharts() {
-            createActivityChart();
-            createWeeklyChart();
-            createTopicsChart();
-            createDurationChart();
+        function calculateFocusScore(sessions) {
+            if (sessions.length === 0) return 0;
+
+            const completedSessions = sessions.filter(s => s.status === 'completed');
+            const avgCompletionTime = completedSessions.reduce((acc, s) => {
+                const duration = s.duration || 25;
+                const actualTime = new Date(s.ended_at) - new Date(s.started_at);
+                const focusRatio = Math.min(1, duration * 60000 / actualTime);
+                return acc + focusRatio;
+            }, 0) / completedSessions.length;
+
+            return Math.round(avgCompletionTime * 100);
         }
 
-        function createActivityChart() {
-            const ctx = document.getElementById('activity-chart').getContext('2d');
+        function calculateLearningEfficiency() {
+            const topics = analyticsData.progress.topics || [];
+            const completedTopics = topics.filter(t => t.status === 'completed');
 
-            // Prepare data for the last 30 days
-            const days = [];
-            const studyTimes = [];
-            const completionRates = [];
+            if (completedTopics.length === 0) return 0;
 
-            for (let i = currentDateRange - 1; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
+            // Calculate based on time spent vs expected time
+            const efficiency = completedTopics.reduce((acc, topic) => {
+                const expectedTime = topic.estimated_hours || 2;
+                const actualTime = topic.time_spent || expectedTime;
+                const ratio = Math.min(1, expectedTime / actualTime);
+                return acc + ratio;
+            }, 0) / completedTopics.length;
 
-                const dayString = date.toDateString();
-                days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            return Math.round(efficiency * 100);
+        }
 
-                // Find sessions for this day
-                const daySessions = analyticsData.sessions.filter(s =>
-                    new Date(s.start_time).toDateString() === dayString
-                );
+        function calculateGrowthRate() {
+            const currentMonth = filterDataByDateRange(analyticsData.pomodoro, 30);
+            const previousMonth = filterDataByDateRange(analyticsData.pomodoro, 60)
+                .filter(s => !currentMonth.includes(s));
 
-                const dayStudyTime = daySessions
-                    .filter(s => s.completed)
-                    .reduce((sum, s) => sum + s.duration, 0);
+            const currentProductivity = currentMonth.filter(s => s.status === 'completed').length;
+            const previousProductivity = previousMonth.filter(s => s.status === 'completed').length;
 
-                const dayCompletionRate = daySessions.length > 0
-                    ? (daySessions.filter(s => s.completed).length / daySessions.length) * 100
-                    : 0;
+            if (previousProductivity === 0) return 0;
 
-                studyTimes.push(dayStudyTime);
-                completionRates.push(dayCompletionRate);
+            return Math.round(((currentProductivity - previousProductivity) / previousProductivity) * 100);
+        }
+
+        function calculateAverageSessionLength(sessions) {
+            const completedSessions = sessions.filter(s => s.status === 'completed');
+            if (completedSessions.length === 0) return 0;
+
+            const avgDuration = completedSessions.reduce((acc, s) => acc + (s.duration || 25), 0) / completedSessions.length;
+            return Math.round(avgDuration);
+        }
+
+        function calculateCompletionRate() {
+            const topics = analyticsData.progress.topics || [];
+            const startedTopics = topics.filter(t => t.status !== 'not_started');
+            const completedTopics = topics.filter(t => t.status === 'completed');
+
+            if (startedTopics.length === 0) return 0;
+
+            return Math.round((completedTopics.length / startedTopics.length) * 100);
+        }
+
+        function calculateStudyConsistency(sessions) {
+            if (sessions.length === 0) return 0;
+
+            // Group sessions by date
+            const sessionsByDate = {};
+            sessions.forEach(session => {
+                const date = new Date(session.started_at).toDateString();
+                sessionsByDate[date] = (sessionsByDate[date] || 0) + 1;
+            });
+
+            // Calculate days with study activity
+            const daysWithStudy = Object.keys(sessionsByDate).length;
+            const totalDays = currentDateRange;
+
+            return Math.round((daysWithStudy / totalDays) * 100);
+        }
+
+        function findPeakPerformanceTime(sessions) {
+            const hourCounts = {};
+
+            sessions.filter(s => s.status === 'completed').forEach(session => {
+                const hour = new Date(session.started_at).getHours();
+                hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+            });
+
+            let peakHour = 10; // Default
+            let maxCount = 0;
+
+            Object.entries(hourCounts).forEach(([hour, count]) => {
+                if (count > maxCount) {
+                    maxCount = count;
+                    peakHour = parseInt(hour);
+                }
+            });
+
+            // Format time
+            const period = peakHour >= 12 ? 'PM' : 'AM';
+            const displayHour = peakHour > 12 ? peakHour - 12 : (peakHour === 0 ? 12 : peakHour);
+
+            return `${displayHour}:00 ${period}`;
+        }
+
+        function renderStudyPatterns() {
+            const container = document.getElementById('study-patterns-chart');
+            const patternView = document.querySelector('input[name="patternView"]:checked').id;
+
+            if (patternView === 'daily-pattern') {
+                renderDailyHeatmap(container);
+            } else if (patternView === 'weekly-pattern') {
+                renderWeeklyPattern(container);
+            } else {
+                renderMonthlyPattern(container);
             }
-
-            if (charts.activity) charts.activity.destroy();
-
-            charts.activity = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: days,
-                    datasets: [{
-                        label: 'Study Time (minutes)',
-                        data: studyTimes,
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        yAxisID: 'y'
-                    }, {
-                        label: 'Completion Rate (%)',
-                        data: completionRates,
-                        borderColor: 'rgb(16, 185, 129)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        yAxisID: 'y1'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        },
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Study Time (minutes)'
-                            }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            title: {
-                                display: true,
-                                text: 'Completion Rate (%)'
-                            },
-                            grid: {
-                                drawOnChartArea: false,
-                            },
-                        }
-                    }
-                }
-            });
         }
 
-        function createWeeklyChart() {
-            const ctx = document.getElementById('weekly-chart').getContext('2d');
+        function renderDailyHeatmap(container) {
+            const sessions = filterDataByDateRange(analyticsData.pomodoro, currentDateRange);
+            const heatmapData = generateHeatmapData(sessions);
 
-            // Group sessions by day of week
-            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const weeklyData = new Array(7).fill(0);
-
-            analyticsData.sessions.forEach(session => {
-                if (session.completed) {
-                    const dayOfWeek = new Date(session.start_time).getDay();
-                    weeklyData[dayOfWeek] += session.duration;
-                }
-            });
-
-            if (charts.weekly) charts.weekly.destroy();
-
-            charts.weekly = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: weekdays,
-                    datasets: [{
-                        data: weeklyData,
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(34, 197, 94, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(139, 92, 246, 0.8)',
-                            'rgba(236, 72, 153, 0.8)',
-                            'rgba(6, 182, 212, 0.8)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        function createTopicsChart() {
-            const ctx = document.getElementById('topics-chart').getContext('2d');
-
-            // Analyze topics from session data and roadmap
-            const topicData = {
-                'Arrays & Strings': 0,
-                'Linked Lists': 0,
-                'Trees & Graphs': 0,
-                'Algorithms': 0,
-                'Dynamic Programming': 0
-            };
-
-            // Map sessions to topics based on weeks
-            analyticsData.sessions.forEach(session => {
-                if (session.completed && session.topic) {
-                    // Simple topic classification based on keywords
-                    const topic = session.topic.toLowerCase();
-                    if (topic.includes('array') || topic.includes('string')) {
-                        topicData['Arrays & Strings'] += session.duration;
-                    } else if (topic.includes('linked') || topic.includes('list')) {
-                        topicData['Linked Lists'] += session.duration;
-                    } else if (topic.includes('tree') || topic.includes('graph')) {
-                        topicData['Trees & Graphs'] += session.duration;
-                    } else if (topic.includes('dp') || topic.includes('dynamic')) {
-                        topicData['Dynamic Programming'] += session.duration;
-                    } else {
-                        topicData['Algorithms'] += session.duration;
-                    }
-                }
-            });
-
-            if (charts.topics) charts.topics.destroy();
-
-            charts.topics = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(topicData),
-                    datasets: [{
-                        label: 'Study Time (minutes)',
-                        data: Object.values(topicData),
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: 'rgb(59, 130, 246)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Study Time (minutes)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function createDurationChart() {
-            const ctx = document.getElementById('duration-chart').getContext('2d');
-
-            // Analyze session durations
-            const durationBuckets = {
-                '0-15 min': 0,
-                '15-30 min': 0,
-                '30-45 min': 0,
-                '45-60 min': 0,
-                '60+ min': 0
-            };
-
-            analyticsData.sessions.forEach(session => {
-                if (session.completed) {
-                    if (session.duration <= 15) {
-                        durationBuckets['0-15 min']++;
-                    } else if (session.duration <= 30) {
-                        durationBuckets['15-30 min']++;
-                    } else if (session.duration <= 45) {
-                        durationBuckets['30-45 min']++;
-                    } else if (session.duration <= 60) {
-                        durationBuckets['45-60 min']++;
-                    } else {
-                        durationBuckets['60+ min']++;
-                    }
-                }
-            });
-
-            if (charts.duration) charts.duration.destroy();
-
-            charts.duration = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(durationBuckets),
-                    datasets: [{
-                        data: Object.values(durationBuckets),
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(34, 197, 94, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(139, 92, 246, 0.8)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        function createHeatmap() {
-            const container = document.getElementById('heatmap-container');
-
-            // Create a simple heatmap for the last 12 weeks
-            const weeks = 12;
-            const days = 7;
-
-            // Prepare data
-            const heatmapData = [];
-            for (let week = 0; week < weeks; week++) {
-                for (let day = 0; day < days; day++) {
-                    const date = new Date();
-                    date.setDate(date.getDate() - (week * 7 + day));
-
-                    const dayString = date.toDateString();
-                    const daySessions = analyticsData.sessions.filter(s =>
-                        new Date(s.start_time).toDateString() === dayString && s.completed
-                    );
-
-                    const intensity = Math.min(daySessions.length, 5); // Max 5 for color scale
-
-                    heatmapData.push({
-                        date: date,
-                        intensity: intensity,
-                        sessions: daySessions.length,
-                        minutes: daySessions.reduce((sum, s) => sum + s.duration, 0)
-                    });
-                }
-            }
-
-            // Render heatmap
-            let heatmapHtml = '<div class="heatmap-grid">';
-
-            // Add month labels
-            heatmapHtml += '<div class="heatmap-months">';
-            const months = [...new Set(heatmapData.map(d => d.date.toLocaleDateString('en-US', { month: 'short' })))];
-            months.reverse().forEach(month => {
-                heatmapHtml += `<span class="heatmap-month">${month}</span>`;
-            });
-            heatmapHtml += '</div>';
-
-            // Add day labels
-            heatmapHtml += '<div class="heatmap-days">';
-            ['Mon', 'Wed', 'Fri'].forEach(day => {
-                heatmapHtml += `<span class="heatmap-day">${day}</span>`;
-            });
-            heatmapHtml += '</div>';
-
-            // Add cells
-            heatmapHtml += '<div class="heatmap-cells">';
-            heatmapData.reverse().forEach(data => {
-                const tooltip = `${data.date.toLocaleDateString()}: ${data.sessions} sessions, ${data.minutes} minutes`;
-                heatmapHtml += `
-                    <div class="heatmap-cell intensity-${data.intensity}" 
-                         title="${tooltip}"></div>
-                `;
-            });
-            heatmapHtml += '</div>';
-
-            heatmapHtml += '</div>';
-
-            // Add legend
-            heatmapHtml += `
-                <div class="heatmap-legend mt-3">
-                    <span class="text-muted small">Less</span>
-                    <div class="heatmap-legend-scale">
-                        ${[0, 1, 2, 3, 4, 5].map(i =>
-                `<div class="heatmap-cell intensity-${i}"></div>`
+            container.innerHTML = `
+                <div class="heatmap-container">
+                    <div class="heatmap-labels-y">
+                        ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) =>
+                `<div class="heatmap-label">${day}</div>`
             ).join('')}
                     </div>
-                    <span class="text-muted small">More</span>
+                    <div class="heatmap-grid">
+                        ${heatmapData.map((row, dayIndex) =>
+                `<div class="heatmap-row">
+                                ${row.map((value, hourIndex) =>
+                    `<div class="heatmap-cell" 
+                                         style="background-color: ${getHeatmapColor(value)}" 
+                                         data-bs-toggle="tooltip" 
+                                         title="${value} sessions on ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dayIndex]} at ${hourIndex}:00">
+                                    </div>`
+                ).join('')}
+                            </div>`
+            ).join('')}
+                    </div>
+                    <div class="heatmap-labels-x">
+                        ${Array.from({ length: 24 }, (_, i) =>
+                i % 3 === 0 ? `<div class="heatmap-label">${i}</div>` : '<div></div>'
+            ).join('')}
+                    </div>
+                </div>
+                <div class="heatmap-legend mt-3">
+                    <span class="text-muted">Less</span>
+                    ${[0, 1, 2, 3, 4].map(i =>
+                `<div class="heatmap-cell" style="background-color: ${getHeatmapColor(i * 2)}"></div>`
+            ).join('')}
+                    <span class="text-muted">More</span>
                 </div>
             `;
 
-            container.innerHTML = heatmapHtml;
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+        }
+
+        function generateHeatmapData(sessions) {
+            const heatmap = Array(7).fill(null).map(() => Array(24).fill(0));
+
+            sessions.forEach(session => {
+                const date = new Date(session.started_at);
+                const day = date.getDay();
+                const hour = date.getHours();
+                heatmap[day][hour]++;
+            });
+
+            return heatmap;
+        }
+
+        function getHeatmapColor(value) {
+            const colors = ['#f3f4f6', '#ddd6fe', '#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed'];
+            const index = Math.min(Math.floor(value / 2), colors.length - 1);
+            return colors[index];
+        }
+
+        function renderWeeklyPattern(container) {
+            // Implementation for weekly pattern view
+            container.innerHTML = '<p class="text-center text-muted">Weekly pattern view coming soon...</p>';
+        }
+
+        function renderMonthlyPattern(container) {
+            // Implementation for monthly pattern view
+            container.innerHTML = '<p class="text-center text-muted">Monthly pattern view coming soon...</p>';
+        }
+
+        function renderTopicPerformance() {
+            const container = document.getElementById('topic-performance-chart');
+            const topics = analyticsData.progress.topics || [];
+            const metric = document.querySelector('input[name="topicMetric"]:checked').id;
+
+            let chartData = [];
+
+            if (metric === 'completion-metric') {
+                chartData = topics.map(topic => ({
+                    name: topic.topic_name,
+                    value: topic.progress || 0,
+                    color: getProgressColor(topic.progress)
+                }));
+            } else if (metric === 'time-metric') {
+                chartData = topics.map(topic => ({
+                    name: topic.topic_name,
+                    value: topic.time_spent || 0,
+                    color: '#6366f1'
+                }));
+            } else {
+                chartData = topics.map(topic => ({
+                    name: topic.topic_name,
+                    value: topic.difficulty_rating || 3,
+                    color: getDifficultyColor(topic.difficulty_rating)
+                }));
+            }
+
+            // Sort by value
+            chartData.sort((a, b) => b.value - a.value);
+
+            // Render horizontal bar chart
+            const maxValue = Math.max(...chartData.map(d => d.value), 1);
+
+            container.innerHTML = `
+                <div class="topic-chart">
+                    ${chartData.slice(0, 10).map(data => `
+                        <div class="topic-bar-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="fw-semibold">${data.name}</span>
+                                <span class="text-muted">${formatMetricValue(data.value, metric)}</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" 
+                                     style="width: ${(data.value / maxValue) * 100}%; background-color: ${data.color};">
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getProgressColor(progress) {
+            if (progress >= 80) return '#10b981';
+            if (progress >= 50) return '#f59e0b';
+            return '#ef4444';
+        }
+
+        function getDifficultyColor(difficulty) {
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#dc2626'];
+            return colors[Math.min(difficulty - 1, 4)];
+        }
+
+        function formatMetricValue(value, metric) {
+            if (metric === 'completion-metric') return `${value}%`;
+            if (metric === 'time-metric') return `${value}h`;
+            return `Level ${value}`;
         }
 
         function generateInsights() {
-            const container = document.getElementById('insights-container');
-            const { sessions, stats } = analyticsData;
-
+            const container = document.getElementById('learning-insights');
             const insights = [];
 
-            // Analyze completion rate
-            const completedSessions = sessions.filter(s => s.completed).length;
-            const completionRate = sessions.length > 0 ? (completedSessions / sessions.length) * 100 : 0;
-
-            if (completionRate < 70) {
-                insights.push({
-                    type: 'warning',
-                    icon: 'bi-exclamation-triangle',
-                    title: 'Improve Focus',
-                    message: `Your completion rate is ${Math.round(completionRate)}%. Try shorter study sessions or the Pomodoro technique.`
-                });
-            }
-
-            // Analyze best day
-            const dayPerformance = {};
-            sessions.forEach(session => {
-                if (session.completed) {
-                    const day = new Date(session.start_time).toLocaleDateString('en-US', { weekday: 'long' });
-                    dayPerformance[day] = (dayPerformance[day] || 0) + 1;
-                }
-            });
-
-            const bestDay = Object.keys(dayPerformance).reduce((a, b) =>
-                dayPerformance[a] > dayPerformance[b] ? a : b, 'Monday'
-            );
-
+            // Peak performance insight
+            const peakTime = document.getElementById('peak-time').textContent;
             insights.push({
-                type: 'info',
-                icon: 'bi-calendar-check',
-                title: 'Peak Performance',
-                message: `You're most productive on ${bestDay}s. Consider scheduling challenging topics on this day.`
+                icon: 'fas fa-sun',
+                color: 'warning',
+                title: 'Peak Performance Time',
+                text: `You're most productive at ${peakTime}. Consider scheduling difficult topics during this time.`
             });
 
-            // Analyze streak
-            if (stats.current_streak > 0) {
+            // Consistency insight
+            const consistency = parseInt(document.getElementById('consistency').textContent);
+            if (consistency > 80) {
                 insights.push({
-                    type: 'success',
-                    icon: 'bi-fire',
-                    title: 'Great Momentum',
-                    message: `You're on a ${stats.current_streak}-day streak! Keep it up to reach your longest streak of ${stats.longest_streak} days.`
+                    icon: 'fas fa-fire',
+                    color: 'danger',
+                    title: 'Excellent Consistency!',
+                    text: `You've maintained ${consistency}% study consistency. Keep up the great work!`
+                });
+            } else {
+                insights.push({
+                    icon: 'fas fa-calendar-check',
+                    color: 'info',
+                    title: 'Improve Consistency',
+                    text: `Your study consistency is ${consistency}%. Try to establish a daily routine.`
                 });
             }
 
-            // Study time recommendation
-            const avgDailyTime = sessions.length > 0
-                ? sessions.reduce((sum, s) => sum + (s.completed ? s.duration : 0), 0) / 30
-                : 0;
-
-            if (avgDailyTime < 30) {
+            // Topic insight
+            const topics = analyticsData.progress.topics || [];
+            const strugglingTopics = topics.filter(t => t.progress < 50 && t.status === 'in_progress');
+            if (strugglingTopics.length > 0) {
                 insights.push({
-                    type: 'info',
-                    icon: 'bi-clock',
-                    title: 'Increase Study Time',
-                    message: `You're averaging ${Math.round(avgDailyTime)} minutes daily. Aim for at least 30 minutes for better retention.`
+                    icon: 'fas fa-exclamation-triangle',
+                    color: 'warning',
+                    title: 'Topics Need Attention',
+                    text: `${strugglingTopics.length} topics need more focus. Consider revisiting the fundamentals.`
                 });
             }
 
             // Render insights
             container.innerHTML = insights.map(insight => `
-                <div class="insight-item alert alert-${getBootstrapAlertClass(insight.type)} d-flex align-items-start">
-                    <i class="bi ${insight.icon} me-3 flex-shrink-0" style="font-size: 1.25rem;"></i>
-                    <div>
-                        <h6 class="alert-heading mb-1">${insight.title}</h6>
-                        <p class="mb-0">${insight.message}</p>
+                <div class="insight-item mb-3 p-3 border rounded">
+                    <div class="d-flex align-items-start">
+                        <i class="${insight.icon} text-${insight.color} mt-1 me-3"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">${insight.title}</h6>
+                            <p class="mb-0 text-muted small">${insight.text}</p>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function getBootstrapAlertClass(type) {
-            const map = {
-                'success': 'success',
-                'warning': 'warning',
-                'info': 'info',
-                'error': 'danger'
-            };
-            return map[type] || 'info';
+        function generateRecommendations() {
+            const container = document.getElementById('recommendations');
+            const recommendations = [];
+
+            // Based on productivity score
+            const productivity = parseInt(document.getElementById('productivity-score').textContent);
+            if (productivity < 70) {
+                recommendations.push({
+                    icon: 'fas fa-clock',
+                    priority: 'high',
+                    action: 'Improve Focus Sessions',
+                    description: 'Try shorter 15-minute sessions to build consistency first.'
+                });
+            }
+
+            // Based on topics
+            const topics = analyticsData.progress.topics || [];
+            const nextTopic = topics.find(t => t.status === 'not_started');
+            if (nextTopic) {
+                recommendations.push({
+                    icon: 'fas fa-book',
+                    priority: 'medium',
+                    action: `Start "${nextTopic.topic_name}"`,
+                    description: 'You\'re ready to begin this new topic based on your progress.'
+                });
+            }
+
+            // Based on time patterns
+            const sessions = filterDataByDateRange(analyticsData.pomodoro, 7);
+            if (sessions.length < 7) {
+                recommendations.push({
+                    icon: 'fas fa-calendar',
+                    priority: 'medium',
+                    action: 'Increase Study Frequency',
+                    description: 'Aim for at least one study session per day.'
+                });
+            }
+
+            // Based on notes
+            const recentNotes = filterDataByDateRange(analyticsData.notes, 7);
+            if (recentNotes.length < 3) {
+                recommendations.push({
+                    icon: 'fas fa-sticky-note',
+                    priority: 'low',
+                    action: 'Take More Notes',
+                    description: 'Active note-taking improves retention and understanding.'
+                });
+            }
+
+            // Render recommendations
+            container.innerHTML = recommendations.map(rec => `
+                <div class="recommendation-item mb-3 p-3 border rounded ${rec.priority === 'high' ? 'border-danger' : ''}">
+                    <div class="d-flex align-items-start">
+                        <i class="${rec.icon} text-primary mt-1 me-3"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1">${rec.action}</h6>
+                            <p class="mb-0 text-muted small">${rec.description}</p>
+                        </div>
+                        ${rec.priority === 'high' ? '<span class="badge bg-danger">High Priority</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProgressTrend() {
+            const container = document.getElementById('progress-trend-chart');
+
+            // Generate trend data
+            const trendData = generateTrendData();
+
+            // Simple line chart using CSS
+            const maxValue = Math.max(...trendData.map(d => d.value), 100);
+            const chartHeight = 200;
+
+            container.innerHTML = `
+                <div class="trend-chart" style="height: ${chartHeight}px; position: relative;">
+                    <div class="chart-grid">
+                        ${[100, 75, 50, 25, 0].map(v => `
+                            <div class="grid-line" style="bottom: ${(v / 100) * chartHeight}px;">
+                                <span class="grid-label">${v}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <svg width="100%" height="${chartHeight}" style="position: absolute; top: 0; left: 0;">
+                        <polyline
+                            fill="none"
+                            stroke="#6366f1"
+                            stroke-width="3"
+                            points="${trendData.map((d, i) =>
+                `${(i / (trendData.length - 1)) * 100}%,${chartHeight - (d.value / maxValue) * chartHeight}`
+            ).join(' ')}"
+                        />
+                        ${trendData.map((d, i) => `
+                            <circle
+                                cx="${(i / (trendData.length - 1)) * 100}%"
+                                cy="${chartHeight - (d.value / maxValue) * chartHeight}"
+                                r="4"
+                                fill="#6366f1"
+                                data-bs-toggle="tooltip"
+                                title="${d.label}: ${d.value}%"
+                            />
+                        `).join('')}
+                    </svg>
+                    <div class="chart-labels">
+                        ${trendData.map((d, i) =>
+                i % Math.ceil(trendData.length / 5) === 0 ?
+                    `<span class="chart-label" style="left: ${(i / (trendData.length - 1)) * 100}%">${d.label}</span>` : ''
+            ).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+        }
+
+        function generateTrendData() {
+            const data = [];
+            const days = Math.min(currentDateRange, 30);
+
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+
+                // Calculate progress for this day
+                const dayProgress = calculateDayProgress(date);
+
+                data.push({
+                    label: date.toLocaleDateString('en', { month: 'short', day: 'numeric' }),
+                    value: dayProgress
+                });
+            }
+
+            return data;
+        }
+
+        function calculateDayProgress(date) {
+            // Simulate progress calculation based on sessions and completions
+            const dateStr = date.toDateString();
+            const sessions = analyticsData.pomodoro.filter(s =>
+                new Date(s.started_at).toDateString() === dateStr
+            );
+
+            const completed = sessions.filter(s => s.status === 'completed').length;
+            const total = sessions.length || 1;
+
+            return Math.round((completed / total) * 100);
+        }
+
+        function renderAchievementsTimeline() {
+            const container = document.getElementById('achievements-timeline');
+
+            // Generate achievement data
+            const achievements = generateAchievements();
+
+            container.innerHTML = `
+                <div class="timeline">
+                    ${achievements.map((achievement, index) => `
+                        <div class="timeline-item ${index === 0 ? 'latest' : ''} animate-fadeInUp animation-delay-${index * 100}">
+                            <div class="timeline-marker ${achievement.type}">
+                                <i class="${achievement.icon}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="fw-bold mb-1">${achievement.title}</h6>
+                                <p class="text-muted small mb-1">${achievement.description}</p>
+                                <small class="text-muted">${achievement.date}</small>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function generateAchievements() {
+            const achievements = [];
+
+            // Check for streak achievement
+            const consistency = parseInt(document.getElementById('consistency').textContent);
+            if (consistency > 80) {
+                achievements.push({
+                    type: 'gold',
+                    icon: 'fas fa-fire',
+                    title: 'Study Streak Master',
+                    description: 'Maintained 80%+ consistency',
+                    date: 'This week'
+                });
+            }
+
+            // Check for topic completions
+            const completedTopics = (analyticsData.progress.topics || []).filter(t => t.status === 'completed');
+            if (completedTopics.length > 0) {
+                const latestTopic = completedTopics[completedTopics.length - 1];
+                achievements.push({
+                    type: 'success',
+                    icon: 'fas fa-check-circle',
+                    title: 'Topic Completed',
+                    description: `Finished "${latestTopic.topic_name}"`,
+                    date: new Date(latestTopic.completed_at).toLocaleDateString()
+                });
+            }
+
+            // Check for productivity milestones
+            const totalSessions = analyticsData.pomodoro.length;
+            const milestones = [10, 25, 50, 100, 250, 500];
+            const reachedMilestone = milestones.find(m => totalSessions >= m && totalSessions < m * 2);
+
+            if (reachedMilestone) {
+                achievements.push({
+                    type: 'primary',
+                    icon: 'fas fa-trophy',
+                    title: `${reachedMilestone} Sessions`,
+                    description: 'Pomodoro milestone reached',
+                    date: 'Recently'
+                });
+            }
+
+            // Add more achievements as needed
+
+            return achievements.slice(0, 5); // Show only recent 5
+        }
+
+        function setupEventListeners() {
+            // Pattern view change
+            document.querySelectorAll('input[name="patternView"]').forEach(input => {
+                input.addEventListener('change', renderStudyPatterns);
+            });
+
+            // Topic metric change
+            document.querySelectorAll('input[name="topicMetric"]').forEach(input => {
+                input.addEventListener('change', renderTopicPerformance);
+            });
         }
 
         function setDateRange(days) {
             currentDateRange = days;
-            document.getElementById('date-range-label').textContent = `Last ${days} Days`;
-            loadAnalytics();
+            initializeAnalytics();
+
+            // Update button text
+            const button = document.querySelector('.dropdown-toggle');
+            const ranges = {
+                7: 'Last 7 Days',
+                30: 'Last 30 Days',
+                90: 'Last 3 Months',
+                365: 'Last Year'
+            };
+            button.innerHTML = `<i class="fas fa-calendar me-1"></i>${ranges[days]}`;
         }
 
-        function formatTime(minutes) {
-            if (minutes < 60) {
-                return `${minutes}m`;
+        async function exportAnalytics() {
+            try {
+                // Generate report data
+                const reportData = {
+                    generatedAt: new Date().toISOString(),
+                    dateRange: currentDateRange,
+                    metrics: {
+                        productivityScore: document.getElementById('productivity-score').textContent,
+                        focusScore: document.getElementById('focus-score').textContent,
+                        learningEfficiency: document.getElementById('accuracy-score').textContent,
+                        growthRate: document.getElementById('growth-rate').textContent,
+                        averageSession: document.getElementById('avg-session').textContent,
+                        completionRate: document.getElementById('completion-rate').textContent,
+                        consistency: document.getElementById('consistency').textContent,
+                        peakTime: document.getElementById('peak-time').textContent
+                    },
+                    topicProgress: analyticsData.progress.topics || [],
+                    sessionHistory: filterDataByDateRange(analyticsData.pomodoro, currentDateRange),
+                    insights: extractInsights(),
+                    recommendations: extractRecommendations()
+                };
+
+                // Convert to CSV
+                const csv = convertToCSV(reportData);
+
+                // Download file
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dsa-analytics-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                showSuccessMessage('Analytics report exported successfully!');
+
+            } catch (error) {
+                console.error('Export error:', error);
+                showErrorMessage('Failed to export analytics report');
             }
-            const hours = Math.floor(minutes / 60);
-            const mins = minutes % 60;
-            return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadAnalytics();
-        });
+        function convertToCSV(data) {
+            let csv = 'DSA Learning Analytics Report\n';
+            csv += `Generated on: ${new Date().toLocaleString()}\n`;
+            csv += `Date Range: Last ${data.dateRange} days\n\n`;
+
+            // Metrics section
+            csv += 'Key Metrics\n';
+            Object.entries(data.metrics).forEach(([key, value]) => {
+                csv += `${key.replace(/([A-Z])/g, ' $1').trim()},${value}\n`;
+            });
+
+            csv += '\nTopic Progress\n';
+            csv += 'Topic Name,Status,Progress,Time Spent\n';
+            data.topicProgress.forEach(topic => {
+                csv += `"${topic.topic_name}",${topic.status},${topic.progress}%,${topic.time_spent || 0}h\n`;
+            });
+
+            return csv;
+        }
+
+        function extractInsights() {
+            // Extract text from insights container
+            const insights = [];
+            document.querySelectorAll('#learning-insights .insight-item').forEach(item => {
+                insights.push(item.textContent.trim());
+            });
+            return insights;
+        }
+
+        function extractRecommendations() {
+            // Extract text from recommendations container
+            const recommendations = [];
+            document.querySelectorAll('#recommendations .recommendation-item').forEach(item => {
+                recommendations.push(item.textContent.trim());
+            });
+            return recommendations;
+        }
+
+        function showSuccessMessage(message) {
+            // Show success toast or alert
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3';
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-check-circle me-2"></i>${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(toast);
+            });
+        }
+
+        function showErrorMessage(message) {
+            // Show error toast or alert
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3';
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-exclamation-circle me-2"></i>${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(toast);
+            });
+        }
+
+        // Helper functions from components
+        function setActiveNavItem() {
+            const currentPage = 'analytics';
+            const navItem = document.querySelector(`[data-page="${currentPage}"]`);
+            if (navItem) {
+                navItem.classList.add('active');
+            }
+        }
+
+        function setActiveMobileNavItem() {
+            const currentPage = 'analytics';
+            const mobileNavItem = document.querySelector(`.mobile-nav-item[onclick*="${currentPage}"]`);
+            if (mobileNavItem) {
+                mobileNavItem.classList.add('active');
+            }
+        }
+
+        function updatePageTitle() {
+            const pageTitle = document.getElementById('page-title');
+            if (pageTitle) {
+                pageTitle.textContent = 'Analytics';
+            }
+        }
+
+        async function loadUserData() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/users/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    updateUserDisplay(userData);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function updateUserDisplay(userData) {
+            const userNameElement = document.getElementById('user-name');
+            const userAvatarElement = document.getElementById('user-avatar');
+
+            if (userNameElement) {
+                userNameElement.textContent = userData.username || 'User';
+            }
+
+            if (userAvatarElement && userData.username) {
+                userAvatarElement.textContent = userData.username.charAt(0).toUpperCase();
+            }
+        }
     </script>
 
     <style>
-        .analytics-metric {
-            border: none;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-base);
-        }
-
-        .analytics-metric:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .metric-icon i {
-            font-size: 2rem;
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .metric-change {
-            font-weight: 600;
-        }
-
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-
-        /* Heatmap Styles */
-        .heatmap-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 10px;
-            align-items: start;
-        }
-
-        .heatmap-months {
+        /* Additional styles for analytics page */
+        .heatmap-container {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+            gap: 10px;
+            padding: 20px;
         }
 
-        .heatmap-month {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .heatmap-days {
+        .heatmap-grid {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 3px;
-            padding-top: 10px;
-        }
-
-        .heatmap-day {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            height: 10px;
-            line-height: 10px;
-        }
-
-        .heatmap-cells {
-            display: grid;
-            grid-template-columns: repeat(84, 10px);
-            /* 12 weeks * 7 days */
-            grid-template-rows: repeat(7, 10px);
             gap: 2px;
-            grid-auto-flow: column;
+        }
+
+        .heatmap-row {
+            display: flex;
+            gap: 2px;
         }
 
         .heatmap-cell {
-            width: 10px;
-            height: 10px;
+            width: 100%;
+            aspect-ratio: 1;
             border-radius: 2px;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .heatmap-cell.intensity-0 {
-            background: var(--bg-tertiary);
+        .heatmap-cell:hover {
+            transform: scale(1.2);
         }
 
-        .heatmap-cell.intensity-1 {
-            background: rgba(59, 130, 246, 0.2);
+        .heatmap-labels-y,
+        .heatmap-labels-x {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #6b7280;
         }
 
-        .heatmap-cell.intensity-2 {
-            background: rgba(59, 130, 246, 0.4);
+        .heatmap-labels-y {
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 5px;
         }
 
-        .heatmap-cell.intensity-3 {
-            background: rgba(59, 130, 246, 0.6);
-        }
-
-        .heatmap-cell.intensity-4 {
-            background: rgba(59, 130, 246, 0.8);
-        }
-
-        .heatmap-cell.intensity-5 {
-            background: rgba(59, 130, 246, 1);
+        .heatmap-labels-x {
+            flex-direction: row;
+            justify-content: space-between;
+            padding-top: 5px;
+            margin-left: 60px;
         }
 
         .heatmap-legend {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 10px;
         }
 
-        .heatmap-legend-scale {
+        .trend-chart {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .chart-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .grid-line {
+            position: absolute;
+            width: 100%;
+            border-bottom: 1px dashed #e5e7eb;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .grid-label {
+            position: absolute;
+            left: -30px;
+            top: -8px;
+        }
+
+        .chart-labels {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
             display: flex;
-            gap: 2px;
+            justify-content: space-between;
         }
 
-        .insight-item {
-            border-left: 4px solid;
+        .chart-label {
+            font-size: 12px;
+            color: #6b7280;
+            position: absolute;
+            transform: translateX(-50%);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -24px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .timeline-marker.gold {
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .timeline-marker.success {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .timeline-marker.primary {
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        .timeline-item.latest .timeline-marker {
+            width: 24px;
+            height: 24px;
+            left: -26px;
+        }
+
+        .metric-item {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .insight-item,
+        .recommendation-item {
+            transition: all 0.3s ease;
+        }
+
+        .insight-item:hover,
+        .recommendation-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         @media (max-width: 768px) {
-            .heatmap-cells {
-                grid-template-columns: repeat(12, 8px);
-                gap: 1px;
+            .heatmap-container {
+                overflow-x: auto;
             }
 
-            .heatmap-cell {
-                width: 8px;
-                height: 8px;
+            .chart-labels {
+                font-size: 10px;
+            }
+
+            .timeline {
+                padding-left: 20px;
             }
         }
     </style>

@@ -3,465 +3,1187 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Profile - DSAPath</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - DSA Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/layouts.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body data-requires-auth="true">
-    <div class="app-layout">
-        <div id="topbar"></div>
-        <div id="sidebar"></div>
+<body>
+    <div class="main-layout">
+        <!-- Include Sidebar -->
+        <div id="sidebar-container"></div>
 
-        <div class="app-content">
-            <main class="app-main">
-                <div class="page-header mb-4">
-                    <h1 class="page-title">Profile</h1>
-                    <p class="page-subtitle">Manage your account information</p>
-                </div>
+        <div class="main-content">
+            <!-- Include Topbar -->
+            <div id="topbar-container"></div>
 
-                <div class="row">
-                    <div class="col-lg-4 mb-4">
-                        <!-- Profile Card -->
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <div class="position-relative d-inline-block mb-3">
-                                    <img src="/assets/images/default-avatar.png" alt="Avatar"
-                                        class="rounded-circle avatar-large" id="profile-avatar">
-                                    <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0"
-                                        onclick="document.getElementById('avatar-upload').click()">
-                                        <i class="bi bi-camera"></i>
-                                    </button>
-                                    <input type="file" id="avatar-upload" class="d-none" accept="image/*">
-                                </div>
-
-                                <h4 id="profile-name">Loading...</h4>
-                                <p class="text-muted" id="profile-email">Loading...</p>
-
-                                <div class="d-flex justify-content-center gap-3 mt-3">
-                                    <div class="text-center">
-                                        <div class="h5 mb-0" id="profile-streak">0</div>
-                                        <small class="text-muted">Day Streak</small>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="h5 mb-0" id="profile-progress">0%</div>
-                                        <small class="text-muted">Complete</small>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="h5 mb-0" id="profile-hours">0h</div>
-                                        <small class="text-muted">Study Time</small>
-                                    </div>
-                                </div>
-
-                                <hr class="my-3">
-
-                                <div class="text-start">
-                                    <p class="mb-2">
-                                        <i class="bi bi-calendar me-2 text-muted"></i>
-                                        Joined <span id="profile-joined">Loading...</span>
-                                    </p>
-                                    <p class="mb-0">
-                                        <i class="bi bi-clock me-2 text-muted"></i>
-                                        Last login <span id="profile-last-login">Loading...</span>
-                                    </p>
-                                </div>
+            <div class="content-area">
+                <!-- Header Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div
+                            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                            <div class="animate-fadeInLeft">
+                                <h2 class="fw-bold text-dark mb-1">Profile</h2>
+                                <p class="text-muted mb-0">Manage your account and preferences</p>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Quick Stats -->
-                        <div class="card mt-4">
-                            <div class="card-body">
-                                <h5 class="card-title mb-3">Achievements</h5>
-                                <div id="profile-achievements">
-                                    <div class="text-center py-3">
-                                        <div class="spinner-border spinner-border-sm"></div>
-                                    </div>
+                <!-- Profile Overview -->
+                <div class="row mb-4">
+                    <div class="col-lg-4">
+                        <div class="stats-card text-center animate-fadeInLeft">
+                            <div class="profile-avatar-section mb-4">
+                                <div class="profile-avatar-container position-relative">
+                                    <img src="" alt="Profile Avatar" class="profile-avatar" id="profile-avatar">
+                                    <button class="avatar-upload-btn"
+                                        onclick="document.getElementById('avatar-input').click()">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                    <input type="file" id="avatar-input" accept="image/*" style="display: none;"
+                                        onchange="uploadAvatar(event)">
+                                </div>
+                            </div>
+                            <h4 class="fw-bold mb-1" id="profile-name">Loading...</h4>
+                            <p class="text-muted mb-3" id="profile-email">Loading...</p>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h5 class="fw-bold text-primary mb-0" id="member-since">0</h5>
+                                    <small class="text-muted">Days</small>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="fw-bold text-success mb-0" id="study-streak">0</h5>
+                                    <small class="text-muted">Streak</small>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="fw-bold text-warning mb-0" id="total-hours">0h</h5>
+                                    <small class="text-muted">Studied</small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-lg-8">
-                        <!-- Profile Form -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">Edit Profile</h5>
-
-                                <form id="profile-form">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="edit-name" class="form-label">Full Name</label>
-                                            <input type="text" class="form-control" id="edit-name" required>
+                        <div class="stats-card animate-fadeInRight">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-chart-line me-2"></i>Learning Progress
+                            </h5>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="progress-item">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="fw-semibold">Overall Progress</span>
+                                            <span class="text-primary fw-bold" id="overall-progress">0%</span>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label for="edit-email" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="edit-email" required>
+                                        <div class="progress-bar-custom">
+                                            <div class="progress-fill progress-fill-animation" id="overall-progress-bar"
+                                                style="width: 0%"></div>
                                         </div>
                                     </div>
-
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-outline-secondary" onclick="loadProfile()">
-                                            Cancel
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-save me-2"></i>Save Changes
-                                        </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="progress-item">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="fw-semibold">Weekly Goal</span>
+                                            <span class="text-success fw-bold" id="weekly-goal">0%</span>
+                                        </div>
+                                        <div class="progress-bar-custom">
+                                            <div class="progress-fill" id="weekly-goal-bar"
+                                                style="width: 0%; background-color: #10b981;"></div>
+                                        </div>
                                     </div>
-                                </form>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-3 col-6">
+                                    <div class="stat-item text-center p-3 bg-light rounded">
+                                        <i class="fas fa-book text-primary fs-4 mb-2"></i>
+                                        <h6 class="fw-bold mb-0" id="completed-topics">0</h6>
+                                        <small class="text-muted">Topics</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="stat-item text-center p-3 bg-light rounded">
+                                        <i class="fas fa-sticky-note text-success fs-4 mb-2"></i>
+                                        <h6 class="fw-bold mb-0" id="total-notes">0</h6>
+                                        <small class="text-muted">Notes</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="stat-item text-center p-3 bg-light rounded">
+                                        <i class="fas fa-clock text-warning fs-4 mb-2"></i>
+                                        <h6 class="fw-bold mb-0" id="pomodoro-sessions">0</h6>
+                                        <small class="text-muted">Sessions</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="stat-item text-center p-3 bg-light rounded">
+                                        <i class="fas fa-trophy text-info fs-4 mb-2"></i>
+                                        <h6 class="fw-bold mb-0" id="achievements">0</h6>
+                                        <small class="text-muted">Badges</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Change Password -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">Change Password</h5>
-
-                                <form id="password-form">
-                                    <div class="mb-3">
-                                        <label for="current-password" class="form-label">Current Password</label>
-                                        <input type="password" class="form-control" id="current-password" required>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="new-password" class="form-label">New Password</label>
-                                            <input type="password" class="form-control" id="new-password" minlength="8"
-                                                required>
-                                            <div class="form-text">At least 8 characters</div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="confirm-password" class="form-label">Confirm Password</label>
-                                            <input type="password" class="form-control" id="confirm-password" required>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-lock me-2"></i>Update Password
-                                    </button>
-                                </form>
+                <!-- Profile Sections -->
+                <div class="row">
+                    <!-- Personal Information -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="stats-card animate-fadeInUp">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fas fa-user me-2"></i>Personal Information
+                                </h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="toggleEditMode('personal')">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </button>
                             </div>
-                        </div>
 
-                        <!-- Danger Zone -->
-                        <div class="card border-danger">
-                            <div class="card-body">
-                                <h5 class="card-title text-danger mb-3">Danger Zone</h5>
-                                <p class="text-muted">Once you delete your account, there is no going back. Please be
-                                    certain.</p>
-                                <button class="btn btn-danger" onclick="deleteAccount()">
-                                    <i class="bi bi-trash me-2"></i>Delete Account
+                            <form id="personal-form">
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Full Name</label>
+                                    <input type="text" class="form-control-custom" id="edit-name" disabled>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Email Address</label>
+                                    <input type="email" class="form-control-custom" id="edit-email" disabled>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Bio</label>
+                                    <textarea class="form-control-custom" id="edit-bio" rows="3"
+                                        placeholder="Tell us about yourself..." disabled></textarea>
+                                </div>
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Location</label>
+                                    <input type="text" class="form-control-custom" id="edit-location"
+                                        placeholder="City, Country" disabled>
+                                </div>
+
+                                <div class="personal-form-actions" style="display: none;">
+                                    <button type="button" class="btn btn-secondary me-2"
+                                        onclick="cancelEdit('personal')">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="savePersonalInfo()">Save
+                                        Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="stats-card animate-fadeInUp animation-delay-100">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-shield-alt me-2"></i>Security Settings
+                            </h5>
+
+                            <div
+                                class="security-item d-flex justify-content-between align-items-center p-3 border rounded mb-3">
+                                <div>
+                                    <h6 class="fw-semibold mb-1">Password</h6>
+                                    <small class="text-muted">Last changed 30 days ago</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="showChangePasswordModal()">
+                                    Change
+                                </button>
+                            </div>
+
+                            <div
+                                class="security-item d-flex justify-content-between align-items-center p-3 border rounded mb-3">
+                                <div>
+                                    <h6 class="fw-semibold mb-1">Two-Factor Authentication</h6>
+                                    <small class="text-muted">Add extra security to your account</small>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="two-factor-switch">
+                                </div>
+                            </div>
+
+                            <div
+                                class="security-item d-flex justify-content-between align-items-center p-3 border rounded mb-3">
+                                <div>
+                                    <h6 class="fw-semibold mb-1">Email Notifications</h6>
+                                    <small class="text-muted">Receive updates via email</small>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="email-notifications-switch"
+                                        checked>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button class="btn btn-outline-danger" onclick="showAccountDeletionModal()">
+                                    <i class="fas fa-trash me-1"></i>Delete Account
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </main>
+
+                <!-- Achievements -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="stats-card animate-fadeInUp">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-trophy me-2"></i>Achievements & Badges
+                            </h5>
+                            <div class="row g-3" id="achievements-container">
+                                <!-- Achievements will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Sessions -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="stats-card animate-fadeInUp">
+                            <h5 class="fw-bold mb-4">
+                                <i class="fas fa-devices me-2"></i>Active Sessions
+                            </h5>
+                            <div id="sessions-container">
+                                <div class="text-center py-3">
+                                    <div class="loading-spinner mx-auto mb-2"></div>
+                                    <p class="text-muted">Loading sessions...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="mobile-nav"></div>
+        <!-- Include Mobile Navigation -->
+        <div id="mobile-nav-container"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
-    <script src="/js/lib.js"></script>
-    <script src="/js/components.js"></script>
-    <script src="/js/loader.js"></script>
-
-    <script>
-        let userData = null;
-
-        async function loadProfile() {
-            try {
-                const response = await api.get('/profile');
-                userData = response.user;
-
-                // Update profile display
-                document.getElementById('profile-name').textContent = userData.name;
-                document.getElementById('profile-email').textContent = userData.email;
-
-                if (userData.avatar_url) {
-                    document.getElementById('profile-avatar').src = userData.avatar_url;
-                }
-
-                // Format dates
-                const joinedDate = new Date(userData.created_at);
-                document.getElementById('profile-joined').textContent = joinedDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-
-                document.getElementById('profile-last-login').textContent = userData.last_login
-                    ? getTimeAgo(new Date(userData.last_login))
-                    : 'Never';
-
-                // Update stats
-                document.getElementById('profile-streak').textContent = userData.current_streak;
-                document.getElementById('profile-hours').textContent =
-                    Math.round(userData.total_study_time / 60) + 'h';
-
-                // Update form
-                document.getElementById('edit-name').value = userData.name;
-                document.getElementById('edit-email').value = userData.email;
-
-                // Load additional data
-                loadProgressSummary();
-                loadAchievements();
-
-            } catch (error) {
-                notifications.error('Failed to load profile');
-                console.error('Profile error:', error);
-            }
-        }
-
-        async function loadProgressSummary() {
-            try {
-                const response = await api.get('/dashboard');
-                document.getElementById('profile-progress').textContent =
-                    Math.round(response.stats.completion_percentage) + '%';
-            } catch (error) {
-                console.error('Failed to load progress:', error);
-            }
-        }
-
-        async function loadAchievements() {
-            const container = document.getElementById('profile-achievements');
-
-            // Simulated achievements based on user data
-            const achievements = [];
-
-            if (userData.current_streak >= 3) {
-                achievements.push({
-                    icon: 'bi-fire',
-                    title: 'Hot Streak',
-                    description: '3+ day streak'
-                });
-            }
-
-            if (userData.total_study_time >= 3600) {
-                achievements.push({
-                    icon: 'bi-clock',
-                    title: 'Time Investor',
-                    description: '60+ hours studied'
-                });
-            }
-
-            if (userData.longest_streak >= 7) {
-                achievements.push({
-                    icon: 'bi-calendar-check',
-                    title: 'Week Warrior',
-                    description: '7+ day streak'
-                });
-            }
-
-            if (achievements.length === 0) {
-                container.innerHTML = '<p class="text-muted text-center">No achievements yet. Keep studying!</p>';
-                return;
-            }
-
-            container.innerHTML = achievements.map(ach => `
-                <div class="achievement-badge text-center mb-3">
-                    <i class="bi ${ach.icon} display-6 text-warning"></i>
-                    <h6 class="mt-2 mb-1">${ach.title}</h6>
-                    <small class="text-muted">${ach.description}</small>
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content modal-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-            `).join('');
-        }
+                <div class="modal-body modal-body-custom">
+                    <form id="change-password-form">
+                        <div class="form-group-custom">
+                            <label class="form-label-custom">Current Password</label>
+                            <div class="position-relative">
+                                <input type="password" class="form-control-custom" id="current-password" required>
+                                <button type="button"
+                                    class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                                    onclick="togglePasswordVisibility('current-password')">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group-custom">
+                            <label class="form-label-custom">New Password</label>
+                            <div class="position-relative">
+                                <input type="password" class="form-control-custom" id="new-password" required>
+                                <button type="button"
+                                    class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                                    onclick="togglePasswordVisibility('new-password')">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength mt-2">
+                                <div class="d-flex gap-1">
+                                    <div class="strength-bar"></div>
+                                    <div class="strength-bar"></div>
+                                    <div class="strength-bar"></div>
+                                    <div class="strength-bar"></div>
+                                </div>
+                                <small class="text-muted" id="password-strength-text">Password strength: Weak</small>
+                            </div>
+                        </div>
+                        <div class="form-group-custom">
+                            <label class="form-label-custom">Confirm New Password</label>
+                            <div class="position-relative">
+                                <input type="password" class="form-control-custom" id="confirm-password" required>
+                                <button type="button"
+                                    class="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                                    onclick="togglePasswordVisibility('confirm-password')">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </button>
+                            </div>
+                            <small id="password-match-text" class="text-muted"></small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer modal-footer-custom">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Handle avatar upload
-        document.getElementById('avatar-upload').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+    <!-- Account Deletion Modal -->
+    <div class="modal fade" id="accountDeletionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content modal-custom">
+                <div class="modal-header modal-header-custom bg-danger">
+                    <h5 class="modal-title">Delete Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-body-custom">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone. All your data will be permanently
+                        deleted.
+                    </div>
+                    <p>Are you sure you want to delete your account? This will remove:</p>
+                    <ul>
+                        <li>All your progress and study data</li>
+                        <li>Notes and session history</li>
+                        <li>Achievement badges</li>
+                        <li>Account settings and preferences</li>
+                    </ul>
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">Type "DELETE" to confirm:</label>
+                        <input type="text" class="form-control-custom" id="delete-confirmation"
+                            placeholder="Type DELETE here">
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-custom">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteAccount()" disabled
+                        id="delete-account-btn">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // Validate file
-            if (!file.type.startsWith('image/')) {
-                notifications.error('Please select an image file');
-                return;
-            }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let profileData = {};
+        let isEditingPersonal = false;
 
-            if (file.size > 5 * 1024 * 1024) {
-                notifications.error('Image must be less than 5MB');
-                return;
-            }
-
-            try {
-                loader.showLoading();
-
-                const response = await api.upload('/profile/avatar', file, 'avatar');
-
-                // Update avatar display
-                document.getElementById('profile-avatar').src = response.avatar_url;
-
-                // Update in topbar
-                const topbarAvatar = document.getElementById('user-avatar');
-                if (topbarAvatar) {
-                    topbarAvatar.src = response.avatar_url;
-                }
-
-                // Update stored user data
-                userData.avatar_url = response.avatar_url;
-                auth.setUser(userData);
-
-                notifications.success('Avatar updated successfully');
-
-            } catch (error) {
-                notifications.error('Failed to upload avatar');
-            } finally {
-                loader.hideLoading();
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            loadComponents();
+            initializeProfile();
         });
 
-        // Handle profile form
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+        }
 
+        async function loadComponents() {
+            try {
+                // Load sidebar
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+                // Load topbar
+                const topbarResponse = await fetch('../components/topbar.html');
+                const topbarHtml = await topbarResponse.text();
+                document.getElementById('topbar-container').innerHTML = topbarHtml;
+
+                // Load mobile nav
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobile-nav-container').innerHTML = mobileNavHtml;
+
+                // Execute scripts in loaded components
+                setActiveNavItem();
+                setActiveMobileNavItem();
+                updatePageTitle();
+                loadUserData();
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function initializeProfile() {
+            try {
+                await Promise.all([
+                    loadProfileData(),
+                    loadProgressStats(),
+                    loadActiveSessions()
+                ]);
+
+                setupEventListeners();
+                loadAchievements();
+            } catch (error) {
+                console.error('Profile initialization error:', error);
+                showErrorMessage('Failed to load profile data');
+            }
+        }
+
+        async function loadProfileData() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    profileData = data.user;
+                    updateProfileDisplay();
+                } else if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                } else {
+                    throw new Error('Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showErrorMessage('Failed to load profile data');
+            }
+        }
+
+        function updateProfileDisplay() {
+            // Basic profile info
+            document.getElementById('profile-name').textContent = profileData.name;
+            document.getElementById('profile-email').textContent = profileData.email;
+
+            // Avatar
+            const avatar = document.getElementById('profile-avatar');
+            avatar.src = profileData.avatar_url ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name)}&background=3b82f6&color=fff&size=150`;
+
+            // Member since
+            const memberSince = new Date(profileData.created_at);
+            const daysSince = Math.floor((new Date() - memberSince) / (1000 * 60 * 60 * 24));
+            document.getElementById('member-since').textContent = daysSince;
+
+            // Study streak
+            document.getElementById('study-streak').textContent = profileData.current_streak || 0;
+
+            // Total hours
+            const totalHours = Math.floor((profileData.total_study_time || 0) / 60);
+            document.getElementById('total-hours').textContent = `${totalHours}h`;
+
+            // Form fields
+            document.getElementById('edit-name').value = profileData.name;
+            document.getElementById('edit-email').value = profileData.email;
+            document.getElementById('edit-bio').value = profileData.bio || '';
+            document.getElementById('edit-location').value = profileData.location || '';
+        }
+
+        async function loadProgressStats() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const [progressResponse, notesResponse, pomodoroResponse] = await Promise.all([
+                    fetch(`${API_BASE}/progress`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    }),
+                    fetch(`${API_BASE}/notes?per_page=1`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    }),
+                    fetch(`${API_BASE}/pomodoro/history?per_page=1`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    })
+                ]);
+
+                // Progress data
+                if (progressResponse.ok) {
+                    const progressData = await progressResponse.json();
+                    updateProgressDisplay(progressData);
+                }
+
+                // Notes count
+                if (notesResponse.ok) {
+                    const notesData = await notesResponse.json();
+                    document.getElementById('total-notes').textContent = notesData.pagination?.total || 0;
+                }
+
+                // Pomodoro sessions count
+                if (pomodoroResponse.ok) {
+                    const pomodoroData = await pomodoroResponse.json();
+                    document.getElementById('pomodoro-sessions').textContent = pomodoroData.pagination?.total || 0;
+                }
+
+            } catch (error) {
+                console.error('Error loading progress stats:', error);
+            }
+        }
+
+        function updateProgressDisplay(progressData) {
+            const progress = progressData.progress || {};
+
+            // Calculate overall progress
+            let totalCompleted = 0;
+            let totalDays = 14 * 7; // 14 weeks, 7 days each
+
+            Object.values(progress).forEach(week => {
+                Object.values(week).forEach(day => {
+                    if (day.completed) totalCompleted++;
+                });
+            });
+
+            const overallProgress = Math.round((totalCompleted / totalDays) * 100);
+            document.getElementById('overall-progress').textContent = `${overallProgress}%`;
+            document.getElementById('overall-progress-bar').style.width = `${overallProgress}%`;
+
+            // Weekly goal (assuming 5 days per week as goal)
+            const currentWeek = Math.floor(totalCompleted / 7) + 1;
+            const weekProgress = progress[currentWeek] || {};
+            const weekCompleted = Object.values(weekProgress).filter(day => day.completed).length;
+            const weeklyGoal = Math.round((weekCompleted / 5) * 100); // 5 days as weekly goal
+
+            document.getElementById('weekly-goal').textContent = `${weeklyGoal}%`;
+            document.getElementById('weekly-goal-bar').style.width = `${weeklyGoal}%`;
+
+            // Completed topics
+            document.getElementById('completed-topics').textContent = totalCompleted;
+
+            // Achievement count (placeholder)
+            const achievementCount = calculateAchievements(overallProgress, profileData.current_streak, totalCompleted);
+            document.getElementById('achievements').textContent = achievementCount;
+        }
+
+        function calculateAchievements(progress, streak, completedTopics) {
+            let count = 0;
+
+            if (progress >= 10) count++; // First Steps
+            if (progress >= 25) count++; // Quarter Way
+            if (progress >= 50) count++; // Halfway Hero
+            if (progress >= 75) count++; // Almost There
+            if (progress >= 100) count++; // Completion Master
+
+            if (streak >= 3) count++; // 3-day streak
+            if (streak >= 7) count++; // Week warrior
+            if (streak >= 30) count++; // Month master
+
+            if (completedTopics >= 10) count++; // Topic explorer
+            if (completedTopics >= 50) count++; // Topic master
+
+            return count;
+        }
+
+        function loadAchievements() {
+            const container = document.getElementById('achievements-container');
+
+            const achievements = [
+                { id: 'first-steps', title: 'First Steps', description: 'Complete your first topic', icon: 'fas fa-baby', earned: profileData.current_streak >= 1 },
+                { id: 'week-warrior', title: 'Week Warrior', description: '7-day study streak', icon: 'fas fa-fire', earned: profileData.current_streak >= 7 },
+                { id: 'month-master', title: 'Month Master', description: '30-day study streak', icon: 'fas fa-crown', earned: profileData.current_streak >= 30 },
+                { id: 'speed-demon', title: 'Speed Demon', description: 'Complete 10 topics in one day', icon: 'fas fa-bolt', earned: false },
+                { id: 'note-taker', title: 'Note Taker', description: 'Write 50 study notes', icon: 'fas fa-sticky-note', earned: false },
+                { id: 'time-manager', title: 'Time Manager', description: 'Complete 100 pomodoro sessions', icon: 'fas fa-clock', earned: false },
+                { id: 'halfway-hero', title: 'Halfway Hero', description: 'Complete 50% of the roadmap', icon: 'fas fa-medal', earned: false },
+                { id: 'completion-master', title: 'Completion Master', description: 'Complete the entire roadmap', icon: 'fas fa-trophy', earned: false }
+            ];
+
+            let html = '';
+            achievements.forEach(achievement => {
+                html += `
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="achievement-card ${achievement.earned ? 'earned' : 'locked'} p-3 text-center border rounded">
+                            <i class="${achievement.icon} fs-2 mb-2 ${achievement.earned ? 'text-warning' : 'text-muted'}"></i>
+                            <h6 class="fw-bold mb-1">${achievement.title}</h6>
+                            <small class="text-muted">${achievement.description}</small>
+                            ${achievement.earned ? '<div class="badge bg-success mt-2">Earned</div>' : '<div class="badge bg-secondary mt-2">Locked</div>'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function loadActiveSessions() {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/sessions`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    renderActiveSessions(data.sessions);
+                } else {
+                    renderActiveSessions([]);
+                }
+            } catch (error) {
+                console.error('Error loading active sessions:', error);
+                renderActiveSessions([]);
+            }
+        }
+
+        function renderActiveSessions(sessions) {
+            const container = document.getElementById('sessions-container');
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-devices text-muted fs-2 mb-3"></i>
+                        <p class="text-muted">No active sessions found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            sessions.forEach(session => {
+                const isCurrentSession = session.ip_address === getCurrentIP(); // Simplified check
+
+                html += `
+                    <div class="session-item d-flex justify-content-between align-items-center p-3 border rounded mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas ${getDeviceIcon(session.device_info)} fs-4 text-primary me-3"></i>
+                            <div>
+                                <h6 class="fw-semibold mb-1">
+                                    ${getDeviceType(session.device_info)} 
+                                    ${isCurrentSession ? '<span class="badge bg-success ms-2">Current</span>' : ''}
+                                </h6>
+                                <small class="text-muted">
+                                    ${session.ip_address} • Last active ${getTimeAgo(session.last_activity)}
+                                </small>
+                            </div>
+                        </div>
+                        ${!isCurrentSession ? `
+                            <button class="btn btn-sm btn-outline-danger" onclick="revokeSession('${session.id}')">
+                                <i class="fas fa-sign-out-alt me-1"></i>Revoke
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getDeviceIcon(deviceInfo) {
+            if (deviceInfo.toLowerCase().includes('mobile')) return 'fa-mobile-alt';
+            if (deviceInfo.toLowerCase().includes('tablet')) return 'fa-tablet-alt';
+            return 'fa-desktop';
+        }
+
+        function getDeviceType(deviceInfo) {
+            if (deviceInfo.toLowerCase().includes('mobile')) return 'Mobile Device';
+            if (deviceInfo.toLowerCase().includes('tablet')) return 'Tablet';
+            if (deviceInfo.toLowerCase().includes('chrome')) return 'Chrome Browser';
+            if (deviceInfo.toLowerCase().includes('firefox')) return 'Firefox Browser';
+            if (deviceInfo.toLowerCase().includes('safari')) return 'Safari Browser';
+            return 'Desktop Browser';
+        }
+
+        function getCurrentIP() {
+            // In a real implementation, you would get this from the server
+            return 'current';
+        }
+
+        function getTimeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return 'just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        }
+
+        function setupEventListeners() {
+            // Password strength checker
+            document.getElementById('new-password').addEventListener('input', checkPasswordStrength);
+            document.getElementById('confirm-password').addEventListener('input', checkPasswordMatch);
+
+            // Delete confirmation
+            document.getElementById('delete-confirmation').addEventListener('input', function () {
+                const deleteBtn = document.getElementById('delete-account-btn');
+                deleteBtn.disabled = this.value !== 'DELETE';
+            });
+        }
+
+        function toggleEditMode(section) {
+            if (section === 'personal') {
+                isEditingPersonal = !isEditingPersonal;
+
+                const fields = ['edit-name', 'edit-email', 'edit-bio', 'edit-location'];
+                const actions = document.querySelector('.personal-form-actions');
+
+                fields.forEach(fieldId => {
+                    document.getElementById(fieldId).disabled = !isEditingPersonal;
+                });
+
+                actions.style.display = isEditingPersonal ? 'block' : 'none';
+
+                const editBtn = event.target.closest('button');
+                editBtn.innerHTML = isEditingPersonal ?
+                    '<i class="fas fa-times me-1"></i>Cancel' :
+                    '<i class="fas fa-edit me-1"></i>Edit';
+            }
+        }
+
+        function cancelEdit(section) {
+            if (section === 'personal') {
+                toggleEditMode('personal');
+                // Reset form values
+                updateProfileDisplay();
+            }
+        }
+
+        async function savePersonalInfo() {
             const name = document.getElementById('edit-name').value.trim();
             const email = document.getElementById('edit-email').value.trim();
+            const bio = document.getElementById('edit-bio').value.trim();
+            const location = document.getElementById('edit-location').value.trim();
+
+            if (!name || !email) {
+                showErrorToast('Name and email are required');
+                return;
+            }
 
             try {
-                const response = await api.put('/profile', { name, email });
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, bio, location })
+                });
 
-                // Update display
-                userData = response.user;
-                auth.setUser(userData);
-
-                document.getElementById('profile-name').textContent = name;
-                document.getElementById('profile-email').textContent = email;
-
-                // Update topbar
-                const topbarName = document.getElementById('user-name');
-                if (topbarName) {
-                    topbarName.textContent = name;
+                if (response.ok) {
+                    const data = await response.json();
+                    profileData = { ...profileData, ...data.user };
+                    updateProfileDisplay();
+                    toggleEditMode('personal');
+                    showSuccessToast('Profile updated successfully!');
+                } else {
+                    const errorData = await response.json();
+                    showErrorToast(errorData.error || 'Failed to update profile');
                 }
-
-                notifications.success('Profile updated successfully');
-
             } catch (error) {
-                notifications.error(error.message || 'Failed to update profile');
+                console.error('Error updating profile:', error);
+                showErrorToast('Network error. Please try again.');
             }
-        });
+        }
 
-        // Handle password form
-        document.getElementById('password-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        async function uploadAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showErrorToast('Please select an image file');
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                showErrorToast('File size must be less than 5MB');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/profile/avatar`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('profile-avatar').src = data.avatar_url;
+                    showSuccessToast('Avatar updated successfully!');
+                } else {
+                    showErrorToast('Failed to upload avatar');
+                }
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                showErrorToast('Network error. Please try again.');
+            }
+        }
+
+        function showChangePasswordModal() {
+            new bootstrap.Modal(document.getElementById('changePasswordModal')).show();
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('new-password').value;
+            const strengthBars = document.querySelectorAll('.strength-bar');
+            const feedback = document.getElementById('password-strength-text');
+
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            // Reset all bars
+            strengthBars.forEach(bar => {
+                bar.style.backgroundColor = '#e5e7eb';
+            });
+
+            // Color bars based on strength
+            const colors = ['#ef4444', '#f59e0b', '#eab308', '#10b981'];
+            const labels = ['Very Weak', 'Weak', 'Fair', 'Strong'];
+
+            for (let i = 0; i < Math.min(strength, 4); i++) {
+                strengthBars[i].style.backgroundColor = colors[Math.min(strength - 1, 3)];
+            }
+
+            feedback.textContent = `Password strength: ${labels[Math.min(strength - 1, 3)] || 'Very Weak'}`;
+            feedback.style.color = colors[Math.min(strength - 1, 3)] || '#6b7280';
+        }
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const matchText = document.getElementById('password-match-text');
+
+            if (confirmPassword === '') {
+                matchText.textContent = '';
+                return;
+            }
+
+            if (password === confirmPassword) {
+                matchText.textContent = '✓ Passwords match';
+                matchText.style.color = '#10b981';
+            } else {
+                matchText.textContent = '✗ Passwords do not match';
+                matchText.style.color = '#ef4444';
+            }
+        }
+
+        async function changePassword() {
             const currentPassword = document.getElementById('current-password').value;
             const newPassword = document.getElementById('new-password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
 
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showErrorToast('Please fill in all fields');
+                return;
+            }
+
             if (newPassword !== confirmPassword) {
-                notifications.error('New passwords do not match');
+                showErrorToast('New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showErrorToast('Password must be at least 8 characters long');
                 return;
             }
 
             try {
-                await api.post('/auth/change-password', {
-                    current_password: currentPassword,
-                    new_password: newPassword
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/auth/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
                 });
 
-                notifications.success('Password updated successfully');
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+                    showSuccessToast('Password changed successfully!');
 
-                // Clear form
-                document.getElementById('password-form').reset();
-
-            } catch (error) {
-                notifications.error(error.message || 'Failed to update password');
-            }
-        });
-
-        function deleteAccount() {
-            const modal = new Modal({
-                title: 'Delete Account',
-                content: `
-                    <p class="text-danger">
-                        <strong>Warning:</strong> This action cannot be undone.
-                    </p>
-                    <p>All your data including:</p>
-                    <ul>
-                        <li>Progress tracking</li>
-                        <li>Notes and study sessions</li>
-                        <li>Achievements and streaks</li>
-                    </ul>
-                    <p>will be permanently deleted.</p>
-                    <div class="form-group mt-3">
-                        <label>Type "DELETE" to confirm:</label>
-                        <input type="text" class="form-control" id="delete-confirm" autocomplete="off">
-                    </div>
-                `,
-                footer: `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete-btn" disabled>
-                        Delete My Account
-                    </button>
-                `,
-                size: 'md'
-            });
-
-            modal.show();
-
-            // Enable delete button only when user types DELETE
-            document.getElementById('delete-confirm').addEventListener('input', (e) => {
-                document.getElementById('confirm-delete-btn').disabled =
-                    e.target.value !== 'DELETE';
-            });
-
-            document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-                try {
-                    await api.delete('/profile');
-
-                    auth.clear();
-                    window.location.href = '/';
-
-                } catch (error) {
-                    notifications.error('Failed to delete account');
+                    // Clear form
+                    document.getElementById('change-password-form').reset();
+                } else {
+                    const errorData = await response.json();
+                    showErrorToast(errorData.error || 'Failed to change password');
                 }
-            });
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showErrorToast('Network error. Please try again.');
+            }
         }
 
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-
-            if (seconds < 60) return 'Just now';
-            if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
-            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
-            if (seconds < 2592000) return Math.floor(seconds / 86400) + ' days ago';
-
-            return date.toLocaleDateString();
+        function showAccountDeletionModal() {
+            new bootstrap.Modal(document.getElementById('accountDeletionModal')).show();
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProfile();
-        });
+        async function deleteAccount() {
+            const confirmation = document.getElementById('delete-confirmation').value;
+
+            if (confirmation !== 'DELETE') {
+                showErrorToast('Please type "DELETE" to confirm');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/profile`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    localStorage.clear();
+                    showSuccessToast('Account deleted successfully. Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showErrorToast('Failed to delete account');
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                showErrorToast('Network error. Please try again.');
+            }
+        }
+
+        async function revokeSession(sessionId) {
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    showSuccessToast('Session revoked successfully');
+                    loadActiveSessions(); // Reload sessions
+                } else {
+                    showErrorToast('Failed to revoke session');
+                }
+            } catch (error) {
+                console.error('Error revoking session:', error);
+                showErrorToast('Network error. Please try again.');
+            }
+        }
+
+        function showSuccessToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-danger text-white">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong class="me-auto">Error</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorMessage(message) {
+            const container = document.querySelector('.content-area');
+            const alert = document.createElement('div');
+            alert.className = 'alert-custom alert-error-custom animate-fadeInDown';
+            alert.innerHTML = `
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${message}</span>
+            `;
+
+            container.insertBefore(alert, container.firstChild);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
     </script>
 
     <style>
-        .avatar-large {
-            width: 120px;
-            height: 120px;
+        .profile-avatar-container {
+            display: inline-block;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
             object-fit: cover;
+            border: 4px solid #e5e7eb;
+            transition: all 0.2s ease;
         }
 
-        .achievement-badge {
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-base);
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
         }
 
-        .achievement-badge:hover {
+        .avatar-upload-btn:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
+
+        .security-item {
+            transition: all 0.2s ease;
+        }
+
+        .security-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .achievement-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .achievement-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-card.earned {
+            background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 20%, #fef3c7 100%);
+            border-color: #f59e0b;
+        }
+
+        .achievement-card.locked {
+            background: #f9fafb;
+            opacity: 0.7;
+        }
+
+        .session-item {
+            transition: all 0.2s ease;
+        }
+
+        .session-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .progress-item {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .stat-item {
+            transition: all 0.2s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .strength-bar {
+            height: 4px;
+            background-color: #e5e7eb;
+            border-radius: 2px;
+            flex: 1;
+            transition: background-color 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+
+            .avatar-upload-btn {
+                width: 35px;
+                height: 35px;
+                bottom: 5px;
+                right: 5px;
+            }
+
+            .security-item {
+                padding: 1rem !important;
+            }
+
+            .achievement-card {
+                margin-bottom: 1rem;
+            }
         }
     </style>
 </body>

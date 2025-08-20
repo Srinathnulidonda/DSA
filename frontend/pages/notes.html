@@ -3,577 +3,1070 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Notes - DSAPath</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Notes - DSA Path</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/layouts.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/components.css" rel="stylesheet">
+    <link href="../css/animation.css" rel="stylesheet">
+    <link href="../css/responsive.css" rel="stylesheet">
 </head>
 
-<body data-requires-auth="true">
-    <div class="app-layout">
-        <div id="topbar"></div>
-        <div id="sidebar"></div>
+<body>
+    <div class="main-layout">
+        <!-- Include Sidebar -->
+        <div id="sidebar-container"></div>
 
-        <div class="app-content">
-            <main class="app-main">
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h1 class="page-title">Notes</h1>
-                            <p class="page-subtitle">Organize your learning with smart notes</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="createNewNote()">
-                            <i class="bi bi-plus-lg me-2"></i>New Note
-                        </button>
-                    </div>
-                </div>
+        <div class="main-content">
+            <!-- Include Topbar -->
+            <div id="topbar-container"></div>
 
-                <!-- Notes Layout -->
-                <div class="notes-grid">
-                    <!-- Sidebar -->
-                    <div class="notes-sidebar">
-                        <!-- Search -->
-                        <div class="mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <input type="search" class="form-control" placeholder="Search notes..."
-                                    id="notes-search" autocomplete="off">
+            <div class="content-area">
+                <!-- Header Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div
+                            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                            <div class="animate-fadeInLeft">
+                                <h2 class="fw-bold text-dark mb-1">Study Notes</h2>
+                                <p class="text-muted mb-0">Organize your learning with rich notes</p>
                             </div>
-                        </div>
-
-                        <!-- Filters -->
-                        <div class="mb-3">
-                            <h6 class="text-muted mb-2">Filter by Week</h6>
-                            <select class="form-select form-select-sm" id="week-filter">
-                                <option value="">All Weeks</option>
-                            </select>
-                        </div>
-
-                        <!-- Tags -->
-                        <div class="mb-3">
-                            <h6 class="text-muted mb-2">Popular Tags</h6>
-                            <div id="popular-tags">
-                                <div class="text-muted small">Loading tags...</div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Notes -->
-                        <div>
-                            <h6 class="text-muted mb-2">Recent Notes</h6>
-                            <div id="recent-notes-list">
-                                <div class="skeleton skeleton-text mb-2"></div>
-                                <div class="skeleton skeleton-text mb-2"></div>
-                                <div class="skeleton skeleton-text"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Notes Content -->
-                    <div class="notes-content" id="notes-content">
-                        <!-- Notes List View -->
-                        <div id="notes-list-view">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0">All Notes</h5>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-secondary active"
-                                        onclick="setNotesView('grid')">
-                                        <i class="bi bi-grid"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        onclick="setNotesView('list')">
-                                        <i class="bi bi-list"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div id="notes-container" class="notes-grid-view">
-                                <!-- Loading skeleton -->
-                                <div class="note-card skeleton-box">
-                                    <div class="skeleton skeleton-title mb-3"></div>
-                                    <div class="skeleton skeleton-text mb-2"></div>
-                                    <div class="skeleton skeleton-text"></div>
-                                </div>
-                                <div class="note-card skeleton-box">
-                                    <div class="skeleton skeleton-title mb-3"></div>
-                                    <div class="skeleton skeleton-text mb-2"></div>
-                                    <div class="skeleton skeleton-text"></div>
-                                </div>
-                            </div>
-
-                            <!-- Pagination -->
-                            <div id="notes-pagination" class="mt-4"></div>
-                        </div>
-
-                        <!-- Note Editor View (hidden by default) -->
-                        <div id="note-editor-view" class="d-none">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="backToNotesList()">
-                                    <i class="bi bi-arrow-left me-2"></i>Back
+                            <div class="d-flex gap-2 animate-fadeInRight">
+                                <button class="btn btn-primary" onclick="createNewNote()">
+                                    <i class="fas fa-plus me-1"></i>New Note
                                 </button>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-primary me-2" id="save-note-btn">
-                                        <i class="bi bi-save me-1"></i>Save
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-sort me-1"></i>Sort
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger" id="delete-note-btn">
-                                        <i class="bi bi-trash me-1"></i>Delete
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="sortNotes('updated')">Last
+                                                Updated</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="sortNotes('created')">Date
+                                                Created</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="sortNotes('title')">Title A-Z</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#" onclick="sortNotes('week')">By Week</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-filter me-1"></i>Filter
                                     </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="filterNotes('all')">All Notes</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <h6 class="dropdown-header">By Week</h6>
+                                        </li>
+                                        <div id="week-filters">
+                                            <!-- Week filters will be populated here -->
+                                        </div>
+                                    </ul>
                                 </div>
                             </div>
-
-                            <form id="note-form">
-                                <div class="mb-3">
-                                    <input type="text" class="form-control form-control-lg" id="note-title"
-                                        placeholder="Note Title" required>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <select class="form-select" id="note-week">
-                                            <option value="">Select Week (Optional)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control" id="note-tags"
-                                            placeholder="Tags (comma separated)">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div id="note-editor"></div>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
-            </main>
+
+                <!-- Search Bar -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="search-container animate-fadeInUp">
+                            <input type="text" class="form-control search-input" id="notes-search"
+                                placeholder="Search notes by title, content, or tags...">
+                            <i class="fas fa-search search-icon"></i>
+                            <div class="search-results" id="notes-search-results" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp">
+                            <i class="fas fa-sticky-note text-primary fs-2 mb-2"></i>
+                            <h4 class="fw-bold text-primary mb-1" id="total-notes">0</h4>
+                            <small class="text-muted">Total Notes</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp animation-delay-100">
+                            <i class="fas fa-calendar-week text-success fs-2 mb-2"></i>
+                            <h4 class="fw-bold text-success mb-1" id="notes-this-week">0</h4>
+                            <small class="text-muted">This Week</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp animation-delay-200">
+                            <i class="fas fa-tags text-warning fs-2 mb-2"></i>
+                            <h4 class="fw-bold text-warning mb-1" id="unique-tags">0</h4>
+                            <small class="text-muted">Unique Tags</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-card text-center hover-lift animate-fadeInUp animation-delay-300">
+                            <i class="fas fa-edit text-info fs-2 mb-2"></i>
+                            <h4 class="fw-bold text-info mb-1" id="recently-updated">0</h4>
+                            <small class="text-muted">Recent Updates</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Grid -->
+                <div id="notes-container">
+                    <div class="text-center py-5">
+                        <div class="loading-spinner mx-auto mb-3"></div>
+                        <p class="text-muted">Loading notes...</p>
+                    </div>
+                </div>
+
+                <!-- Load More Button -->
+                <div class="text-center mt-4" id="load-more-container" style="display: none;">
+                    <button class="btn btn-outline-primary" onclick="loadMoreNotes()">
+                        <i class="fas fa-chevron-down me-1"></i>Load More Notes
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div id="mobile-nav"></div>
+        <!-- Include Mobile Navigation -->
+        <div id="mobile-nav-container"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
-    <script src="/js/lib.js"></script>
-    <script src="/js/components.js"></script>
-    <script src="/js/loader.js"></script>
+    <!-- Note Editor Modal -->
+    <div class="modal fade" id="noteEditorModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content modal-custom">
+                <div class="modal-header modal-header-custom">
+                    <h5 class="modal-title" id="noteModalTitle">New Note</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-body-custom p-0">
+                    <div class="notes-toolbar">
+                        <button class="toolbar-btn" onclick="formatText('bold')" title="Bold">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="formatText('italic')" title="Italic">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="formatText('underline')" title="Underline">
+                            <i class="fas fa-underline"></i>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" onclick="formatText('insertUnorderedList')" title="Bullet List">
+                            <i class="fas fa-list-ul"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="formatText('insertOrderedList')" title="Numbered List">
+                            <i class="fas fa-list-ol"></i>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" onclick="insertCodeBlock()" title="Code Block">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="insertLink()" title="Insert Link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <form id="note-form">
+                            <div class="form-group-custom">
+                                <input type="text" class="form-control-custom" id="note-title"
+                                    placeholder="Enter note title..." required>
+                            </div>
 
+                            <div class="form-group-custom">
+                                <div class="notes-editor" id="note-content" contenteditable="true"
+                                    placeholder="Start writing your note..."></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Week (Optional)</label>
+                                        <select class="form-control-custom" id="note-week">
+                                            <option value="">Select week...</option>
+                                            <!-- Weeks will be populated here -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label class="form-label-custom">Day (Optional)</label>
+                                        <select class="form-control-custom" id="note-day">
+                                            <option value="">Select day...</option>
+                                            <option value="Monday">Monday</option>
+                                            <option value="Tuesday">Tuesday</option>
+                                            <option value="Wednesday">Wednesday</option>
+                                            <option value="Thursday">Thursday</option>
+                                            <option value="Friday">Friday</option>
+                                            <option value="Saturday">Saturday</option>
+                                            <option value="Sunday">Sunday</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group-custom">
+                                <label class="form-label-custom">Tags</label>
+                                <input type="text" class="form-control-custom" id="note-tags"
+                                    placeholder="Add tags separated by commas...">
+                                <div id="tag-suggestions" class="tag-suggestions mt-2"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-custom">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="delete-note-btn" onclick="deleteNote()"
+                        style="display: none;">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveNote()">
+                        <i class="fas fa-save me-1"></i>Save Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let notesData = [];
+        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+        let allNotes = [];
+        let filteredNotes = [];
         let currentPage = 1;
-        let currentNote = null;
-        let markdownEditor = null;
-        let notesView = 'grid';
-        let searchQuery = '';
-        let weekFilter = '';
-        let tagFilter = '';
+        let currentSort = 'updated';
+        let currentFilter = 'all';
+        let editingNoteId = null;
+        let searchTimeout;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuth();
+            loadComponents();
+            initializeNotes();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+        }
+
+        async function loadComponents() {
+            try {
+                // Load sidebar
+                const sidebarResponse = await fetch('../components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+                // Load topbar
+                const topbarResponse = await fetch('../components/topbar.html');
+                const topbarHtml = await topbarResponse.text();
+                document.getElementById('topbar-container').innerHTML = topbarHtml;
+
+                // Load mobile nav
+                const mobileNavResponse = await fetch('../components/mobile-nav.html');
+                const mobileNavHtml = await mobileNavResponse.text();
+                document.getElementById('mobile-nav-container').innerHTML = mobileNavHtml;
+
+                // Execute scripts in loaded components
+                setActiveNavItem();
+                setActiveMobileNavItem();
+                updatePageTitle();
+                loadUserData();
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function initializeNotes() {
+            try {
+                await loadNotes();
+                populateWeekFilter();
+                setupSearch();
+                checkForStudySession();
+            } catch (error) {
+                console.error('Notes initialization error:', error);
+                showErrorMessage('Failed to load notes');
+            }
+        }
 
         async function loadNotes(page = 1) {
             try {
-                const params = {
-                    page: page,
-                    per_page: 12,
-                    search: searchQuery
-                };
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/notes?page=${page}&per_page=20`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-                if (weekFilter) params.week = weekFilter;
+                if (response.ok) {
+                    const data = await response.json();
 
-                const response = await api.get('/notes', params);
-                notesData = response.notes;
+                    if (page === 1) {
+                        allNotes = data.notes;
+                    } else {
+                        allNotes = [...allNotes, ...data.notes];
+                    }
 
-                renderNotes();
-                renderPagination(response.pagination);
+                    filteredNotes = [...allNotes];
+                    currentPage = page;
 
-                // Load additional data on first load
-                if (page === 1) {
-                    loadWeekFilter();
-                    loadPopularTags();
-                    loadRecentNotes();
+                    renderNotes();
+                    updateNotesStats();
+
+                    // Show load more button if there are more pages
+                    const loadMoreContainer = document.getElementById('load-more-container');
+                    if (data.pagination.page < data.pagination.pages) {
+                        loadMoreContainer.style.display = 'block';
+                    } else {
+                        loadMoreContainer.style.display = 'none';
+                    }
+                } else if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                } else {
+                    throw new Error('Failed to load notes');
                 }
-
             } catch (error) {
-                notifications.error('Failed to load notes');
-                console.error('Notes error:', error);
+                console.error('Error loading notes:', error);
+                if (page === 1) {
+                    showErrorMessage('Failed to load notes');
+                }
             }
         }
 
         function renderNotes() {
             const container = document.getElementById('notes-container');
 
-            if (notesData.length === 0) {
+            if (filteredNotes.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state text-center py-5">
-                        <i class="bi bi-journal-x display-1 text-muted"></i>
-                        <h5 class="mt-3">No notes found</h5>
-                        <p class="text-muted">Create your first note to get started</p>
-                        <button class="btn btn-primary mt-3" onclick="createNewNote()">
-                            <i class="bi bi-plus-lg me-2"></i>Create Note
+                    <div class="text-center py-5">
+                        <i class="fas fa-sticky-note text-muted fs-1 mb-3"></i>
+                        <h4 class="text-muted mb-3">No Notes Found</h4>
+                        <p class="text-muted mb-4">Start taking notes to organize your learning journey!</p>
+                        <button class="btn btn-primary" onclick="createNewNote()">
+                            <i class="fas fa-plus me-2"></i>Create Your First Note
                         </button>
                     </div>
                 `;
                 return;
             }
 
-            container.className = notesView === 'grid' ? 'notes-grid-view' : 'notes-list-view';
-            container.innerHTML = notesData.map(note => {
-                const preview = note.content.substring(0, 150) + '...';
-                const date = new Date(note.updated_at);
-                const dateStr = date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
-                });
+            let html = '<div class="row g-4">';
 
-                return `
-                    <div class="note-card animate-fade-in" onclick="openNote('${note.id}')">
-                        <h6 class="note-card-title">${note.title}</h6>
-                        <p class="note-card-content">${preview}</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <div class="note-card-tags">
-                                ${note.tags.map(tag => `
-                                    <span class="note-card-tag" onclick="filterByTag('${tag}', event)">
-                                        ${tag}
-                                    </span>
-                                `).join('')}
+            filteredNotes.forEach((note, index) => {
+                const tags = note.tags || [];
+                const preview = stripHtml(note.content).substring(0, 150);
+                const timeAgo = getTimeAgo(note.updated_at);
+
+                html += `
+                    <div class="col-lg-4 col-md-6">
+                        <div class="note-card stats-card h-100 hover-lift animate-fadeInUp" 
+                             style="animation-delay: ${index * 50}ms;" 
+                             onclick="editNote('${note.id}')">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="fw-bold mb-0 note-title">${note.title}</h6>
+                                <div class="dropdown" onclick="event.stopPropagation();">
+                                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="editNote('${note.id}')">
+                                            <i class="fas fa-edit me-2"></i>Edit
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="duplicateNote('${note.id}')">
+                                            <i class="fas fa-copy me-2"></i>Duplicate
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="confirmDeleteNote('${note.id}')">
+                                            <i class="fas fa-trash me-2"></i>Delete
+                                        </a></li>
+                                    </ul>
+                                </div>
                             </div>
-                            <small class="text-muted">${dateStr}</small>
-                        </div>
-                        ${note.week ? `
-                            <div class="mt-2">
-                                <small class="text-primary">
-                                    <i class="bi bi-calendar-week me-1"></i>Week ${note.week}
+                            
+                            <div class="note-preview mb-3">
+                                <p class="text-muted mb-0">${preview}${preview.length >= 150 ? '...' : ''}</p>
+                            </div>
+                            
+                            <div class="note-meta">
+                                ${note.week ? `<span class="badge bg-primary me-1">Week ${note.week}</span>` : ''}
+                                ${note.day ? `<span class="badge bg-secondary me-1">${note.day}</span>` : ''}
+                                ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                            
+                            <div class="note-footer mt-auto pt-3 border-top">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Updated ${timeAgo}
                                 </small>
                             </div>
-                        ` : ''}
+                        </div>
                     </div>
                 `;
-            }).join('');
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        function renderPagination(pagination) {
-            const container = document.getElementById('notes-pagination');
+        function updateNotesStats() {
+            const totalNotes = allNotes.length;
 
-            if (pagination.pages <= 1) {
-                container.innerHTML = '';
-                return;
+            // Notes this week
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const notesThisWeek = allNotes.filter(note =>
+                new Date(note.updated_at) > oneWeekAgo
+            ).length;
+
+            // Unique tags
+            const allTags = new Set();
+            allNotes.forEach(note => {
+                if (note.tags) {
+                    note.tags.forEach(tag => allTags.add(tag));
+                }
+            });
+
+            // Recently updated (last 24 hours)
+            const oneDayAgo = new Date();
+            oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+            const recentlyUpdated = allNotes.filter(note =>
+                new Date(note.updated_at) > oneDayAgo
+            ).length;
+
+            document.getElementById('total-notes').textContent = totalNotes;
+            document.getElementById('notes-this-week').textContent = notesThisWeek;
+            document.getElementById('unique-tags').textContent = allTags.size;
+            document.getElementById('recently-updated').textContent = recentlyUpdated;
+        }
+
+        function populateWeekFilter() {
+            const weekFilters = document.getElementById('week-filters');
+            let html = '';
+
+            for (let i = 1; i <= 14; i++) {
+                html += `<li><a class="dropdown-item" href="#" onclick="filterNotes('week-${i}')">Week ${i}</a></li>`;
             }
 
-            const paginationComponent = new Pagination(container, {
-                totalPages: pagination.pages,
-                currentPage: pagination.page,
-                onChange: (page) => {
-                    currentPage = page;
-                    loadNotes(page);
+            weekFilters.innerHTML = html;
+
+            // Populate week selector in modal
+            const weekSelector = document.getElementById('note-week');
+            let weekOptions = '<option value="">Select week...</option>';
+            for (let i = 1; i <= 14; i++) {
+                weekOptions += `<option value="${i}">Week ${i}</option>`;
+            }
+            weekSelector.innerHTML = weekOptions;
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('notes-search');
+            const searchResults = document.getElementById('notes-search-results');
+
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    filteredNotes = [...allNotes];
+                    renderNotes();
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+
+            // Close search results when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
                 }
             });
         }
 
-        async function loadWeekFilter() {
-            try {
-                const response = await api.get('/roadmap');
-                const weekSelect = document.getElementById('week-filter');
+        function performSearch(query) {
+            const queryLower = query.toLowerCase();
 
-                weekSelect.innerHTML = '<option value="">All Weeks</option>' +
-                    response.roadmap.map(week => `
-                        <option value="${week.week}">Week ${week.week}: ${week.title}</option>
-                    `).join('');
-
-                // Also populate the note editor week select
-                const noteWeekSelect = document.getElementById('note-week');
-                noteWeekSelect.innerHTML = weekSelect.innerHTML;
-
-            } catch (error) {
-                console.error('Failed to load weeks:', error);
-            }
-        }
-
-        async function loadPopularTags() {
-            // In a real app, this would be an API endpoint
-            // For now, extract from loaded notes
-            const allTags = {};
-            notesData.forEach(note => {
-                note.tags.forEach(tag => {
-                    allTags[tag] = (allTags[tag] || 0) + 1;
-                });
+            filteredNotes = allNotes.filter(note => {
+                return note.title.toLowerCase().includes(queryLower) ||
+                    note.content.toLowerCase().includes(queryLower) ||
+                    (note.tags && note.tags.some(tag => tag.toLowerCase().includes(queryLower)));
             });
 
-            const sortedTags = Object.entries(allTags)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10);
+            renderNotes();
 
-            const container = document.getElementById('popular-tags');
-            if (sortedTags.length === 0) {
-                container.innerHTML = '<div class="text-muted small">No tags yet</div>';
-                return;
-            }
+            // Show search results dropdown
+            const searchResults = document.getElementById('notes-search-results');
+            if (filteredNotes.length > 0) {
+                let html = '';
+                filteredNotes.slice(0, 5).forEach(note => {
+                    html += `
+                        <div class="search-result-item" onclick="editNote('${note.id}')">
+                            <div class="fw-semibold">${note.title}</div>
+                            <small class="text-muted">${stripHtml(note.content).substring(0, 50)}...</small>
+                        </div>
+                    `;
+                });
 
-            container.innerHTML = sortedTags.map(([tag, count]) => `
-                <span class="badge bg-secondary me-1 mb-1 cursor-pointer" 
-                      onclick="filterByTag('${tag}')">
-                    ${tag} (${count})
-                </span>
-            `).join('');
-        }
-
-        async function loadRecentNotes() {
-            const recent = activity.getRecentNotes();
-            const container = document.getElementById('recent-notes-list');
-
-            if (recent.length === 0) {
-                container.innerHTML = '<div class="text-muted small">No recent notes</div>';
-                return;
-            }
-
-            container.innerHTML = recent.map(note => `
-                <div class="recent-note-item mb-2 cursor-pointer" onclick="openNote('${note.id}')">
-                    <div class="text-truncate">${note.title}</div>
-                    <small class="text-muted">${new Date(note.updated_at).toLocaleDateString()}</small>
-                </div>
-            `).join('');
-        }
-
-        function createNewNote() {
-            currentNote = null;
-            showNoteEditor();
-
-            // Clear form
-            document.getElementById('note-title').value = '';
-            document.getElementById('note-week').value = '';
-            document.getElementById('note-tags').value = '';
-
-            if (markdownEditor) {
-                markdownEditor.setValue('');
-            }
-
-            // Update buttons
-            document.getElementById('delete-note-btn').style.display = 'none';
-        }
-
-        async function openNote(noteId) {
-            try {
-                const note = notesData.find(n => n.id === noteId);
-                if (!note) {
-                    // Fetch full note content
-                    const response = await api.get(`/notes/${noteId}`);
-                    currentNote = response;
-                } else {
-                    currentNote = note;
+                if (filteredNotes.length > 5) {
+                    html += `<div class="search-result-item text-center text-muted">+${filteredNotes.length - 5} more results</div>`;
                 }
 
-                showNoteEditor();
+                searchResults.innerHTML = html;
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.innerHTML = '<div class="search-result-item text-muted">No notes found</div>';
+                searchResults.style.display = 'block';
+            }
+        }
 
-                // Populate form
-                document.getElementById('note-title').value = currentNote.title;
-                document.getElementById('note-week').value = currentNote.week || '';
-                document.getElementById('note-tags').value = currentNote.tags.join(', ');
+        function sortNotes(sortBy) {
+            currentSort = sortBy;
 
-                if (markdownEditor) {
-                    markdownEditor.setValue(currentNote.content);
+            filteredNotes.sort((a, b) => {
+                switch (sortBy) {
+                    case 'updated':
+                        return new Date(b.updated_at) - new Date(a.updated_at);
+                    case 'created':
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    case 'title':
+                        return a.title.localeCompare(b.title);
+                    case 'week':
+                        return (a.week || 0) - (b.week || 0);
+                    default:
+                        return 0;
                 }
-
-                // Update buttons
-                document.getElementById('delete-note-btn').style.display = 'inline-block';
-
-                // Add to recent notes
-                activity.addRecentNote(currentNote);
-
-            } catch (error) {
-                notifications.error('Failed to load note');
-            }
-        }
-
-        function showNoteEditor() {
-            document.getElementById('notes-list-view').classList.add('d-none');
-            document.getElementById('note-editor-view').classList.remove('d-none');
-
-            // Initialize markdown editor if not already done
-            if (!markdownEditor) {
-                const editorElement = document.getElementById('note-editor');
-                markdownEditor = new MarkdownEditor(document.createElement('textarea'), {
-                    toolbar: true,
-                    preview: true,
-                    autosave: true,
-                    draftKey: 'current-note'
-                });
-                editorElement.appendChild(markdownEditor.container);
-            }
-        }
-
-        function backToNotesList() {
-            document.getElementById('note-editor-view').classList.add('d-none');
-            document.getElementById('notes-list-view').classList.remove('d-none');
-
-            // Save draft
-            if (markdownEditor) {
-                drafts.saveNote({
-                    id: currentNote?.id || 'new',
-                    title: document.getElementById('note-title').value,
-                    content: markdownEditor.getValue()
-                });
-            }
-        }
-
-        function setNotesView(view) {
-            notesView = view;
-            document.querySelectorAll('.btn-group-sm button').forEach(btn => {
-                btn.classList.remove('active');
             });
-            event.target.closest('button').classList.add('active');
+
             renderNotes();
         }
 
-        function filterByTag(tag, event) {
-            if (event) {
-                event.stopPropagation();
+        function filterNotes(filter) {
+            currentFilter = filter;
+
+            if (filter === 'all') {
+                filteredNotes = [...allNotes];
+            } else if (filter.startsWith('week-')) {
+                const weekNumber = parseInt(filter.split('-')[1]);
+                filteredNotes = allNotes.filter(note => note.week === weekNumber);
             }
-            tagFilter = tag;
-            searchQuery = tag;
-            document.getElementById('notes-search').value = tag;
-            loadNotes(1);
+
+            sortNotes(currentSort);
         }
 
-        // Save note
-        document.getElementById('save-note-btn').addEventListener('click', async () => {
-            const title = document.getElementById('note-title').value.trim();
-            const content = markdownEditor.getValue().trim();
-            const week = document.getElementById('note-week').value;
-            const tags = document.getElementById('note-tags').value
-                .split(',')
-                .map(tag => tag.trim())
-                .filter(tag => tag);
+        function createNewNote() {
+            editingNoteId = null;
+            const modal = new bootstrap.Modal(document.getElementById('noteEditorModal'));
 
-            if (!title || !content) {
-                notifications.warning('Please provide a title and content');
+            // Reset form
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-content').innerHTML = '';
+            document.getElementById('note-week').value = '';
+            document.getElementById('note-day').value = '';
+            document.getElementById('note-tags').value = '';
+
+            // Check if there's a current study session
+            const studySession = localStorage.getItem('current_study_session');
+            if (studySession) {
+                const session = JSON.parse(studySession);
+                document.getElementById('note-title').value = `Week ${session.week} - ${session.topic}`;
+                document.getElementById('note-week').value = session.week;
+                document.getElementById('note-day').value = session.day;
+            }
+
+            document.getElementById('noteModalTitle').textContent = 'New Note';
+            document.getElementById('delete-note-btn').style.display = 'none';
+
+            modal.show();
+
+            // Focus on title input after modal is shown
+            setTimeout(() => {
+                document.getElementById('note-title').focus();
+            }, 300);
+        }
+
+        function editNote(noteId) {
+            const note = allNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            editingNoteId = noteId;
+            const modal = new bootstrap.Modal(document.getElementById('noteEditorModal'));
+
+            // Populate form
+            document.getElementById('note-title').value = note.title;
+            document.getElementById('note-content').innerHTML = note.content;
+            document.getElementById('note-week').value = note.week || '';
+            document.getElementById('note-day').value = note.day || '';
+            document.getElementById('note-tags').value = note.tags ? note.tags.join(', ') : '';
+
+            document.getElementById('noteModalTitle').textContent = 'Edit Note';
+            document.getElementById('delete-note-btn').style.display = 'block';
+
+            modal.show();
+        }
+
+        async function saveNote() {
+            const title = document.getElementById('note-title').value.trim();
+            const content = document.getElementById('note-content').innerHTML;
+            const week = document.getElementById('note-week').value;
+            const day = document.getElementById('note-day').value;
+            const tagsInput = document.getElementById('note-tags').value.trim();
+
+            if (!title) {
+                showErrorToast('Please enter a note title');
+                return;
+            }
+
+            if (!content || content === '<br>') {
+                showErrorToast('Please enter note content');
+                return;
+            }
+
+            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+            const noteData = {
+                title,
+                content,
+                week: week ? parseInt(week) : null,
+                day: day || null,
+                tags
+            };
+
+            try {
+                const token = localStorage.getItem('access_token');
+                let response;
+
+                if (editingNoteId) {
+                    response = await fetch(`${API_BASE}/notes/${editingNoteId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(noteData)
+                    });
+                } else {
+                    response = await fetch(`${API_BASE}/notes`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(noteData)
+                    });
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (editingNoteId) {
+                        // Update existing note
+                        const noteIndex = allNotes.findIndex(n => n.id === editingNoteId);
+                        if (noteIndex !== -1) {
+                            allNotes[noteIndex] = { ...allNotes[noteIndex], ...noteData, updated_at: new Date().toISOString() };
+                        }
+                        showSuccessToast('Note updated successfully!');
+                    } else {
+                        // Add new note
+                        const newNote = {
+                            id: data.id,
+                            ...noteData,
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        };
+                        allNotes.unshift(newNote);
+                        showSuccessToast('Note created successfully!');
+                    }
+
+                    // Clear study session if it was used
+                    localStorage.removeItem('current_study_session');
+
+                    filteredNotes = [...allNotes];
+                    renderNotes();
+                    updateNotesStats();
+
+                    bootstrap.Modal.getInstance(document.getElementById('noteEditorModal')).hide();
+                } else {
+                    const errorData = await response.json();
+                    showErrorToast(errorData.error || 'Failed to save note');
+                }
+            } catch (error) {
+                console.error('Error saving note:', error);
+                showErrorToast('Network error. Please try again.');
+            }
+        }
+
+        async function deleteNote() {
+            if (!editingNoteId) return;
+
+            if (!confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
                 return;
             }
 
             try {
-                const noteData = {
-                    title,
-                    content,
-                    tags,
-                    week: week ? parseInt(week) : null
-                };
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/notes/${editingNoteId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-                if (currentNote) {
-                    // Update existing note
-                    await api.put(`/notes/${currentNote.id}`, noteData);
-                    notifications.success('Note updated successfully');
+                if (response.ok) {
+                    // Remove note from arrays
+                    allNotes = allNotes.filter(n => n.id !== editingNoteId);
+                    filteredNotes = filteredNotes.filter(n => n.id !== editingNoteId);
+
+                    renderNotes();
+                    updateNotesStats();
+
+                    bootstrap.Modal.getInstance(document.getElementById('noteEditorModal')).hide();
+                    showSuccessToast('Note deleted successfully!');
                 } else {
-                    // Create new note
-                    const response = await api.post('/notes', noteData);
-                    currentNote = { id: response.id, ...noteData };
-                    notifications.success('Note created successfully');
+                    showErrorToast('Failed to delete note');
                 }
-
-                // Clear draft
-                drafts.deleteNote(currentNote.id);
-
-                // Reload notes
-                backToNotesList();
-                loadNotes(currentPage);
-
             } catch (error) {
-                notifications.error('Failed to save note');
+                console.error('Error deleting note:', error);
+                showErrorToast('Network error. Please try again.');
             }
-        });
+        }
 
-        // Delete note
-        document.getElementById('delete-note-btn').addEventListener('click', async () => {
-            if (!currentNote) return;
+        function confirmDeleteNote(noteId) {
+            editingNoteId = noteId;
+            deleteNote();
+        }
 
-            const confirmed = confirm('Are you sure you want to delete this note?');
-            if (!confirmed) return;
+        async function duplicateNote(noteId) {
+            const note = allNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            const duplicatedNote = {
+                title: `Copy of ${note.title}`,
+                content: note.content,
+                week: note.week,
+                day: note.day,
+                tags: note.tags
+            };
 
             try {
-                await api.delete(`/notes/${currentNote.id}`);
-                notifications.success('Note deleted successfully');
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`${API_BASE}/notes`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(duplicatedNote)
+                });
 
-                backToNotesList();
-                loadNotes(currentPage);
+                if (response.ok) {
+                    const data = await response.json();
+                    const newNote = {
+                        id: data.id,
+                        ...duplicatedNote,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
 
-            } catch (error) {
-                notifications.error('Failed to delete note');
-            }
-        });
+                    allNotes.unshift(newNote);
+                    filteredNotes = [...allNotes];
+                    renderNotes();
+                    updateNotesStats();
 
-        // Search functionality
-        let searchTimeout;
-        document.getElementById('notes-search').addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchQuery = e.target.value;
-
-            searchTimeout = setTimeout(() => {
-                loadNotes(1);
-            }, 300);
-        });
-
-        // Week filter
-        document.getElementById('week-filter').addEventListener('change', (e) => {
-            weekFilter = e.target.value;
-            loadNotes(1);
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadNotes();
-
-            // Auto-save draft
-            setInterval(() => {
-                if (markdownEditor && document.getElementById('note-editor-view').classList.contains('d-none') === false) {
-                    drafts.saveNote({
-                        id: currentNote?.id || 'new',
-                        title: document.getElementById('note-title').value,
-                        content: markdownEditor.getValue()
-                    });
+                    showSuccessToast('Note duplicated successfully!');
+                } else {
+                    showErrorToast('Failed to duplicate note');
                 }
-            }, 30000); // Every 30 seconds
-        });
+            } catch (error) {
+                console.error('Error duplicating note:', error);
+                showErrorToast('Network error. Please try again.');
+            }
+        }
+
+        function loadMoreNotes() {
+            loadNotes(currentPage + 1);
+        }
+
+        function checkForStudySession() {
+            const studySession = localStorage.getItem('current_study_session');
+            if (studySession) {
+                const session = JSON.parse(studySession);
+
+                // Show notification about creating a note for the study session
+                showStudySessionNotification(session);
+            }
+        }
+
+        function showStudySessionNotification(session) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-info text-white">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong class="me-auto">Study Session</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        Ready to take notes for <strong>${session.topic}</strong>?
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-primary me-2" onclick="createNewNote(); this.closest('.toast').parentElement.remove();">
+                                Start Note
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="localStorage.removeItem('current_study_session'); this.closest('.toast').parentElement.remove();">
+                                Later
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.remove();
+                }
+            }, 10000);
+        }
+
+        // Rich text editor functions
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            document.getElementById('note-content').focus();
+        }
+
+        function insertCodeBlock() {
+            const code = prompt('Enter your code:');
+            if (code) {
+                document.execCommand('insertHTML', false, `<pre><code>${code}</code></pre>`);
+            }
+        }
+
+        function insertLink() {
+            const url = prompt('Enter the URL:');
+            if (url) {
+                const text = prompt('Enter the link text:') || url;
+                document.execCommand('insertHTML', false, `<a href="${url}" target="_blank">${text}</a>`);
+            }
+        }
+
+        // Utility functions
+        function stripHtml(html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            return temp.textContent || temp.innerText || '';
+        }
+
+        function getTimeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return 'just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        function showSuccessToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                <div class="toast show animate-slideInDown" role="alert">
+                    <div class="toast-header bg-danger text-white">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong class="me-auto">Error</strong>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.toast').parentElement.remove()"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showErrorMessage(message) {
+            const container = document.getElementById('notes-container');
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle text-warning fs-1 mb-3"></i>
+                    <h4 class="text-muted mb-3">Unable to Load Notes</h4>
+                    <p class="text-muted mb-4">${message}</p>
+                    <button class="btn btn-primary" onclick="initializeNotes()">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                </div>
+            `;
+        }
     </script>
 
     <style>
-        .notes-grid-view {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        .note-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
         }
 
-        .notes-list-view .note-card {
+        .note-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .note-title {
+            line-height: 1.3;
+            max-height: 2.6em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .note-preview {
+            flex-grow: 1;
+        }
+
+        .note-preview p {
+            line-height: 1.4;
+            max-height: 4.2em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .note-meta {
             margin-bottom: 1rem;
         }
 
-        .recent-note-item {
+        .notes-editor {
+            min-height: 300px;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: inherit;
+            line-height: 1.5;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .notes-editor:focus {
+            border-color: #3b82f6;
+        }
+
+        .notes-editor[contenteditable]:empty::before {
+            content: attr(placeholder);
+            color: #9ca3af;
+        }
+
+        .notes-toolbar {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-bottom: none;
+            border-radius: 0.5rem 0.5rem 0 0;
             padding: 0.5rem;
-            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem;
+            border: none;
+            background: none;
+            border-radius: 0.25rem;
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: background-color 0.2s;
+            color: #6b7280;
         }
 
-        .recent-note-item:hover {
-            background: var(--bg-tertiary);
+        .toolbar-btn:hover {
+            background: #e5e7eb;
+            color: #374151;
         }
 
-        .cursor-pointer {
-            cursor: pointer;
+        .toolbar-btn.active {
+            background: #3b82f6;
+            color: white;
         }
 
-        #note-editor .markdown-editor {
-            min-height: 400px;
+        .toolbar-divider {
+            width: 1px;
+            height: 20px;
+            background: #d1d5db;
+            margin: 0 0.5rem;
+        }
+
+        .tag-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         @media (max-width: 768px) {
-            .notes-grid {
-                grid-template-columns: 1fr;
+            .notes-editor {
+                min-height: 200px;
+                font-size: 16px;
+                /* Prevent zoom on iOS */
             }
 
-            .notes-sidebar {
+            .toolbar-btn {
+                padding: 0.4rem;
+            }
+
+            .note-card {
                 margin-bottom: 1rem;
             }
         }
