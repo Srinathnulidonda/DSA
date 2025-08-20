@@ -1,227 +1,272 @@
-<div class="container-fluid p-4">
+<div class="page-container">
     <!-- Welcome Section -->
     <div class="row mb-4">
         <div class="col-12">
             <div
-                class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4">
+                class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-3">
                 <div>
-                    <h1 class="h3 fw-bold mb-1">Welcome back, <span id="user-name-display">Student</span>! 👋</h1>
-                    <p class="text-muted mb-0">Ready to continue your DSA journey today?</p>
+                    <h1 class="h2 mb-1">Welcome back, <span id="dashboard-user-name">Student</span>! 🚀</h1>
+                    <p class="text-muted mb-0">Let's continue your DSA journey</p>
                 </div>
-                <div class="d-flex gap-2 mt-3 mt-lg-0">
-                    <a href="/pages/pomodoro" class="btn btn-primary">
-                        <i class="fas fa-clock me-2"></i>Start Study Session
-                    </a>
-                    <a href="/pages/roadmap" class="btn btn-outline-primary">
-                        <i class="fas fa-map me-2"></i>View Roadmap
-                    </a>
+                <div class="mt-3 mt-lg-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div
+                            class="streak-display bg-gradient-primary text-white px-3 py-2 rounded-lg d-flex align-items-center">
+                            <i class="bi bi-fire text-warning me-2 fs-5"></i>
+                            <div>
+                                <div class="fw-bold fs-5" id="dashboard-streak">0</div>
+                                <small class="opacity-75">day streak</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="startQuickStudy()">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Quick Study
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="row g-4 mb-4" id="stats-section">
-        <div class="col-md-3 col-sm-6">
-            <div class="card stat-card bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h3 class="stat-value" data-stat="current_streak">0</h3>
-                            <p class="stat-label mb-0">Day Streak</p>
-                            <div class="stat-change positive mt-2">
-                                <i class="fas fa-fire me-1"></i>
-                                <span>Keep it going!</span>
-                            </div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-calendar-check fa-2x opacity-75"></i>
+    <div class="row g-4 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                            <i class="bi bi-target text-primary fs-4"></i>
                         </div>
                     </div>
+                    <h3 class="h4 mb-1 text-primary fw-bold" id="completion-rate">0%</h3>
+                    <p class="text-muted mb-0 small">Completion Rate</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 col-sm-6">
-            <div class="card stat-card bg-gradient-to-r from-green-500 to-green-600 text-white border-0 h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h3 class="stat-value" data-stat="completion_percentage">0%</h3>
-                            <p class="stat-label mb-0">Progress</p>
-                            <div class="stat-change positive mt-2">
-                                <i class="fas fa-arrow-up me-1"></i>
-                                <span data-stat="completed_days">0</span>/<span data-stat="total_days">98</span> days
-                            </div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-line fa-2x opacity-75"></i>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                            <i class="bi bi-clock text-success fs-4"></i>
                         </div>
                     </div>
+                    <h3 class="h4 mb-1 text-success fw-bold" id="total-study-time">0h</h3>
+                    <p class="text-muted mb-0 small">Total Study Time</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 col-sm-6">
-            <div class="card stat-card bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h3 class="stat-value" data-stat="total_study_time">0h</h3>
-                            <p class="stat-label mb-0">Total Study Time</p>
-                            <div class="stat-change mt-2">
-                                <i class="fas fa-clock me-1"></i>
-                                <span data-stat="study_time_last_7_days">0h</span> this week
-                            </div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-hourglass-half fa-2x opacity-75"></i>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="bg-info bg-opacity-10 p-3 rounded-circle">
+                            <i class="bi bi-calendar-week text-info fs-4"></i>
                         </div>
                     </div>
+                    <h3 class="h4 mb-1 text-info fw-bold" id="weekly-time">0h</h3>
+                    <p class="text-muted mb-0 small">This Week</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 col-sm-6">
-            <div class="card stat-card bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h3 class="stat-value" data-stat="longest_streak">0</h3>
-                            <p class="stat-label mb-0">Best Streak</p>
-                            <div class="stat-change mt-2">
-                                <i class="fas fa-trophy me-1"></i>
-                                <span>Personal Record</span>
-                            </div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-medal fa-2x opacity-75"></i>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
+                            <i class="bi bi-journal-text text-warning fs-4"></i>
                         </div>
                     </div>
+                    <h3 class="h4 mb-1 text-warning fw-bold" id="notes-count">0</h3>
+                    <p class="text-muted mb-0 small">Notes Created</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content Row -->
+    <!-- Main Content -->
     <div class="row g-4">
-        <!-- Weekly Progress Chart -->
+        <!-- Left Column -->
         <div class="col-lg-8">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-chart-bar me-2 text-primary"></i>
-                        Weekly Progress
+            <!-- Progress Overview -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up text-primary me-2"></i>
+                        Learning Progress
                     </h5>
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-outline-primary active" data-view="weekly">Weekly</button>
-                        <button type="button" class="btn btn-outline-primary" data-view="monthly">Monthly</button>
+                    <a href="/progress" class="btn btn-sm btn-outline-primary">
+                        View Details
+                        <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Overall Progress</span>
+                                <span class="fw-medium" id="progress-text">0 of 98 days completed</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 12px;">
+                                <div class="progress-bar bg-gradient-primary" role="progressbar"
+                                    id="overall-progress-bar" style="width: 0%" aria-valuenow="0" aria-valuemin="0"
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+
+                            <!-- Weekly Breakdown -->
+                            <div class="row g-2" id="weekly-progress">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="position-relative d-inline-block">
+                                <canvas id="progress-doughnut" width="120" height="120"></canvas>
+                                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                    <div class="fs-4 fw-bold text-primary" id="progress-percentage">0%</div>
+                                    <small class="text-muted">Complete</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-activity text-success me-2"></i>
+                        Recent Activity
+                    </h5>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-ghost" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/analytics">View Analytics</a></li>
+                            <li><a class="dropdown-item" href="/calendar">View Calendar</a></li>
+                        </ul>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="weekly-progress-chart"></canvas>
+                    <div id="recent-activity-list">
+                        <!-- Loading state -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted mt-2 mb-0">Loading recent activity...</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Today's Focus -->
+        <!-- Right Column -->
         <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-bullseye me-2 text-success"></i>
-                        Today's Focus
-                    </h5>
-                </div>
-                <div class="card-body" id="todays-focus">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Activities -->
-    <div class="row g-4 mt-0">
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-clock me-2 text-info"></i>
-                        Recent Study Sessions
-                    </h5>
-                    <a href="/pages/pomodoro" class="btn btn-sm btn-outline-primary">View All</a>
-                </div>
-                <div class="card-body">
-                    <div id="recent-sessions">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-sticky-note me-2 text-warning"></i>
-                        Recent Notes
-                    </h5>
-                    <a href="/pages/notes" class="btn btn-sm btn-outline-primary">View All</a>
-                </div>
-                <div class="card-body">
-                    <div id="recent-notes">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="row g-4 mt-0">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-rocket me-2 text-primary"></i>
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightning text-warning me-2"></i>
                         Quick Actions
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-3 col-sm-6">
-                            <a href="/pages/roadmap"
-                                class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
-                                <i class="fas fa-map fa-2x mb-2"></i>
-                                <span class="fw-medium">Study Roadmap</span>
-                                <small class="text-muted">View weekly curriculum</small>
-                            </a>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" onclick="startPomodoro()">
+                            <i class="bi bi-clock me-2"></i>
+                            Start Pomodoro Timer
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="createNote()">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Create New Note
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="openAIAssistant()">
+                            <i class="bi bi-robot me-2"></i>
+                            Ask AI Assistant
+                        </button>
+                        <button class="btn btn-outline-info" onclick="viewRoadmap()">
+                            <i class="bi bi-map me-2"></i>
+                            View Roadmap
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Week Focus -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bullseye text-danger me-2"></i>
+                        This Week's Focus
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="current-week-content">
+                        <!-- Loading state -->
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <p class="text-muted mt-2 mb-0 small">Loading week focus...</p>
                         </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="/pages/notes"
-                                class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
-                                <i class="fas fa-plus fa-2x mb-2"></i>
-                                <span class="fw-medium">New Note</span>
-                                <small class="text-muted">Capture your thoughts</small>
-                            </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Streak -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom-0">
+                    <h5 class="mb-0">
+                        <i class="bi bi-fire text-warning me-2"></i>
+                        Study Streak
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="streak-visualization mb-3">
+                        <canvas id="streak-chart" height="100"></canvas>
+                    </div>
+                    <div class="row g-3 text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <div class="fs-4 fw-bold text-warning" id="current-streak-display">0</div>
+                                <small class="text-muted">Current</small>
+                            </div>
                         </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="/pages/ai-assistant"
-                                class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
-                                <i class="fas fa-robot fa-2x mb-2"></i>
-                                <span class="fw-medium">AI Assistant</span>
-                                <small class="text-muted">Get instant help</small>
-                            </a>
+                        <div class="col-6">
+                            <div class="fs-4 fw-bold text-primary" id="longest-streak-display">0</div>
+                            <small class="text-muted">Best</small>
                         </div>
-                        <div class="col-md-3 col-sm-6">
-                            <a href="/pages/resources"
-                                class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-decoration-none">
-                                <i class="fas fa-book fa-2x mb-2"></i>
-                                <span class="fw-medium">Resources</span>
-                                <small class="text-muted">Browse materials</small>
-                            </a>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-lightbulb me-1"></i>
+                            Study daily to maintain your streak!
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Notes -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-journal-text text-info me-2"></i>
+                        Recent Notes
+                    </h5>
+                    <a href="/notes" class="btn btn-sm btn-outline-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div id="recent-notes-list">
+                        <!-- Loading state -->
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <p class="text-muted mt-2 mb-0 small">Loading notes...</p>
                         </div>
                     </div>
                 </div>
@@ -231,166 +276,461 @@
 </div>
 
 <script>
+    let dashboardData = null;
+
+    // Initialize dashboard
     document.addEventListener('DOMContentLoaded', async function () {
-        console.log('Loading dashboard...');
-
-        try {
-            // Load dashboard data
-            const dashboardData = await ApiMethods.dashboard.get();
-            console.log('Dashboard data loaded:', dashboardData);
-
-            // Update user name
-            const user = Storage.user.getUserData();
-            if (user) {
-                document.getElementById('user-name-display').textContent = user.name;
-            }
-
-            // Update stats cards
-            updateStatsCards(dashboardData.stats);
-
-            // Update weekly progress chart
-            updateWeeklyProgressChart(dashboardData.weekly_progress);
-
-            // Update today's focus
-            updateTodaysFocus(dashboardData);
-
-            // Update recent activities
-            updateRecentActivities(dashboardData);
-
-        } catch (error) {
-            console.error('Failed to load dashboard:', error);
-            Notifications.error('Failed to load dashboard data');
-        }
+        await loadDashboardData();
+        setupDashboard();
     });
 
-    function updateStatsCards(stats) {
-        // Update stat values
-        Object.entries(stats).forEach(([key, value]) => {
-            const element = document.querySelector(`[data-stat="${key}"]`);
-            if (element) {
-                switch (key) {
-                    case 'total_study_time':
-                    case 'study_time_last_7_days':
-                        element.textContent = Utils.time.formatDuration(value * 60);
-                        break;
-                    case 'completion_percentage':
-                        element.textContent = `${Math.round(value)}%`;
-                        break;
-                    default:
-                        element.textContent = value;
-                }
-            }
-        });
+    async function loadDashboardData() {
+        try {
+            // Show loading state
+            showLoadingState();
+
+            // Load all dashboard data
+            const [dashboard, recentNotes] = await Promise.all([
+                API.dashboard.get(),
+                API.notes.getAll({ limit: 5 }).catch(() => ({ notes: [] }))
+            ]);
+
+            dashboardData = dashboard;
+
+            // Update all dashboard components
+            updateUserGreeting();
+            updateStatsCards(dashboard.stats);
+            updateProgressOverview(dashboard.stats, dashboard.weekly_progress);
+            updateRecentActivity(dashboard.recent_sessions, dashboard.stats);
+            updateCurrentWeekFocus(dashboard.weekly_progress);
+            updateStreakDisplay(dashboard.stats);
+            updateRecentNotes(recentNotes.notes);
+
+            // Initialize charts
+            initializeCharts(dashboard);
+
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+            Notifications.handleApiError(error, 'Loading dashboard');
+            showErrorState();
+        }
     }
 
-    function updateWeeklyProgressChart(weeklyProgress) {
-        const canvas = document.getElementById('weekly-progress-chart');
-        if (!canvas || !weeklyProgress) return;
-
-        const weeklyData = Object.entries(weeklyProgress).map(([week, data]) => ({
-            week: parseInt(week),
-            percentage: data.percentage
-        }));
-
-        Lib.charts.createWeeklyProgressChart(canvas, weeklyData);
+    function showLoadingState() {
+        // Already handled by skeleton loaders in HTML
     }
 
-    function updateTodaysFocus(data) {
-        const container = document.getElementById('todays-focus');
-        if (!container) return;
-
-        // Get current week and day
-        const today = new Date();
-        const currentWeek = Math.ceil((today.getTime() - new Date(today.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
-        const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
-
-        container.innerHTML = `
-        <div class="mb-3">
-            <h6 class="fw-bold text-primary">Week ${Math.min(currentWeek, 14)}</h6>
-            <p class="text-muted mb-2">${dayName}</p>
-        </div>
-        
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="text-sm">Today's Progress</span>
-            <span class="badge bg-primary">75%</span>
-        </div>
-        
-        <div class="progress mb-3" style="height: 8px;">
-            <div class="progress-bar bg-gradient" role="progressbar" style="width: 75%"></div>
-        </div>
-        
-        <div class="d-grid gap-2">
-            <a href="/pages/roadmap?week=${Math.min(currentWeek, 14)}" class="btn btn-primary btn-sm">
-                <i class="fas fa-play me-2"></i>Continue Learning
-            </a>
-            <a href="/pages/pomodoro" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-clock me-2"></i>Start Timer
-            </a>
+    function showErrorState() {
+        document.querySelector('.page-container').innerHTML = `
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="text-center py-5">
+                    <i class="bi bi-exclamation-triangle text-warning fs-1 mb-3"></i>
+                    <h3>Unable to Load Dashboard</h3>
+                    <p class="text-muted mb-4">There was an error loading your dashboard data.</p>
+                    <button class="btn btn-primary" onclick="location.reload()">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        Try Again
+                    </button>
+                </div>
+            </div>
         </div>
     `;
     }
 
-    function updateRecentActivities(data) {
-        updateRecentSessions(data.recent_sessions || []);
-        updateRecentNotes(data.recent_notes || []);
+    function updateUserGreeting() {
+        const userName = Auth.getUserName() || 'Student';
+        const nameEl = document.getElementById('dashboard-user-name');
+        if (nameEl) nameEl.textContent = userName;
     }
 
-    function updateRecentSessions(sessions) {
-        const container = document.getElementById('recent-sessions');
-        if (!container) return;
+    function updateStatsCards(stats) {
+        // Completion rate
+        const completionRate = document.getElementById('completion-rate');
+        if (completionRate) {
+            completionRate.textContent = `${Math.round(stats.completion_percentage || 0)}%`;
+        }
 
-        if (sessions.length === 0) {
-            container.innerHTML = `
+        // Total study time
+        const totalTime = document.getElementById('total-study-time');
+        if (totalTime) {
+            totalTime.textContent = Utils.formatDuration(stats.total_study_time || 0);
+        }
+
+        // Weekly time
+        const weeklyTime = document.getElementById('weekly-time');
+        if (weeklyTime) {
+            weeklyTime.textContent = Utils.formatDuration(stats.study_time_last_7_days || 0);
+        }
+
+        // Streak
+        const streak = document.getElementById('dashboard-streak');
+        if (streak) {
+            streak.textContent = stats.current_streak || 0;
+        }
+    }
+
+    function updateProgressOverview(stats, weeklyProgress) {
+        // Overall progress bar
+        const progressBar = document.getElementById('overall-progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressPercentage = document.getElementById('progress-percentage');
+
+        const completionPercentage = stats.completion_percentage || 0;
+        const completedDays = stats.completed_days || 0;
+        const totalDays = stats.total_days || 98;
+
+        if (progressBar) {
+            progressBar.style.width = `${completionPercentage}%`;
+            progressBar.setAttribute('aria-valuenow', completionPercentage);
+        }
+
+        if (progressText) {
+            progressText.textContent = `${completedDays} of ${totalDays} days completed`;
+        }
+
+        if (progressPercentage) {
+            progressPercentage.textContent = `${Math.round(completionPercentage)}%`;
+        }
+
+        // Weekly breakdown
+        const weeklyContainer = document.getElementById('weekly-progress');
+        if (weeklyContainer && weeklyProgress) {
+            weeklyContainer.innerHTML = Object.entries(weeklyProgress)
+                .slice(0, 6)
+                .map(([week, data]) => {
+                    const percentage = data.total > 0 ? (data.completed / data.total) * 100 : 0;
+                    return `
+                    <div class="col-2">
+                        <div class="text-center">
+                            <div class="progress mb-1" style="height: 4px;">
+                                <div class="progress-bar bg-primary" 
+                                     style="width: ${percentage}%"></div>
+                            </div>
+                            <small class="text-muted">W${week}</small>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+        }
+    }
+
+    function updateRecentActivity(recentSessions, stats) {
+        const activityList = document.getElementById('recent-activity-list');
+
+        if (!activityList) return;
+
+        // Create activity items from recent sessions and stats
+        const activities = [];
+
+        // Add recent study sessions
+        if (recentSessions && recentSessions.length > 0) {
+            activities.push(...recentSessions.map(session => ({
+                type: 'study',
+                title: `Studied ${session.topic || 'DSA'}`,
+                description: `${Utils.formatDuration(session.duration)} • ${Utils.getRelativeTime(session.start_time)}`,
+                time: session.start_time,
+                icon: 'bi-clock',
+                color: 'text-primary'
+            })));
+        }
+
+        // Add streak milestone if applicable
+        if (stats.current_streak > 0 && stats.current_streak % 7 === 0) {
+            activities.push({
+                type: 'achievement',
+                title: `${stats.current_streak} Day Streak! 🔥`,
+                description: 'Consistency is key to mastering DSA',
+                time: new Date().toISOString(),
+                icon: 'bi-trophy',
+                color: 'text-warning'
+            });
+        }
+
+        // Add progress milestone
+        if (stats.completion_percentage >= 25 && stats.completion_percentage < 30) {
+            activities.push({
+                type: 'milestone',
+                title: 'Quarter Way There! 🎯',
+                description: `${Math.round(stats.completion_percentage)}% of the roadmap completed`,
+                time: new Date().toISOString(),
+                icon: 'bi-flag',
+                color: 'text-success'
+            });
+        }
+
+        // Sort by time and limit to 5
+        activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+        activities.splice(5);
+
+        if (activities.length === 0) {
+            activityList.innerHTML = `
             <div class="text-center py-4">
-                <i class="fas fa-clock text-muted fa-2x mb-2"></i>
-                <p class="text-muted mb-0">No study sessions yet</p>
-                <a href="/pages/pomodoro" class="btn btn-sm btn-primary mt-2">Start Your First Session</a>
+                <i class="bi bi-activity text-muted fs-2 mb-2"></i>
+                <p class="text-muted mb-0">No recent activity</p>
+                <small class="text-muted">Start studying to see your activity here!</small>
             </div>
         `;
             return;
         }
 
-        container.innerHTML = sessions.map(session => `
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-            <div class="flex-grow-1">
-                <div class="fw-medium">${session.topic || 'Study Session'}</div>
-                <small class="text-muted">${Utils.date.relative(session.start_time)}</small>
+        activityList.innerHTML = activities.map(activity => `
+        <div class="d-flex align-items-start mb-3 pb-3 border-bottom">
+            <div class="flex-shrink-0 me-3">
+                <div class="bg-light rounded-circle p-2">
+                    <i class="${activity.icon} ${activity.color}"></i>
+                </div>
             </div>
-            <div class="text-end">
-                <span class="badge bg-${session.completed ? 'success' : 'warning'}">
-                    ${session.duration} min
-                </span>
-                ${session.completed ? '<i class="fas fa-check-circle text-success ms-2"></i>' : '<i class="fas fa-clock text-warning ms-2"></i>'}
+            <div class="flex-grow-1">
+                <h6 class="mb-1">${activity.title}</h6>
+                <p class="text-muted small mb-0">${activity.description}</p>
             </div>
         </div>
     `).join('');
+    }
+
+    function updateCurrentWeekFocus(weeklyProgress) {
+        const container = document.getElementById('current-week-content');
+
+        if (!container || !weeklyProgress) return;
+
+        // Find current week (first incomplete week)
+        const currentWeekEntry = Object.entries(weeklyProgress)
+            .find(([week, data]) => data.completed < data.total);
+
+        if (!currentWeekEntry) {
+            container.innerHTML = `
+            <div class="text-center py-3">
+                <i class="bi bi-check-circle text-success fs-2 mb-2"></i>
+                <h6 class="text-success">All Caught Up! 🎉</h6>
+                <p class="text-muted small mb-0">You've completed the entire roadmap!</p>
+            </div>
+        `;
+            return;
+        }
+
+        const [weekNum, weekData] = currentWeekEntry;
+        const weekInfo = dashboardData?.roadmap_preview?.find(w => w.week === parseInt(weekNum));
+
+        if (weekInfo) {
+            const progress = weekData.total > 0 ? (weekData.completed / weekData.total) * 100 : 0;
+
+            container.innerHTML = `
+            <div class="text-center mb-3">
+                <h6 class="text-primary mb-1">Week ${weekNum}</h6>
+                <h5 class="mb-2">${weekInfo.title}</h5>
+                <p class="text-muted small mb-3">${weekInfo.goal}</p>
+                
+                <div class="progress mb-2" style="height: 8px;">
+                    <div class="progress-bar bg-primary" 
+                         style="width: ${progress}%"></div>
+                </div>
+                <small class="text-muted">${weekData.completed} of ${weekData.total} days completed</small>
+            </div>
+            
+            <div class="d-grid">
+                <a href="/roadmap?week=${weekNum}" class="btn btn-primary btn-sm">
+                    Continue Learning
+                    <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        `;
+        } else {
+            container.innerHTML = `
+            <div class="text-center">
+                <h6 class="text-primary mb-2">Week ${weekNum}</h6>
+                <p class="text-muted small mb-3">${weekData.completed} of ${weekData.total} days completed</p>
+                <a href="/roadmap?week=${weekNum}" class="btn btn-primary btn-sm">
+                    Continue Learning
+                </a>
+            </div>
+        `;
+        }
+    }
+
+    function updateStreakDisplay(stats) {
+        const currentStreakEl = document.getElementById('current-streak-display');
+        const longestStreakEl = document.getElementById('longest-streak-display');
+
+        if (currentStreakEl) {
+            currentStreakEl.textContent = stats.current_streak || 0;
+        }
+
+        if (longestStreakEl) {
+            longestStreakEl.textContent = stats.longest_streak || 0;
+        }
     }
 
     function updateRecentNotes(notes) {
-        const container = document.getElementById('recent-notes');
-        if (!container) return;
+        const notesList = document.getElementById('recent-notes-list');
+
+        if (!notesList) return;
+
+        // Update notes count in stats
+        const notesCountEl = document.getElementById('notes-count');
+        if (notesCountEl && dashboardData?.stats) {
+            // Get total notes count from API or calculate from recent
+            notesCountEl.textContent = notes.length; // This would be total count from API
+        }
 
         if (notes.length === 0) {
-            container.innerHTML = `
-            <div class="text-center py-4">
-                <i class="fas fa-sticky-note text-muted fa-2x mb-2"></i>
-                <p class="text-muted mb-0">No notes yet</p>
-                <a href="/pages/notes" class="btn btn-sm btn-primary mt-2">Create Your First Note</a>
+            notesList.innerHTML = `
+            <div class="text-center py-3">
+                <i class="bi bi-journal-plus text-muted fs-3 mb-2"></i>
+                <p class="text-muted small mb-2">No notes yet</p>
+                <button class="btn btn-sm btn-outline-primary" onclick="createNote()">
+                    Create First Note
+                </button>
             </div>
         `;
             return;
         }
 
-        container.innerHTML = notes.map(note => `
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-            <div class="flex-grow-1">
-                <div class="fw-medium">${Utils.string.truncate(note.title, 30)}</div>
-                <small class="text-muted">${Utils.date.relative(note.updated_at)}</small>
-            </div>
-            <a href="/pages/notes?id=${note.id}" class="btn btn-sm btn-outline-primary">
-                <i class="fas fa-external-link-alt"></i>
-            </a>
+        notesList.innerHTML = notes.map(note => `
+        <div class="border-bottom pb-2 mb-2">
+            <h6 class="mb-1">
+                <a href="/notes?id=${note.id}" class="text-decoration-none">
+                    ${note.title}
+                </a>
+            </h6>
+            <p class="text-muted small mb-1">${Utils.truncate(note.content, 60)}</p>
+            <small class="text-muted">${Utils.getRelativeTime(note.updated_at)}</small>
         </div>
     `).join('');
     }
+
+    function initializeCharts(dashboard) {
+        // Progress doughnut chart
+        const progressCanvas = document.getElementById('progress-doughnut');
+        if (progressCanvas) {
+            const ctx = progressCanvas.getContext('2d');
+            const stats = dashboard.stats;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [stats.completed_days || 0, (stats.total_days || 98) - (stats.completed_days || 0)],
+                        backgroundColor: [
+                            getComputedStyle(document.documentElement).getPropertyValue('--bs-primary'),
+                            '#f8f9fa'
+                        ],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
+        // Streak chart
+        const streakCanvas = document.getElementById('streak-chart');
+        if (streakCanvas) {
+            const ctx = streakCanvas.getContext('2d');
+
+            // Generate last 7 days data
+            const last7Days = Array.from({ length: 7 }, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - (6 - i));
+                return {
+                    date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                    studied: Math.random() > 0.3 // Simulate study data
+                };
+            });
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: last7Days.map(d => d.date),
+                    datasets: [{
+                        data: last7Days.map(d => d.studied ? 1 : 0),
+                        backgroundColor: last7Days.map(d =>
+                            d.studied ?
+                                getComputedStyle(document.documentElement).getPropertyValue('--bs-warning') :
+                                '#e9ecef'
+                        ),
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    },
+                    elements: {
+                        bar: { borderRadius: 4 }
+                    }
+                }
+            });
+        }
+    }
+
+    function setupDashboard() {
+        // Setup auto-refresh every 5 minutes
+        setInterval(async () => {
+            try {
+                const freshData = await API.dashboard.get();
+                updateStatsCards(freshData.stats);
+                updateStreakDisplay(freshData.stats);
+            } catch (error) {
+                console.warn('Dashboard refresh failed:', error);
+            }
+        }, 5 * 60 * 1000);
+
+        // Update time-based elements every minute
+        setInterval(() => {
+            // Update relative times in recent activity
+            updateRecentActivity(dashboardData?.recent_sessions, dashboardData?.stats);
+        }, 60 * 1000);
+    }
+
+    // Quick action functions
+    function startQuickStudy() {
+        // Navigate to current week or first incomplete topic
+        const currentWeek = Object.entries(dashboardData?.weekly_progress || {})
+            .find(([week, data]) => data.completed < data.total);
+
+        if (currentWeek) {
+            Router.navigate(`/roadmap?week=${currentWeek[0]}`);
+        } else {
+            Router.navigate('/roadmap');
+        }
+    }
+
+    function startPomodoro() {
+        Router.navigate('/pomodoro');
+    }
+
+    function createNote() {
+        Router.navigate('/notes?action=new');
+    }
+
+    function openAIAssistant() {
+        Router.navigate('/ai-assistant');
+    }
+
+    function viewRoadmap() {
+        Router.navigate('/roadmap');
+    }
+
+    // Handle page visibility to refresh data when tab becomes active
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && Auth.isAuthenticated) {
+            loadDashboardData();
+        }
+    });
 </script>

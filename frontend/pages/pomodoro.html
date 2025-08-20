@@ -1,21 +1,21 @@
-<div class="container-fluid p-4">
+<div class="page-container">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center">
                 <div>
-                    <h1 class="h3 fw-bold mb-1">
-                        <i class="fas fa-clock text-danger me-2"></i>
+                    <h1 class="h2 mb-1">
+                        <i class="bi bi-clock text-primary me-2"></i>
                         Pomodoro Timer
                     </h1>
-                    <p class="text-muted mb-0">Focus on your studies with structured time blocks</p>
+                    <p class="text-muted mb-0">Focus on your studies with the proven Pomodoro Technique</p>
                 </div>
-                <div class="d-flex gap-2 mt-3 mt-lg-0">
-                    <button class="btn btn-outline-primary" id="stats-btn">
-                        <i class="fas fa-chart-bar me-2"></i>View Stats
+                <div class="mt-3 mt-lg-0 d-flex gap-2">
+                    <button class="btn btn-outline-secondary" onclick="showTimerSettings()">
+                        <i class="bi bi-gear me-2"></i>Settings
                     </button>
-                    <button class="btn btn-outline-secondary" id="settings-btn">
-                        <i class="fas fa-cog me-2"></i>Settings
+                    <button class="btn btn-outline-primary" onclick="showTimerHistory()">
+                        <i class="bi bi-clock-history me-2"></i>History
                     </button>
                 </div>
             </div>
@@ -23,83 +23,83 @@
     </div>
 
     <!-- Timer Section -->
-    <div class="row justify-content-center mb-5">
+    <div class="row justify-content-center mb-4">
         <div class="col-lg-8">
-            <div class="card shadow-lg border-0 timer-card">
-                <div class="card-body p-5 text-center">
-                    <!-- Session Type -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center py-5">
+                    <!-- Timer Mode Selector -->
                     <div class="mb-4">
-                        <h4 class="fw-bold mb-3" id="session-type">Study Session</h4>
-                        <div class="btn-group" role="group" id="session-selector">
-                            <input type="radio" class="btn-check" name="session-type" id="study-session" value="study"
+                        <div class="btn-group" role="group" aria-label="Timer modes">
+                            <input type="radio" class="btn-check" name="timer-mode" id="pomodoro-mode" value="pomodoro"
                                 checked>
-                            <label class="btn btn-outline-primary" for="study-session">
-                                <i class="fas fa-book me-2"></i>Study (25min)
+                            <label class="btn btn-outline-primary" for="pomodoro-mode">
+                                <i class="bi bi-clock me-1"></i>Pomodoro
                             </label>
 
-                            <input type="radio" class="btn-check" name="session-type" id="short-break"
-                                value="short_break">
-                            <label class="btn btn-outline-success" for="short-break">
-                                <i class="fas fa-coffee me-2"></i>Short Break (5min)
+                            <input type="radio" class="btn-check" name="timer-mode" id="short-break-mode"
+                                value="short-break">
+                            <label class="btn btn-outline-success" for="short-break-mode">
+                                <i class="bi bi-cup-hot me-1"></i>Short Break
                             </label>
 
-                            <input type="radio" class="btn-check" name="session-type" id="long-break"
-                                value="long_break">
-                            <label class="btn btn-outline-info" for="long-break">
-                                <i class="fas fa-couch me-2"></i>Long Break (15min)
+                            <input type="radio" class="btn-check" name="timer-mode" id="long-break-mode"
+                                value="long-break">
+                            <label class="btn btn-outline-info" for="long-break-mode">
+                                <i class="bi bi-moon me-1"></i>Long Break
                             </label>
                         </div>
                     </div>
 
                     <!-- Timer Display -->
-                    <div class="timer-display mb-4">
+                    <div class="timer-display-container mb-4">
                         <div class="position-relative d-inline-block">
-                            <svg class="timer-circle" width="300" height="300">
-                                <circle cx="150" cy="150" r="140" fill="none" stroke="#e5e7eb" stroke-width="8" />
-                                <circle id="timer-progress" cx="150" cy="150" r="140" fill="none" stroke="#3b82f6"
-                                    stroke-width="8" stroke-linecap="round" stroke-dasharray="879.64"
-                                    stroke-dashoffset="879.64" transform="rotate(-90 150 150)"
-                                    class="transition-all duration-1000" />
+                            <!-- Circular Progress -->
+                            <svg class="timer-circle" width="280" height="280">
+                                <circle cx="140" cy="140" r="120" fill="none" stroke="#e9ecef" stroke-width="8" />
+                                <circle cx="140" cy="140" r="120" fill="none" stroke="#6366f1" stroke-width="8"
+                                    stroke-dasharray="754" stroke-dashoffset="754" id="timer-progress-circle"
+                                    transform="rotate(-90 140 140)" class="timer-progress" />
                             </svg>
+
+                            <!-- Timer Text -->
                             <div class="position-absolute top-50 start-50 translate-middle text-center">
-                                <div class="timer-time display-1 fw-bold" id="timer-display">25:00</div>
-                                <div class="timer-label text-muted mt-2" id="timer-status">Ready to start</div>
+                                <div class="timer-time-display mb-2" id="timer-display">25:00</div>
+                                <div class="timer-mode-text text-muted" id="timer-mode-text">Focus Time</div>
+                                <div class="timer-session-info mt-2">
+                                    <small class="text-muted">Session <span id="session-counter">1</span></small>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Topic Input -->
-                    <div class="mb-4">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text">
-                                <i class="fas fa-tag"></i>
-                            </span>
-                            <input type="text" class="form-control" id="session-topic"
-                                placeholder="What are you studying? (Optional)" maxlength="100">
+                    <!-- Timer Controls -->
+                    <div class="timer-controls mb-4">
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <button class="btn btn-lg btn-primary" id="start-pause-btn" onclick="toggleTimer()">
+                                <i class="bi bi-play-fill me-2"></i>
+                                <span id="start-pause-text">Start</span>
+                            </button>
+                            <button class="btn btn-lg btn-outline-secondary" id="reset-btn" onclick="resetTimer()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                Reset
+                            </button>
+                            <button class="btn btn-lg btn-outline-info" id="skip-btn" onclick="skipTimer()" disabled>
+                                <i class="bi bi-skip-end me-2"></i>
+                                Skip
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Control Buttons -->
-                    <div class="d-flex justify-content-center gap-3 mb-4">
-                        <button class="btn btn-primary btn-lg px-4" id="start-pause-btn">
-                            <i class="fas fa-play me-2"></i>Start
-                        </button>
-                        <button class="btn btn-outline-secondary btn-lg px-4" id="reset-btn" disabled>
-                            <i class="fas fa-redo me-2"></i>Reset
-                        </button>
-                        <button class="btn btn-outline-danger btn-lg px-4" id="stop-btn" disabled>
-                            <i class="fas fa-stop me-2"></i>Stop
-                        </button>
-                    </div>
-
-                    <!-- Session Progress -->
-                    <div class="session-progress" id="session-progress" style="display: none;">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="small text-muted">Session Progress</span>
-                            <span class="small text-muted" id="session-count">Session 1 of 4</span>
+                    <!-- Current Topic -->
+                    <div class="current-topic">
+                        <div class="mb-2">
+                            <label for="study-topic" class="form-label fw-medium">What are you studying?</label>
                         </div>
-                        <div class="progress mb-3" style="height: 8px;">
-                            <div class="progress-bar bg-success" id="session-progress-bar" style="width: 0%"></div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control text-center" id="study-topic"
+                                    placeholder="e.g., Arrays and Strings" value="">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -107,36 +107,80 @@
         </div>
     </div>
 
-    <!-- Recent Sessions -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-history me-2"></i>Recent Sessions
-                    </h5>
-                    <button class="btn btn-sm btn-outline-primary" id="view-all-sessions">
-                        View All
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div id="recent-sessions">
-                        <!-- Populated by JavaScript -->
+    <!-- Stats and Info -->
+    <div class="row g-4 mb-4">
+        <!-- Today's Stats -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-calendar-day text-primary fs-2"></i>
                     </div>
+                    <h3 class="h4 text-primary fw-bold" id="sessions-today">0</h3>
+                    <p class="text-muted mb-0 small">Sessions Today</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-chart-pie me-2"></i>Today's Stats
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-clock text-success fs-2"></i>
+                    </div>
+                    <h3 class="h4 text-success fw-bold" id="time-today">0h 0m</h3>
+                    <p class="text-muted mb-0 small">Focus Time Today</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-trophy text-warning fs-2"></i>
+                    </div>
+                    <h3 class="h4 text-warning fw-bold" id="weekly-sessions">0</h3>
+                    <p class="text-muted mb-0 small">This Week</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-graph-up text-info fs-2"></i>
+                    </div>
+                    <h3 class="h4 text-info fw-bold" id="total-sessions">0</h3>
+                    <p class="text-muted mb-0 small">Total Sessions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-task text-primary me-2"></i>
+                        Recent Sessions
                     </h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="clearAllSessions()">
+                        <i class="bi bi-trash me-1"></i>Clear History
+                    </button>
                 </div>
                 <div class="card-body">
-                    <div id="daily-stats">
-                        <!-- Populated by JavaScript -->
+                    <div id="recent-sessions">
+                        <!-- Loading state -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted mt-2 mb-0">Loading recent sessions...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -145,40 +189,54 @@
 </div>
 
 <!-- Timer Settings Modal -->
-<div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="timerSettingsModal" tabindex="-1" aria-labelledby="timerSettingsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Timer Settings</h5>
+                <h5 class="modal-title" id="timerSettingsModalLabel">
+                    <i class="bi bi-gear me-2"></i>Timer Settings
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="settings-form">
+                <form id="timer-settings-form">
                     <div class="mb-3">
-                        <label for="study-duration" class="form-label">Study Duration (minutes)</label>
-                        <input type="number" class="form-control" id="study-duration" min="1" max="60" value="25">
+                        <label for="pomodoro-duration" class="form-label">Pomodoro Duration (minutes)</label>
+                        <input type="number" class="form-control" id="pomodoro-duration" min="15" max="60" value="25">
                     </div>
                     <div class="mb-3">
-                        <label for="short-break-duration" class="form-label">Short Break (minutes)</label>
-                        <input type="number" class="form-control" id="short-break-duration" min="1" max="30" value="5">
+                        <label for="short-break-duration" class="form-label">Short Break Duration (minutes)</label>
+                        <input type="number" class="form-control" id="short-break-duration" min="3" max="15" value="5">
                     </div>
                     <div class="mb-3">
-                        <label for="long-break-duration" class="form-label">Long Break (minutes)</label>
-                        <input type="number" class="form-control" id="long-break-duration" min="1" max="60" value="15">
+                        <label for="long-break-duration" class="form-label">Long Break Duration (minutes)</label>
+                        <input type="number" class="form-control" id="long-break-duration" min="10" max="30" value="15">
                     </div>
                     <div class="mb-3">
+                        <label for="auto-start-breaks" class="form-label">Auto-start breaks</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="auto-start-breaks" checked>
+                            <input class="form-check-input" type="checkbox" id="auto-start-breaks">
                             <label class="form-check-label" for="auto-start-breaks">
-                                Auto-start breaks
+                                Automatically start break timers
                             </label>
                         </div>
                     </div>
                     <div class="mb-3">
+                        <label for="enable-notifications" class="form-label">Notifications</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="play-sounds" checked>
-                            <label class="form-check-label" for="play-sounds">
-                                Play notification sounds
+                            <input class="form-check-input" type="checkbox" id="enable-notifications" checked>
+                            <label class="form-check-label" for="enable-notifications">
+                                Show notifications when timer completes
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="enable-sounds" class="form-label">Sound</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="enable-sounds" checked>
+                            <label class="form-check-label" for="enable-sounds">
+                                Play sound when timer completes
                             </label>
                         </div>
                     </div>
@@ -186,555 +244,712 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+                <button type="button" class="btn btn-primary" onclick="saveTimerSettings()">Save Settings</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Session Complete Modal -->
-<div class="modal fade" id="sessionCompleteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog">
+<!-- Timer History Modal -->
+<div class="modal fade" id="timerHistoryModal" tabindex="-1" aria-labelledby="timerHistoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">🎉 Session Complete!</h5>
+                <h5 class="modal-title" id="timerHistoryModalLabel">
+                    <i class="bi bi-clock-history me-2"></i>Timer History
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
-                <div class="mb-4">
-                    <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
-                    <h4 id="completion-message">Great work!</h4>
-                    <p class="text-muted" id="completion-details">You completed a 25-minute study session.</p>
+            <div class="modal-body">
+                <div id="timer-history-content">
+                    <!-- History content will be loaded here -->
                 </div>
-
-                <div class="mb-4">
-                    <h6>Session Summary</h6>
-                    <div class="row g-3 text-center">
-                        <div class="col-4">
-                            <div class="small text-muted">Duration</div>
-                            <div class="fw-bold" id="summary-duration">25:00</div>
-                        </div>
-                        <div class="col-4">
-                            <div class="small text-muted">Topic</div>
-                            <div class="fw-bold" id="summary-topic">Study Session</div>
-                        </div>
-                        <div class="col-4">
-                            <div class="small text-muted">Sessions Today</div>
-                            <div class="fw-bold" id="summary-sessions">1</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="start-next-session">Start Next Session</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // Timer state
+    let timerState = {
+        isRunning: false,
+        isPaused: false,
+        currentMode: 'pomodoro',
+        timeLeft: 25 * 60, // 25 minutes in seconds
+        totalTime: 25 * 60,
+        sessionId: null,
+        sessionCounter: 1,
+        completedSessions: 0
+    };
+
+    // Timer settings
+    let timerSettings = {
+        pomodoroDuration: 25,
+        shortBreakDuration: 5,
+        longBreakDuration: 15,
+        autoStartBreaks: false,
+        enableNotifications: true,
+        enableSounds: true
+    };
+
+    // Timer intervals
+    let timerInterval = null;
+    let progressInterval = null;
+
+    // Audio for notifications
+    let notificationSound = null;
+
     document.addEventListener('DOMContentLoaded', async function () {
-        let currentTimer = null;
-        let isRunning = false;
-        let timeRemaining = 25 * 60; // 25 minutes in seconds
-        let currentSessionType = 'study';
-        let sessionSettings = {
-            study: 25,
-            short_break: 5,
-            long_break: 15,
-            autoStartBreaks: true,
-            playSounds: true
-        };
-        let currentSessionId = null;
-        let completedSessions = 0;
-        let timerWorker = null;
+        await initializeTimer();
+        loadTimerHistory();
+        loadTodayStats();
+        setupTimerEvents();
+    });
 
-        // Initialize
-        await loadSettings();
-        await loadRecentSessions();
-        await loadDailyStats();
-        setupEventListeners();
-        checkForRestoredSession();
+    async function initializeTimer() {
+        // Load settings from storage
+        const savedSettings = Storage.get('timer_settings');
+        if (savedSettings) {
+            timerSettings = { ...timerSettings, ...savedSettings };
+        }
 
-        function setupEventListeners() {
-            // Session type selector
-            document.querySelectorAll('input[name="session-type"]').forEach(radio => {
-                radio.addEventListener('change', function () {
-                    if (!isRunning) {
-                        currentSessionType = this.value;
-                        updateTimerForSessionType();
-                    }
-                });
+        // Load timer state from storage
+        const savedState = Storage.timer.getState();
+        if (savedState.isRunning) {
+            // Resume timer if it was running
+            timerState = { ...timerState, ...savedState };
+            resumeTimer();
+        }
+
+        // Initialize audio
+        try {
+            notificationSound = new Audio('/assets/sounds/timer-complete.mp3');
+            notificationSound.volume = 0.5;
+        } catch (error) {
+            console.warn('Could not load notification sound:', error);
+        }
+
+        // Setup mode change listeners
+        document.querySelectorAll('input[name="timer-mode"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (!timerState.isRunning) {
+                    changeTimerMode(this.value);
+                }
             });
+        });
 
-            // Control buttons
-            document.getElementById('start-pause-btn').addEventListener('click', toggleTimer);
-            document.getElementById('reset-btn').addEventListener('click', resetTimer);
-            document.getElementById('stop-btn').addEventListener('click', stopTimer);
+        // Update UI
+        updateTimerDisplay();
+        updateProgressCircle();
+        updateTimerControls();
+    }
 
-            // Modal buttons
-            document.getElementById('settings-btn').addEventListener('click', openSettings);
-            document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
-            document.getElementById('start-next-session').addEventListener('click', startNextSession);
-
-            // Close session complete modal
-            document.getElementById('sessionCompleteModal').addEventListener('hidden.bs.modal', function () {
-                suggestNextSession();
-            });
-        }
-
-        function updateTimerForSessionType() {
-            const durations = {
-                study: sessionSettings.study,
-                short_break: sessionSettings.short_break,
-                long_break: sessionSettings.long_break
-            };
-
-            timeRemaining = durations[currentSessionType] * 60;
-            updateTimerDisplay();
-            updateSessionTypeDisplay();
-        }
-
-        function updateSessionTypeDisplay() {
-            const typeLabels = {
-                study: 'Study Session',
-                short_break: 'Short Break',
-                long_break: 'Long Break'
-            };
-
-            document.getElementById('session-type').textContent = typeLabels[currentSessionType];
-
-            // Update timer circle color
-            const colors = {
-                study: '#3b82f6',
-                short_break: '#10b981',
-                long_break: '#06b6d4'
-            };
-
-            document.getElementById('timer-progress').style.stroke = colors[currentSessionType];
-        }
-
-        async function toggleTimer() {
-            if (isRunning) {
-                pauseTimer();
-            } else {
-                await startTimer();
-            }
-        }
-
-        async function startTimer() {
-            try {
-                const topic = document.getElementById('session-topic').value.trim();
-
-                if (!currentSessionId) {
-                    // Start new session
-                    const response = await ApiMethods.pomodoro.start({
-                        duration: Math.ceil(timeRemaining / 60),
-                        topic: topic || null,
-                        session_type: currentSessionType
-                    });
-
-                    currentSessionId = response.session_id;
-                }
-
-                isRunning = true;
-                updateControlButtons();
-
-                // Start timer worker
-                if (!timerWorker) {
-                    timerWorker = new Worker('/js/timer-worker.js');
-                    timerWorker.onmessage = handleTimerMessage;
-                }
-
-                timerWorker.postMessage({
-                    action: 'start',
-                    duration: Math.ceil(timeRemaining / 60)
-                });
-
-                // Save timer state
-                Storage.timer.setTimerState({
-                    sessionId: currentSessionId,
-                    startTime: Date.now(),
-                    duration: timeRemaining,
-                    sessionType: currentSessionType,
-                    topic: topic,
-                    isRunning: true
-                });
-
-                document.getElementById('timer-status').textContent = 'Focus time!';
-
-            } catch (error) {
-                console.error('Failed to start timer:', error);
-                Notifications.error('Failed to start timer session');
-            }
-        }
-
-        function pauseTimer() {
-            isRunning = false;
-
-            if (timerWorker) {
-                timerWorker.postMessage({ action: 'pause' });
-            }
-
-            updateControlButtons();
-            document.getElementById('timer-status').textContent = 'Paused';
-
-            // Update stored state
-            const state = Storage.timer.getTimerState();
-            if (state) {
-                state.isRunning = false;
-                Storage.timer.setTimerState(state);
-            }
-        }
-
-        async function resetTimer() {
-            if (timerWorker) {
-                timerWorker.postMessage({ action: 'stop' });
-            }
-
-            isRunning = false;
-            currentSessionId = null;
-            updateTimerForSessionType();
-            updateControlButtons();
-            document.getElementById('timer-status').textContent = 'Ready to start';
-            document.getElementById('session-progress').style.display = 'none';
-
-            // Clear stored state
-            Storage.timer.clearTimerState();
-        }
-
-        async function stopTimer() {
-            try {
-                if (currentSessionId) {
-                    await ApiMethods.pomodoro.complete(currentSessionId);
-                }
-
-                await resetTimer();
-                await loadRecentSessions();
-                await loadDailyStats();
-
-            } catch (error) {
-                console.error('Failed to stop timer:', error);
-                Notifications.error('Failed to stop timer session');
-            }
-        }
-
-        function handleTimerMessage(event) {
-            const { type, remaining, elapsed } = event.data;
-
-            switch (type) {
-                case 'tick':
-                    timeRemaining = remaining;
+    function setupTimerEvents() {
+        // Listen for timer state changes from other tabs
+        window.addEventListener('storage', function (e) {
+            if (e.key === Storage.getKey('timer_state')) {
+                const newState = JSON.parse(e.newValue || '{}');
+                if (newState.isRunning !== timerState.isRunning) {
+                    timerState = { ...timerState, ...newState };
                     updateTimerDisplay();
-                    updateProgress();
-                    break;
-
-                case 'complete':
-                    completeSession();
-                    break;
-            }
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-            document.getElementById('timer-display').textContent = display;
-
-            // Update page title
-            if (isRunning) {
-                document.title = `${display} - ${currentSessionType} - DSA Path`;
-            } else {
-                document.title = 'Pomodoro Timer - DSA Path';
-            }
-        }
-
-        function updateProgress() {
-            const totalDuration = sessionSettings[currentSessionType] * 60;
-            const progress = ((totalDuration - timeRemaining) / totalDuration) * 100;
-            const circumference = 879.64; // 2 * π * r (140)
-            const offset = circumference - (progress / 100) * circumference;
-
-            document.getElementById('timer-progress').style.strokeDashoffset = offset;
-        }
-
-        function updateControlButtons() {
-            const startPauseBtn = document.getElementById('start-pause-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const stopBtn = document.getElementById('stop-btn');
-
-            if (isRunning) {
-                startPauseBtn.innerHTML = '<i class="fas fa-pause me-2"></i>Pause';
-                startPauseBtn.className = 'btn btn-warning btn-lg px-4';
-            } else {
-                startPauseBtn.innerHTML = '<i class="fas fa-play me-2"></i>Start';
-                startPauseBtn.className = 'btn btn-primary btn-lg px-4';
-            }
-
-            resetBtn.disabled = !currentSessionId && timeRemaining === sessionSettings[currentSessionType] * 60;
-            stopBtn.disabled = !currentSessionId;
-        }
-
-        async function completeSession() {
-            try {
-                isRunning = false;
-
-                if (currentSessionId) {
-                    await ApiMethods.pomodoro.complete(currentSessionId);
+                    updateTimerControls();
                 }
-
-                completedSessions++;
-
-                // Play completion sound
-                if (sessionSettings.playSounds && typeof Lib !== 'undefined' && Lib.audio) {
-                    Lib.audio.play('timerComplete');
-                }
-
-                // Show completion modal
-                showSessionCompleteModal();
-
-                // Update UI
-                await loadRecentSessions();
-                await loadDailyStats();
-
-                // Clear timer state
-                Storage.timer.clearTimerState();
-                currentSessionId = null;
-
-            } catch (error) {
-                console.error('Failed to complete session:', error);
-                Notifications.error('Failed to complete session');
             }
+        });
+
+        // Setup study topic input
+        const topicInput = document.getElementById('study-topic');
+        topicInput.addEventListener('change', function () {
+            Storage.set('current_study_topic', this.value);
+        });
+
+        // Load saved topic
+        const savedTopic = Storage.get('current_study_topic', '');
+        topicInput.value = savedTopic;
+
+        // Setup page visibility handling
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden && timerState.isRunning) {
+                // Page is hidden, rely on web worker for timing
+                clearInterval(timerInterval);
+            } else if (!document.hidden && timerState.isRunning) {
+                // Page is visible, resume local timer
+                startTimerInterval();
+            }
+        });
+    }
+
+    function changeTimerMode(mode) {
+        timerState.currentMode = mode;
+
+        // Set duration based on mode
+        switch (mode) {
+            case 'pomodoro':
+                timerState.timeLeft = timerSettings.pomodoroDuration * 60;
+                timerState.totalTime = timerSettings.pomodoroDuration * 60;
+                break;
+            case 'short-break':
+                timerState.timeLeft = timerSettings.shortBreakDuration * 60;
+                timerState.totalTime = timerSettings.shortBreakDuration * 60;
+                break;
+            case 'long-break':
+                timerState.timeLeft = timerSettings.longBreakDuration * 60;
+                timerState.totalTime = timerSettings.longBreakDuration * 60;
+                break;
         }
 
-        function showSessionCompleteModal() {
-            const modal = new bootstrap.Modal(document.getElementById('sessionCompleteModal'));
+        updateTimerDisplay();
+        updateProgressCircle();
+        updateModeText();
+    }
 
-            const messages = {
-                study: 'Excellent focus! Time for a well-deserved break.',
-                short_break: 'Break time over! Ready to get back to work?',
-                long_break: 'Long break complete! You\'re refreshed and ready to continue.'
-            };
-
-            const topic = document.getElementById('session-topic').value.trim();
-            const duration = sessionSettings[currentSessionType];
-
-            document.getElementById('completion-message').textContent = messages[currentSessionType];
-            document.getElementById('completion-details').textContent =
-                `You completed a ${duration}-minute ${currentSessionType.replace('_', ' ')} session.`;
-            document.getElementById('summary-duration').textContent = `${duration}:00`;
-            document.getElementById('summary-topic').textContent = topic || 'General Study';
-            document.getElementById('summary-sessions').textContent = completedSessions;
-
-            modal.show();
+    function toggleTimer() {
+        if (timerState.isRunning) {
+            pauseTimer();
+        } else {
+            startTimer();
         }
+    }
 
-        function startNextSession() {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('sessionCompleteModal'));
-            modal.hide();
+    async function startTimer() {
+        try {
+            // Start session with backend if not already started
+            if (!timerState.sessionId) {
+                const topic = document.getElementById('study-topic').value || 'Study Session';
+                const duration = Math.round(timerState.totalTime / 60);
 
-            // Auto-suggest next session type
-            suggestNextSession();
-        }
-
-        function suggestNextSession() {
-            if (currentSessionType === 'study') {
-                // After study, suggest break
-                const breakType = completedSessions % 4 === 0 ? 'long_break' : 'short_break';
-                document.getElementById(breakType).checked = true;
-                currentSessionType = breakType;
-            } else {
-                // After break, suggest study
-                document.getElementById('study-session').checked = true;
-                currentSessionType = 'study';
+                const response = await API.pomodoro.start(duration, topic, timerState.currentMode);
+                timerState.sessionId = response.session_id;
             }
 
-            updateTimerForSessionType();
+            timerState.isRunning = true;
+            timerState.isPaused = false;
 
-            if (sessionSettings.autoStartBreaks && currentSessionType !== 'study') {
+            startTimerInterval();
+            updateTimerControls();
+            saveTimerState();
+
+            // Enable skip button
+            document.getElementById('skip-btn').disabled = false;
+
+        } catch (error) {
+            console.error('Error starting timer:', error);
+            Notifications.error('Failed to start timer session');
+        }
+    }
+
+    function pauseTimer() {
+        timerState.isRunning = false;
+        timerState.isPaused = true;
+
+        clearInterval(timerInterval);
+        updateTimerControls();
+        saveTimerState();
+    }
+
+    function resumeTimer() {
+        if (timerState.isPaused) {
+            timerState.isRunning = true;
+            timerState.isPaused = false;
+
+            startTimerInterval();
+            updateTimerControls();
+            saveTimerState();
+        }
+    }
+
+    function resetTimer() {
+        // Stop any running timers
+        clearInterval(timerInterval);
+
+        // Reset state
+        timerState.isRunning = false;
+        timerState.isPaused = false;
+        timerState.sessionId = null;
+
+        // Reset time based on current mode
+        changeTimerMode(timerState.currentMode);
+
+        updateTimerControls();
+        saveTimerState();
+
+        // Disable skip button
+        document.getElementById('skip-btn').disabled = true;
+    }
+
+    function skipTimer() {
+        if (timerState.isRunning || timerState.isPaused) {
+            completeTimer();
+        }
+    }
+
+    function startTimerInterval() {
+        clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            timerState.timeLeft--;
+
+            updateTimerDisplay();
+            updateProgressCircle();
+
+            if (timerState.timeLeft <= 0) {
+                completeTimer();
+            }
+
+            // Save state every 10 seconds
+            if (timerState.timeLeft % 10 === 0) {
+                saveTimerState();
+            }
+        }, 1000);
+    }
+
+    async function completeTimer() {
+        try {
+            clearInterval(timerInterval);
+
+            // Complete session with backend
+            if (timerState.sessionId) {
+                await API.pomodoro.complete(timerState.sessionId);
+            }
+
+            // Show completion notification
+            showCompletionNotification();
+
+            // Reset timer state
+            timerState.isRunning = false;
+            timerState.isPaused = false;
+            timerState.sessionId = null;
+
+            // Increment session counter if it was a pomodoro
+            if (timerState.currentMode === 'pomodoro') {
+                timerState.completedSessions++;
+                timerState.sessionCounter++;
+            }
+
+            // Auto-switch to break mode
+            autoSwitchMode();
+
+            updateTimerControls();
+            updateSessionCounter();
+            saveTimerState();
+
+            // Refresh stats
+            loadTodayStats();
+            loadTimerHistory();
+
+        } catch (error) {
+            console.error('Error completing timer:', error);
+            Notifications.error('Failed to save timer session');
+        }
+    }
+
+    function showCompletionNotification() {
+        const modeTexts = {
+            'pomodoro': 'Focus session complete! Time for a break.',
+            'short-break': 'Break time\'s up! Ready to focus?',
+            'long-break': 'Long break finished! Let\'s get back to work.'
+        };
+
+        const message = modeTexts[timerState.currentMode];
+
+        // Show app notification
+        Notifications.success(message, {
+            title: 'Timer Complete!',
+            duration: 5000,
+            sound: timerSettings.enableSounds
+        });
+
+        // Show browser notification if enabled
+        if (timerSettings.enableNotifications && 'Notification' in window && Notification.permission === 'granted') {
+            new Notification('DSA Path - Timer Complete!', {
+                body: message,
+                icon: '/assets/icons/apple-touch-icon.png',
+                tag: 'timer-complete'
+            });
+        }
+
+        // Play sound if enabled
+        if (timerSettings.enableSounds && notificationSound) {
+            notificationSound.play().catch(e => console.warn('Could not play notification sound:', e));
+        }
+
+        // Show confetti for completed pomodoro
+        if (timerState.currentMode === 'pomodoro') {
+            Notifications.showCelebration();
+        }
+    }
+
+    function autoSwitchMode() {
+        if (timerState.currentMode === 'pomodoro') {
+            // Switch to break mode
+            const isLongBreakTime = timerState.completedSessions % 4 === 0;
+            const newMode = isLongBreakTime ? 'long-break' : 'short-break';
+
+            // Update radio button
+            document.getElementById(newMode + '-mode').checked = true;
+            changeTimerMode(newMode);
+
+            // Auto-start if enabled
+            if (timerSettings.autoStartBreaks) {
                 setTimeout(() => {
                     startTimer();
                 }, 2000);
             }
+        } else {
+            // Switch back to pomodoro
+            document.getElementById('pomodoro-mode').checked = true;
+            changeTimerMode('pomodoro');
+        }
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timerState.timeLeft / 60);
+        const seconds = timerState.timeLeft % 60;
+        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        document.getElementById('timer-display').textContent = timeString;
+
+        // Update page title with timer
+        if (timerState.isRunning) {
+            document.title = `${timeString} - ${getModeText()} - DSA Path`;
+        } else {
+            document.title = 'Pomodoro Timer - DSA Path';
+        }
+    }
+
+    function updateProgressCircle() {
+        const progressCircle = document.getElementById('timer-progress-circle');
+        if (!progressCircle) return;
+
+        const progress = timerState.totalTime > 0 ? (timerState.totalTime - timerState.timeLeft) / timerState.totalTime : 0;
+        const circumference = 2 * Math.PI * 120; // radius = 120
+        const offset = circumference - (progress * circumference);
+
+        progressCircle.style.strokeDashoffset = offset;
+
+        // Change color based on mode
+        const colors = {
+            'pomodoro': '#6366f1',
+            'short-break': '#10b981',
+            'long-break': '#0ea5e9'
+        };
+
+        progressCircle.style.stroke = colors[timerState.currentMode];
+    }
+
+    function updateTimerControls() {
+        const startPauseBtn = document.getElementById('start-pause-btn');
+        const startPauseText = document.getElementById('start-pause-text');
+        const resetBtn = document.getElementById('reset-btn');
+
+        if (timerState.isRunning) {
+            startPauseBtn.innerHTML = '<i class="bi bi-pause-fill me-2"></i><span>Pause</span>';
+            startPauseBtn.className = 'btn btn-lg btn-warning';
+            resetBtn.disabled = true;
+        } else {
+            startPauseBtn.innerHTML = '<i class="bi bi-play-fill me-2"></i><span>Start</span>';
+            startPauseBtn.className = 'btn btn-lg btn-primary';
+            resetBtn.disabled = false;
         }
 
-        function checkForRestoredSession() {
-            const savedState = Storage.timer.getTimerState();
-            if (!savedState) return;
+        // Disable mode switching when timer is running
+        document.querySelectorAll('input[name="timer-mode"]').forEach(radio => {
+            radio.disabled = timerState.isRunning;
+        });
+    }
 
-            const { sessionId, startTime, duration, sessionType, topic, isRunning } = savedState;
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    function updateModeText() {
+        const modeText = document.getElementById('timer-mode-text');
+        modeText.textContent = getModeText();
+    }
 
-            if (elapsed < duration) {
-                // Restore session
-                currentSessionId = sessionId;
-                currentSessionType = sessionType;
-                timeRemaining = duration - elapsed;
+    function getModeText() {
+        const modeTexts = {
+            'pomodoro': 'Focus Time',
+            'short-break': 'Short Break',
+            'long-break': 'Long Break'
+        };
+        return modeTexts[timerState.currentMode];
+    }
 
-                document.getElementById('session-topic').value = topic || '';
-                document.querySelector(`input[value="${sessionType}"]`).checked = true;
+    function updateSessionCounter() {
+        document.getElementById('session-counter').textContent = timerState.sessionCounter;
+    }
 
-                updateTimerForSessionType();
-                updateTimerDisplay();
+    function saveTimerState() {
+        Storage.timer.setState(timerState);
 
-                if (isRunning) {
-                    Notifications.info('Restored your previous timer session');
-                    // Auto-resume if it was running
-                    setTimeout(() => {
-                        startTimer();
-                    }, 1000);
-                }
-            } else {
-                // Session would have completed
-                Storage.timer.clearTimerState();
+        // Also update global state
+        State.setTimer(timerState);
+    }
+
+    async function loadTodayStats() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const response = await API.pomodoro.getHistory({
+                limit: 100,
+                date: today
+            });
+
+            const todaySessions = response.sessions.filter(session => {
+                const sessionDate = new Date(session.start_time).toISOString().split('T')[0];
+                return sessionDate === today && session.completed;
+            });
+
+            const totalMinutes = todaySessions.reduce((sum, session) => sum + session.duration, 0);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+
+            document.getElementById('sessions-today').textContent = todaySessions.length;
+            document.getElementById('time-today').textContent = `${hours}h ${minutes}m`;
+
+            // Calculate weekly stats
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const weeklySessions = response.sessions.filter(session => {
+                return new Date(session.start_time) >= weekAgo && session.completed;
+            });
+
+            document.getElementById('weekly-sessions').textContent = weeklySessions.length;
+            document.getElementById('total-sessions').textContent = response.pagination?.total || 0;
+
+        } catch (error) {
+            console.error('Error loading today stats:', error);
+        }
+    }
+
+    async function loadTimerHistory() {
+        try {
+            const response = await API.pomodoro.getHistory({ limit: 10 });
+            const sessions = response.sessions;
+
+            const container = document.getElementById('recent-sessions');
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-clock fs-2 mb-2"></i>
+                    <p class="mb-0">No timer sessions yet</p>
+                    <small>Start your first Pomodoro session above!</small>
+                </div>
+            `;
+                return;
             }
-        }
 
-        async function loadRecentSessions() {
-            try {
-                const response = await ApiMethods.pomodoro.getHistory(1, 10);
-                const sessions = response.sessions || [];
+            container.innerHTML = sessions.map(session => {
+                const startTime = new Date(session.start_time);
+                const duration = session.duration;
+                const statusIcon = session.completed ?
+                    '<i class="bi bi-check-circle-fill text-success"></i>' :
+                    '<i class="bi bi-x-circle-fill text-danger"></i>';
 
-                const container = document.getElementById('recent-sessions');
-
-                if (sessions.length === 0) {
-                    container.innerHTML = `
-                    <div class="text-center py-4 text-muted">
-                        <i class="fas fa-clock fa-2x mb-2"></i>
-                        <p class="mb-0">No sessions yet. Start your first pomodoro!</p>
-                    </div>
-                `;
-                    return;
-                }
-
-                container.innerHTML = sessions.map(session => `
-                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                    <div class="flex-grow-1">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-${session.completed ? 'check-circle text-success' : 'clock text-warning'} me-2"></i>
-                            <div>
-                                <div class="fw-medium">${session.topic || 'Study Session'}</div>
-                                <small class="text-muted">${Utils.date.relative(session.start_time)}</small>
-                            </div>
+                return `
+                <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">${statusIcon}</div>
+                        <div>
+                            <h6 class="mb-0">${session.topic || 'Study Session'}</h6>
+                            <small class="text-muted">
+                                ${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString()}
+                            </small>
                         </div>
                     </div>
                     <div class="text-end">
-                        <span class="badge bg-${session.completed ? 'success' : 'warning'}">
-                            ${session.duration}min
-                        </span>
+                        <div class="fw-medium">${duration} min</div>
+                        <small class="text-muted">${Utils.titleCase(session.session_type)}</small>
                     </div>
-                </div>
-            `).join('');
-
-            } catch (error) {
-                console.error('Failed to load recent sessions:', error);
-            }
-        }
-
-        async function loadDailyStats() {
-            try {
-                // Calculate today's stats from recent sessions
-                const today = new Date().toDateString();
-                const response = await ApiMethods.pomodoro.getHistory(1, 50);
-                const allSessions = response.sessions || [];
-
-                const todaySessions = allSessions.filter(session =>
-                    new Date(session.start_time).toDateString() === today && session.completed
-                );
-
-                const totalTime = todaySessions.reduce((sum, session) => sum + session.duration, 0);
-                const studySessions = todaySessions.filter(s => s.session_type === 'study').length;
-                const avgSession = todaySessions.length > 0 ? Math.round(totalTime / todaySessions.length) : 0;
-
-                document.getElementById('daily-stats').innerHTML = `
-                <div class="row g-3 text-center">
-                    <div class="col-12">
-                        <div class="border-bottom pb-2 mb-3">
-                            <div class="h4 fw-bold text-primary">${Utils.time.formatDuration(totalTime * 60)}</div>
-                            <small class="text-muted">Total Focus Time</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="h5 fw-bold">${studySessions}</div>
-                        <small class="text-muted">Study Sessions</small>
-                    </div>
-                    <div class="col-6">
-                        <div class="h5 fw-bold">${avgSession}min</div>
-                        <small class="text-muted">Avg Session</small>
-                    </div>
-                </div>
-                
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="text-muted">Daily Goal</small>
-                        <small class="text-muted">${Math.min(Math.round((totalTime / 120) * 100), 100)}%</small>
-                    </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar" style="width: ${Math.min((totalTime / 120) * 100, 100)}%"></div>
-                    </div>
-                    <small class="text-muted">Target: 2 hours daily</small>
                 </div>
             `;
+            }).join('');
 
-            } catch (error) {
-                console.error('Failed to load daily stats:', error);
-            }
+        } catch (error) {
+            console.error('Error loading timer history:', error);
+            document.getElementById('recent-sessions').innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <p class="mb-0">Failed to load session history</p>
+            </div>
+        `;
+        }
+    }
+
+    function showTimerSettings() {
+        // Load current settings into modal
+        document.getElementById('pomodoro-duration').value = timerSettings.pomodoroDuration;
+        document.getElementById('short-break-duration').value = timerSettings.shortBreakDuration;
+        document.getElementById('long-break-duration').value = timerSettings.longBreakDuration;
+        document.getElementById('auto-start-breaks').checked = timerSettings.autoStartBreaks;
+        document.getElementById('enable-notifications').checked = timerSettings.enableNotifications;
+        document.getElementById('enable-sounds').checked = timerSettings.enableSounds;
+
+        const modal = new bootstrap.Modal(document.getElementById('timerSettingsModal'));
+        modal.show();
+    }
+
+    function saveTimerSettings() {
+        // Get values from form
+        timerSettings.pomodoroDuration = parseInt(document.getElementById('pomodoro-duration').value);
+        timerSettings.shortBreakDuration = parseInt(document.getElementById('short-break-duration').value);
+        timerSettings.longBreakDuration = parseInt(document.getElementById('long-break-duration').value);
+        timerSettings.autoStartBreaks = document.getElementById('auto-start-breaks').checked;
+        timerSettings.enableNotifications = document.getElementById('enable-notifications').checked;
+        timerSettings.enableSounds = document.getElementById('enable-sounds').checked;
+
+        // Save to storage
+        Storage.set('timer_settings', timerSettings);
+
+        // Update current timer if not running
+        if (!timerState.isRunning) {
+            changeTimerMode(timerState.currentMode);
         }
 
-        function openSettings() {
-            // Populate current settings
-            document.getElementById('study-duration').value = sessionSettings.study;
-            document.getElementById('short-break-duration').value = sessionSettings.short_break;
-            document.getElementById('long-break-duration').value = sessionSettings.long_break;
-            document.getElementById('auto-start-breaks').checked = sessionSettings.autoStartBreaks;
-            document.getElementById('play-sounds').checked = sessionSettings.playSounds;
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('timerSettingsModal'));
+        modal.hide();
 
-            const modal = new bootstrap.Modal(document.getElementById('settingsModal'));
+        Notifications.success('Timer settings saved!');
+    }
+
+    async function showTimerHistory() {
+        try {
+            const response = await API.pomodoro.getHistory({ limit: 50 });
+            const sessions = response.sessions;
+
+            const content = document.getElementById('timer-history-content');
+
+            if (sessions.length === 0) {
+                content.innerHTML = `
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-clock fs-2 mb-2"></i>
+                    <p class="mb-0">No timer history available</p>
+                </div>
+            `;
+            } else {
+                // Group sessions by date
+                const groupedSessions = Utils.groupBy(sessions, session => {
+                    return new Date(session.start_time).toDateString();
+                });
+
+                content.innerHTML = Object.entries(groupedSessions).map(([date, dateSessions]) => {
+                    const totalMinutes = dateSessions
+                        .filter(s => s.completed)
+                        .reduce((sum, s) => sum + s.duration, 0);
+
+                    return `
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">${new Date(date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}</h6>
+                            <small class="text-muted">${Utils.formatDuration(totalMinutes)} total</small>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            ${dateSessions.map(session => `
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            ${session.completed ?
+                            '<i class="bi bi-check-circle-fill text-success me-2"></i>' :
+                            '<i class="bi bi-x-circle-fill text-danger me-2"></i>'
+                        }
+                                            <div>
+                                                <div class="fw-medium">${session.topic || 'Study Session'}</div>
+                                                <small class="text-muted">
+                                                    ${new Date(session.start_time).toLocaleTimeString()} - 
+                                                    ${Utils.titleCase(session.session_type)}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="fw-medium">${session.duration}m</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('timerHistoryModal'));
             modal.show();
+
+        } catch (error) {
+            console.error('Error loading timer history:', error);
+            Notifications.error('Failed to load timer history');
         }
+    }
 
-        function saveSettings() {
-            sessionSettings = {
-                study: parseInt(document.getElementById('study-duration').value),
-                short_break: parseInt(document.getElementById('short-break-duration').value),
-                long_break: parseInt(document.getElementById('long-break-duration').value),
-                autoStartBreaks: document.getElementById('auto-start-breaks').checked,
-                playSounds: document.getElementById('play-sounds').checked
-            };
+    async function clearAllSessions() {
+        const confirmed = await Components.modal.confirm(
+            'Are you sure you want to clear all timer history? This action cannot be undone.',
+            { title: 'Clear History', confirmText: 'Clear All' }
+        );
 
-            // Save to storage
-            Storage.setItem('pomodoro_settings', sessionSettings);
+        if (confirmed) {
+            // In a real app, this would call an API endpoint to clear history
+            // For now, just reload the empty state
+            document.getElementById('recent-sessions').innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="bi bi-clock fs-2 mb-2"></i>
+                <p class="mb-0">Timer history cleared</p>
+            </div>
+        `;
 
-            // Update current timer if not running
-            if (!isRunning) {
-                updateTimerForSessionType();
-            }
-
-            // Update session selector labels
-            document.querySelector('label[for="study-session"]').innerHTML =
-                `<i class="fas fa-book me-2"></i>Study (${sessionSettings.study}min)`;
-            document.querySelector('label[for="short-break"]').innerHTML =
-                `<i class="fas fa-coffee me-2"></i>Short Break (${sessionSettings.short_break}min)`;
-            document.querySelector('label[for="long-break"]').innerHTML =
-                `<i class="fas fa-couch me-2"></i>Long Break (${sessionSettings.long_break}min)`;
-
-            bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
-            Notifications.success('Settings saved successfully');
+            Notifications.success('Timer history cleared');
         }
+    }
 
-        function loadSettings() {
-            const saved = Storage.getItem('pomodoro_settings');
-            if (saved) {
-                sessionSettings = { ...sessionSettings, ...saved };
-            }
+    // Initialize timer when page loads
+    updateModeText();
+    updateSessionCounter();
+
+    // Add CSS for timer animations
+    const timerStyle = document.createElement('style');
+    timerStyle.textContent = `
+    .timer-time-display {
+        font-size: 3.5rem;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        color: var(--bs-primary);
+    }
+    
+    .timer-progress {
+        transition: stroke-dashoffset 1s ease;
+    }
+    
+    .timer-circle {
+        transform: rotate(-90deg);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .timer-display-container.completed {
+        animation: pulse 0.5s ease-in-out;
+    }
+    
+    @media (max-width: 576px) {
+        .timer-time-display {
+            font-size: 2.5rem;
         }
-
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', function () {
-            if (timerWorker) {
-                timerWorker.terminate();
-            }
-        });
-    });
+        
+        .timer-circle {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .timer-circle circle {
+            cx: 100;
+            cy: 100;
+            r: 80;
+        }
+    }
+`;
+    document.head.appendChild(timerStyle);
 </script>

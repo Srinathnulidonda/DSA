@@ -1,246 +1,223 @@
-// API Configuration
-const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
+// Application Constants
+const APP_CONFIG = {
+    API_BASE_URL: 'https://dsa-backend-gj8n.onrender.com',
+    APP_NAME: 'DSA Path',
+    VERSION: '1.0.0',
+    STORAGE_PREFIX: 'dsapath_',
+    THEMES: ['light', 'dark'],
+    DEFAULT_THEME: 'light',
+    POMODORO_DURATION: 25 * 60, // 25 minutes in seconds
+    SHORT_BREAK: 5 * 60, // 5 minutes
+    LONG_BREAK: 15 * 60, // 15 minutes
+    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+    SUPPORTED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    ROADMAP_WEEKS: 14,
+    ITEMS_PER_PAGE: 20,
+};
+
+const ROUTES = {
+    HOME: '/',
+    DASHBOARD: '/dashboard',
+    ROADMAP: '/roadmap',
+    CALENDAR: '/calendar',
+    PROGRESS: '/progress',
+    NOTES: '/notes',
+    POMODORO: '/pomodoro',
+    PROFILE: '/profile',
+    SETTINGS: '/settings',
+    ANALYTICS: '/analytics',
+    RESOURCES: '/resources',
+    AI_ASSISTANT: '/ai-assistant',
+    SEARCH: '/search',
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
+};
+
 const API_ENDPOINTS = {
-    // Authentication
-    AUTH_LOGIN: '/auth/login',
-    AUTH_REGISTER: '/auth/register',
-    AUTH_REFRESH: '/auth/refresh',
-    AUTH_FORGOT_PASSWORD: '/auth/forgot-password',
-    AUTH_RESET_PASSWORD: '/auth/reset-password',
+    // Auth
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
+    REFRESH_TOKEN: '/auth/refresh',
 
     // User
     PROFILE: '/profile',
     PREFERENCES: '/preferences',
-    NOTIFICATIONS: '/notifications',
-    SESSIONS: '/sessions',
+    UPLOAD_AVATAR: '/profile/avatar',
 
     // Progress
     PROGRESS: '/progress',
     CALENDAR: '/calendar',
 
-    // Study Tools
-    POMODORO: '/pomodoro',
+    // Notes
     NOTES: '/notes',
 
-    // Data
-    DASHBOARD: '/dashboard',
-    ROADMAP: '/roadmap',
-    RESOURCES: '/resources',
-    SEARCH: '/search',
+    // Pomodoro
+    POMODORO_START: '/pomodoro',
+    POMODORO_COMPLETE: '/pomodoro/:id/complete',
+    POMODORO_HISTORY: '/pomodoro/history',
 
-    // AI
+    // AI Assistant
     AI_ASK: '/ai/ask',
     AI_STUDY_PLAN: '/ai/study-plan',
     AI_QUIZ: '/ai/quiz',
-    AI_SUMMARIZE: '/ai/summarize'
+    AI_SUMMARIZE: '/ai/summarize',
+
+    // Dashboard
+    DASHBOARD: '/dashboard',
+
+    // Resources
+    RESOURCES: '/resources',
+    ROADMAP: '/roadmap',
+
+    // Search
+    SEARCH: '/search',
+
+    // Notifications
+    NOTIFICATIONS: '/notifications',
+    MARK_READ: '/notifications/:id/read',
 };
 
-// Local Storage Keys
 const STORAGE_KEYS = {
-    ACCESS_TOKEN: 'dsa_access_token',
-    REFRESH_TOKEN: 'dsa_refresh_token',
-    USER_DATA: 'dsa_user_data',
-    THEME: 'dsa_theme',
-    PREFERENCES: 'dsa_preferences',
-    TIMER_STATE: 'dsa_timer_state',
-    DRAFT_NOTES: 'dsa_draft_notes',
-    SEARCH_HISTORY: 'dsa_search_history'
+    ACCESS_TOKEN: 'access_token',
+    REFRESH_TOKEN: 'refresh_token',
+    USER_DATA: 'user_data',
+    THEME: 'theme',
+    PREFERENCES: 'preferences',
+    TIMER_STATE: 'timer_state',
+    DRAFT_NOTE: 'draft_note',
+    RECENT_SEARCHES: 'recent_searches',
+    OFFLINE_DATA: 'offline_data',
 };
 
-// App Configuration
-const APP_CONFIG = {
-    NAME: 'DSA Path',
-    VERSION: '1.0.0',
-    DESCRIPTION: 'Master Data Structures & Algorithms',
-
-    // Timing
-    TOKEN_REFRESH_INTERVAL: 30 * 60 * 1000, // 30 minutes
-    AUTO_SAVE_INTERVAL: 30 * 1000, // 30 seconds
-    NOTIFICATION_DURATION: 5000, // 5 seconds
-    SEARCH_DEBOUNCE: 300, // 300ms
-
-    // Pagination
-    DEFAULT_PAGE_SIZE: 20,
-    MAX_PAGE_SIZE: 100,
-
-    // File Upload
-    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
-    ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-
-    // Pomodoro Settings
-    POMODORO_DURATIONS: {
-        WORK: 25,
-        SHORT_BREAK: 5,
-        LONG_BREAK: 15
-    },
-
-    // Chart Colors
-    CHART_COLORS: {
-        PRIMARY: '#3b82f6',
-        SUCCESS: '#10b981',
-        WARNING: '#f59e0b',
-        DANGER: '#ef4444',
-        INFO: '#06b6d4',
-        GRAY: '#6b7280'
-    }
+const EVENT_TYPES = {
+    AUTH_STATE_CHANGED: 'auth_state_changed',
+    THEME_CHANGED: 'theme_changed',
+    PROGRESS_UPDATED: 'progress_updated',
+    TIMER_TICK: 'timer_tick',
+    TIMER_COMPLETE: 'timer_complete',
+    NOTE_SAVED: 'note_saved',
+    NOTIFICATION_RECEIVED: 'notification_received',
+    ROUTE_CHANGED: 'route_changed',
+    NETWORK_STATUS_CHANGED: 'network_status_changed',
 };
 
-// Roadmap Data
-const ROADMAP_CONFIG = {
-    TOTAL_WEEKS: 14,
-    DAYS_PER_WEEK: 7,
-    TOPICS: [
-        'Foundation & Environment',
-        'Arrays & String Mastery',
-        'Linked Lists Deep Dive',
-        'Stacks & Queues Applications',
-        'Binary Trees Foundation',
-        'Binary Search Trees',
-        'Heaps & Priority Queues',
-        'Hashing & Hash Tables',
-        'Graph Fundamentals',
-        'Advanced Graph Algorithms',
-        'Sorting & Searching Mastery',
-        'Recursion & Backtracking',
-        'Dynamic Programming',
-        'Advanced Topics & System Design'
-    ]
-};
-
-// Notification Types
 const NOTIFICATION_TYPES = {
     SUCCESS: 'success',
     ERROR: 'error',
     WARNING: 'warning',
-    INFO: 'info'
+    INFO: 'info',
 };
 
-// Theme Configuration
-const THEME_CONFIG = {
-    LIGHT: 'light',
-    DARK: 'dark',
-    SYSTEM: 'system'
+const TIMER_STATES = {
+    IDLE: 'idle',
+    RUNNING: 'running',
+    PAUSED: 'paused',
+    COMPLETED: 'completed',
 };
 
-// Validation Rules
-const VALIDATION_RULES = {
-    PASSWORD: {
-        MIN_LENGTH: 8,
-        REQUIRE_UPPERCASE: true,
-        REQUIRE_LOWERCASE: true,
-        REQUIRE_NUMBER: true,
-        REQUIRE_SPECIAL: false
-    },
-
-    EMAIL: {
-        PATTERN: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    },
-
-    NOTE_TITLE: {
-        MIN_LENGTH: 1,
-        MAX_LENGTH: 200
-    },
-
-    NOTE_CONTENT: {
-        MAX_LENGTH: 50000
-    }
-};
-
-// Error Messages
-const ERROR_MESSAGES = {
-    NETWORK_ERROR: 'Network error. Please check your connection.',
-    UNAUTHORIZED: 'Session expired. Please log in again.',
-    FORBIDDEN: 'You don\'t have permission to access this resource.',
-    NOT_FOUND: 'The requested resource was not found.',
-    SERVER_ERROR: 'Server error. Please try again later.',
-    VALIDATION_ERROR: 'Please check your input and try again.',
-    UNKNOWN_ERROR: 'An unexpected error occurred.'
-};
-
-// Success Messages
-const SUCCESS_MESSAGES = {
-    LOGIN: 'Welcome back!',
-    REGISTER: 'Account created successfully!',
-    LOGOUT: 'Logged out successfully',
-    SAVE: 'Saved successfully',
-    DELETE: 'Deleted successfully',
-    UPDATE: 'Updated successfully',
-    COPY: 'Copied to clipboard'
-};
-
-// Routes Configuration
-const ROUTES = {
-    HOME: '/',
-    DASHBOARD: '/pages/dashboard',
-    ROADMAP: '/pages/roadmap',
-    CALENDAR: '/pages/calendar',
-    PROGRESS: '/pages/progress',
-    NOTES: '/pages/notes',
-    POMODORO: '/pages/pomodoro',
-    RESOURCES: '/pages/resources',
-    AI_ASSISTANT: '/pages/ai-assistant',
-    ANALYTICS: '/pages/analytics',
-    SEARCH: '/pages/search',
-    PROFILE: '/pages/profile',
-    SETTINGS: '/pages/settings',
-
-    // Auth routes
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    FORGOT_PASSWORD: '/auth/forgot-password',
-    RESET_PASSWORD: '/auth/reset-password'
-};
-
-// Resource Types
-const RESOURCE_TYPES = {
-    TEXT: 'text',
-    VIDEO: 'video',
-    INTERACTIVE: 'interactive',
-    PRACTICE: 'practice'
-};
-
-// Progress Status
-const PROGRESS_STATUS = {
-    LOCKED: 'locked',
-    AVAILABLE: 'available',
+const PROGRESS_STATES = {
+    NOT_STARTED: 'not_started',
     IN_PROGRESS: 'in_progress',
-    COMPLETED: 'completed'
+    COMPLETED: 'completed',
+    REVIEW: 'review',
 };
 
-// AI Assistant Configuration
-const AI_CONFIG = {
-    MAX_MESSAGE_LENGTH: 1000,
-    MAX_CONVERSATION_HISTORY: 50,
-    RESPONSE_TIMEOUT: 30000, // 30 seconds
-    RETRY_ATTEMPTS: 3
+const CHART_COLORS = {
+    PRIMARY: '#6366f1',
+    SUCCESS: '#10b981',
+    WARNING: '#f59e0b',
+    DANGER: '#ef4444',
+    INFO: '#0ea5e9',
+    PURPLE: '#8b5cf6',
+    PINK: '#ec4899',
+    INDIGO: '#6366f1',
 };
 
-// Keyboard Shortcuts
-const KEYBOARD_SHORTCUTS = {
-    SEARCH: ['ctrl+k', 'cmd+k'],
-    NEW_NOTE: ['ctrl+n', 'cmd+n'],
-    SAVE: ['ctrl+s', 'cmd+s'],
-    ESCAPE: ['escape'],
-    ENTER: ['enter']
+const MOBILE_BREAKPOINT = 768;
+const TABLET_BREAKPOINT = 992;
+const DESKTOP_BREAKPOINT = 1200;
+
+const ACHIEVEMENT_TYPES = {
+    STREAK: 'streak',
+    COMPLETION: 'completion',
+    TIME: 'time',
+    CONSISTENCY: 'consistency',
 };
 
-// Export for use in other modules
+const NAVIGATION_ITEMS = [
+    { id: 'dashboard', label: 'Dashboard', icon: 'bi-speedometer2', route: ROUTES.DASHBOARD, primary: true },
+    { id: 'roadmap', label: 'Roadmap', icon: 'bi-map', route: ROUTES.ROADMAP, primary: true },
+    { id: 'progress', label: 'Progress', icon: 'bi-graph-up', route: ROUTES.PROGRESS, primary: true },
+    { id: 'notes', label: 'Notes', icon: 'bi-journal-text', route: ROUTES.NOTES, primary: true },
+    { id: 'pomodoro', label: 'Timer', icon: 'bi-clock', route: ROUTES.POMODORO, primary: false },
+    { id: 'calendar', label: 'Calendar', icon: 'bi-calendar3', route: ROUTES.CALENDAR, primary: false },
+    { id: 'analytics', label: 'Analytics', icon: 'bi-bar-chart', route: ROUTES.ANALYTICS, primary: false },
+    { id: 'resources', label: 'Resources', icon: 'bi-book', route: ROUTES.RESOURCES, primary: false },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: 'bi-robot', route: ROUTES.AI_ASSISTANT, primary: false },
+    { id: 'search', label: 'Search', icon: 'bi-search', route: ROUTES.SEARCH, primary: false },
+    { id: 'profile', label: 'Profile', icon: 'bi-person', route: ROUTES.PROFILE, primary: false },
+    { id: 'settings', label: 'Settings', icon: 'bi-gear', route: ROUTES.SETTINGS, primary: false },
+];
+
+const SOUND_FILES = {
+    NOTIFICATION: '/assets/sounds/notification.mp3',
+    TIMER_COMPLETE: '/assets/sounds/timer-complete.mp3',
+    ACHIEVEMENT: '/assets/sounds/achievement.mp3',
+};
+
+const REGEX_PATTERNS = {
+    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/,
+    PHONE: /^\+?[\d\s\-KATEX_INLINE_OPENKATEX_INLINE_CLOSE]+$/,
+    URL: /^https?:\/\/.+/,
+};
+
+const ERROR_MESSAGES = {
+    NETWORK_ERROR: 'Network connection failed. Please check your internet connection.',
+    UNAUTHORIZED: 'Session expired. Please log in again.',
+    FORBIDDEN: 'You don\'t have permission to perform this action.',
+    NOT_FOUND: 'The requested resource was not found.',
+    SERVER_ERROR: 'Server error occurred. Please try again later.',
+    VALIDATION_ERROR: 'Please check your input and try again.',
+    FILE_TOO_LARGE: `File size must be less than ${APP_CONFIG.MAX_FILE_SIZE / 1024 / 1024}MB`,
+    INVALID_FILE_TYPE: 'Invalid file type. Please select a supported format.',
+};
+
+const SUCCESS_MESSAGES = {
+    LOGIN_SUCCESS: 'Welcome back! You\'ve successfully logged in.',
+    REGISTER_SUCCESS: 'Account created successfully! Welcome to DSA Path.',
+    LOGOUT_SUCCESS: 'You\'ve been logged out successfully.',
+    PROGRESS_SAVED: 'Progress saved successfully!',
+    NOTE_SAVED: 'Note saved successfully!',
+    SETTINGS_SAVED: 'Settings updated successfully!',
+    PASSWORD_RESET: 'Password reset successfully!',
+    TIMER_COMPLETE: 'Pomodoro session completed! Great work!',
+};
+
+// Export for modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        API_BASE,
+        APP_CONFIG,
+        ROUTES,
         API_ENDPOINTS,
         STORAGE_KEYS,
-        APP_CONFIG,
-        ROADMAP_CONFIG,
+        EVENT_TYPES,
         NOTIFICATION_TYPES,
-        THEME_CONFIG,
-        VALIDATION_RULES,
+        TIMER_STATES,
+        PROGRESS_STATES,
+        CHART_COLORS,
+        MOBILE_BREAKPOINT,
+        TABLET_BREAKPOINT,
+        DESKTOP_BREAKPOINT,
+        ACHIEVEMENT_TYPES,
+        NAVIGATION_ITEMS,
+        SOUND_FILES,
+        REGEX_PATTERNS,
         ERROR_MESSAGES,
         SUCCESS_MESSAGES,
-        ROUTES,
-        RESOURCE_TYPES,
-        PROGRESS_STATUS,
-        AI_CONFIG,
-        KEYBOARD_SHORTCUTS
     };
 }

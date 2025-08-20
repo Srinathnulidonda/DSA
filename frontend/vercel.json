@@ -1,15 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/auth/(.*)",
-      "destination": "/auth/$1.html"
-    },
-    {
-      "source": "/pages/(.*)",
-      "destination": "/pages/$1.html"
-    },
-    {
-      "source": "/((?!api|assets|css|js|components|templates).*)",
+      "source": "/((?!css|js|assets|components|templates).*)",
       "destination": "/index.html"
     }
   ],

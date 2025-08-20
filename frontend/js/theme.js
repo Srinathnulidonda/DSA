@@ -1,370 +1,373 @@
-// Theme Management for DSA Path Application
-
-const Theme = {
-    // Current theme
-    current: 'system',
-
-    // Available themes
+// Theme Management
+const ThemeManager = {
+    currentTheme: 'light',
     themes: {
         light: {
             name: 'Light',
-            icon: 'fas fa-sun',
-            class: 'light'
+            icon: 'bi-sun',
+            className: ''
         },
         dark: {
             name: 'Dark',
-            icon: 'fas fa-moon',
-            class: 'dark'
-        },
-        system: {
-            name: 'System',
-            icon: 'fas fa-desktop',
-            class: 'system'
+            icon: 'bi-moon',
+            className: 'dark-theme'
         }
     },
 
-    /**
-     * Initialize theme system
-     */
+    // Initialize theme
     init() {
-        // Load saved theme
-        this.current = Storage.theme.getTheme();
-
-        // Apply initial theme
-        this.apply(this.current);
-
-        // Listen for system theme changes
+        this.loadTheme();
         this.setupSystemThemeDetection();
-
-        // Setup theme toggle button
         this.setupThemeToggle();
-
-        // Update UI
-        this.updateUI();
+        return this;
     },
 
-    /**
-     * Apply theme
-     */
-    apply(themeName) {
-        const body = document.body;
-        const html = document.documentElement;
+    // Load theme from storage or system preference
+    loadTheme() {
+        const savedTheme = Storage.get(STORAGE_KEYS.THEME);
+        const systemTheme = this.getSystemTheme();
 
-        // Remove existing theme classes
-        Object.values(this.themes).forEach(theme => {
-            body.classList.remove(`theme-${theme.class}`);
-            html.removeAttribute('data-theme');
+        this.currentTheme = savedTheme || systemTheme;
+        this.applyTheme(this.currentTheme);
+    },
+
+    // Get system theme preference
+    getSystemTheme() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        }
+        return 'light';
+    },
+
+    // Setup system theme change detection
+    setupSystemThemeDetection() {
+        if (window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+            mediaQuery.addEventListener('change', (e) => {
+                // Only auto-switch if user hasn't manually set a theme
+                const savedTheme = Storage.get(STORAGE_KEYS.THEME);
+                if (!savedTheme) {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    this.setTheme(newTheme);
+                }
+            });
+        }
+    },
+
+    // Setup theme toggle functionality
+    setupThemeToggle() {
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-theme-toggle]')) {
+                e.preventDefault();
+                this.toggleTheme();
+            }
         });
 
-        if (themeName === 'system') {
-            // Use system preference
-            const systemTheme = this.getSystemTheme();
-            html.setAttribute('data-theme', systemTheme);
-            body.classList.add(`theme-${systemTheme}`);
-        } else {
-            // Use selected theme
-            html.setAttribute('data-theme', themeName);
-            body.classList.add(`theme-${themeName}`);
+        // Keyboard shortcut (Ctrl/Cmd + Shift + T)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
+                e.preventDefault();
+                this.toggleTheme();
+            }
+        });
+    },
+
+    // Apply theme
+    applyTheme(theme) {
+        if (!this.themes[theme]) {
+            console.warn(`Theme '${theme}' not found, falling back to light`);
+            theme = 'light';
         }
 
-        this.current = themeName;
+        const themeConfig = this.themes[theme];
+        const html = document.documentElement;
 
-        // Save to storage
-        Storage.theme.setTheme(themeName);
+        // Remove all theme classes
+        Object.values(this.themes).forEach(t => {
+            if (t.className) {
+                html.classList.remove(t.className);
+            }
+        });
+
+        // Remove data-theme attribute first
+        html.removeAttribute('data-theme');
+
+        // Apply new theme
+        if (themeConfig.className) {
+            html.classList.add(themeConfig.className);
+        }
+
+        // Set data-theme attribute
+        html.setAttribute('data-theme', theme);
+
+        // Update current theme
+        this.currentTheme = theme;
+
+        // Update theme toggle buttons
+        this.updateThemeToggles();
+
+        // Update meta theme-color for mobile browsers
+        this.updateMetaThemeColor(theme);
+
+        // Dispatch theme change event
+        document.dispatchEvent(new CustomEvent(EVENT_TYPES.THEME_CHANGED, {
+            detail: { theme, themeConfig }
+        }));
 
         // Update state
-        State.setState('ui.theme', themeName);
-
-        // Notify other components
-        this.notifyThemeChange(themeName);
+        State.actions.setTheme(theme);
     },
 
-    /**
-     * Get system theme preference
-     */
-    getSystemTheme() {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // Set theme
+    setTheme(theme) {
+        Storage.set(STORAGE_KEYS.THEME, theme);
+        this.applyTheme(theme);
     },
 
-    /**
-     * Setup system theme detection
-     */
-    setupSystemThemeDetection() {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    // Toggle theme
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
 
-        const handleChange = () => {
-            if (this.current === 'system') {
-                this.apply('system');
+        // Show feedback
+        Notifications.show(`Switched to ${this.themes[newTheme].name.toLowerCase()} theme`, 'info');
+    },
+
+    // Get current theme
+    getCurrentTheme() {
+        return this.currentTheme;
+    },
+
+    // Check if current theme is dark
+    isDarkTheme() {
+        return this.currentTheme === 'dark';
+    },
+
+    // Update theme toggle buttons
+    updateThemeToggles() {
+        const toggles = document.querySelectorAll('[data-theme-toggle]');
+        const currentConfig = this.themes[this.currentTheme];
+        const nextTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        const nextConfig = this.themes[nextTheme];
+
+        toggles.forEach(toggle => {
+            // Update icon
+            const icon = toggle.querySelector('i');
+            if (icon) {
+                // Remove all theme icons
+                Object.values(this.themes).forEach(theme => {
+                    icon.classList.remove(theme.icon);
+                });
+                // Add current theme icon
+                icon.classList.add(nextConfig.icon);
+            }
+
+            // Update text
+            const text = toggle.querySelector('.theme-text');
+            if (text) {
+                text.textContent = `Switch to ${nextConfig.name}`;
+            }
+
+            // Update aria-label
+            toggle.setAttribute('aria-label', `Switch to ${nextConfig.name.toLowerCase()} theme`);
+
+            // Update title
+            toggle.title = `Switch to ${nextConfig.name.toLowerCase()} theme`;
+        });
+    },
+
+    // Update meta theme-color for mobile browsers
+    updateMetaThemeColor(theme) {
+        let themeColor = '#6366f1'; // Default primary color
+
+        if (theme === 'dark') {
+            themeColor = '#0f172a'; // Dark background
+        }
+
+        // Update existing meta tag or create new one
+        let metaTag = document.querySelector('meta[name="theme-color"]');
+        if (!metaTag) {
+            metaTag = document.createElement('meta');
+            metaTag.name = 'theme-color';
+            document.head.appendChild(metaTag);
+        }
+        metaTag.content = themeColor;
+    },
+
+    // Get theme-aware color
+    getThemeColor(colorName, fallback = '#6366f1') {
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
+
+        // Try to get CSS custom property
+        const cssVar = computedStyle.getPropertyValue(`--${colorName}`);
+        if (cssVar) {
+            return cssVar.trim();
+        }
+
+        // Fallback to predefined colors
+        const colors = {
+            light: {
+                primary: '#6366f1',
+                secondary: '#64748b',
+                background: '#ffffff',
+                surface: '#f8fafc',
+                text: '#1e293b'
+            },
+            dark: {
+                primary: '#8b5cf6',
+                secondary: '#cbd5e1',
+                background: '#0f172a',
+                surface: '#1e293b',
+                text: '#f8fafc'
             }
         };
 
-        // Modern browsers
-        if (mediaQuery.addEventListener) {
-            mediaQuery.addEventListener('change', handleChange);
-        } else {
-            // Fallback for older browsers
-            mediaQuery.addListener(handleChange);
-        }
+        return colors[this.currentTheme]?.[colorName] || fallback;
     },
 
-    /**
-     * Setup theme toggle button
-     */
-    setupThemeToggle() {
-        const toggleBtn = Utils.dom.$('#theme-toggle');
-        if (!toggleBtn) return;
+    // Create theme picker
+    createThemePicker() {
+        const picker = document.createElement('div');
+        picker.className = 'theme-picker dropdown';
 
-        toggleBtn.addEventListener('click', () => {
-            this.toggle();
+        picker.innerHTML = `
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="${this.themes[this.currentTheme].icon}"></i>
+                <span class="ms-2">${this.themes[this.currentTheme].name}</span>
+            </button>
+            <ul class="dropdown-menu">
+                ${Object.entries(this.themes).map(([key, theme]) => `
+                    <li>
+                        <a class="dropdown-item ${key === this.currentTheme ? 'active' : ''}" 
+                           href="#" data-theme="${key}">
+                            <i class="${theme.icon}"></i>
+                            <span class="ms-2">${theme.name}</span>
+                        </a>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+
+        // Add event listeners
+        picker.addEventListener('click', (e) => {
+            if (e.target.closest('[data-theme]')) {
+                e.preventDefault();
+                const theme = e.target.closest('[data-theme]').dataset.theme;
+                this.setTheme(theme);
+            }
         });
 
-        // Update button icon
-        this.updateToggleButton();
+        return picker;
     },
 
-    /**
-     * Toggle between themes
-     */
-    toggle() {
-        const themes = Object.keys(this.themes);
-        const currentIndex = themes.indexOf(this.current);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        const nextTheme = themes[nextIndex];
+    // Apply theme to specific element
+    applyThemeToElement(element, theme) {
+        const themeConfig = this.themes[theme];
+        if (!themeConfig) return;
 
-        this.apply(nextTheme);
-        this.updateToggleButton();
+        // Remove all theme classes
+        Object.values(this.themes).forEach(t => {
+            if (t.className) {
+                element.classList.remove(t.className);
+            }
+        });
 
-        // Show notification
-        const themeName = this.themes[nextTheme].name;
-        Notifications.show(`Switched to ${themeName} theme`, 'info');
-    },
-
-    /**
-     * Update theme toggle button
-     */
-    updateToggleButton() {
-        const toggleBtn = Utils.dom.$('#theme-toggle');
-        if (!toggleBtn) return;
-
-        const icon = toggleBtn.querySelector('i');
-        if (!icon) return;
-
-        // Clear existing classes
-        icon.className = '';
-
-        // Get effective theme for display
-        let displayTheme = this.current;
-        if (this.current === 'system') {
-            displayTheme = this.getSystemTheme();
+        // Apply new theme class
+        if (themeConfig.className) {
+            element.classList.add(themeConfig.className);
         }
 
-        // Set appropriate icon
-        if (displayTheme === 'dark') {
-            icon.className = 'fas fa-sun';
-            toggleBtn.title = 'Switch to light theme';
-        } else {
-            icon.className = 'fas fa-moon';
-            toggleBtn.title = 'Switch to dark theme';
-        }
+        element.setAttribute('data-theme', theme);
     },
 
-    /**
-     * Update UI elements based on theme
-     */
-    updateUI() {
-        // Update charts if they exist
-        if (window.Chart) {
-            this.updateChartDefaults();
-        }
-
-        // Update theme selector if it exists
-        this.updateThemeSelector();
-
-        // Update meta theme color
-        this.updateMetaThemeColor();
+    // Watch for theme changes
+    onThemeChange(callback) {
+        document.addEventListener(EVENT_TYPES.THEME_CHANGED, (e) => {
+            callback(e.detail.theme, e.detail.themeConfig);
+        });
     },
 
-    /**
-     * Update Chart.js defaults for current theme
-     */
-    updateChartDefaults() {
-        const isDark = this.getEffectiveTheme() === 'dark';
-
-        if (window.Chart) {
-            Chart.defaults.color = isDark ? '#e5e7eb' : '#374151';
-            Chart.defaults.borderColor = isDark ? '#374151' : '#e5e7eb';
-            Chart.defaults.backgroundColor = isDark ? '#1f2937' : '#f9fafb';
-
-            // Update existing charts
-            Object.values(Chart.instances).forEach(chart => {
-                chart.update();
-            });
-        }
-    },
-
-    /**
-     * Update theme selector component
-     */
-    updateThemeSelector() {
-        const selector = Utils.dom.$('#theme-selector');
-        if (!selector) return;
-
-        Object.entries(this.themes).forEach(([key, theme]) => {
-            const option = selector.querySelector(`[data-theme="${key}"]`);
-            if (option) {
-                if (key === this.current) {
-                    option.classList.add('active');
-                } else {
-                    option.classList.remove('active');
-                }
+    // Preload theme styles
+    preloadThemeStyles() {
+        // In a real app, you might preload CSS files for different themes
+        Object.keys(this.themes).forEach(theme => {
+            if (theme !== this.currentTheme) {
+                // Preload theme-specific resources
+                this.preloadThemeResources(theme);
             }
         });
     },
 
-    /**
-     * Update meta theme color for mobile browsers
-     */
-    updateMetaThemeColor() {
-        const metaThemeColor = Utils.dom.$('meta[name="theme-color"]');
-        if (!metaThemeColor) return;
+    preloadThemeResources(theme) {
+        // Preload images or other resources specific to the theme
+        const themeImages = {
+            dark: ['/assets/images/dark-hero.jpg'],
+            light: ['/assets/images/light-hero.jpg']
+        };
 
-        const isDark = this.getEffectiveTheme() === 'dark';
-        const color = isDark ? '#1f2937' : '#3b82f6';
-
-        metaThemeColor.setAttribute('content', color);
-    },
-
-    /**
-     * Get effective theme (resolves system to actual theme)
-     */
-    getEffectiveTheme() {
-        if (this.current === 'system') {
-            return this.getSystemTheme();
-        }
-        return this.current;
-    },
-
-    /**
-     * Create theme selector component
-     */
-    createThemeSelector(container) {
-        const selector = Utils.dom.createElement('div', {
-            className: 'theme-selector',
-            id: 'theme-selector'
+        const images = themeImages[theme] || [];
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
         });
-
-        Object.entries(this.themes).forEach(([key, theme]) => {
-            const option = Utils.dom.createElement('button', {
-                className: `theme-option btn btn-outline-secondary ${key === this.current ? 'active' : ''}`,
-                'data-theme': key,
-                title: `Switch to ${theme.name} theme`
-            });
-
-            const icon = Utils.dom.createElement('i', {
-                className: theme.icon
-            });
-
-            const label = Utils.dom.createElement('span', {}, theme.name);
-
-            option.appendChild(icon);
-            option.appendChild(label);
-
-            option.addEventListener('click', () => {
-                this.apply(key);
-                this.updateThemeSelector();
-            });
-
-            selector.appendChild(option);
-        });
-
-        container.appendChild(selector);
-        return selector;
     },
 
-    /**
-     * Notify other components of theme change
-     */
-    notifyThemeChange(themeName) {
-        const event = new CustomEvent('themechange', {
-            detail: {
-                theme: themeName,
-                effectiveTheme: this.getEffectiveTheme()
-            }
-        });
+    // Accessibility considerations
+    setupReducedMotion() {
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-        document.dispatchEvent(event);
+        const handleReducedMotion = (e) => {
+            document.documentElement.classList.toggle('reduced-motion', e.matches);
+        };
+
+        mediaQuery.addEventListener('change', handleReducedMotion);
+        handleReducedMotion(mediaQuery);
     },
 
-    /**
-     * Add theme-aware styles
-     */
-    addThemeStyles() {
-        const styles = `
-      .theme-light {
-        --bg-primary: #ffffff;
-        --bg-secondary: #f8f9fa;
-        --text-primary: #212529;
-        --text-secondary: #6c757d;
-        --border-color: #dee2e6;
-      }
-      
-      .theme-dark {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #2d3748;
-        --text-primary: #ffffff;
-        --text-secondary: #a0aec0;
-        --border-color: #4a5568;
-      }
-      
-      .theme-selector {
-        display: flex;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        background: var(--bg-secondary);
-      }
-      
-      .theme-option {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 0.375rem;
-        background: transparent;
-        color: var(--text-secondary);
-        transition: all 0.2s;
-      }
-      
-      .theme-option:hover {
-        background: var(--bg-primary);
-        color: var(--text-primary);
-      }
-      
-      .theme-option.active {
-        background: var(--primary-color);
-        color: white;
-      }
-    `;
+    // High contrast support
+    setupHighContrast() {
+        const mediaQuery = window.matchMedia('(prefers-contrast: high)');
 
-        const styleElement = document.createElement('style');
-        styleElement.textContent = styles;
-        document.head.appendChild(styleElement);
+        const handleHighContrast = (e) => {
+            document.documentElement.classList.toggle('high-contrast', e.matches);
+        };
+
+        mediaQuery.addEventListener('change', handleHighContrast);
+        handleHighContrast(mediaQuery);
     },
 
-    /**
-     * Save user theme preference to backend
-     */
-    async savePreference(themeName) {
-        try {
-            await ApiMethods.preferences.update({ theme: themeName });
-        } catch (error) {
-            console.error('Failed to save theme preference:', error);
-        }
+    // Initialize accessibility features
+    initAccessibility() {
+        this.setupReducedMotion();
+        this.setupHighContrast();
     }
 };
 
-// Export Theme for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Theme;
-}
+// Initialize theme manager
+ThemeManager.initAccessibility();
+
+// Listen for theme changes to update UI
+ThemeManager.onThemeChange((theme) => {
+    // Update Chart.js theme if charts exist
+    if (window.Chart) {
+        Chart.defaults.color = ThemeManager.getThemeColor('text');
+        Chart.defaults.borderColor = ThemeManager.getThemeColor('border-color');
+        Chart.defaults.backgroundColor = ThemeManager.getThemeColor('background');
+
+        // Update existing charts
+        Object.values(Chart.instances).forEach(chart => {
+            chart.update('none');
+        });
+    }
+
+    // Update any theme-dependent components
+    document.querySelectorAll('[data-theme-dependent]').forEach(element => {
+        element.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme } }));
+    });
+});
+
+// Make available globally
+window.ThemeManager = ThemeManager;

@@ -1,691 +1,490 @@
-// Utility Functions for DSA Path Application
-
+// Utility Functions
 const Utils = {
-    // DOM Utilities
-    dom: {
-        /**
-         * Query selector with null check
-         */
-        $(selector, context = document) {
-            return context.querySelector(selector);
-        },
+    // Date and Time Utilities
+    formatDate(date, format = 'short') {
+        if (!date) return '';
 
-        /**
-         * Query selector all
-         */
-        $$(selector, context = document) {
-            return Array.from(context.querySelectorAll(selector));
-        },
+        const d = new Date(date);
+        const options = {
+            short: { year: 'numeric', month: 'short', day: 'numeric' },
+            long: { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' },
+            time: { hour: '2-digit', minute: '2-digit' },
+            datetime: { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
+        };
 
-        /**
-         * Create element with attributes and content
-         */
-        createElement(tag, attributes = {}, content = '') {
-            const element = document.createElement(tag);
+        return d.toLocaleDateString('en-US', options[format] || options.short);
+    },
 
-            Object.entries(attributes).forEach(([key, value]) => {
-                if (key === 'className') {
-                    element.className = value;
-                } else if (key === 'innerHTML') {
-                    element.innerHTML = value;
-                } else {
-                    element.setAttribute(key, value);
-                }
-            });
+    formatTime(seconds) {
+        if (typeof seconds !== 'number' || seconds < 0) return '0:00';
 
-            if (content) {
-                element.textContent = content;
-            }
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
 
-            return element;
-        },
-
-        /**
-         * Add event listener with cleanup
-         */
-        on(element, event, handler, options = {}) {
-            element.addEventListener(event, handler, options);
-            return () => element.removeEventListener(event, handler, options);
-        },
-
-        /**
-         * Show element with animation
-         */
-        show(element, animation = 'fade-in') {
-            element.classList.remove('d-none', 'hidden');
-            element.classList.add('animate-' + animation);
-        },
-
-        /**
-         * Hide element with animation
-         */
-        hide(element, animation = 'fade-out') {
-            element.classList.add('animate-' + animation);
-            setTimeout(() => {
-                element.classList.add('d-none');
-                element.classList.remove('animate-' + animation);
-            }, 300);
-        },
-
-        /**
-         * Toggle element visibility
-         */
-        toggle(element, show = null) {
-            const isHidden = element.classList.contains('d-none') || element.classList.contains('hidden');
-
-            if (show === null) {
-                if (isHidden) {
-                    this.show(element);
-                } else {
-                    this.hide(element);
-                }
-            } else if (show) {
-                this.show(element);
-            } else {
-                this.hide(element);
-            }
+        if (hours > 0) {
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
+        return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    },
+
+    formatDuration(minutes) {
+        if (minutes < 60) return `${minutes}m`;
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+    },
+
+    getRelativeTime(date) {
+        if (!date) return '';
+
+        const now = new Date();
+        const then = new Date(date);
+        const diffMs = now - then;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+
+        return this.formatDate(date);
     },
 
     // String Utilities
-    string: {
-        /**
-         * Capitalize first letter
-         */
-        capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        },
-
-        /**
-         * Convert to kebab-case
-         */
-        kebabCase(str) {
-            return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-        },
-
-        /**
-         * Convert to camelCase
-         */
-        camelCase(str) {
-            return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-        },
-
-        /**
-         * Truncate string with ellipsis
-         */
-        truncate(str, length = 100, suffix = '...') {
-            if (str.length <= length) return str;
-            return str.substring(0, length - suffix.length) + suffix;
-        },
-
-        /**
-         * Generate random string
-         */
-        random(length = 10) {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        },
-
-        /**
-         * Generate URL-safe slug
-         */
-        slugify(str) {
-            return str
-                .toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/[\s_-]+/g, '-')
-                .replace(/^-+|-+$/g, '');
-        },
-
-        /**
-         * Highlight search terms in text
-         */
-        highlight(text, searchTerm) {
-            if (!searchTerm) return text;
-            const regex = new RegExp(`(${searchTerm})`, 'gi');
-            return text.replace(regex, '<mark class="search-highlight">$1</mark>');
-        }
+    capitalize(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     },
 
-    // Array Utilities
-    array: {
-        /**
-         * Remove duplicates from array
-         */
-        unique(arr) {
-            return [...new Set(arr)];
-        },
-
-        /**
-         * Group array by key
-         */
-        groupBy(arr, key) {
-            return arr.reduce((groups, item) => {
-                const group = item[key];
-                groups[group] = groups[group] || [];
-                groups[group].push(item);
-                return groups;
-            }, {});
-        },
-
-        /**
-         * Sort array by multiple keys
-         */
-        sortBy(arr, ...keys) {
-            return arr.sort((a, b) => {
-                for (const key of keys) {
-                    let aVal = a[key];
-                    let bVal = b[key];
-
-                    if (typeof aVal === 'string') {
-                        aVal = aVal.toLowerCase();
-                        bVal = bVal.toLowerCase();
-                    }
-
-                    if (aVal < bVal) return -1;
-                    if (aVal > bVal) return 1;
-                }
-                return 0;
-            });
-        },
-
-        /**
-         * Chunk array into smaller arrays
-         */
-        chunk(arr, size) {
-            const chunks = [];
-            for (let i = 0; i < arr.length; i += size) {
-                chunks.push(arr.slice(i, i + size));
-            }
-            return chunks;
-        },
-
-        /**
-         * Shuffle array
-         */
-        shuffle(arr) {
-            const shuffled = [...arr];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
+    titleCase(str) {
+        if (!str) return '';
+        return str.replace(/\w\S*/g, (txt) =>
+            txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        );
     },
 
-    // Date Utilities
-    date: {
-        /**
-         * Format date to readable string
-         */
-        format(date, format = 'YYYY-MM-DD') {
-            const d = new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            const hours = String(d.getHours()).padStart(2, '0');
-            const minutes = String(d.getMinutes()).padStart(2, '0');
-            const seconds = String(d.getSeconds()).padStart(2, '0');
+    slugify(str) {
+        if (!str) return '';
+        return str
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    },
 
-            return format
-                .replace('YYYY', year)
-                .replace('MM', month)
-                .replace('DD', day)
-                .replace('HH', hours)
-                .replace('mm', minutes)
-                .replace('ss', seconds);
-        },
+    truncate(str, length = 100, suffix = '...') {
+        if (!str || str.length <= length) return str;
+        return str.substring(0, length).trim() + suffix;
+    },
 
-        /**
-         * Get relative time string
-         */
-        relative(date) {
-            const now = new Date();
-            const then = new Date(date);
-            const diff = now - then;
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            const weeks = Math.floor(days / 7);
-            const months = Math.floor(days / 30);
-            const years = Math.floor(days / 365);
+    highlight(text, query) {
+        if (!text || !query) return text;
+        const regex = new RegExp(`(${this.escapeRegex(query)})`, 'gi');
+        return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+    },
 
-            if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
-            if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
-            if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-            if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-            if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-            return 'Just now';
-        },
+    escapeRegex(str) {
+        return str.replace(/[.*+?^${}()|[```\\\/]/g, '\\$&');
+    },
 
-        /**
-         * Check if date is today
-         */
-        isToday(date) {
-            const today = new Date();
-            const checkDate = new Date(date);
-            return today.toDateString() === checkDate.toDateString();
-        },
-
-        /**
-         * Get week number
-         */
-        getWeekNumber(date) {
-            const d = new Date(date);
-            d.setHours(0, 0, 0, 0);
-            d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
-            const week1 = new Date(d.getFullYear(), 0, 4);
-            return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-        },
-
-        /**
-         * Add days to date
-         */
-        addDays(date, days) {
-            const result = new Date(date);
-            result.setDate(result.getDate() + days);
-            return result;
-        }
+    escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     },
 
     // Number Utilities
-    number: {
-        /**
-         * Format number with commas
-         */
-        format(num, decimals = 0) {
-            return num.toLocaleString('en-US', {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            });
-        },
-
-        /**
-         * Convert to percentage
-         */
-        toPercent(num, decimals = 1) {
-            return (num * 100).toFixed(decimals) + '%';
-        },
-
-        /**
-         * Clamp number between min and max
-         */
-        clamp(num, min, max) {
-            return Math.min(Math.max(num, min), max);
-        },
-
-        /**
-         * Generate random number between min and max
-         */
-        random(min = 0, max = 1) {
-            return Math.random() * (max - min) + min;
-        },
-
-        /**
-         * Round to specified decimal places
-         */
-        round(num, decimals = 0) {
-            const factor = Math.pow(10, decimals);
-            return Math.round(num * factor) / factor;
-        }
+    formatNumber(num, decimals = 0) {
+        if (typeof num !== 'number') return '0';
+        return num.toLocaleString('en-US', {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+        });
     },
 
-    // Time Utilities
-    time: {
-        /**
-         * Format seconds to MM:SS or HH:MM:SS
-         */
-        formatDuration(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
+    formatPercent(value, total) {
+        if (!total || total === 0) return '0%';
+        const percent = (value / total) * 100;
+        return `${Math.round(percent)}%`;
+    },
 
-            if (hours > 0) {
-                return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }
-            return `${minutes}:${secs.toString().padStart(2, '0')}`;
-        },
+    clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    },
 
-        /**
-         * Parse duration string to seconds
-         */
-        parseDuration(duration) {
-            const parts = duration.split(':').map(Number);
-            if (parts.length === 2) {
-                return parts[0] * 60 + parts[1];
-            } else if (parts.length === 3) {
-                return parts[0] * 3600 + parts[1] * 60 + parts[2];
-            }
+    randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
+    // Array Utilities
+    chunk(array, size) {
+        const chunks = [];
+        for (let i = 0; i < array.length; i += size) {
+            chunks.push(array.slice(i, i + size));
+        }
+        return chunks;
+    },
+
+    shuffle(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    },
+
+    unique(array, key = null) {
+        if (!key) return [...new Set(array)];
+        const seen = new Set();
+        return array.filter(item => {
+            const value = typeof key === 'function' ? key(item) : item[key];
+            if (seen.has(value)) return false;
+            seen.add(value);
+            return true;
+        });
+    },
+
+    groupBy(array, key) {
+        return array.reduce((groups, item) => {
+            const value = typeof key === 'function' ? key(item) : item[key];
+            (groups[value] = groups[value] || []).push(item);
+            return groups;
+        }, {});
+    },
+
+    sortBy(array, key, direction = 'asc') {
+        return [...array].sort((a, b) => {
+            const aVal = typeof key === 'function' ? key(a) : a[key];
+            const bVal = typeof key === 'function' ? key(b) : b[key];
+
+            if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return direction === 'asc' ? 1 : -1;
             return 0;
-        },
-
-        /**
-         * Debounce function
-         */
-        debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        },
-
-        /**
-         * Throttle function
-         */
-        throttle(func, limit) {
-            let inThrottle;
-            return function () {
-                const args = arguments;
-                const context = this;
-                if (!inThrottle) {
-                    func.apply(context, args);
-                    inThrottle = true;
-                    setTimeout(() => inThrottle = false, limit);
-                }
-            };
-        }
+        });
     },
 
-    // URL Utilities
-    url: {
-        /**
-         * Parse query parameters
-         */
-        parseQuery(search = window.location.search) {
-            const params = new URLSearchParams(search);
-            const result = {};
-            for (const [key, value] of params) {
-                result[key] = value;
-            }
-            return result;
-        },
-
-        /**
-         * Build query string
-         */
-        buildQuery(params) {
-            const searchParams = new URLSearchParams();
-            Object.entries(params).forEach(([key, value]) => {
-                if (value !== null && value !== undefined && value !== '') {
-                    searchParams.append(key, value);
-                }
+    // Object Utilities
+    deepClone(obj) {
+        if (obj === null || typeof obj !== 'object') return obj;
+        if (obj instanceof Date) return new Date(obj.getTime());
+        if (obj instanceof Array) return obj.map(item => this.deepClone(item));
+        if (typeof obj === 'object') {
+            const cloned = {};
+            Object.keys(obj).forEach(key => {
+                cloned[key] = this.deepClone(obj[key]);
             });
-            return searchParams.toString();
-        },
-
-        /**
-         * Get base URL
-         */
-        getBase() {
-            return `${window.location.protocol}//${window.location.host}`;
-        },
-
-        /**
-         * Join URL parts
-         */
-        join(...parts) {
-            return parts
-                .map(part => part.replace(/^\/+|\/+$/g, ''))
-                .filter(Boolean)
-                .join('/');
+            return cloned;
         }
     },
 
-    // Browser Utilities
-    browser: {
-        /**
-         * Copy text to clipboard
-         */
-        async copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                return true;
-            } catch (err) {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.opacity = '0';
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-
-                try {
-                    const successful = document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    return successful;
-                } catch (err) {
-                    document.body.removeChild(textArea);
-                    return false;
-                }
+    deepMerge(target, source) {
+        const result = { ...target };
+        Object.keys(source).forEach(key => {
+            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                result[key] = this.deepMerge(result[key] || {}, source[key]);
+            } else {
+                result[key] = source[key];
             }
-        },
+        });
+        return result;
+    },
 
-        /**
-         * Download file from URL
-         */
-        download(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        },
+    pick(obj, keys) {
+        const result = {};
+        keys.forEach(key => {
+            if (key in obj) result[key] = obj[key];
+        });
+        return result;
+    },
 
-        /**
-         * Get device type
-         */
-        getDeviceType() {
-            const width = window.innerWidth;
-            if (width < 576) return 'mobile';
-            if (width < 768) return 'tablet';
-            if (width < 992) return 'laptop';
-            return 'desktop';
-        },
-
-        /**
-         * Check if mobile device
-         */
-        isMobile() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        },
-
-        /**
-         * Check if touch device
-         */
-        isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        },
-
-        /**
-         * Scroll to element
-         */
-        scrollTo(element, options = {}) {
-            const defaultOptions = {
-                behavior: 'smooth',
-                block: 'start',
-                inline: 'nearest'
-            };
-
-            if (typeof element === 'string') {
-                element = document.querySelector(element);
-            }
-
-            if (element) {
-                element.scrollIntoView({ ...defaultOptions, ...options });
-            }
-        }
+    omit(obj, keys) {
+        const result = { ...obj };
+        keys.forEach(key => delete result[key]);
+        return result;
     },
 
     // Validation Utilities
-    validation: {
-        /**
-         * Validate email
-         */
-        isValidEmail(email) {
-            return VALIDATION_RULES.EMAIL.PATTERN.test(email);
+    isEmail(email) {
+        return REGEX_PATTERNS.EMAIL.test(email);
+    },
+
+    isPassword(password) {
+        return REGEX_PATTERNS.PASSWORD.test(password);
+    },
+
+    isUrl(url) {
+        return REGEX_PATTERNS.URL.test(url);
+    },
+
+    isEmpty(value) {
+        if (value === null || value === undefined) return true;
+        if (typeof value === 'string') return value.trim() === '';
+        if (Array.isArray(value)) return value.length === 0;
+        if (typeof value === 'object') return Object.keys(value).length === 0;
+        return false;
+    },
+
+    // File Utilities
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+    },
+
+    getFileExtension(filename) {
+        return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    },
+
+    isImageFile(file) {
+        return APP_CONFIG.SUPPORTED_IMAGE_TYPES.includes(file.type);
+    },
+
+    validateFileSize(file) {
+        return file.size <= APP_CONFIG.MAX_FILE_SIZE;
+    },
+
+    // URL Utilities
+    getUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        const result = {};
+        for (const [key, value] of params) {
+            result[key] = value;
+        }
+        return result;
+    },
+
+    updateUrlParams(params) {
+        const url = new URL(window.location);
+        Object.keys(params).forEach(key => {
+            if (params[key] === null || params[key] === undefined) {
+                url.searchParams.delete(key);
+            } else {
+                url.searchParams.set(key, params[key]);
+            }
+        });
+        window.history.replaceState({}, '', url);
+    },
+
+    // Device Utilities
+    isMobile() {
+        return window.innerWidth < MOBILE_BREAKPOINT;
+    },
+
+    isTablet() {
+        return window.innerWidth >= MOBILE_BREAKPOINT && window.innerWidth < DESKTOP_BREAKPOINT;
+    },
+
+    isDesktop() {
+        return window.innerWidth >= DESKTOP_BREAKPOINT;
+    },
+
+    isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    },
+
+    // Performance Utilities
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    throttle(func, limit) {
+        let lastFunc;
+        let lastRan;
+        return function (...args) {
+            if (!lastRan) {
+                func.apply(this, args);
+                lastRan = Date.now();
+            } else {
+                clearTimeout(lastFunc);
+                lastFunc = setTimeout(() => {
+                    if ((Date.now() - lastRan) >= limit) {
+                        func.apply(this, args);
+                        lastRan = Date.now();
+                    }
+                }, limit - (Date.now() - lastRan));
+            }
+        };
+    },
+
+    // Local Storage Utilities
+    storage: {
+        set(key, value) {
+            try {
+                const serialized = JSON.stringify(value);
+                localStorage.setItem(APP_CONFIG.STORAGE_PREFIX + key, serialized);
+                return true;
+            } catch (error) {
+                console.error('Storage set error:', error);
+                return false;
+            }
         },
 
-        /**
-         * Validate password
-         */
-        isValidPassword(password) {
-            const rules = VALIDATION_RULES.PASSWORD;
-
-            if (password.length < rules.MIN_LENGTH) return false;
-            if (rules.REQUIRE_UPPERCASE && !/[A-Z]/.test(password)) return false;
-            if (rules.REQUIRE_LOWERCASE && !/[a-z]/.test(password)) return false;
-            if (rules.REQUIRE_NUMBER && !/\d/.test(password)) return false;
-            if (rules.REQUIRE_SPECIAL && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) return false;
-
-            return true;
+        get(key, defaultValue = null) {
+            try {
+                const item = localStorage.getItem(APP_CONFIG.STORAGE_PREFIX + key);
+                return item ? JSON.parse(item) : defaultValue;
+            } catch (error) {
+                console.error('Storage get error:', error);
+                return defaultValue;
+            }
         },
 
-        /**
-         * Sanitize HTML
-         */
-        sanitizeHtml(html) {
-            const temp = document.createElement('div');
-            temp.textContent = html;
-            return temp.innerHTML;
+        remove(key) {
+            try {
+                localStorage.removeItem(APP_CONFIG.STORAGE_PREFIX + key);
+                return true;
+            } catch (error) {
+                console.error('Storage remove error:', error);
+                return false;
+            }
         },
 
-        /**
-         * Validate file type
-         */
-        isValidFileType(file, allowedTypes) {
-            return allowedTypes.includes(file.type);
-        },
-
-        /**
-         * Validate file size
-         */
-        isValidFileSize(file, maxSize) {
-            return file.size <= maxSize;
+        clear() {
+            try {
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                return true;
+            } catch (error) {
+                console.error('Storage clear error:', error);
+                return false;
+            }
         }
     },
 
     // Animation Utilities
-    animation: {
-        /**
-         * Animate element with CSS classes
-         */
-        animate(element, animation, duration = 300) {
-            return new Promise((resolve) => {
-                element.classList.add(`animate-${animation}`);
+    animateValue(start, end, duration, callback) {
+        const startTime = performance.now();
 
-                const handleAnimationEnd = () => {
-                    element.classList.remove(`animate-${animation}`);
-                    element.removeEventListener('animationend', handleAnimationEnd);
-                    resolve();
-                };
+        function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
 
-                element.addEventListener('animationend', handleAnimationEnd);
+            // Easing function (ease-out)
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = start + (end - start) * eased;
 
-                // Fallback timeout
-                setTimeout(() => {
-                    handleAnimationEnd();
-                }, duration);
-            });
-        },
+            callback(current);
 
-        /**
-         * Create confetti effect
-         */
-        confetti(options = {}) {
-            const defaults = {
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            };
-
-            const config = { ...defaults, ...options };
-
-            for (let i = 0; i < config.particleCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * window.innerWidth + 'px';
-                confetti.style.backgroundColor = this.getRandomColor();
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = confetti.style.width;
-
-                document.body.appendChild(confetti);
-
-                setTimeout(() => {
-                    if (confetti.parentNode) {
-                        confetti.parentNode.removeChild(confetti);
-                    }
-                }, 3000);
+            if (progress < 1) {
+                requestAnimationFrame(animate);
             }
-        },
-
-        /**
-         * Get random color
-         */
-        getRandomColor() {
-            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
-            return colors[Math.floor(Math.random() * colors.length)];
         }
+
+        requestAnimationFrame(animate);
+    },
+
+    // DOM Utilities
+    createElement(tag, attributes = {}, children = []) {
+        const element = document.createElement(tag);
+
+        Object.keys(attributes).forEach(key => {
+            if (key === 'className') {
+                element.className = attributes[key];
+            } else if (key === 'innerHTML') {
+                element.innerHTML = attributes[key];
+            } else if (key === 'textContent') {
+                element.textContent = attributes[key];
+            } else {
+                element.setAttribute(key, attributes[key]);
+            }
+        });
+
+        children.forEach(child => {
+            if (typeof child === 'string') {
+                element.appendChild(document.createTextNode(child));
+            } else {
+                element.appendChild(child);
+            }
+        });
+
+        return element;
     },
 
     // Error Handling
-    error: {
-        /**
-         * Log error with context
-         */
-        log(error, context = '') {
-            console.error(`[DSA Path Error] ${context}:`, error);
+    handleError(error, context = '') {
+        console.error(`Error in ${context}:`, error);
 
-            // In production, you might want to send errors to a logging service
-            if (process.env.NODE_ENV === 'production') {
-                // Send to error tracking service
-            }
-        },
+        // Log to external service in production
+        if (process.env.NODE_ENV === 'production') {
+            // Send to error tracking service
+        }
 
-        /**
-         * Handle API errors
-         */
-        handleApiError(error) {
-            if (error.response) {
-                const status = error.response.status;
-                switch (status) {
-                    case 401:
-                        return ERROR_MESSAGES.UNAUTHORIZED;
-                    case 403:
-                        return ERROR_MESSAGES.FORBIDDEN;
-                    case 404:
-                        return ERROR_MESSAGES.NOT_FOUND;
-                    case 422:
-                        return ERROR_MESSAGES.VALIDATION_ERROR;
-                    case 500:
-                        return ERROR_MESSAGES.SERVER_ERROR;
-                    default:
-                        return ERROR_MESSAGES.UNKNOWN_ERROR;
-                }
-            } else if (error.request) {
-                return ERROR_MESSAGES.NETWORK_ERROR;
+        return {
+            message: error.message || 'An unexpected error occurred',
+            type: 'error',
+            context
+        };
+    },
+
+    // Color Utilities
+    hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    },
+
+    rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    },
+
+    // Math Utilities
+    calculateStreak(dates) {
+        if (!dates || dates.length === 0) return 0;
+
+        const sortedDates = dates
+            .map(d => new Date(d).toDateString())
+            .sort((a, b) => new Date(b) - new Date(a));
+
+        let streak = 0;
+        let currentDate = new Date();
+
+        for (const dateStr of sortedDates) {
+            const date = new Date(dateStr);
+            const daysDiff = Math.floor((currentDate - date) / (1000 * 60 * 60 * 24));
+
+            if (daysDiff === streak) {
+                streak++;
+                currentDate = date;
             } else {
-                return ERROR_MESSAGES.UNKNOWN_ERROR;
+                break;
             }
         }
-    }
+
+        return streak;
+    },
+
+    // Progress Calculation
+    calculateProgress(completed, total) {
+        if (!total || total === 0) return 0;
+        return Math.round((completed / total) * 100);
+    },
+
+    // Random ID Generator
+    generateId(prefix = 'id') {
+        return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    },
 };
 
-// Export Utils for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Utils;
-}
+// Make utils available globally
+window.Utils = Utils;

@@ -1,474 +1,462 @@
-// Local Storage Management for DSA Path Application
-
+// Storage Management
 const Storage = {
-    /**
-     * Set item in localStorage with error handling
-     */
-    setItem(key, value) {
+    // Initialize storage
+    init() {
+        this.checkStorageAvailability();
+        this.migrateOldData();
+        return this;
+    },
+
+    // Check if localStorage is available
+    checkStorageAvailability() {
         try {
-            const serializedValue = JSON.stringify(value);
-            localStorage.setItem(key, serializedValue);
+            const test = '__storage_test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            this.isAvailable = true;
+        } catch (error) {
+            this.isAvailable = false;
+            console.warn('localStorage is not available:', error);
+        }
+    },
+
+    // Migrate old data if needed
+    migrateOldData() {
+        const version = this.get('version', '1.0.0');
+        if (version !== APP_CONFIG.VERSION) {
+            console.log('Migrating storage data...');
+            this.set('version', APP_CONFIG.VERSION);
+        }
+    },
+
+    // Core storage methods
+    set(key, value, options = {}) {
+        if (!this.isAvailable) {
+            console.warn('Storage not available');
+            return false;
+        }
+
+        try {
+            const data = {
+                value,
+                timestamp: Date.now(),
+                expires: options.expires ? Date.now() + options.expires : null,
+                encrypted: options.encrypt || false
+            };
+
+            let serialized = JSON.stringify(data);
+
+            if (options.encrypt) {
+                serialized = this.encrypt(serialized);
+            }
+
+            localStorage.setItem(this.getKey(key), serialized);
             return true;
         } catch (error) {
-            console.error('Error saving to localStorage:', error);
+            console.error('Storage set error:', error);
             return false;
         }
     },
 
-    /**
-     * Get item from localStorage with error handling
-     */
-    getItem(key, defaultValue = null) {
+    get(key, defaultValue = null) {
+        if (!this.isAvailable) {
+            return defaultValue;
+        }
+
         try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
+            let item = localStorage.getItem(this.getKey(key));
+            if (!item) return defaultValue;
+
+            // Check if it's encrypted
+            if (item.startsWith('encrypted:')) {
+                item = this.decrypt(item);
+            }
+
+            const data = JSON.parse(item);
+
+            // Check expiration
+            if (data.expires && Date.now() > data.expires) {
+                this.remove(key);
+                return defaultValue;
+            }
+
+            return data.value;
         } catch (error) {
-            console.error('Error reading from localStorage:', error);
+            console.error('Storage get error:', error);
             return defaultValue;
         }
     },
 
-    /**
-     * Remove item from localStorage
-     */
-    removeItem(key) {
+    remove(key) {
+        if (!this.isAvailable) return false;
+
         try {
-            localStorage.removeItem(key);
+            localStorage.removeItem(this.getKey(key));
             return true;
         } catch (error) {
-            console.error('Error removing from localStorage:', error);
+            console.error('Storage remove error:', error);
             return false;
         }
     },
 
-    /**
-     * Clear all items from localStorage
-     */
     clear() {
+        if (!this.isAvailable) return false;
+
         try {
-            localStorage.clear();
-            return true;
-        } catch (error) {
-            console.error('Error clearing localStorage:', error);
-            return false;
-        }
-    },
-
-    /**
-     * Check if localStorage is available
-     */
-    isAvailable() {
-        try {
-            const test = '__localStorage_test__';
-            localStorage.setItem(test, test);
-            localStorage.removeItem(test);
-            return true;
-        } catch (error) {
-            return false;
-        }
-    },
-
-    /**
-     * Get storage usage information
-     */
-    getUsage() {
-        if (!this.isAvailable()) return null;
-
-        let totalSize = 0;
-        const itemSizes = {};
-
-        for (let key in localStorage) {
-            if (localStorage.hasOwnProperty(key)) {
-                const value = localStorage.getItem(key);
-                const size = new Blob([value]).size;
-                itemSizes[key] = size;
-                totalSize += size;
-            }
-        }
-
-        return {
-            totalSize,
-            itemSizes,
-            totalSizeFormatted: this.formatBytes(totalSize),
-            itemSizesFormatted: Object.entries(itemSizes).reduce((acc, [key, size]) => {
-                acc[key] = this.formatBytes(size);
-                return acc;
-            }, {})
-        };
-    },
-
-    /**
-     * Format bytes to human readable format
-     */
-    formatBytes(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    },
-
-    /**
-     * Token management
-     */
-    token: {
-        setAccessToken(token) {
-            return Storage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
-        },
-
-        getAccessToken() {
-            return Storage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-        },
-
-        setRefreshToken(token) {
-            return Storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, token);
-        },
-
-        getRefreshToken() {
-            return Storage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-        },
-
-        clearTokens() {
-            Storage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-            Storage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-        }
-    },
-
-    /**
-     * User data management
-     */
-    user: {
-        setUserData(userData) {
-            return Storage.setItem(STORAGE_KEYS.USER_DATA, userData);
-        },
-
-        getUserData() {
-            return Storage.getItem(STORAGE_KEYS.USER_DATA);
-        },
-
-        clearUserData() {
-            Storage.removeItem(STORAGE_KEYS.USER_DATA);
-        },
-
-        updateUserData(updates) {
-            const currentData = this.getUserData() || {};
-            const updatedData = { ...currentData, ...updates };
-            return this.setUserData(updatedData);
-        }
-    },
-
-    /**
-     * Theme management
-     */
-    theme: {
-        setTheme(theme) {
-            return Storage.setItem(STORAGE_KEYS.THEME, theme);
-        },
-
-        getTheme() {
-            return Storage.getItem(STORAGE_KEYS.THEME, THEME_CONFIG.SYSTEM);
-        }
-    },
-
-    /**
-     * Preferences management
-     */
-    preferences: {
-        setPreferences(preferences) {
-            return Storage.setItem(STORAGE_KEYS.PREFERENCES, preferences);
-        },
-
-        getPreferences() {
-            return Storage.getItem(STORAGE_KEYS.PREFERENCES, {});
-        },
-
-        updatePreferences(updates) {
-            const currentPrefs = this.getPreferences();
-            const updatedPrefs = { ...currentPrefs, ...updates };
-            return this.setPreferences(updatedPrefs);
-        }
-    },
-
-    /**
-     * Timer state management
-     */
-    timer: {
-        setTimerState(state) {
-            return Storage.setItem(STORAGE_KEYS.TIMER_STATE, {
-                ...state,
-                timestamp: Date.now()
-            });
-        },
-
-        getTimerState() {
-            const state = Storage.getItem(STORAGE_KEYS.TIMER_STATE);
-            if (!state) return null;
-
-            // Check if state is not too old (1 hour)
-            const maxAge = 60 * 60 * 1000; // 1 hour
-            if (Date.now() - state.timestamp > maxAge) {
-                this.clearTimerState();
-                return null;
-            }
-
-            return state;
-        },
-
-        clearTimerState() {
-            Storage.removeItem(STORAGE_KEYS.TIMER_STATE);
-        }
-    },
-
-    /**
-     * Draft notes management
-     */
-    notes: {
-        setDraftNote(noteId, content) {
-            const drafts = this.getDraftNotes();
-            drafts[noteId] = {
-                content,
-                timestamp: Date.now()
-            };
-            return Storage.setItem(STORAGE_KEYS.DRAFT_NOTES, drafts);
-        },
-
-        getDraftNote(noteId) {
-            const drafts = this.getDraftNotes();
-            return drafts[noteId] || null;
-        },
-
-        getDraftNotes() {
-            return Storage.getItem(STORAGE_KEYS.DRAFT_NOTES, {});
-        },
-
-        removeDraftNote(noteId) {
-            const drafts = this.getDraftNotes();
-            delete drafts[noteId];
-            return Storage.setItem(STORAGE_KEYS.DRAFT_NOTES, drafts);
-        },
-
-        clearOldDrafts() {
-            const drafts = this.getDraftNotes();
-            const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-            const now = Date.now();
-
-            Object.keys(drafts).forEach(noteId => {
-                if (now - drafts[noteId].timestamp > maxAge) {
-                    delete drafts[noteId];
-                }
-            });
-
-            return Storage.setItem(STORAGE_KEYS.DRAFT_NOTES, drafts);
-        }
-    },
-
-    /**
-     * Search history management
-     */
-    search: {
-        addSearchQuery(query) {
-            if (!query || query.trim().length < 2) return;
-
-            const history = this.getSearchHistory();
-            const normalizedQuery = query.trim().toLowerCase();
-
-            // Remove if already exists
-            const existingIndex = history.findIndex(item => item.query === normalizedQuery);
-            if (existingIndex > -1) {
-                history.splice(existingIndex, 1);
-            }
-
-            // Add to beginning
-            history.unshift({
-                query: normalizedQuery,
-                timestamp: Date.now()
-            });
-
-            // Keep only last 20 searches
-            const trimmedHistory = history.slice(0, 20);
-
-            return Storage.setItem(STORAGE_KEYS.SEARCH_HISTORY, trimmedHistory);
-        },
-
-        getSearchHistory() {
-            return Storage.getItem(STORAGE_KEYS.SEARCH_HISTORY, []);
-        },
-
-        clearSearchHistory() {
-            Storage.removeItem(STORAGE_KEYS.SEARCH_HISTORY);
-        },
-
-        removeSearchQuery(query) {
-            const history = this.getSearchHistory();
-            const filteredHistory = history.filter(item => item.query !== query);
-            return Storage.setItem(STORAGE_KEYS.SEARCH_HISTORY, filteredHistory);
-        }
-    },
-
-    /**
-     * Cache management with expiration
-     */
-    cache: {
-        set(key, data, expirationMinutes = 60) {
-            const item = {
-                data,
-                expiration: Date.now() + (expirationMinutes * 60 * 1000)
-            };
-            return Storage.setItem(`cache_${key}`, item);
-        },
-
-        get(key) {
-            const item = Storage.getItem(`cache_${key}`);
-            if (!item) return null;
-
-            if (Date.now() > item.expiration) {
-                this.remove(key);
-                return null;
-            }
-
-            return item.data;
-        },
-
-        remove(key) {
-            Storage.removeItem(`cache_${key}`);
-        },
-
-        clear() {
-            const keys = Object.keys(localStorage).filter(key => key.startsWith('cache_'));
-            keys.forEach(key => localStorage.removeItem(key));
-        },
-
-        cleanExpired() {
-            const keys = Object.keys(localStorage).filter(key => key.startsWith('cache_'));
-            keys.forEach(key => {
-                const item = Storage.getItem(key);
-                if (item && Date.now() > item.expiration) {
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
                     localStorage.removeItem(key);
                 }
             });
+            return true;
+        } catch (error) {
+            console.error('Storage clear error:', error);
+            return false;
         }
     },
 
-    /**
-     * Session management for temporary data
-     */
+    // Helper methods
+    getKey(key) {
+        return APP_CONFIG.STORAGE_PREFIX + key;
+    },
+
+    // Simple encryption (for sensitive data)
+    encrypt(data) {
+        // Simple base64 encoding (not secure, just obfuscation)
+        return 'encrypted:' + btoa(data);
+    },
+
+    decrypt(data) {
+        return atob(data.replace('encrypted:', ''));
+    },
+
+    // Session storage methods
     session: {
-        setItem(key, value) {
+        set(key, value) {
             try {
-                sessionStorage.setItem(key, JSON.stringify(value));
+                sessionStorage.setItem(APP_CONFIG.STORAGE_PREFIX + key, JSON.stringify(value));
                 return true;
             } catch (error) {
-                console.error('Error saving to sessionStorage:', error);
+                console.error('Session storage set error:', error);
                 return false;
             }
         },
 
-        getItem(key, defaultValue = null) {
+        get(key, defaultValue = null) {
             try {
-                const item = sessionStorage.getItem(key);
+                const item = sessionStorage.getItem(APP_CONFIG.STORAGE_PREFIX + key);
                 return item ? JSON.parse(item) : defaultValue;
             } catch (error) {
-                console.error('Error reading from sessionStorage:', error);
+                console.error('Session storage get error:', error);
                 return defaultValue;
             }
         },
 
-        removeItem(key) {
+        remove(key) {
             try {
-                sessionStorage.removeItem(key);
+                sessionStorage.removeItem(APP_CONFIG.STORAGE_PREFIX + key);
                 return true;
             } catch (error) {
-                console.error('Error removing from sessionStorage:', error);
+                console.error('Session storage remove error:', error);
                 return false;
             }
         },
 
         clear() {
             try {
-                sessionStorage.clear();
+                Object.keys(sessionStorage).forEach(key => {
+                    if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                        sessionStorage.removeItem(key);
+                    }
+                });
                 return true;
             } catch (error) {
-                console.error('Error clearing sessionStorage:', error);
+                console.error('Session storage clear error:', error);
                 return false;
             }
         }
     },
 
-    /**
-     * Backup and restore functionality
-     */
-    backup: {
-        export() {
-            const data = {};
+    // Specialized storage methods
+    auth: {
+        setTokens(accessToken, refreshToken) {
+            Storage.set(STORAGE_KEYS.ACCESS_TOKEN, accessToken, { encrypt: true });
+            Storage.set(STORAGE_KEYS.REFRESH_TOKEN, refreshToken, { encrypt: true });
+        },
 
-            // Export all DSA Path related data
-            Object.values(STORAGE_KEYS).forEach(key => {
-                const value = Storage.getItem(key);
-                if (value !== null) {
-                    data[key] = value;
+        getAccessToken() {
+            return Storage.get(STORAGE_KEYS.ACCESS_TOKEN);
+        },
+
+        getRefreshToken() {
+            return Storage.get(STORAGE_KEYS.REFRESH_TOKEN);
+        },
+
+        clearTokens() {
+            Storage.remove(STORAGE_KEYS.ACCESS_TOKEN);
+            Storage.remove(STORAGE_KEYS.REFRESH_TOKEN);
+        },
+
+        setUser(userData) {
+            Storage.set(STORAGE_KEYS.USER_DATA, userData);
+        },
+
+        getUser() {
+            return Storage.get(STORAGE_KEYS.USER_DATA);
+        },
+
+        clearUser() {
+            Storage.remove(STORAGE_KEYS.USER_DATA);
+        }
+    },
+
+    preferences: {
+        set(preferences) {
+            Storage.set(STORAGE_KEYS.PREFERENCES, preferences);
+        },
+
+        get() {
+            return Storage.get(STORAGE_KEYS.PREFERENCES, {
+                theme: APP_CONFIG.DEFAULT_THEME,
+                notifications: true,
+                sounds: true,
+                autoSave: true,
+                pomodoroLength: 25,
+                shortBreakLength: 5,
+                longBreakLength: 15
+            });
+        },
+
+        update(key, value) {
+            const current = this.get();
+            current[key] = value;
+            this.set(current);
+        }
+    },
+
+    timer: {
+        setState(state) {
+            Storage.session.set(STORAGE_KEYS.TIMER_STATE, state);
+        },
+
+        getState() {
+            return Storage.session.get(STORAGE_KEYS.TIMER_STATE, {
+                mode: 'pomodoro',
+                timeLeft: APP_CONFIG.POMODORO_DURATION,
+                isRunning: false,
+                sessionCount: 0
+            });
+        },
+
+        clearState() {
+            Storage.session.remove(STORAGE_KEYS.TIMER_STATE);
+        }
+    },
+
+    notes: {
+        saveDraft(noteId, content) {
+            const drafts = Storage.get(STORAGE_KEYS.DRAFT_NOTE, {});
+            drafts[noteId] = {
+                content,
+                timestamp: Date.now()
+            };
+            Storage.set(STORAGE_KEYS.DRAFT_NOTE, drafts);
+        },
+
+        getDraft(noteId) {
+            const drafts = Storage.get(STORAGE_KEYS.DRAFT_NOTE, {});
+            return drafts[noteId] || null;
+        },
+
+        clearDraft(noteId) {
+            const drafts = Storage.get(STORAGE_KEYS.DRAFT_NOTE, {});
+            delete drafts[noteId];
+            Storage.set(STORAGE_KEYS.DRAFT_NOTE, drafts);
+        },
+
+        clearAllDrafts() {
+            Storage.remove(STORAGE_KEYS.DRAFT_NOTE);
+        }
+    },
+
+    search: {
+        addRecentSearch(query) {
+            const recent = this.getRecentSearches();
+            const filtered = recent.filter(item => item.query !== query);
+            filtered.unshift({
+                query,
+                timestamp: Date.now()
+            });
+
+            // Keep only last 10 searches
+            const limited = filtered.slice(0, 10);
+            Storage.set(STORAGE_KEYS.RECENT_SEARCHES, limited);
+        },
+
+        getRecentSearches() {
+            return Storage.get(STORAGE_KEYS.RECENT_SEARCHES, []);
+        },
+
+        clearRecentSearches() {
+            Storage.remove(STORAGE_KEYS.RECENT_SEARCHES);
+        }
+    },
+
+    offline: {
+        saveData(key, data) {
+            const offlineData = Storage.get(STORAGE_KEYS.OFFLINE_DATA, {});
+            offlineData[key] = {
+                data,
+                timestamp: Date.now(),
+                synced: false
+            };
+            Storage.set(STORAGE_KEYS.OFFLINE_DATA, offlineData);
+        },
+
+        getData(key) {
+            const offlineData = Storage.get(STORAGE_KEYS.OFFLINE_DATA, {});
+            return offlineData[key] || null;
+        },
+
+        markSynced(key) {
+            const offlineData = Storage.get(STORAGE_KEYS.OFFLINE_DATA, {});
+            if (offlineData[key]) {
+                offlineData[key].synced = true;
+                Storage.set(STORAGE_KEYS.OFFLINE_DATA, offlineData);
+            }
+        },
+
+        getUnsyncedData() {
+            const offlineData = Storage.get(STORAGE_KEYS.OFFLINE_DATA, {});
+            const unsynced = {};
+
+            Object.keys(offlineData).forEach(key => {
+                if (!offlineData[key].synced) {
+                    unsynced[key] = offlineData[key];
                 }
             });
 
-            // Add metadata
-            data._metadata = {
-                exportDate: new Date().toISOString(),
-                version: APP_CONFIG.VERSION
-            };
-
-            return data;
+            return unsynced;
         },
 
-        import(data) {
-            try {
-                // Validate data structure
-                if (!data || typeof data !== 'object') {
-                    throw new Error('Invalid backup data');
+        clearSyncedData() {
+            const offlineData = Storage.get(STORAGE_KEYS.OFFLINE_DATA, {});
+            const unsynced = {};
+
+            Object.keys(offlineData).forEach(key => {
+                if (!offlineData[key].synced) {
+                    unsynced[key] = offlineData[key];
                 }
+            });
 
-                // Import each item
-                Object.entries(data).forEach(([key, value]) => {
-                    if (key !== '_metadata' && Object.values(STORAGE_KEYS).includes(key)) {
-                        Storage.setItem(key, value);
-                    }
-                });
-
-                return true;
-            } catch (error) {
-                console.error('Error importing backup:', error);
-                return false;
-            }
-        },
-
-        download() {
-            const data = this.export();
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const filename = `dsa-path-backup-${Utils.date.format(new Date(), 'YYYY-MM-DD-HHmm')}.json`;
-
-            Utils.browser.download(url, filename);
-            URL.revokeObjectURL(url);
+            Storage.set(STORAGE_KEYS.OFFLINE_DATA, unsynced);
         }
     },
 
-    /**
-     * Initialize storage with cleanup
-     */
-    init() {
-        // Clean expired cache items
-        this.cache.cleanExpired();
+    // Storage size management
+    getSize() {
+        if (!this.isAvailable) return 0;
 
-        // Clean old draft notes
-        this.notes.clearOldDrafts();
+        let total = 0;
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                total += localStorage.getItem(key).length;
+            }
+        });
 
-        // Set up periodic cleanup
-        setInterval(() => {
-            this.cache.cleanExpired();
-            this.notes.clearOldDrafts();
-        }, 60 * 60 * 1000); // Every hour
+        return total;
+    },
+
+    getFormattedSize() {
+        return Utils.formatFileSize(this.getSize());
+    },
+
+    // Cleanup old data
+    cleanup(maxAge = 7 * 24 * 60 * 60 * 1000) { // 7 days
+        if (!this.isAvailable) return;
+
+        const now = Date.now();
+        const toRemove = [];
+
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (data.timestamp && (now - data.timestamp) > maxAge) {
+                        toRemove.push(key);
+                    }
+                } catch (error) {
+                    // Invalid data, mark for removal
+                    toRemove.push(key);
+                }
+            }
+        });
+
+        toRemove.forEach(key => localStorage.removeItem(key));
+        console.log(`Cleaned up ${toRemove.length} old storage items`);
+    },
+
+    // Export/Import data
+    export() {
+        if (!this.isAvailable) return null;
+
+        const data = {};
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                data[key] = localStorage.getItem(key);
+            }
+        });
+
+        return JSON.stringify(data);
+    },
+
+    import(jsonData) {
+        if (!this.isAvailable) return false;
+
+        try {
+            const data = JSON.parse(jsonData);
+            Object.keys(data).forEach(key => {
+                if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                    localStorage.setItem(key, data[key]);
+                }
+            });
+            return true;
+        } catch (error) {
+            console.error('Import error:', error);
+            return false;
+        }
+    },
+
+    // Debug methods
+    debug: {
+        listAll() {
+            if (!Storage.isAvailable) return {};
+
+            const data = {};
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith(APP_CONFIG.STORAGE_PREFIX)) {
+                    try {
+                        data[key] = JSON.parse(localStorage.getItem(key));
+                    } catch (error) {
+                        data[key] = localStorage.getItem(key);
+                    }
+                }
+            });
+            return data;
+        },
+
+        clear() {
+            return Storage.clear();
+        },
+
+        size() {
+            return Storage.getFormattedSize();
+        }
     }
 };
 
-// Export Storage for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Storage;
-}
+// Initialize storage
+Storage.init();
+
+// Make available globally
+window.Storage = Storage;

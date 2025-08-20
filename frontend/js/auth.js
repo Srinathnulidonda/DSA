@@ -1,445 +1,431 @@
-// Authentication Management for DSA Path Application
-
+// Authentication Management
 const Auth = {
-    // Current user state
     currentUser: null,
     isAuthenticated: false,
 
-    // Event listeners for auth state changes
-    listeners: {
-        login: [],
-        logout: [],
-        authChange: []
+    // Initialize auth
+    init() {
+        this.loadUserFromStorage();
+        this.setupTokenRefresh();
+        return this;
     },
 
-    /**
-     * Initialize authentication
-     */
-    init() {
-        // Check for existing token
-        const token = Storage.token.getAccessToken();
-        const userData = Storage.user.getUserData();
+    // Load user from storage
+    loadUserFromStorage() {
+        const userData = Storage.auth.getUser();
+        const accessToken = Storage.auth.getAccessToken();
 
-        if (token && userData) {
+        if (userData && accessToken) {
             this.currentUser = userData;
             this.isAuthenticated = true;
-            this.notifyListeners('authChange', this.currentUser);
-        }
-
-        // Set up automatic token refresh
-        this.setupTokenRefresh();
-    },
-
-    /**
-     * Login user
-     */
-    async login(email, password, rememberMe = false) {
-        try {
-            const response = await ApiMethods.auth.login(email, password);
-
-            this.currentUser = response.user;
-            this.isAuthenticated = true;
-
-            // If remember me is not checked, use session storage for tokens
-            if (!rememberMe) {
-                Storage.session.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.access_token);
-                Storage.session.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refresh_token);
-                Storage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-                Storage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-            }
-
-            this.notifyListeners('login', this.currentUser);
-            this.notifyListeners('authChange', this.currentUser);
-
-            Notifications.show('Welcome back!', 'success');
-
-            return response;
-        } catch (error) {
-            const message = Utils.error.handleApiError(error);
-            Notifications.show(message, 'error');
-            throw error;
+            this.dispatchAuthStateChange();
         }
     },
 
-    /**
-     * Register new user
-     */
-    async register(userData) {
-        try {
-            const response = await ApiMethods.auth.register(userData);
-
-            this.currentUser = response.user;
-            this.isAuthenticated = true;
-
-            this.notifyListeners('login', this.currentUser);
-            this.notifyListeners('authChange', this.currentUser);
-
-            Notifications.show('Account created successfully!', 'success');
-
-            return response;
-        } catch (error) {
-            const message = Utils.error.handleApiError(error);
-            Notifications.show(message, 'error');
-            throw error;
-        }
-    },
-
-    /**
-     * Logout user
-     */
-    logout() {
-        // Clear all auth data
-        Storage.token.clearTokens();
-        Storage.user.clearUserData();
-        Storage.session.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-        Storage.session.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-
-        this.currentUser = null;
-        this.isAuthenticated = false;
-
-        this.notifyListeners('logout');
-        this.notifyListeners('authChange', null);
-
-        Notifications.show('Logged out successfully', 'info');
-
-        // Redirect to login
-        Router.navigate(ROUTES.LOGIN);
-    },
-
-    /**
-     * Forgot password
-     */
-    async forgotPassword(email) {
-        try {
-            await ApiMethods.auth.forgotPassword(email);
-            Notifications.show('Password reset link sent to your email', 'success');
-            return true;
-        } catch (error) {
-            const message = Utils.error.handleApiError(error);
-            Notifications.show(message, 'error');
-            throw error;
-        }
-    },
-
-    /**
-     * Reset password
-     */
-    async resetPassword(token, password) {
-        try {
-            await ApiMethods.auth.resetPassword(token, password);
-            Notifications.show('Password reset successful', 'success');
-            return true;
-        } catch (error) {
-            const message = Utils.error.handleApiError(error);
-            Notifications.show(message, 'error');
-            throw error;
-        }
-    },
-
-    /**
-     * Update user profile
-     */
-    async updateProfile(updates) {
-        try {
-            const response = await ApiMethods.profile.update(updates);
-
-            this.currentUser = response.user;
-            this.notifyListeners('authChange', this.currentUser);
-
-            Notifications.show('Profile updated successfully', 'success');
-
-            return response;
-        } catch (error) {
-            const message = Utils.error.handleApiError(error);
-            Notifications.show(message, 'error');
-            throw error;
-        }
-    },
-
-    /**
-     * Upload user avatar
-     */
-    async uploadAvatar(file) {
-        try {
-            // Validate file
-            const validation = Validators.file.validateImage(file);
-            if (!validation.isValid) {
-                Notifications.show(validation.errors[0], 'error');
-                return;
-            }
-
-            const response = await ApiMethods.profile.uploadAvatar(file);
-
-            this.currentUser.avatar_url = response.avatar_url;
-            Storage.user.updateUserData(this.currentUser);
-            this.notifyListeners('authChange', this.currentUser);
-
-            Notifications.show('Avatar updated successfully', 'success');
-
-            return response;
-        } catch (error) {
-            const message = Utils.error.handleApiError(error);
-            Notifications.show(message, 'error');
-            throw error;
-        }
-    },
-
-    /**
-     * Get user token (from storage or session)
-     */
-    getToken() {
-        return Storage.token.getAccessToken() || Storage.session.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-    },
-
-    /**
-     * Check if user is authenticated
-     */
-    isLoggedIn() {
-        return this.isAuthenticated && this.getToken();
-    },
-
-    /**
-     * Require authentication (for protected routes)
-     */
-    requireAuth() {
-        if (!this.isLoggedIn()) {
-            Router.navigate(ROUTES.LOGIN);
-            return false;
-        }
-        return true;
-    },
-
-    /**
-     * Setup automatic token refresh
-     */
+    // Setup automatic token refresh
     setupTokenRefresh() {
+        // Refresh token every 50 minutes (tokens expire in 1 hour)
         setInterval(async () => {
             if (this.isAuthenticated) {
                 try {
-                    await API.refreshToken();
+                    await this.refreshToken();
                 } catch (error) {
                     console.error('Token refresh failed:', error);
                     this.logout();
                 }
             }
-        }, APP_CONFIG.TOKEN_REFRESH_INTERVAL);
+        }, 50 * 60 * 1000);
     },
 
-    /**
-     * Add event listener
-     */
-    addEventListener(event, callback) {
-        if (this.listeners[event]) {
-            this.listeners[event].push(callback);
+    // Login
+    async login(email, password) {
+        try {
+            const response = await API.auth.login(email, password);
+
+            // Store tokens and user data
+            Storage.auth.setTokens(response.access_token, response.refresh_token);
+            Storage.auth.setUser(response.user);
+
+            this.currentUser = response.user;
+            this.isAuthenticated = true;
+
+            this.dispatchAuthStateChange();
+
+            return {
+                success: true,
+                user: response.user,
+                message: SUCCESS_MESSAGES.LOGIN_SUCCESS
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message || ERROR_MESSAGES.SERVER_ERROR
+            };
         }
     },
 
-    /**
-     * Remove event listener
-     */
-    removeEventListener(event, callback) {
-        if (this.listeners[event]) {
-            const index = this.listeners[event].indexOf(callback);
-            if (index > -1) {
-                this.listeners[event].splice(index, 1);
+    // Register
+    async register(name, email, password) {
+        try {
+            const response = await API.auth.register(name, email, password);
+
+            // Store tokens and user data
+            Storage.auth.setTokens(response.access_token, response.refresh_token);
+            Storage.auth.setUser(response.user);
+
+            this.currentUser = response.user;
+            this.isAuthenticated = true;
+
+            this.dispatchAuthStateChange();
+
+            return {
+                success: true,
+                user: response.user,
+                message: SUCCESS_MESSAGES.REGISTER_SUCCESS
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message || ERROR_MESSAGES.SERVER_ERROR
+            };
+        }
+    },
+
+    // Forgot password
+    async forgotPassword(email) {
+        try {
+            await API.auth.forgotPassword(email);
+
+            return {
+                success: true,
+                message: 'If the email exists, a reset link has been sent to your inbox.'
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message || ERROR_MESSAGES.SERVER_ERROR
+            };
+        }
+    },
+
+    // Reset password
+    async resetPassword(token, password) {
+        try {
+            await API.auth.resetPassword(token, password);
+
+            return {
+                success: true,
+                message: SUCCESS_MESSAGES.PASSWORD_RESET
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message || ERROR_MESSAGES.SERVER_ERROR
+            };
+        }
+    },
+
+    // Refresh token
+    async refreshToken() {
+        try {
+            const response = await API.auth.refreshToken();
+            Storage.auth.setTokens(response.access_token, response.refresh_token || Storage.auth.getRefreshToken());
+
+            return response;
+        } catch (error) {
+            this.logout();
+            throw error;
+        }
+    },
+
+    // Logout
+    logout() {
+        // Clear storage
+        Storage.auth.clearTokens();
+        Storage.auth.clearUser();
+
+        // Reset state
+        this.currentUser = null;
+        this.isAuthenticated = false;
+
+        this.dispatchAuthStateChange();
+
+        // Redirect to login
+        Router.navigate(ROUTES.LOGIN);
+
+        Notifications.show(SUCCESS_MESSAGES.LOGOUT_SUCCESS, 'info');
+    },
+
+    // Get current user
+    getUser() {
+        return this.currentUser;
+    },
+
+    // Check if user is authenticated
+    isLoggedIn() {
+        return this.isAuthenticated;
+    },
+
+    // Get user ID
+    getUserId() {
+        return this.currentUser ? this.currentUser.id : null;
+    },
+
+    // Get user name
+    getUserName() {
+        return this.currentUser ? this.currentUser.name : null;
+    },
+
+    // Get user email
+    getUserEmail() {
+        return this.currentUser ? this.currentUser.email : null;
+    },
+
+    // Get user avatar
+    getUserAvatar() {
+        return this.currentUser ? this.currentUser.avatar_url : null;
+    },
+
+    // Update current user data
+    updateUser(userData) {
+        if (this.currentUser) {
+            this.currentUser = { ...this.currentUser, ...userData };
+            Storage.auth.setUser(this.currentUser);
+            this.dispatchAuthStateChange();
+        }
+    },
+
+    // Check if route requires authentication
+    requiresAuth(route) {
+        const publicRoutes = [
+            ROUTES.LOGIN,
+            ROUTES.REGISTER,
+            ROUTES.FORGOT_PASSWORD,
+            ROUTES.RESET_PASSWORD
+        ];
+
+        return !publicRoutes.includes(route);
+    },
+
+    // Check if user can access route
+    canAccessRoute(route) {
+        if (this.requiresAuth(route)) {
+            return this.isAuthenticated;
+        }
+        return true;
+    },
+
+    // Redirect to login if not authenticated
+    redirectToLogin(returnUrl = null) {
+        const currentPath = returnUrl || window.location.pathname;
+        Router.navigate(`${ROUTES.LOGIN}?return=${encodeURIComponent(currentPath)}`);
+    },
+
+    // Handle auth redirect after login
+    handleAuthRedirect() {
+        const urlParams = Utils.getUrlParams();
+        const returnUrl = urlParams.return;
+
+        if (returnUrl && returnUrl !== ROUTES.LOGIN) {
+            Router.navigate(decodeURIComponent(returnUrl));
+        } else {
+            Router.navigate(ROUTES.DASHBOARD);
+        }
+    },
+
+    // Dispatch auth state change event
+    dispatchAuthStateChange() {
+        document.dispatchEvent(new CustomEvent(EVENT_TYPES.AUTH_STATE_CHANGED, {
+            detail: {
+                isAuthenticated: this.isAuthenticated,
+                user: this.currentUser
             }
-        }
+        }));
     },
 
-    /**
-     * Notify listeners of auth events
-     */
-    notifyListeners(event, data = null) {
-        if (this.listeners[event]) {
-            this.listeners[event].forEach(callback => {
+    // Auto-login check
+    async checkAuthStatus() {
+        if (!this.isAuthenticated) return false;
+
+        try {
+            // Verify token by making a request to profile endpoint
+            const userData = await API.user.getProfile();
+            this.updateUser(userData.user);
+            return true;
+        } catch (error) {
+            if (error.status === 401) {
+                // Try to refresh token
                 try {
-                    callback(data);
-                } catch (error) {
-                    console.error('Auth event listener error:', error);
+                    await this.refreshToken();
+                    return true;
+                } catch (refreshError) {
+                    this.logout();
+                    return false;
                 }
-            });
+            }
+            return false;
         }
     },
 
-    /**
-     * Update UI based on auth state
-     */
-    updateUI() {
-        const isLoggedIn = this.isLoggedIn();
+    // Session timeout warning
+    setupSessionTimeout() {
+        let warningShown = false;
+        let timeoutId;
 
-        // Update user info in header
-        const userNameElement = Utils.dom.$('#user-name');
-        const userAvatarElement = Utils.dom.$('#user-avatar');
+        const checkSession = async () => {
+            if (!this.isAuthenticated) return;
 
-        if (isLoggedIn && this.currentUser) {
-            if (userNameElement) {
-                userNameElement.textContent = this.currentUser.name;
+            try {
+                await API.user.getProfile();
+                warningShown = false;
+            } catch (error) {
+                if (error.status === 401 && !warningShown) {
+                    warningShown = true;
+
+                    const shouldRefresh = confirm(
+                        'Your session is about to expire. Would you like to continue?'
+                    );
+
+                    if (shouldRefresh) {
+                        try {
+                            await this.refreshToken();
+                            warningShown = false;
+                        } catch (refreshError) {
+                            this.logout();
+                        }
+                    } else {
+                        this.logout();
+                    }
+                }
             }
+        };
 
-            if (userAvatarElement) {
-                userAvatarElement.src = this.currentUser.avatar_url || '/assets/icons/default-avatar.svg';
-                userAvatarElement.alt = this.currentUser.name;
-            }
-        }
+        // Check session every 5 minutes
+        setInterval(checkSession, 5 * 60 * 1000);
 
-        // Show/hide auth-required elements
-        const authRequiredElements = Utils.dom.$$('[data-auth-required]');
-        authRequiredElements.forEach(element => {
-            if (isLoggedIn) {
-                element.classList.remove('d-none');
-            } else {
-                element.classList.add('d-none');
-            }
+        // Reset warning on user activity
+        const resetTimeout = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                warningShown = false;
+            }, 30 * 60 * 1000); // 30 minutes
+        };
+
+        ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetTimeout, true);
         });
-
-        // Show/hide guest-only elements
-        const guestOnlyElements = Utils.dom.$$('[data-guest-only]');
-        guestOnlyElements.forEach(element => {
-            if (isLoggedIn) {
-                element.classList.add('d-none');
-            } else {
-                element.classList.remove('d-none');
-            }
-        });
     },
 
-    /**
-     * Handle form submissions
-     */
-    setupForms() {
-        // Login form
-        const loginForm = Utils.dom.$('#login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+    // Password strength checker
+    checkPasswordStrength(password) {
+        const checks = {
+            length: password.length >= 8,
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            number: /\d/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
 
-                const formData = new FormData(loginForm);
-                const email = formData.get('email');
-                const password = formData.get('password');
-                const rememberMe = formData.get('remember') === 'on';
+        const score = Object.values(checks).filter(Boolean).length;
 
-                const submitBtn = loginForm.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
+        let strength;
+        if (score < 3) strength = 'weak';
+        else if (score < 4) strength = 'medium';
+        else strength = 'strong';
 
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Signing in...';
+        return {
+            score,
+            strength,
+            checks,
+            suggestions: this.getPasswordSuggestions(checks)
+        };
+    },
 
-                    await this.login(email, password, rememberMe);
+    getPasswordSuggestions(checks) {
+        const suggestions = [];
 
-                    // Redirect to dashboard or intended page
-                    const redirect = Utils.url.parseQuery().redirect || ROUTES.DASHBOARD;
-                    Router.navigate(redirect);
+        if (!checks.length) suggestions.push('Use at least 8 characters');
+        if (!checks.lowercase) suggestions.push('Add lowercase letters');
+        if (!checks.uppercase) suggestions.push('Add uppercase letters');
+        if (!checks.number) suggestions.push('Add numbers');
+        if (!checks.special) suggestions.push('Add special characters');
 
-                } catch (error) {
-                    // Error already handled in login method
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
-        }
+        return suggestions;
+    },
 
-        // Register form
-        const registerForm = Utils.dom.$('#register-form');
-        if (registerForm) {
-            registerForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+    // Two-factor authentication (placeholder for future implementation)
+    async enableTwoFactor() {
+        // TODO: Implement 2FA
+        throw new Error('Two-factor authentication not yet implemented');
+    },
 
-                const formData = new FormData(registerForm);
-                const userData = {
-                    name: formData.get('name'),
-                    email: formData.get('email'),
-                    password: formData.get('password')
-                };
+    async disableTwoFactor() {
+        // TODO: Implement 2FA
+        throw new Error('Two-factor authentication not yet implemented');
+    },
 
-                const submitBtn = registerForm.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
+    // Security logging
+    logSecurityEvent(event, details = {}) {
+        const logData = {
+            event,
+            timestamp: new Date().toISOString(),
+            userId: this.getUserId(),
+            userAgent: navigator.userAgent,
+            ip: 'client', // Would need server-side logging for real IP
+            ...details
+        };
 
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Creating account...';
+        console.log('Security Event:', logData);
 
-                    await this.register(userData);
-
-                    // Redirect to dashboard
-                    Router.navigate(ROUTES.DASHBOARD);
-
-                } catch (error) {
-                    // Error already handled in register method
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
-        }
-
-        // Forgot password form
-        const forgotForm = Utils.dom.$('#forgot-password-form');
-        if (forgotForm) {
-            forgotForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const formData = new FormData(forgotForm);
-                const email = formData.get('email');
-
-                const submitBtn = forgotForm.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
-
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Sending...';
-
-                    await this.forgotPassword(email);
-
-                } catch (error) {
-                    // Error already handled in forgotPassword method
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
-        }
-
-        // Reset password form
-        const resetForm = Utils.dom.$('#reset-password-form');
-        if (resetForm) {
-            resetForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const formData = new FormData(resetForm);
-                const password = formData.get('password');
-                const token = Utils.url.parseQuery().token;
-
-                if (!token) {
-                    Notifications.show('Invalid reset link', 'error');
-                    return;
-                }
-
-                const submitBtn = resetForm.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
-
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Resetting...';
-
-                    await this.resetPassword(token, password);
-
-                    // Redirect to login
-                    Router.navigate(ROUTES.LOGIN);
-
-                } catch (error) {
-                    // Error already handled in resetPassword method
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            });
+        // In production, send to security monitoring service
+        if (process.env.NODE_ENV === 'production') {
+            // Send to security service
         }
     }
 };
 
-// Export Auth for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Auth;
-}
+// Initialize auth
+Auth.init();
+
+// Listen for auth state changes
+document.addEventListener(EVENT_TYPES.AUTH_STATE_CHANGED, (event) => {
+    const { isAuthenticated, user } = event.detail;
+
+    // Update UI elements based on auth state
+    const authElements = document.querySelectorAll('[data-auth-required]');
+    authElements.forEach(element => {
+        element.style.display = isAuthenticated ? 'block' : 'none';
+    });
+
+    const guestElements = document.querySelectorAll('[data-guest-only]');
+    guestElements.forEach(element => {
+        element.style.display = isAuthenticated ? 'none' : 'block';
+    });
+
+    // Update user info displays
+    const userNameElements = document.querySelectorAll('[data-user-name]');
+    userNameElements.forEach(element => {
+        element.textContent = user ? user.name : '';
+    });
+
+    const userEmailElements = document.querySelectorAll('[data-user-email]');
+    userEmailElements.forEach(element => {
+        element.textContent = user ? user.email : '';
+    });
+
+    const userAvatarElements = document.querySelectorAll('[data-user-avatar]');
+    userAvatarElements.forEach(element => {
+        if (user && user.avatar_url) {
+            element.src = user.avatar_url;
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    });
+});
+
+// Setup session timeout
+Auth.setupSessionTimeout();
+
+// Make available globally
+window.Auth = Auth;

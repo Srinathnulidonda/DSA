@@ -1,1106 +1,723 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="page-container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-1">
+                <i class="bi bi-gear text-primary me-2"></i>
+                Settings
+            </h1>
+            <p class="text-muted mb-0">Customize your learning experience</p>
+        </div>
+    </div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - DSA Path</title>
-
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/layouts.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-
-    <style>
-        .settings-nav {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 1rem;
-        }
-
-        .settings-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-md);
-            color: var(--gray-700);
-            text-decoration: none;
-            transition: all var(--transition-fast);
-            margin-bottom: 0.25rem;
-        }
-
-        .settings-nav-item:hover {
-            background: var(--gray-100);
-            color: var(--primary);
-        }
-
-        .settings-nav-item.active {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .settings-section {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-        }
-
-        .settings-subtitle {
-            color: var(--gray-600);
-            margin-bottom: 2rem;
-        }
-
-        .setting-item {
-            padding: 1.5rem 0;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .setting-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .setting-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 0.5rem;
-        }
-
-        .setting-label {
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-        }
-
-        .setting-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .theme-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-
-        .theme-option {
-            border: 2px solid var(--gray-300);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .theme-option:hover {
-            border-color: var(--primary);
-        }
-
-        .theme-option.active {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .theme-preview {
-            width: 100%;
-            height: 60px;
-            border-radius: var(--radius-md);
-            margin-bottom: 0.5rem;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .theme-preview-sidebar {
-            width: 30%;
-            background: var(--gray-800);
-        }
-
-        .theme-preview-content {
-            flex: 1;
-            background: var(--gray-100);
-        }
-
-        .theme-light .theme-preview-sidebar {
-            background: var(--gray-800);
-        }
-
-        .theme-light .theme-preview-content {
-            background: var(--gray-100);
-        }
-
-        .theme-dark .theme-preview-sidebar {
-            background: var(--gray-900);
-        }
-
-        .theme-dark .theme-preview-content {
-            background: var(--gray-800);
-        }
-
-        .theme-auto .theme-preview {
-            background: linear-gradient(to right, var(--gray-100) 50%, var(--gray-800) 50%);
-        }
-
-        .notification-setting {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: var(--radius-md);
-            margin-bottom: 0.75rem;
-        }
-
-        .notification-info {
-            flex: 1;
-        }
-
-        .notification-title {
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-        }
-
-        .notification-desc {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-        }
-
-        .language-select {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .language-option {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .language-option:hover {
-            border-color: var(--primary);
-            background: var(--gray-50);
-        }
-
-        .language-option.active {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .language-flag {
-            font-size: 1.5rem;
-        }
-
-        .privacy-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: var(--radius-md);
-            margin-bottom: 0.75rem;
-        }
-
-        .keyboard-shortcut {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: var(--gray-50);
-            border-radius: var(--radius-md);
-            margin-bottom: 0.5rem;
-        }
-
-        .shortcut-keys {
-            display: flex;
-            gap: 0.25rem;
-        }
-
-        .key {
-            background: white;
-            border: 1px solid var(--gray-300);
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            box-shadow: 0 2px 0 var(--gray-300);
-        }
-    </style>
-</head>
-
-<body>
-    <div class="app-layout">
-        <!-- Sidebar (same as previous pages) -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="fas fa-code-branch"></i>
-                    <span>DSA Path</span>
+    <div class="row g-4">
+        <!-- Settings Navigation -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-2">
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link active" href="#general" data-bs-toggle="pill">
+                            <i class="bi bi-gear me-2"></i>General
+                        </a>
+                        <a class="nav-link" href="#appearance" data-bs-toggle="pill">
+                            <i class="bi bi-palette me-2"></i>Appearance
+                        </a>
+                        <a class="nav-link" href="#notifications" data-bs-toggle="pill">
+                            <i class="bi bi-bell me-2"></i>Notifications
+                        </a>
+                        <a class="nav-link" href="#study" data-bs-toggle="pill">
+                            <i class="bi bi-book me-2"></i>Study Preferences
+                        </a>
+                        <a class="nav-link" href="#privacy" data-bs-toggle="pill">
+                            <i class="bi bi-shield me-2"></i>Privacy
+                        </a>
+                        <a class="nav-link" href="#data" data-bs-toggle="pill">
+                            <i class="bi bi-database me-2"></i>Data & Storage
+                        </a>
+                    </nav>
                 </div>
             </div>
+        </div>
 
-            <nav class="sidebar-nav">
-                <div class="nav-item">
-                    <a href="/dashboard" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/roadmap" class="nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/calendar" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Calendar</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/progress" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/resources" class="nav-link">
-                        <i class="fas fa-book"></i>
-                        <span>Resources</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/notes" class="nav-link">
-                        <i class="fas fa-sticky-note"></i>
-                        <span>Notes</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/pomodoro" class="nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Pomodoro</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/ai-assistant" class="nav-link">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Assistant</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/analytics" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Analytics</span>
-                    </a>
-                </div>
+        <!-- Settings Content -->
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- General Settings -->
+                <div class="tab-pane fade show active" id="general">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0">
+                            <h5 class="mb-0">General Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="general-settings-form">
+                                <div class="mb-4">
+                                    <label for="language" class="form-label">Language</label>
+                                    <select class="form-select" id="language">
+                                        <option value="en" selected>English</option>
+                                        <option value="es">Spanish</option>
+                                        <option value="fr">French</option>
+                                        <option value="de">German</option>
+                                        <option value="zh">Chinese</option>
+                                        <option value="ja">Japanese</option>
+                                    </select>
+                                </div>
 
-                <div class="mt-auto pt-4 border-top">
-                    <div class="nav-item">
-                        <a href="/profile" class="nav-link">
-                            <i class="fas fa-user"></i>
-                            <span>Profile</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="/settings" class="nav-link active">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
+                                <div class="mb-4">
+                                    <label for="date-format" class="form-label">Date Format</label>
+                                    <select class="form-select" id="date-format">
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="time-format" class="form-label">Time Format</label>
+                                    <select class="form-select" id="time-format">
+                                        <option value="12">12-hour (AM/PM)</option>
+                                        <option value="24">24-hour</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="week-start" class="form-label">Week Starts On</label>
+                                    <select class="form-select" id="week-start">
+                                        <option value="sunday">Sunday</option>
+                                        <option value="monday">Monday</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </nav>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="btn btn-link d-lg-none" onclick="toggleSidebar()">
-                        <i class="fas fa-bars fa-lg"></i>
-                    </button>
-                    <h4 class="mb-0 fw-bold">Settings</h4>
-                </div>
-
-                <div class="topbar-right">
-                    <button class="btn btn-primary btn-sm" onclick="saveAllSettings()">
-                        <i class="fas fa-save me-2"></i>Save Changes
-                    </button>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <div class="page-content">
-                <div class="row">
-                    <!-- Settings Navigation -->
-                    <div class="col-lg-3">
-                        <nav class="settings-nav">
-                            <a href="#appearance" class="settings-nav-item active" onclick="showSection('appearance')">
-                                <i class="fas fa-palette"></i>
-                                <span>Appearance</span>
-                            </a>
-                            <a href="#notifications" class="settings-nav-item" onclick="showSection('notifications')">
-                                <i class="fas fa-bell"></i>
-                                <span>Notifications</span>
-                            </a>
-                            <a href="#language" class="settings-nav-item" onclick="showSection('language')">
-                                <i class="fas fa-language"></i>
-                                <span>Language & Region</span>
-                            </a>
-                            <a href="#privacy" class="settings-nav-item" onclick="showSection('privacy')">
-                                <i class="fas fa-shield-alt"></i>
-                                <span>Privacy</span>
-                            </a>
-                            <a href="#accessibility" class="settings-nav-item" onclick="showSection('accessibility')">
-                                <i class="fas fa-universal-access"></i>
-                                <span>Accessibility</span>
-                            </a>
-                            <a href="#keyboard" class="settings-nav-item" onclick="showSection('keyboard')">
-                                <i class="fas fa-keyboard"></i>
-                                <span>Keyboard Shortcuts</span>
-                            </a>
-                            <a href="#data" class="settings-nav-item" onclick="showSection('data')">
-                                <i class="fas fa-database"></i>
-                                <span>Data & Storage</span>
-                            </a>
-                        </nav>
-                    </div>
-
-                    <!-- Settings Content -->
-                    <div class="col-lg-9">
-                        <!-- Appearance Section -->
-                        <div id="appearance-section" class="settings-section">
-                            <h2 class="settings-title">Appearance</h2>
-                            <p class="settings-subtitle">Customize how DSA Path looks on your device</p>
-
-                            <div class="setting-item">
-                                <div class="setting-label">Theme</div>
-                                <div class="setting-description mb-3">Choose your preferred color theme</div>
-
-                                <div class="theme-selector">
-                                    <div class="theme-option theme-light active" onclick="selectTheme('light')">
-                                        <div class="theme-preview">
-                                            <div class="theme-preview-sidebar"></div>
-                                            <div class="theme-preview-content"></div>
-                                        </div>
-                                        <span>Light</span>
-                                    </div>
-                                    <div class="theme-option theme-dark" onclick="selectTheme('dark')">
-                                        <div class="theme-preview">
-                                            <div class="theme-preview-sidebar"></div>
-                                            <div class="theme-preview-content"></div>
-                                        </div>
-                                        <span>Dark</span>
-                                    </div>
-                                    <div class="theme-option theme-auto" onclick="selectTheme('auto')">
-                                        <div class="theme-preview"></div>
-                                        <span>Auto</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">Compact Mode</div>
-                                        <div class="setting-description">Reduce spacing for more content</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="compactMode">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">Animations</div>
-                                        <div class="setting-description">Enable smooth transitions and effects</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="animations" checked>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Appearance Settings -->
+                <div class="tab-pane fade" id="appearance">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0">
+                            <h5 class="mb-0">Appearance</h5>
                         </div>
-
-                        <!-- Notifications Section -->
-                        <div id="notifications-section" class="settings-section d-none">
-                            <h2 class="settings-title">Notifications</h2>
-                            <p class="settings-subtitle">Choose what notifications you want to receive</p>
-
-                            <div class="setting-item">
-                                <div class="notification-setting">
-                                    <div class="notification-info">
-                                        <div class="notification-title">Study Reminders</div>
-                                        <div class="notification-desc">Daily reminders to continue your streak</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="studyReminders" checked>
-                                    </div>
-                                </div>
-
-                                <div class="notification-setting">
-                                    <div class="notification-info">
-                                        <div class="notification-title">Achievement Alerts</div>
-                                        <div class="notification-desc">Notify when you unlock new achievements</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="achievementAlerts" checked>
-                                    </div>
-                                </div>
-
-                                <div class="notification-setting">
-                                    <div class="notification-info">
-                                        <div class="notification-title">Weekly Progress Report</div>
-                                        <div class="notification-desc">Summary of your weekly learning progress</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="weeklyReport" checked>
-                                    </div>
-                                </div>
-
-                                <div class="notification-setting">
-                                    <div class="notification-info">
-                                        <div class="notification-title">Email Notifications</div>
-                                        <div class="notification-desc">Receive important updates via email</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-label">Quiet Hours</div>
-                                <div class="setting-description mb-3">Pause notifications during specific times</div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="form-label">From</label>
-                                        <input type="time" class="form-control" value="22:00">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">To</label>
-                                        <input type="time" class="form-control" value="07:00">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Language Section -->
-                        <div id="language-section" class="settings-section d-none">
-                            <h2 class="settings-title">Language & Region</h2>
-                            <p class="settings-subtitle">Set your preferred language and regional settings</p>
-
-                            <div class="setting-item">
-                                <div class="setting-label">Language</div>
-                                <div class="setting-description mb-3">Choose your preferred language</div>
-
-                                <div class="language-select">
-                                    <div class="language-option active" onclick="selectLanguage('en')">
-                                        <span class="language-flag">🇺🇸</span>
-                                        <div>
-                                            <div class="fw-semibold">English</div>
-                                            <small class="text-muted">United States</small>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h6 class="mb-3">Theme</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-3">
+                                            <input class="form-check-input" type="radio" name="theme" id="theme-light"
+                                                value="light">
+                                            <label class="form-check-label d-flex align-items-center" for="theme-light">
+                                                <i class="bi bi-sun me-2 fs-4"></i>
+                                                <div>
+                                                    <div class="fw-medium">Light</div>
+                                                    <small class="text-muted">Default light theme</small>
+                                                </div>
+                                            </label>
                                         </div>
                                     </div>
-                                    <div class="language-option" onclick="selectLanguage('es')">
-                                        <span class="language-flag">🇪🇸</span>
-                                        <div>
-                                            <div class="fw-semibold">Español</div>
-                                            <small class="text-muted">España</small>
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-3">
+                                            <input class="form-check-input" type="radio" name="theme" id="theme-dark"
+                                                value="dark">
+                                            <label class="form-check-label d-flex align-items-center" for="theme-dark">
+                                                <i class="bi bi-moon me-2 fs-4"></i>
+                                                <div>
+                                                    <div class="fw-medium">Dark</div>
+                                                    <small class="text-muted">Easy on the eyes</small>
+                                                </div>
+                                            </label>
                                         </div>
                                     </div>
-                                    <div class="language-option" onclick="selectLanguage('fr')">
-                                        <span class="language-flag">🇫🇷</span>
-                                        <div>
-                                            <div class="fw-semibold">Français</div>
-                                            <small class="text-muted">France</small>
-                                        </div>
-                                    </div>
-                                    <div class="language-option" onclick="selectLanguage('de')">
-                                        <span class="language-flag">🇩🇪</span>
-                                        <div>
-                                            <div class="fw-semibold">Deutsch</div>
-                                            <small class="text-muted">Deutschland</small>
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-3">
+                                            <input class="form-check-input" type="radio" name="theme" id="theme-auto"
+                                                value="auto">
+                                            <label class="form-check-label d-flex align-items-center" for="theme-auto">
+                                                <i class="bi bi-circle-half me-2 fs-4"></i>
+                                                <div>
+                                                    <div class="fw-medium">Auto</div>
+                                                    <small class="text-muted">Follow system</small>
+                                                </div>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="setting-item">
-                                <div class="setting-label">Time Zone</div>
-                                <div class="setting-description mb-3">Set your local time zone</div>
-
-                                <select class="form-select">
-                                    <option>UTC-08:00 Pacific Time (US & Canada)</option>
-                                    <option>UTC-07:00 Mountain Time (US & Canada)</option>
-                                    <option>UTC-06:00 Central Time (US & Canada)</option>
-                                    <option selected>UTC-05:00 Eastern Time (US & Canada)</option>
-                                    <option>UTC+00:00 Greenwich Mean Time</option>
-                                    <option>UTC+01:00 Central European Time</option>
-                                    <option>UTC+05:30 India Standard Time</option>
-                                    <option>UTC+08:00 China Standard Time</option>
-                                </select>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-label">Date Format</div>
-                                <div class="setting-description mb-3">Choose how dates are displayed</div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="dateFormat" id="dateUS" checked>
-                                    <label class="form-check-label" for="dateUS">
-                                        MM/DD/YYYY (01/31/2024)
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="dateFormat" id="dateEU">
-                                    <label class="form-check-label" for="dateEU">
-                                        DD/MM/YYYY (31/01/2024)
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="dateFormat" id="dateISO">
-                                    <label class="form-check-label" for="dateISO">
-                                        YYYY-MM-DD (2024-01-31)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Privacy Section -->
-                        <div id="privacy-section" class="settings-section d-none">
-                            <h2 class="settings-title">Privacy</h2>
-                            <p class="settings-subtitle">Control your privacy and data sharing preferences</p>
-
-                            <div class="setting-item">
-                                <div class="privacy-toggle">
-                                    <div>
-                                        <div class="fw-semibold">Profile Visibility</div>
-                                        <small class="text-muted">Make your profile visible to other users</small>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="profileVisibility">
-                                    </div>
-                                </div>
-
-                                <div class="privacy-toggle">
-                                    <div>
-                                        <div class="fw-semibold">Show Activity Status</div>
-                                        <small class="text-muted">Let others see when you're online</small>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="activityStatus">
-                                    </div>
-                                </div>
-
-                                <div class="privacy-toggle">
-                                    <div>
-                                        <div class="fw-semibold">Share Progress</div>
-                                        <small class="text-muted">Share your learning progress with the
-                                            community</small>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="shareProgress">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-label">Data Collection</div>
-                                <div class="setting-description mb-3">Help us improve by sharing anonymous usage data
-                                </div>
-
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="analytics" checked>
-                                    <label class="form-check-label" for="analytics">
-                                        Allow analytics to improve the platform
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Accessibility Section -->
-                        <div id="accessibility-section" class="settings-section d-none">
-                            <h2 class="settings-title">Accessibility</h2>
-                            <p class="settings-subtitle">Make DSA Path easier to use</p>
-
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">High Contrast Mode</div>
-                                        <div class="setting-description">Increase contrast for better visibility</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="highContrast">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="setting-item">
-                                <div class="setting-label">Font Size</div>
-                                <div class="setting-description mb-3">Adjust the text size for better readability</div>
-
-                                <input type="range" class="form-range" min="12" max="20" value="16" id="fontSize">
+                            <div class="mb-4">
+                                <h6 class="mb-3">Font Size</h6>
+                                <input type="range" class="form-range" id="font-size" min="12" max="20" value="16"
+                                    step="1">
                                 <div class="d-flex justify-content-between">
                                     <small>Small</small>
-                                    <small>Default</small>
+                                    <small>Medium</small>
                                     <small>Large</small>
                                 </div>
                             </div>
 
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">Reduce Motion</div>
-                                        <div class="setting-description">Minimize animations and transitions</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="reduceMotion">
-                                    </div>
-                                </div>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Layout Density</h6>
+                                <select class="form-select" id="layout-density">
+                                    <option value="comfortable">Comfortable</option>
+                                    <option value="compact">Compact</option>
+                                    <option value="spacious">Spacious</option>
+                                </select>
                             </div>
 
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">Screen Reader Support</div>
-                                        <div class="setting-description">Optimize for screen reader compatibility</div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="screenReader">
-                                    </div>
-                                </div>
-                            </div>
+                            <button type="button" class="btn btn-primary" onclick="saveAppearanceSettings()">
+                                Save Appearance Settings
+                            </button>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Keyboard Shortcuts Section -->
-                        <div id="keyboard-section" class="settings-section d-none">
-                            <h2 class="settings-title">Keyboard Shortcuts</h2>
-                            <p class="settings-subtitle">Navigate faster with keyboard shortcuts</p>
-
-                            <div class="setting-item">
-                                <div class="keyboard-shortcut">
-                                    <span>Go to Dashboard</span>
-                                    <div class="shortcut-keys">
-                                        <span class="key">G</span>
-                                        <span class="key">D</span>
-                                    </div>
+                <!-- Notification Settings -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0">
+                            <h5 class="mb-0">Notification Preferences</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="enable-notifications" checked>
+                                    <label class="form-check-label" for="enable-notifications">
+                                        <div class="fw-medium">Enable Notifications</div>
+                                        <small class="text-muted">Get notified about important events</small>
+                                    </label>
                                 </div>
 
-                                <div class="keyboard-shortcut">
-                                    <span>Go to Roadmap</span>
-                                    <div class="shortcut-keys">
-                                        <span class="key">G</span>
-                                        <span class="key">R</span>
-                                    </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="email-notifications" checked>
+                                    <label class="form-check-label" for="email-notifications">
+                                        <div class="fw-medium">Email Notifications</div>
+                                        <small class="text-muted">Receive updates via email</small>
+                                    </label>
                                 </div>
 
-                                <div class="keyboard-shortcut">
-                                    <span>Search</span>
-                                    <div class="shortcut-keys">
-                                        <span class="key">Ctrl</span>
-                                        <span class="key">K</span>
-                                    </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="browser-notifications" checked>
+                                    <label class="form-check-label" for="browser-notifications">
+                                        <div class="fw-medium">Browser Notifications</div>
+                                        <small class="text-muted">Show desktop notifications</small>
+                                    </label>
                                 </div>
 
-                                <div class="keyboard-shortcut">
-                                    <span>Create Note</span>
-                                    <div class="shortcut-keys">
-                                        <span class="key">N</span>
-                                    </div>
-                                </div>
-
-                                <div class="keyboard-shortcut">
-                                    <span>Start Pomodoro</span>
-                                    <div class="shortcut-keys">
-                                        <span class="key">P</span>
-                                    </div>
-                                </div>
-
-                                <div class="keyboard-shortcut">
-                                    <span>Toggle Sidebar</span>
-                                    <div class="shortcut-keys">
-                                        <span class="key">Ctrl</span>
-                                        <span class="key">B</span>
-                                    </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sound-notifications" checked>
+                                    <label class="form-check-label" for="sound-notifications">
+                                        <div class="fw-medium">Sound Effects</div>
+                                        <small class="text-muted">Play sounds for notifications</small>
+                                    </label>
                                 </div>
                             </div>
 
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">Enable Keyboard Shortcuts</div>
-                                        <div class="setting-description">Use keyboard shortcuts for quick navigation
+                            <hr>
+
+                            <h6 class="mb-3">Notification Types</h6>
+                            <div class="mb-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notify-achievements" checked>
+                                    <label class="form-check-label" for="notify-achievements">
+                                        Achievement unlocked
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notify-streaks" checked>
+                                    <label class="form-check-label" for="notify-streaks">
+                                        Streak milestones
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notify-reminders" checked>
+                                    <label class="form-check-label" for="notify-reminders">
+                                        Study reminders
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notify-timer" checked>
+                                    <label class="form-check-label" for="notify-timer">
+                                        Timer completions
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" onclick="saveNotificationSettings()">
+                                Save Notification Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Preferences -->
+                <div class="tab-pane fade" id="study">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0">
+                            <h5 class="mb-0">Study Preferences</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label for="daily-goal" class="form-label">Daily Study Goal (minutes)</label>
+                                <input type="number" class="form-control" id="daily-goal" min="15" max="240" value="60">
+                                <small class="text-muted">Set your daily study target</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="reminder-time" class="form-label">Study Reminder Time</label>
+                                <input type="time" class="form-control" id="reminder-time" value="19:00">
+                                <small class="text-muted">Get daily reminders to study</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Pomodoro Timer Settings</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="pomodoro-length" class="form-label">Focus Time</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="pomodoro-length" value="25"
+                                                min="15" max="60">
+                                            <span class="input-group-text">min</span>
                                         </div>
                                     </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="enableShortcuts" checked>
+                                    <div class="col-md-4">
+                                        <label for="short-break-length" class="form-label">Short Break</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="short-break-length" value="5"
+                                                min="3" max="15">
+                                            <span class="input-group-text">min</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="long-break-length" class="form-label">Long Break</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="long-break-length" value="15"
+                                                min="10" max="30">
+                                            <span class="input-group-text">min</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="mb-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="auto-save-notes" checked>
+                                    <label class="form-check-label" for="auto-save-notes">
+                                        <div class="fw-medium">Auto-save Notes</div>
+                                        <small class="text-muted">Automatically save notes as you type</small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" onclick="saveStudySettings()">
+                                Save Study Preferences
+                            </button>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Data & Storage Section -->
-                        <div id="data-section" class="settings-section d-none">
-                            <h2 class="settings-title">Data & Storage</h2>
-                            <p class="settings-subtitle">Manage your data and storage settings</p>
+                <!-- Privacy Settings -->
+                <div class="tab-pane fade" id="privacy">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0">
+                            <h5 class="mb-0">Privacy Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h6 class="mb-3">Profile Visibility</h6>
+                                <select class="form-select" id="profile-visibility">
+                                    <option value="public">Public - Anyone can view</option>
+                                    <option value="friends">Friends Only</option>
+                                    <option value="private" selected>Private - Only you</option>
+                                </select>
+                            </div>
 
-                            <div class="setting-item">
-                                <div class="setting-label">Storage Usage</div>
-                                <div class="setting-description mb-3">View how your storage is being used</div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Notes</span>
-                                        <span>24 MB</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-primary" style="width: 40%"></div>
-                                    </div>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Data Sharing</h6>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="share-analytics">
+                                    <label class="form-check-label" for="share-analytics">
+                                        <div class="fw-medium">Share Analytics Data</div>
+                                        <small class="text-muted">Help improve the platform with anonymous usage
+                                            data</small>
+                                    </label>
                                 </div>
 
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="share-progress">
+                                    <label class="form-check-label" for="share-progress">
+                                        <div class="fw-medium">Share Progress</div>
+                                        <small class="text-muted">Show your learning progress on your profile</small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Active Sessions</h6>
+                                <p class="text-muted">Manage devices where you're logged in</p>
+                                <div id="active-sessions">
+                                    <!-- Sessions will be loaded here -->
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" onclick="savePrivacySettings()">
+                                Save Privacy Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data & Storage -->
+                <div class="tab-pane fade" id="data">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom-0">
+                            <h5 class="mb-0">Data & Storage</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h6 class="mb-3">Storage Usage</h6>
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between mb-1">
-                                        <span>Cached Resources</span>
-                                        <span>18 MB</span>
+                                        <span>Local Storage</span>
+                                        <span id="storage-used">0 KB</span>
                                     </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-info" style="width: 30%"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Other Data</span>
-                                        <span>8 MB</span>
-                                    </div>
-                                    <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-secondary" style="width: 15%"></div>
+                                    <div class="progress">
+                                        <div class="progress-bar" id="storage-bar" style="width: 0%"></div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <button class="btn btn-outline-danger btn-sm">
-                                    <i class="fas fa-trash me-2"></i>Clear Cache
+                            <div class="mb-4">
+                                <h6 class="mb-3">Cache Management</h6>
+                                <p class="text-muted">Clear cached data to free up space</p>
+                                <button class="btn btn-outline-danger" onclick="clearCache()">
+                                    <i class="bi bi-trash me-2"></i>Clear Cache
                                 </button>
                             </div>
 
-                            <div class="setting-item">
-                                <div class="setting-label">Data Export</div>
-                                <div class="setting-description mb-3">Download all your data</div>
-
-                                <button class="btn btn-outline-primary">
-                                    <i class="fas fa-download me-2"></i>Export All Data
+                            <div class="mb-4">
+                                <h6 class="mb-3">Data Export</h6>
+                                <p class="text-muted">Download all your data</p>
+                                <button class="btn btn-outline-primary" onclick="exportAllData()">
+                                    <i class="bi bi-download me-2"></i>Export Data
                                 </button>
                             </div>
 
-                            <div class="setting-item">
-                                <div class="setting-header">
-                                    <div>
-                                        <div class="setting-label">Auto Backup</div>
-                                        <div class="setting-description">Automatically backup your notes and progress
-                                        </div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="autoBackup" checked>
-                                    </div>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Offline Mode</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable-offline">
+                                    <label class="form-check-label" for="enable-offline">
+                                        <div class="fw-medium">Enable Offline Mode</div>
+                                        <small class="text-muted">Save data for offline access</small>
+                                    </label>
                                 </div>
                             </div>
+
+                            <button type="button" class="btn btn-primary" onclick="saveDataSettings()">
+                                Save Data Settings
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
-
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-items">
-            <a href="/dashboard" class="mobile-nav-item">
-                <i class="fas fa-home mobile-nav-icon"></i>
-                <span>Home</span>
-            </a>
-            <a href="/roadmap" class="mobile-nav-item">
-                <i class="fas fa-route mobile-nav-icon"></i>
-                <span>Roadmap</span>
-            </a>
-            <a href="/resources" class="mobile-nav-item">
-                <i class="fas fa-book mobile-nav-icon"></i>
-                <span>Resources</span>
-            </a>
-            <a href="/notes" class="mobile-nav-item">
-                <i class="fas fa-sticky-note mobile-nav-icon"></i>
-                <span>Notes</span>
-            </a>
-            <a href="/profile" class="mobile-nav-item">
-                <i class="fas fa-user mobile-nav-icon"></i>
-                <span>Profile</span>
-            </a>
         </div>
-    </nav>
+    </div>
+</div>
 
-    <!-- Toast Container -->
-    <div class="toast-container"></div>
+<script>
+    let preferences = null;
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        await loadSettings();
+        setupSettingsHandlers();
+        updateStorageUsage();
+    });
 
-    <script>
-        // API Configuration
-        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let accessToken = localStorage.getItem('access_token');
-        let preferences = {};
-        let hasChanges = false;
+    async function loadSettings() {
+        try {
+            // Load preferences from storage and API
+            preferences = Storage.preferences.get();
 
-        // Authentication check
-        if (!accessToken) {
-            window.location.href = '/login';
+            // Populate settings forms
+            populateGeneralSettings();
+            populateAppearanceSettings();
+            populateNotificationSettings();
+            populateStudySettings();
+            populatePrivacySettings();
+            populateDataSettings();
+
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            Notifications.error('Failed to load settings');
         }
+    }
 
-        // Utility Functions
-        function showToast(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
-            const toastId = 'toast-' + Date.now();
+    function setupSettingsHandlers() {
+        // General settings form
+        document.getElementById('general-settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveGeneralSettings();
+        });
 
-            const toastHTML = `
-                <div id="${toastId}" class="custom-toast ${type}" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-
-            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-
-            setTimeout(() => {
-                const toast = document.getElementById(toastId);
-                if (toast) {
-                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 5000);
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        async function logout() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
-
-        // API Functions
-        async function fetchWithAuth(url, options = {}) {
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
+        // Theme radio buttons
+        document.querySelectorAll('input[name="theme"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.checked) {
+                    ThemeManager.setTheme(this.value);
                 }
             });
+        });
 
-            if (response.status === 401) {
-                logout();
-            }
+        // Font size slider
+        const fontSizeSlider = document.getElementById('font-size');
+        fontSizeSlider.addEventListener('input', function () {
+            document.documentElement.style.fontSize = `${this.value}px`;
+        });
+    }
 
-            return response;
-        }
+    function populateGeneralSettings() {
+        document.getElementById('language').value = preferences.language || 'en';
+        document.getElementById('date-format').value = preferences.dateFormat || 'MM/DD/YYYY';
+        document.getElementById('time-format').value = preferences.timeFormat || '12';
+        document.getElementById('week-start').value = preferences.weekStart || 'sunday';
+    }
 
-        // Load Preferences
-        async function loadPreferences() {
-            try {
-                const response = await fetchWithAuth(`${API_BASE}/profile`);
-                if (response.ok) {
-                    const data = await response.json();
-                    preferences = data.preferences || {};
-                    applyPreferences();
-                }
-            } catch (error) {
-                console.error('Error loading preferences:', error);
-            }
-        }
+    function populateAppearanceSettings() {
+        // Theme
+        const currentTheme = ThemeManager.getCurrentTheme();
+        document.querySelector(`input[name="theme"][value="${currentTheme}"]`).checked = true;
 
-        // Apply Preferences to UI
-        function applyPreferences() {
-            // Theme
-            const theme = preferences.theme || 'light';
-            selectTheme(theme, false);
+        // Font size
+        const fontSize = preferences.fontSize || 16;
+        document.getElementById('font-size').value = fontSize;
 
-            // Notifications
-            document.getElementById('studyReminders').checked = preferences.notifications_enabled !== false;
-            document.getElementById('emailNotifications').checked = preferences.email_notifications !== false;
+        // Layout density
+        document.getElementById('layout-density').value = preferences.layoutDensity || 'comfortable';
+    }
 
-            // Accessibility
-            document.getElementById('highContrast').checked = preferences.accessibility_mode === true;
+    function populateNotificationSettings() {
+        document.getElementById('enable-notifications').checked = preferences.notifications !== false;
+        document.getElementById('email-notifications').checked = preferences.emailNotifications !== false;
+        document.getElementById('browser-notifications').checked = preferences.browserNotifications !== false;
+        document.getElementById('sound-notifications').checked = preferences.sounds !== false;
 
-            // Language
-            const language = preferences.language || 'en';
-            selectLanguage(language, false);
-        }
+        // Notification types
+        document.getElementById('notify-achievements').checked = preferences.notifyAchievements !== false;
+        document.getElementById('notify-streaks').checked = preferences.notifyStreaks !== false;
+        document.getElementById('notify-reminders').checked = preferences.notifyReminders !== false;
+        document.getElementById('notify-timer').checked = preferences.notifyTimer !== false;
+    }
 
-        // Show Section
-        function showSection(section) {
-            // Hide all sections
-            document.querySelectorAll('.settings-section').forEach(s => s.classList.add('d-none'));
+    function populateStudySettings() {
+        document.getElementById('daily-goal').value = preferences.dailyGoal || 60;
+        document.getElementById('reminder-time').value = preferences.reminderTime || '19:00';
+        document.getElementById('pomodoro-length').value = preferences.pomodoroLength || 25;
+        document.getElementById('short-break-length').value = preferences.shortBreakLength || 5;
+        document.getElementById('long-break-length').value = preferences.longBreakLength || 15;
+        document.getElementById('auto-save-notes').checked = preferences.autoSave !== false;
+    }
 
-            // Show selected section
-            document.getElementById(`${section}-section`).classList.remove('d-none');
+    function populatePrivacySettings() {
+        document.getElementById('profile-visibility').value = preferences.profileVisibility || 'private';
+        document.getElementById('share-analytics').checked = preferences.shareAnalytics || false;
+        document.getElementById('share-progress').checked = preferences.shareProgress || false;
+    }
 
-            // Update navigation
-            document.querySelectorAll('.settings-nav-item').forEach(item => {
-                item.classList.toggle('active', item.getAttribute('href') === `#${section}`);
-            });
+    function populateDataSettings() {
+        document.getElementById('enable-offline').checked = preferences.enableOffline || false;
+    }
 
-            // Update URL
-            window.location.hash = section;
-        }
-
-        // Theme Selection
-        function selectTheme(theme, markChanged = true) {
-            document.querySelectorAll('.theme-option').forEach(option => {
-                option.classList.toggle('active', option.classList.contains(`theme-${theme}`));
-            });
-
-            // Apply theme
-            document.body.setAttribute('data-theme', theme);
-            preferences.theme = theme;
-
-            if (markChanged) {
-                hasChanges = true;
-            }
-        }
-
-        // Language Selection
-        function selectLanguage(lang, markChanged = true) {
-            document.querySelectorAll('.language-option').forEach(option => {
-                option.classList.toggle('active', option.getAttribute('onclick').includes(lang));
-            });
-
-            preferences.language = lang;
-
-            if (markChanged) {
-                hasChanges = true;
-            }
-        }
-
-        // Save All Settings
-        async function saveAllSettings() {
-            // Gather all settings
+    async function saveGeneralSettings() {
+        try {
             const settings = {
-                theme: preferences.theme,
-                language: preferences.language,
-                notifications_enabled: document.getElementById('studyReminders').checked,
-                email_notifications: document.getElementById('emailNotifications').checked,
-                accessibility_mode: document.getElementById('highContrast').checked
+                language: document.getElementById('language').value,
+                dateFormat: document.getElementById('date-format').value,
+                timeFormat: document.getElementById('time-format').value,
+                weekStart: document.getElementById('week-start').value
             };
 
+            await updatePreferences(settings);
+            Notifications.success('General settings saved!');
+
+        } catch (error) {
+            console.error('Error saving general settings:', error);
+            Notifications.error('Failed to save settings');
+        }
+    }
+
+    async function saveAppearanceSettings() {
+        try {
+            const settings = {
+                theme: document.querySelector('input[name="theme"]:checked').value,
+                fontSize: parseInt(document.getElementById('font-size').value),
+                layoutDensity: document.getElementById('layout-density').value
+            };
+
+            await updatePreferences(settings);
+            Notifications.success('Appearance settings saved!');
+
+        } catch (error) {
+            console.error('Error saving appearance settings:', error);
+            Notifications.error('Failed to save settings');
+        }
+    }
+
+    async function saveNotificationSettings() {
+        try {
+            const settings = {
+                notifications: document.getElementById('enable-notifications').checked,
+                emailNotifications: document.getElementById('email-notifications').checked,
+                browserNotifications: document.getElementById('browser-notifications').checked,
+                sounds: document.getElementById('sound-notifications').checked,
+                notifyAchievements: document.getElementById('notify-achievements').checked,
+                notifyStreaks: document.getElementById('notify-streaks').checked,
+                notifyReminders: document.getElementById('notify-reminders').checked,
+                notifyTimer: document.getElementById('notify-timer').checked
+            };
+
+            await updatePreferences(settings);
+
+            // Request browser notification permission if enabled
+            if (settings.browserNotifications) {
+                await Notifications.requestPermission();
+            }
+
+            Notifications.success('Notification settings saved!');
+
+        } catch (error) {
+            console.error('Error saving notification settings:', error);
+            Notifications.error('Failed to save settings');
+        }
+    }
+
+    async function saveStudySettings() {
+        try {
+            const settings = {
+                dailyGoal: parseInt(document.getElementById('daily-goal').value),
+                reminderTime: document.getElementById('reminder-time').value,
+                pomodoroLength: parseInt(document.getElementById('pomodoro-length').value),
+                shortBreakLength: parseInt(document.getElementById('short-break-length').value),
+                longBreakLength: parseInt(document.getElementById('long-break-length').value),
+                autoSave: document.getElementById('auto-save-notes').checked
+            };
+
+            await updatePreferences(settings);
+            Notifications.success('Study preferences saved!');
+
+        } catch (error) {
+            console.error('Error saving study settings:', error);
+            Notifications.error('Failed to save settings');
+        }
+    }
+
+    async function savePrivacySettings() {
+        try {
+            const settings = {
+                profileVisibility: document.getElementById('profile-visibility').value,
+                shareAnalytics: document.getElementById('share-analytics').checked,
+                shareProgress: document.getElementById('share-progress').checked
+            };
+
+            await updatePreferences(settings);
+            Notifications.success('Privacy settings saved!');
+
+        } catch (error) {
+            console.error('Error saving privacy settings:', error);
+            Notifications.error('Failed to save settings');
+        }
+    }
+
+    async function saveDataSettings() {
+        try {
+            const settings = {
+                enableOffline: document.getElementById('enable-offline').checked
+            };
+
+            await updatePreferences(settings);
+            Notifications.success('Data settings saved!');
+
+        } catch (error) {
+            console.error('Error saving data settings:', error);
+            Notifications.error('Failed to save settings');
+        }
+    }
+
+    async function updatePreferences(newSettings) {
+        // Update local preferences
+        preferences = { ...preferences, ...newSettings };
+        Storage.preferences.set(preferences);
+        State.setPreferences(preferences);
+
+        // Update backend if authenticated
+        if (Auth.isAuthenticated) {
             try {
-                const response = await fetchWithAuth(`${API_BASE}/preferences`, {
-                    method: 'PUT',
-                    body: JSON.stringify(settings)
-                });
-
-                if (response.ok) {
-                    showToast('Settings saved successfully', 'success');
-                    hasChanges = false;
-                } else {
-                    showToast('Failed to save settings', 'error');
-                }
+                await API.user.updatePreferences(preferences);
             } catch (error) {
-                console.error('Error saving settings:', error);
-                showToast('Failed to save settings', 'error');
+                console.warn('Failed to sync preferences to backend:', error);
             }
         }
+    }
 
-        // Track changes
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('change', () => {
-                hasChanges = true;
-            });
-        });
+    function updateStorageUsage() {
+        const storageSize = Storage.getSize();
+        const storageUsed = Utils.formatFileSize(storageSize);
+        const maxStorage = 5 * 1024 * 1024; // 5MB
+        const percentage = (storageSize / maxStorage) * 100;
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!document.getElementById('enableShortcuts')?.checked) return;
+        document.getElementById('storage-used').textContent = storageUsed;
+        document.getElementById('storage-bar').style.width = `${percentage}%`;
+    }
 
-            // Ctrl+K for search
-            if (e.ctrlKey && e.key === 'k') {
-                e.preventDefault();
-                window.location.href = '/search';
-            }
+    async function clearCache() {
+        const confirmed = await Components.modal.confirm(
+            'Are you sure you want to clear all cached data? This will remove all offline data.',
+            { title: 'Clear Cache', confirmText: 'Clear' }
+        );
 
-            // G+D for dashboard
-            if (e.key === 'g') {
-                window.addEventListener('keydown', function gKey(e2) {
-                    if (e2.key === 'd') {
-                        window.location.href = '/dashboard';
-                    }
-                    window.removeEventListener('keydown', gKey);
-                }, { once: true });
-            }
-        });
-
-        // Warn before leaving with unsaved changes
-        window.addEventListener('beforeunload', (e) => {
-            if (hasChanges) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-        // Check URL hash
-        const hash = window.location.hash.substring(1);
-        if (hash) {
-            showSection(hash);
+        if (confirmed) {
+            Storage.clear();
+            State.clearAllCache();
+            updateStorageUsage();
+            Notifications.success('Cache cleared successfully!');
         }
+    }
 
-        // Initialize
-        loadPreferences();
-    </script>
-</body>
+    async function exportAllData() {
+        try {
+            // Show loading
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Preparing export...';
 
-</html>
+            // Gather all data
+            const exportData = {
+                preferences: preferences,
+                notes: State.get('notes') || [],
+                progress: State.get('progress') || {},
+                export_date: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-path-full-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            Notifications.success('Data exported successfully!');
+
+        } catch (error) {
+            console.error('Error exporting data:', error);
+            Notifications.error('Failed to export data');
+        } finally {
+            // Reset button
+            const btn = event.target;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-download me-2"></i>Export Data';
+        }
+    }
+</script>

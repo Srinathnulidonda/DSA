@@ -1,449 +1,469 @@
-// State Management for DSA Path Application
-
+// Global State Management
 const State = {
     // Application state
-    app: {
-        isLoading: false,
-        currentPage: null,
-        isOnline: navigator.onLine,
-        deviceType: Utils.browser.getDeviceType()
-    },
-
-    // User state
-    user: {
-        data: null,
-        preferences: {},
-        notifications: [],
-        sessions: []
-    },
-
-    // Progress state
-    progress: {
-        data: {},
-        stats: {},
-        calendar: {},
-        weeklyProgress: {}
-    },
-
-    // Study tools state
-    study: {
+    data: {
+        user: null,
+        progress: {},
         notes: [],
-        pomodoroSessions: [],
-        currentTimer: null,
-        resources: []
+        dashboard: null,
+        roadmap: [],
+        resources: [],
+        notifications: [],
+        timer: {
+            isRunning: false,
+            timeLeft: 0,
+            mode: 'pomodoro',
+            sessionId: null
+        },
+        ui: {
+            theme: 'light',
+            sidebarCollapsed: false,
+            loading: false,
+            currentRoute: '/'
+        },
+        preferences: {},
+        cache: {}
     },
 
-    // UI state
-    ui: {
-        theme: 'system',
-        sidebarOpen: false,
-        mobileMenuOpen: false,
-        modals: {},
-        toasts: []
-    },
+    // Event listeners
+    listeners: {},
 
-    // Cache for API responses
-    cache: new Map(),
-
-    // Event subscribers
-    subscribers: new Map(),
-
-    /**
-     * Initialize state management
-     */
+    // Initialize state
     init() {
-        // Load initial state from storage
         this.loadFromStorage();
-
-        // Set up online/offline detection
-        this.setupNetworkDetection();
-
-        // Set up periodic cache cleanup
-        this.setupCacheCleanup();
-
-        // Load user data if authenticated
-        if (Auth.isLoggedIn()) {
-            this.loadUserData();
-        }
+        this.setupStorageSync();
+        return this;
     },
 
-    /**
-     * Subscribe to state changes
-     */
-    subscribe(key, callback) {
-        if (!this.subscribers.has(key)) {
-            this.subscribers.set(key, []);
+    // Load state from storage
+    loadFromStorage() {
+        // Load user data
+        const userData = Storage.auth.getUser();
+        if (userData) {
+            this.data.user = userData;
         }
-        this.subscribers.get(key).push(callback);
+
+        // Load preferences
+        this.data.preferences = Storage.preferences.get();
+
+        // Load theme
+        this.data.ui.theme = Storage.get(STORAGE_KEYS.THEME, APP_CONFIG.DEFAULT_THEME);
+
+        // Load timer state
+        this.data.timer = { ...this.data.timer, ...Storage.timer.getState() };
+    },
+
+    // Setup storage synchronization
+    setupStorageSync() {
+        // Sync preferences to storage when changed
+        this.subscribe('preferences', (preferences) => {
+            Storage.preferences.set(preferences);
+        });
+
+        // Sync theme to storage when changed
+        this.subscribe('ui.theme', (theme) => {
+            Storage.set(STORAGE_KEYS.THEME, theme);
+        });
+
+        // Sync timer state to storage when changed
+        this.subscribe('timer', (timer) => {
+            Storage.timer.setState(timer);
+        });
+    },
+
+    // Get state value
+    get(path) {
+        return this.getNestedValue(this.data, path);
+    },
+
+    // Set state value
+    set(path, value) {
+        const oldValue = this.get(path);
+        this.setNestedValue(this.data, path, value);
+
+        // Emit change event
+        this.emit(path, value, oldValue);
+
+        return this;
+    },
+
+    // Update state (merge with existing)
+    update(path, updates) {
+        const currentValue = this.get(path) || {};
+        const newValue = { ...currentValue, ...updates };
+        return this.set(path, newValue);
+    },
+
+    // Subscribe to state changes
+    subscribe(path, callback) {
+        if (!this.listeners[path]) {
+            this.listeners[path] = [];
+        }
+
+        this.listeners[path].push(callback);
 
         // Return unsubscribe function
         return () => {
-            const callbacks = this.subscribers.get(key);
-            if (callbacks) {
-                const index = callbacks.indexOf(callback);
-                if (index > -1) {
-                    callbacks.splice(index, 1);
-                }
+            const index = this.listeners[path].indexOf(callback);
+            if (index > -1) {
+                this.listeners[path].splice(index, 1);
             }
         };
     },
 
-    /**
-     * Update state and notify subscribers
-     */
-    setState(key, value) {
-        const keys = key.split('.');
-        let current = this;
-
-        // Navigate to the parent object
-        for (let i = 0; i < keys.length - 1; i++) {
-            if (!current[keys[i]]) {
-                current[keys[i]] = {};
-            }
-            current = current[keys[i]];
-        }
-
-        // Set the value
-        const lastKey = keys[keys.length - 1];
-        const oldValue = current[lastKey];
-        current[lastKey] = value;
-
-        // Notify subscribers
-        this.notifySubscribers(key, value, oldValue);
-
-        // Save to storage if needed
-        this.saveToStorage(key, value);
-    },
-
-    /**
-     * Get state value
-     */
-    getState(key) {
-        const keys = key.split('.');
-        let current = this;
-
-        for (const k of keys) {
-            if (current[k] === undefined) {
-                return undefined;
-            }
-            current = current[k];
-        }
-
-        return current;
-    },
-
-    /**
-     * Notify subscribers of state changes
-     */
-    notifySubscribers(key, newValue, oldValue) {
-        const callbacks = this.subscribers.get(key);
-        if (callbacks) {
-            callbacks.forEach(callback => {
+    // Emit state change
+    emit(path, newValue, oldValue) {
+        // Emit specific path listeners
+        if (this.listeners[path]) {
+            this.listeners[path].forEach(callback => {
                 try {
-                    callback(newValue, oldValue);
+                    callback(newValue, oldValue, path);
                 } catch (error) {
-                    console.error('State subscriber error:', error);
+                    console.error('State listener error:', error);
+                }
+            });
+        }
+
+        // Emit wildcard listeners
+        if (this.listeners['*']) {
+            this.listeners['*'].forEach(callback => {
+                try {
+                    callback(path, newValue, oldValue);
+                } catch (error) {
+                    console.error('Wildcard state listener error:', error);
                 }
             });
         }
     },
 
-    /**
-     * Load initial state from storage
-     */
-    loadFromStorage() {
-        // Load user preferences
-        const preferences = Storage.preferences.getPreferences();
-        this.setState('user.preferences', preferences);
+    // Helper to get nested value
+    getNestedValue(obj, path) {
+        if (typeof path !== 'string') return obj[path];
 
-        // Load theme
-        const theme = Storage.theme.getTheme();
-        this.setState('ui.theme', theme);
+        return path.split('.').reduce((current, key) => {
+            return current && current[key] !== undefined ? current[key] : undefined;
+        }, obj);
+    },
 
-        // Load cached progress data
-        const cachedProgress = Storage.cache.get('progress');
-        if (cachedProgress) {
-            this.setState('progress.data', cachedProgress);
+    // Helper to set nested value
+    setNestedValue(obj, path, value) {
+        if (typeof path !== 'string') {
+            obj[path] = value;
+            return;
         }
+
+        const keys = path.split('.');
+        const lastKey = keys.pop();
+        const target = keys.reduce((current, key) => {
+            if (current[key] === undefined) {
+                current[key] = {};
+            }
+            return current[key];
+        }, obj);
+
+        target[lastKey] = value;
     },
 
-    /**
-     * Save state to storage
-     */
-    saveToStorage(key, value) {
-        switch (key) {
-            case 'user.preferences':
-                Storage.preferences.setPreferences(value);
-                break;
-            case 'ui.theme':
-                Storage.theme.setTheme(value);
-                break;
-            case 'progress.data':
-                Storage.cache.set('progress', value, 60); // Cache for 1 hour
-                break;
-        }
-    },
+    // State actions
+    actions: {
+        // User actions
+        setUser(user) {
+            State.set('user', user);
+        },
 
-    /**
-     * Setup network detection
-     */
-    setupNetworkDetection() {
-        window.addEventListener('online', () => {
-            this.setState('app.isOnline', true);
-            Notifications.show('Connection restored', 'success');
-        });
+        updateUser(updates) {
+            State.update('user', updates);
+        },
 
-        window.addEventListener('offline', () => {
-            this.setState('app.isOnline', false);
-            Notifications.show('No internet connection', 'warning');
-        });
-    },
+        clearUser() {
+            State.set('user', null);
+        },
 
-    /**
-     * Setup cache cleanup
-     */
-    setupCacheCleanup() {
-        setInterval(() => {
-            const now = Date.now();
-            for (const [key, item] of this.cache.entries()) {
-                if (item.expiry && now > item.expiry) {
-                    this.cache.delete(key);
+        // Progress actions
+        setProgress(progress) {
+            State.set('progress', progress);
+        },
+
+        updateProgress(week, day, data) {
+            const currentProgress = State.get('progress') || {};
+            if (!currentProgress[week]) {
+                currentProgress[week] = {};
+            }
+            currentProgress[week][day] = data;
+            State.set('progress', currentProgress);
+        },
+
+        // Notes actions
+        setNotes(notes) {
+            State.set('notes', notes);
+        },
+
+        addNote(note) {
+            const notes = State.get('notes') || [];
+            notes.unshift(note);
+            State.set('notes', notes);
+        },
+
+        updateNote(noteId, updates) {
+            const notes = State.get('notes') || [];
+            const index = notes.findIndex(note => note.id === noteId);
+            if (index !== -1) {
+                notes[index] = { ...notes[index], ...updates };
+                State.set('notes', notes);
+            }
+        },
+
+        removeNote(noteId) {
+            const notes = State.get('notes') || [];
+            const filtered = notes.filter(note => note.id !== noteId);
+            State.set('notes', filtered);
+        },
+
+        // Dashboard actions
+        setDashboard(dashboard) {
+            State.set('dashboard', dashboard);
+        },
+
+        // Roadmap actions
+        setRoadmap(roadmap) {
+            State.set('roadmap', roadmap);
+        },
+
+        // Resources actions
+        setResources(resources) {
+            State.set('resources', resources);
+        },
+
+        // Notifications actions
+        setNotifications(notifications) {
+            State.set('notifications', notifications);
+        },
+
+        addNotification(notification) {
+            const notifications = State.get('notifications') || [];
+            notifications.unshift(notification);
+            State.set('notifications', notifications);
+        },
+
+        markNotificationRead(notificationId) {
+            const notifications = State.get('notifications') || [];
+            const index = notifications.findIndex(n => n.id === notificationId);
+            if (index !== -1) {
+                notifications[index].is_read = true;
+                State.set('notifications', notifications);
+            }
+        },
+
+        // Timer actions
+        startTimer(sessionId, timeLeft, mode = 'pomodoro') {
+            State.set('timer', {
+                isRunning: true,
+                timeLeft,
+                mode,
+                sessionId,
+                startTime: Date.now()
+            });
+        },
+
+        pauseTimer() {
+            State.update('timer', {
+                isRunning: false,
+                pausedAt: Date.now()
+            });
+        },
+
+        resumeTimer() {
+            const timer = State.get('timer');
+            const pausedDuration = Date.now() - timer.pausedAt;
+            State.update('timer', {
+                isRunning: true,
+                startTime: timer.startTime + pausedDuration,
+                pausedAt: null
+            });
+        },
+
+        updateTimerTime(timeLeft) {
+            State.update('timer', { timeLeft });
+        },
+
+        completeTimer() {
+            State.update('timer', {
+                isRunning: false,
+                timeLeft: 0,
+                completedAt: Date.now()
+            });
+        },
+
+        resetTimer() {
+            State.set('timer', {
+                isRunning: false,
+                timeLeft: 0,
+                mode: 'pomodoro',
+                sessionId: null
+            });
+        },
+
+        // UI actions
+        setTheme(theme) {
+            State.set('ui.theme', theme);
+        },
+
+        toggleSidebar() {
+            const collapsed = State.get('ui.sidebarCollapsed');
+            State.set('ui.sidebarCollapsed', !collapsed);
+        },
+
+        setLoading(loading) {
+            State.set('ui.loading', loading);
+        },
+
+        setCurrentRoute(route) {
+            State.set('ui.currentRoute', route);
+        },
+
+        // Preferences actions
+        setPreferences(preferences) {
+            State.set('preferences', preferences);
+        },
+
+        updatePreference(key, value) {
+            State.update('preferences', { [key]: value });
+        },
+
+        // Cache actions
+        setCache(key, data, ttl = 5 * 60 * 1000) { // 5 minutes default TTL
+            State.update('cache', {
+                [key]: {
+                    data,
+                    timestamp: Date.now(),
+                    ttl
                 }
-            }
-        }, 5 * 60 * 1000); // Every 5 minutes
-    },
+            });
+        },
 
-    /**
-     * Load user data from API
-     */
-    async loadUserData() {
-        try {
-            this.setState('app.isLoading', true);
+        getCache(key) {
+            const cache = State.get('cache') || {};
+            const item = cache[key];
 
-            // Load profile data
-            const profile = await ApiMethods.profile.get();
-            this.setState('user.data', profile.user);
-            this.setState('user.preferences', profile.preferences);
+            if (!item) return null;
 
-            // Load dashboard data for quick access
-            const dashboard = await ApiMethods.dashboard.get();
-            this.setState('progress.stats', dashboard.stats);
-            this.setState('progress.weeklyProgress', dashboard.weekly_progress);
-
-        } catch (error) {
-            console.error('Failed to load user data:', error);
-        } finally {
-            this.setState('app.isLoading', false);
-        }
-    },
-
-    /**
-     * Update progress state
-     */
-    async updateProgress(week, day, progressData) {
-        try {
-            // Optimistic update
-            const currentProgress = this.getState('progress.data') || {};
-            if (!currentProgress[week]) currentProgress[week] = {};
-            currentProgress[week][day] = progressData;
-            this.setState('progress.data', currentProgress);
-
-            // Send to server
-            await ApiMethods.progress.update(week, day, progressData);
-
-            // Refresh stats
-            const dashboard = await ApiMethods.dashboard.get();
-            this.setState('progress.stats', dashboard.stats);
-            this.setState('progress.weeklyProgress', dashboard.weekly_progress);
-
-        } catch (error) {
-            // Revert optimistic update on error
-            this.loadProgress();
-            throw error;
-        }
-    },
-
-    /**
-     * Load progress data
-     */
-    async loadProgress() {
-        try {
-            const progress = await ApiMethods.progress.get();
-            this.setState('progress.data', progress.progress);
-            this.setState('progress.stats', progress.stats);
-        } catch (error) {
-            console.error('Failed to load progress:', error);
-        }
-    },
-
-    /**
-     * Load notes
-     */
-    async loadNotes(filters = {}) {
-        try {
-            const notes = await ApiMethods.notes.getAll(1, 50, filters);
-            this.setState('study.notes', notes.notes);
-            return notes;
-        } catch (error) {
-            console.error('Failed to load notes:', error);
-            return { notes: [], pagination: {} };
-        }
-    },
-
-    /**
-     * Add or update note
-     */
-    async saveNote(noteData, noteId = null) {
-        try {
-            let response;
-            if (noteId) {
-                response = await ApiMethods.notes.update(noteId, noteData);
-            } else {
-                response = await ApiMethods.notes.create(noteData);
+            // Check if expired
+            if (Date.now() - item.timestamp > item.ttl) {
+                State.clearCache(key);
+                return null;
             }
 
-            // Refresh notes list
-            await this.loadNotes();
+            return item.data;
+        },
 
-            return response;
-        } catch (error) {
-            console.error('Failed to save note:', error);
-            throw error;
+        clearCache(key) {
+            const cache = State.get('cache') || {};
+            delete cache[key];
+            State.set('cache', cache);
+        },
+
+        clearAllCache() {
+            State.set('cache', {});
         }
     },
 
-    /**
-     * Delete note
-     */
-    async deleteNote(noteId) {
-        try {
-            await ApiMethods.notes.delete(noteId);
+    // Computed values
+    computed: {
+        // Get total completed progress
+        getTotalProgress() {
+            const progress = State.get('progress') || {};
+            let completed = 0;
+            let total = 0;
 
-            // Remove from state
-            const currentNotes = this.getState('study.notes') || [];
-            const updatedNotes = currentNotes.filter(note => note.id !== noteId);
-            this.setState('study.notes', updatedNotes);
+            Object.values(progress).forEach(week => {
+                Object.values(week).forEach(day => {
+                    total++;
+                    if (day.completed) completed++;
+                });
+            });
 
-        } catch (error) {
-            console.error('Failed to delete note:', error);
-            throw error;
+            return { completed, total, percentage: total > 0 ? (completed / total) * 100 : 0 };
+        },
+
+        // Get current streak
+        getCurrentStreak() {
+            const progress = State.get('progress') || {};
+            const completedDates = [];
+
+            Object.values(progress).forEach(week => {
+                Object.values(week).forEach(day => {
+                    if (day.completed && day.completion_date) {
+                        completedDates.push(day.completion_date);
+                    }
+                });
+            });
+
+            return Utils.calculateStreak(completedDates);
+        },
+
+        // Get unread notifications count
+        getUnreadNotificationsCount() {
+            const notifications = State.get('notifications') || [];
+            return notifications.filter(n => !n.is_read).length;
+        },
+
+        // Get timer progress percentage
+        getTimerProgress() {
+            const timer = State.get('timer');
+            if (!timer.isRunning) return 0;
+
+            const totalTime = APP_CONFIG.POMODORO_DURATION; // Default duration
+            return ((totalTime - timer.timeLeft) / totalTime) * 100;
         }
     },
 
-    /**
-     * Start pomodoro session
-     */
-    async startPomodoro(sessionData) {
-        try {
-            const response = await ApiMethods.pomodoro.start(sessionData);
+    // Debugging helpers
+    debug: {
+        getState() {
+            return State.data;
+        },
 
-            const timerState = {
-                sessionId: response.session_id,
-                startTime: new Date(response.start_time),
-                duration: sessionData.duration,
-                topic: sessionData.topic,
-                isRunning: true
+        setState(newState) {
+            State.data = newState;
+        },
+
+        getListeners() {
+            return State.listeners;
+        },
+
+        clearState() {
+            State.data = {
+                user: null,
+                progress: {},
+                notes: [],
+                dashboard: null,
+                roadmap: [],
+                resources: [],
+                notifications: [],
+                timer: {
+                    isRunning: false,
+                    timeLeft: 0,
+                    mode: 'pomodoro',
+                    sessionId: null
+                },
+                ui: {
+                    theme: 'light',
+                    sidebarCollapsed: false,
+                    loading: false,
+                    currentRoute: '/'
+                },
+                preferences: {},
+                cache: {}
             };
-
-            this.setState('study.currentTimer', timerState);
-            Storage.timer.setTimerState(timerState);
-
-            return response;
-        } catch (error) {
-            console.error('Failed to start pomodoro:', error);
-            throw error;
         }
-    },
-
-    /**
-     * Complete pomodoro session
-     */
-    async completePomodoro(sessionId) {
-        try {
-            const response = await ApiMethods.pomodoro.complete(sessionId);
-
-            this.setState('study.currentTimer', null);
-            Storage.timer.clearTimerState();
-
-            // Show completion notification
-            Notifications.show('Pomodoro session completed!', 'success');
-
-            return response;
-        } catch (error) {
-            console.error('Failed to complete pomodoro:', error);
-            throw error;
-        }
-    },
-
-    /**
-     * Load resources
-     */
-    async loadResources(type = null) {
-        try {
-            const cacheKey = `resources_${type || 'all'}`;
-            const cached = this.cache.get(cacheKey);
-
-            if (cached && cached.expiry > Date.now()) {
-                this.setState('study.resources', cached.data);
-                return cached.data;
-            }
-
-            const resources = await ApiMethods.resources.get(type);
-
-            // Cache for 30 minutes
-            this.cache.set(cacheKey, {
-                data: resources,
-                expiry: Date.now() + 30 * 60 * 1000
-            });
-
-            this.setState('study.resources', resources);
-            return resources;
-        } catch (error) {
-            console.error('Failed to load resources:', error);
-            return { resources: [], pagination: {} };
-        }
-    },
-
-    /**
-     * Search functionality
-     */
-    async search(query, page = 1, type = 'all') {
-        try {
-            // Add to search history
-            Storage.search.addSearchQuery(query);
-
-            const results = await ApiMethods.search.query(query, page, type);
-            return results;
-        } catch (error) {
-            console.error('Search failed:', error);
-            return {};
-        }
-    },
-
-    /**
-     * Update UI state
-     */
-    updateUI(updates) {
-        Object.entries(updates).forEach(([key, value]) => {
-            this.setState(`ui.${key}`, value);
-        });
-    },
-
-    /**
-     * Clear all state (on logout)
-     */
-    clear() {
-        this.user = { data: null, preferences: {}, notifications: [], sessions: [] };
-        this.progress = { data: {}, stats: {}, calendar: {}, weeklyProgress: {} };
-        this.study = { notes: [], pomodoroSessions: [], currentTimer: null, resources: [] };
-        this.cache.clear();
-
-        // Clear storage
-        Storage.cache.clear();
     }
 };
 
-// Export State for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = State;
-}
+// Initialize state
+State.init();
+
+// Make actions available globally for convenience
+Object.assign(State, State.actions);
+
+// Make available globally
+window.State = State;

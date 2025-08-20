@@ -1,42 +1,60 @@
-<div class="container-fluid p-4">
+<div class="page-container">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 fw-bold mb-3">
-                <i class="fas fa-search text-primary me-2"></i>
-                Search Results
+            <h1 class="h2 mb-1">
+                <i class="bi bi-search text-primary me-2"></i>
+                Search
             </h1>
+            <p class="text-muted mb-0">Find resources, notes, and topics across your learning journey</p>
+        </div>
+    </div>
 
-            <!-- Search Bar -->
-            <div class="card">
-                <div class="card-body">
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4">
                     <form id="search-form">
                         <div class="input-group input-group-lg">
-                            <span class="input-group-text">
-                                <i class="fas fa-search"></i>
+                            <span class="input-group-text bg-transparent border-end-0">
+                                <i class="bi bi-search text-primary"></i>
                             </span>
-                            <input type="text" class="form-control" id="search-input"
-                                placeholder="Search for topics, notes, resources..." autocomplete="off">
-                            <button class="btn btn-primary" type="submit">Search</button>
+                            <input type="text" id="search-query" class="form-control border-start-0 ps-0"
+                                placeholder="Search for resources, notes, topics, or questions..." autocomplete="off"
+                                autofocus>
+                            <button class="btn btn-primary" type="submit">
+                                Search
+                            </button>
                         </div>
                     </form>
 
                     <!-- Search Filters -->
                     <div class="mt-3">
-                        <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <span class="text-muted small">Filter by:</span>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <input type="checkbox" class="btn-check" id="filter-all" checked>
-                                <label class="btn btn-outline-secondary" for="filter-all">All</label>
-
-                                <input type="checkbox" class="btn-check" id="filter-roadmap">
-                                <label class="btn btn-outline-secondary" for="filter-roadmap">Roadmap</label>
-
-                                <input type="checkbox" class="btn-check" id="filter-resources">
-                                <label class="btn btn-outline-secondary" for="filter-resources">Resources</label>
-
-                                <input type="checkbox" class="btn-check" id="filter-notes">
-                                <label class="btn btn-outline-secondary" for="filter-notes">Notes</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filter-all" checked>
+                                <label class="form-check-label" for="filter-all">
+                                    All
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filter-resources">
+                                <label class="form-check-label" for="filter-resources">
+                                    <i class="bi bi-book me-1"></i>Resources
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filter-notes">
+                                <label class="form-check-label" for="filter-notes">
+                                    <i class="bi bi-journal-text me-1"></i>Notes
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filter-roadmap">
+                                <label class="form-check-label" for="filter-roadmap">
+                                    <i class="bi bi-map me-1"></i>Roadmap
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -45,157 +63,462 @@
         </div>
     </div>
 
-    <!-- Search Results Summary -->
-    <div class="row mb-4" id="search-summary" style="display: none;">
+    <!-- Recent Searches -->
+    <div class="row mb-4" id="recent-searches-section">
         <div class="col-12">
-            <div class="alert alert-info d-flex justify-content-between align-items-center">
-                <div>
-                    <i class="fas fa-info-circle me-2"></i>
-                    Found <strong id="result-count">0</strong> results for "<strong id="search-query"></strong>"
-                </div>
-                <button type="button" class="btn-close" onclick="clearSearch()"></button>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Recent Searches</h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="clearRecentSearches()">
+                    Clear History
+                </button>
+            </div>
+            <div id="recent-searches" class="d-flex flex-wrap gap-2">
+                <!-- Recent searches will be populated here -->
             </div>
         </div>
     </div>
 
-    <!-- Results Container -->
-    <div class="row" id="results-container">
-        <!-- Initial State -->
+    <!-- Search Results -->
+    <div class="row">
         <div class="col-12">
-            <div class="text-center py-5">
-                <i class="fas fa-search text-muted fa-4x mb-3"></i>
-                <h4 class="text-muted">Start Searching</h4>
-                <p class="text-muted mb-4">Enter a search term to find roadmap topics, resources, and notes.</p>
+            <div id="search-results-container">
+                <!-- Initial state -->
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-search fs-1 mb-3"></i>
+                    <h4>Start Searching</h4>
+                    <p>Enter a search term above to find resources, notes, and topics</p>
 
-                <!-- Popular Searches -->
-                <div class="mt-4">
-                    <h6 class="text-muted mb-3">Popular Searches:</h6>
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('arrays')">Arrays</button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('linked lists')">Linked
-                            Lists</button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('binary search')">Binary
-                            Search</button>
-                        <button class="btn btn-sm btn-outline-primary"
-                            onclick="performSearch('dynamic programming')">Dynamic Programming</button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('graphs')">Graphs</button>
+                    <!-- Popular Searches -->
+                    <div class="mt-4">
+                        <h6 class="text-primary mb-3">Popular Searches</h6>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="performSearch('arrays')">
+                                Arrays
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="performSearch('binary search')">
+                                Binary Search
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="performSearch('linked list')">
+                                Linked List
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm"
+                                onclick="performSearch('dynamic programming')">
+                                Dynamic Programming
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="performSearch('graph algorithms')">
+                                Graph Algorithms
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Pagination -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <nav id="search-pagination" style="display: none;">
-                <!-- Populated by JavaScript -->
-            </nav>
-        </div>
-    </div>
 </div>
 
 <script>
+    let currentSearchQuery = '';
+    let searchResults = null;
+
     document.addEventListener('DOMContentLoaded', function () {
-        let currentQuery = '';
-        let currentPage = 1;
-        let searchResults = {};
-        let activeFilters = new Set(['all']);
+        setupSearch();
+        loadRecentSearches();
 
-        // Check for query parameter
+        // Check URL for search query
         const urlParams = new URLSearchParams(window.location.search);
-        const initialQuery = urlParams.get('q');
-        if (initialQuery) {
-            document.getElementById('search-input').value = initialQuery;
-            performSearch(initialQuery);
+        const query = urlParams.get('q');
+        if (query) {
+            document.getElementById('search-query').value = query;
+            performSearch(query);
         }
+    });
 
-        setupEventListeners();
-        loadSearchHistory();
+    function setupSearch() {
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-query');
 
-        function setupEventListeners() {
-            // Search form
-            document.getElementById('search-form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const query = document.getElementById('search-input').value.trim();
-                if (query) {
-                    performSearch(query);
-                }
-            });
+        // Form submission
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                performSearch(query);
+            }
+        });
 
-            // Filter checkboxes
-            document.querySelectorAll('.btn-check').forEach(checkbox => {
+        // Real-time search suggestions (debounced)
+        const debouncedSearch = Utils.debounce((query) => {
+            if (query.length >= 2) {
+                showSearchSuggestions(query);
+            }
+        }, 300);
+
+        searchInput.addEventListener('input', (e) => {
+            debouncedSearch(e.target.value);
+        });
+
+        // Filter checkboxes
+        const filterCheckboxes = document.querySelectorAll('.form-check-input');
+        const filterAll = document.getElementById('filter-all');
+
+        filterAll.addEventListener('change', function () {
+            if (this.checked) {
+                filterCheckboxes.forEach(cb => {
+                    if (cb !== filterAll) cb.checked = false;
+                });
+            }
+        });
+
+        filterCheckboxes.forEach(checkbox => {
+            if (checkbox !== filterAll) {
                 checkbox.addEventListener('change', function () {
-                    if (this.id === 'filter-all') {
-                        if (this.checked) {
-                            activeFilters.clear();
-                            activeFilters.add('all');
-                            document.querySelectorAll('.btn-check:not(#filter-all)').forEach(cb => cb.checked = false);
-                        } else {
-                            this.checked = true; // Keep at least one filter active
-                        }
-                    } else {
-                        document.getElementById('filter-all').checked = false;
-                        activeFilters.delete('all');
-
-                        if (this.checked) {
-                            activeFilters.add(this.id.replace('filter-', ''));
-                        } else {
-                            activeFilters.delete(this.id.replace('filter-', ''));
-                        }
-
-                        // If no filters selected, select all
-                        if (activeFilters.size === 0) {
-                            document.getElementById('filter-all').checked = true;
-                            activeFilters.add('all');
-                        }
+                    if (this.checked) {
+                        filterAll.checked = false;
                     }
 
-                    // Re-render results with new filters
-                    if (currentQuery) {
-                        renderResults();
+                    // If no filters selected, check "All"
+                    const anyChecked = Array.from(filterCheckboxes).some(cb => cb !== filterAll && cb.checked);
+                    if (!anyChecked) {
+                        filterAll.checked = true;
+                    }
+
+                    // Re-run search with new filters
+                    if (currentSearchQuery) {
+                        performSearch(currentSearchQuery);
                     }
                 });
-            });
+            }
+        });
+    }
 
-            // Real-time search suggestions
-            const searchInput = document.getElementById('search-input');
-            const debouncedSuggest = Utils.time.debounce(showSuggestions, 300);
+    async function performSearch(query) {
+        currentSearchQuery = query;
 
-            searchInput.addEventListener('input', function () {
-                const query = this.value.trim();
-                if (query.length >= 2) {
-                    debouncedSuggest(query);
-                } else {
-                    hideSuggestions();
-                }
-            });
+        // Save to recent searches
+        Storage.search.addRecentSearch(query);
+        loadRecentSearches();
 
-            // Handle click outside to close suggestions
-            document.addEventListener('click', function (e) {
-                if (!e.target.closest('#search-form')) {
-                    hideSuggestions();
-                }
-            });
+        // Update URL
+        const url = new URL(window.location);
+        url.searchParams.set('q', query);
+        window.history.replaceState({}, '', url);
+
+        // Show loading state
+        showLoadingState();
+
+        try {
+            // Get active filters
+            const filters = getActiveFilters();
+
+            // Perform search
+            const results = await API.search.query(query, { type: filters.join(',') });
+            searchResults = results;
+
+            // Display results
+            displaySearchResults(results, query);
+
+        } catch (error) {
+            console.error('Search error:', error);
+            showErrorState();
+            Notifications.error('Search failed. Please try again.');
+        }
+    }
+
+    function getActiveFilters() {
+        const filters = [];
+
+        if (document.getElementById('filter-all').checked) {
+            return ['all'];
         }
 
-        async function performSearch(query, page = 1) {
-            currentQuery = query;
-            currentPage = page;
+        if (document.getElementById('filter-resources').checked) filters.push('resources');
+        if (document.getElementById('filter-notes').checked) filters.push('notes');
+        if (document.getElementById('filter-roadmap').checked) filters.push('roadmap');
 
-            // Update URL
-            const newUrl = `${window.location.pathname}?q=${encodeURIComponent(query)}`;
-            history.pushState({ query }, '', newUrl);
+        return filters.length > 0 ? filters : ['all'];
+    }
 
-            // Show loading
-            showLoading();
+    function showLoadingState() {
+        const container = document.getElementById('search-results-container');
+        container.innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Searching...</span>
+            </div>
+            <p class="text-muted mt-3 mb-0">Searching for "${currentSearchQuery}"...</p>
+        </div>
+    `;
+    }
 
-            try {
-                // Fetch search results from backend
-                const response = await ApiMethods.search.query(query, page, 'all');
-                searchResults = response;
+    function showErrorState() {
+        const container = document.getElementById('search-results-container');
+        container.innerHTML = `
+        <div class="text-center py-5">
+            <i class="bi bi-exclamation-triangle text-warning fs-1 mb-3"></i>
+            <h4>Search Failed</h4>
+            <p class="text-muted mb-4">There was an error performing your search</p>
+            <button class="btn btn-primary" onclick="performSearch('${currentSearchQuery}')">
+                <i class="bi bi-arrow-clockwise me-2"></i>
+                Try Again
+            </button>
+        </div>
+    `;
+    }
 
-                // Add to search history
-                Storage.search.addSearchQuery(query);
+    function displaySearchResults(results, query) {
+        const container = document.getElementById('search-results-container');
 
-    // Show results
+        // Count total results
+        let totalResults = 0;
+        if (results.resources) totalResults += results.resources.length;
+        if (results.notes) totalResults += results.notes.length;
+        if (results.roadmap) totalResults += results.roadmap.length;
+
+        if (totalResults === 0) {
+            container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-search-x text-muted fs-1 mb-3"></i>
+                <h4>No Results Found</h4>
+                <p class="text-muted mb-4">No results found for "${query}"</p>
+                <p class="text-muted">Try different keywords or check your spelling</p>
+            </div>
+        `;
+            return;
+        }
+
+        let html = `
+        <div class="mb-4">
+            <h5>${totalResults} results for "${query}"</h5>
+        </div>
+    `;
+
+        // Resources Section
+        if (results.resources && results.resources.length > 0) {
+            html += `
+            <div class="mb-5">
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-book me-2"></i>
+                    Resources (${results.resources.length})
+                </h6>
+                <div class="row g-3">
+                    ${results.resources.map(resource => createResourceCard(resource, query)).join('')}
+                </div>
+            </div>
+        `;
+        }
+
+        // Notes Section
+        if (results.notes && results.notes.length > 0) {
+            html += `
+            <div class="mb-5">
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-journal-text me-2"></i>
+                    Notes (${results.notes.length})
+                </h6>
+                <div class="row g-3">
+                    ${results.notes.map(note => createNoteCard(note, query)).join('')}
+                </div>
+            </div>
+        `;
+        }
+
+        // Roadmap Section
+        if (results.roadmap && results.roadmap.length > 0) {
+            html += `
+            <div class="mb-5">
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-map me-2"></i>
+                    Roadmap Topics (${results.roadmap.length})
+                </h6>
+                <div class="row g-3">
+                    ${results.roadmap.map(week => createRoadmapCard(week, query)).join('')}
+                </div>
+            </div>
+        `;
+        }
+
+        container.innerHTML = html;
+    }
+
+    function createResourceCard(resource, query) {
+        const typeIcons = {
+            'text': 'bi-file-text',
+            'video': 'bi-play-circle',
+            'interactive': 'bi-diagram-3',
+            'practice': 'bi-code-slash'
+        };
+
+        const typeColors = {
+            'text': 'primary',
+            'video': 'danger',
+            'interactive': 'success',
+            'practice': 'warning'
+        };
+
+        const icon = typeIcons[resource.type] || 'bi-link-45deg';
+        const color = typeColors[resource.type] || 'secondary';
+
+        return `
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-2">
+                        <div class="bg-${color} bg-opacity-10 p-2 rounded me-3">
+                            <i class="${icon} text-${color} fs-5"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-1">
+                                <a href="${resource.url}" target="_blank" class="text-decoration-none">
+                                    ${highlightMatch(resource.title, query)}
+                                </a>
+                            </h6>
+                            <span class="badge bg-${color} bg-opacity-10 text-${color}">
+                                ${Utils.titleCase(resource.type)}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <a href="${resource.url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>
+                            Open Resource
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    function createNoteCard(note, query) {
+        return `
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-lift">
+                <div class="card-body">
+                    <h6 class="card-title mb-2">
+                        <a href="/notes?id=${note.id}" class="text-decoration-none">
+                            ${highlightMatch(note.title, query)}
+                        </a>
+                    </h6>
+                    <p class="text-muted small mb-2">
+                        ${highlightMatch(Utils.truncate(note.content, 100), query)}
+                    </p>
+                    ${note.tags && note.tags.length > 0 ? `
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            ${note.tags.slice(0, 3).map(tag =>
+            `<span class="badge bg-light text-dark">#${tag}</span>`
+        ).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            ${Utils.getRelativeTime(note.updated_at)}
+                        </small>
+                        <a href="/notes?id=${note.id}" class="btn btn-sm btn-outline-primary">
+                            View Note
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    function createRoadmapCard(week, query) {
+        return `
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-lift">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="card-title mb-1">
+                            <a href="/roadmap?week=${week.week}" class="text-decoration-none">
+                                Week ${week.week}: ${highlightMatch(week.title, query)}
+                            </a>
+                        </h6>
+                        <span class="badge bg-primary">Week ${week.week}</span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        ${highlightMatch(week.goal, query)}
+                    </p>
+                    <div class="bg-light rounded p-2 mb-3">
+                        <small class="text-muted d-block mb-1">Project:</small>
+                        <p class="mb-0 small fw-medium">${week.project.title}</p>
+                    </div>
+                    <a href="/roadmap?week=${week.week}" class="btn btn-sm btn-outline-primary">
+                        View Week
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    function highlightMatch(text, query) {
+        if (!query) return text;
+
+        const regex = new RegExp(`(${Utils.escapeRegex(query)})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    function showSearchSuggestions(query) {
+        // In a real app, this would fetch suggestions from the backend
+        // For now, we'll use static suggestions based on common searches
+        const suggestions = [
+            'arrays and strings',
+            'binary search tree',
+            'linked list reversal',
+            'dynamic programming patterns',
+            'graph traversal algorithms',
+            'sorting algorithms comparison',
+            'time complexity analysis',
+            'recursion techniques'
+        ].filter(s => s.toLowerCase().includes(query.toLowerCase()));
+
+        // Could implement a dropdown suggestions UI here
+    }
+
+    function loadRecentSearches() {
+        const recentSearches = Storage.search.getRecentSearches();
+        const container = document.getElementById('recent-searches');
+        const section = document.getElementById('recent-searches-section');
+
+        if (recentSearches.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = 'block';
+        container.innerHTML = recentSearches.slice(0, 8).map(search => `
+        <button class="btn btn-outline-secondary btn-sm" 
+                onclick="performSearch('${search.query.replace(/'/g, "\\'")}')">
+            <i class="bi bi-clock-history me-1"></i>
+            ${search.query}
+        </button>
+    `).join('');
+    }
+
+    function clearRecentSearches() {
+        Storage.search.clearRecentSearches();
+        loadRecentSearches();
+        Notifications.success('Search history cleared');
+    }
+
+    // Add CSS for search results
+    const searchStyle = document.createElement('style');
+    searchStyle.textContent = `
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    mark {
+        background: rgba(255, 235, 59, 0.4);
+        padding: 0.1em 0.2em;
+        border-radius: 2px;
+    }
+`;
+    document.head.appendChild(searchStyle);
+</script>

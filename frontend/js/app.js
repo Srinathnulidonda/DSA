@@ -1,679 +1,740 @@
-// Main Application Entry Point for DSA Path
-
+// Main Application Bootstrap
 const App = {
-    // Application state
-    isInitialized: false,
-    isOnline: navigator.onLine,
+    initialized: false,
 
-    /**
-     * Initialize the application
-     */
+    // Initialize application
     async init() {
+        if (this.initialized) return;
+
+        console.log('🚀 Initializing DSA Path Application...');
+
         try {
-            console.log('🚀 Initializing DSA Path Application...');
-
-            // Show loading screen
-            this.showLoadingScreen();
-
             // Initialize core systems
-            await this.initCore();
+            await this.initializeCore();
 
-            // Initialize UI
-            await this.initUI();
+            // Setup error handling
+            this.setupErrorHandling();
 
-            // Initialize services
-            await this.initServices();
+            // Setup authentication
+            this.setupAuthentication();
 
-            // Setup event listeners
-            this.setupEventListeners();
+            // Initialize router
+            this.initializeRouter();
 
-            // Initialize routing
-            this.initRouting();
+            // Setup theme
+            this.setupTheme();
 
-            // Hide loading screen and show app
-            this.hideLoadingScreen();
+            // Initialize notifications
+            this.initializeNotifications();
 
-            this.isInitialized = true;
-            console.log('✅ Application initialized successfully');
+            // Setup offline handling
+            this.setupOfflineHandling();
 
-            // Show welcome message for new users
-            this.showWelcomeMessage();
+            // Setup performance monitoring
+            this.setupPerformanceMonitoring();
+
+            // Preload critical resources
+            await this.preloadCriticalResources();
+
+            // Mark as initialized
+            this.initialized = true;
+
+            console.log('✅ DSA Path Application initialized successfully');
+
+            // Dispatch app ready event
+            document.dispatchEvent(new CustomEvent('app:ready'));
 
         } catch (error) {
             console.error('❌ Application initialization failed:', error);
-            this.showInitializationError(error);
+            this.handleInitializationError(error);
         }
     },
 
-    /**
-     * Initialize core systems
-     */
-    async initCore() {
+    // Initialize core systems
+    async initializeCore() {
         // Initialize storage
         Storage.init();
 
         // Initialize state management
         State.init();
 
+        // Initialize theme manager
+        ThemeManager.init();
+
         // Initialize authentication
         Auth.init();
 
-        // Initialize theme system
-        Theme.init();
-
-        // Wait for critical resources
-        await this.waitForCriticalResources();
-    },
-
-    /**
-     * Initialize UI systems
-     */
-    async initUI() {
         // Initialize notifications
         Notifications.init();
 
-        // Initialize components
-        this.initializeComponents();
-
-        // Setup global UI event listeners
-        this.setupGlobalUIEvents();
-
-        // Initialize tooltips and other Bootstrap components
-        this.initializeBootstrapComponents();
+        // Preload critical components
+        await Loader.preloadComponents();
     },
 
-    /**
-     * Initialize services
-     */
-    async initServices() {
-        // Initialize library extensions
-        Lib.markdown.init();
-        Lib.charts.init();
-        Lib.timer.init();
-        Lib.audio.init();
+    // Setup error handling
+    setupErrorHandling() {
+        // Global error handler
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            this.logError('javascript', event.error);
 
-        // Preload common pages for better performance
-        if (Auth.isLoggedIn()) {
-            await this.preloadPages();
-        }
-    },
-
-    /**
-     * Wait for critical resources to load
-     */
-    async waitForCriticalResources() {
-        // Wait for fonts to load
-        if (document.fonts) {
-            await document.fonts.ready;
-        }
-
-        // Wait for essential images to load
-        const criticalImages = Utils.dom.$$('img[data-critical]');
-        const imagePromises = Array.from(criticalImages).map(img => {
-            return new Promise((resolve) => {
-                if (img.complete) {
-                    resolve();
-                } else {
-                    img.onload = resolve;
-                    img.onerror = resolve; // Continue even if image fails
-                }
-            });
+            // Don't show notifications for known harmless errors
+            if (!this.isHarmlessError(event.error)) {
+                Notifications.error('An unexpected error occurred. Please refresh the page if the problem persists.');
+            }
         });
 
-        await Promise.all(imagePromises);
-    },
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            this.logError('promise', event.reason);
 
-    /**
-     * Initialize components
-     */
-    initializeComponents() {
-        // Initialize sidebar toggle
-        this.initSidebarToggle();
+            // Prevent the default handling
+            event.preventDefault();
 
-        // Initialize theme toggle
-        this.initThemeToggle();
-
-        // Initialize search
-        this.initGlobalSearch();
-
-        // Initialize notifications dropdown
-        this.initNotificationsDropdown();
-
-        // Initialize user menu
-        this.initUserMenu();
-    },
-
-    /**
-     * Initialize sidebar toggle
-     */
-    initSidebarToggle() {
-        const toggleBtn = Utils.dom.$('#sidebar-toggle');
-        const sidebar = Utils.dom.$('#sidebar');
-        const overlay = Utils.dom.$('#sidebar-overlay');
-
-        if (toggleBtn && sidebar) {
-            toggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-
-                // Add overlay for mobile
-                if (Utils.browser.isMobile() && sidebar.classList.contains('active')) {
-                    this.createSidebarOverlay();
-                }
-            });
-        }
-    },
-
-    /**
-     * Create sidebar overlay for mobile
-     */
-    createSidebarOverlay() {
-        let overlay = Utils.dom.$('#sidebar-overlay');
-
-        if (!overlay) {
-            overlay = Utils.dom.createElement('div', {
-                id: 'sidebar-overlay',
-                className: 'sidebar-overlay'
-            });
-
-            overlay.addEventListener('click', () => {
-                const sidebar = Utils.dom.$('#sidebar');
-                if (sidebar) {
-                    sidebar.classList.remove('active');
-                }
-                overlay.remove();
-            });
-
-            document.body.appendChild(overlay);
-        }
-    },
-
-    /**
-     * Initialize theme toggle
-     */
-    initThemeToggle() {
-        const toggleBtn = Utils.dom.$('#theme-toggle');
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                Theme.toggle();
-            });
-        }
-    },
-
-    /**
-     * Initialize global search
-     */
-    initGlobalSearch() {
-        const searchInput = Utils.dom.$('#global-search');
-        const searchBtn = Utils.dom.$('#search-btn');
-
-        if (searchInput) {
-            // Debounced search suggestions
-            const debouncedSearch = Utils.time.debounce(async (query) => {
-                if (query.length >= 2) {
-                    await this.showSearchSuggestions(query);
-                } else {
-                    this.hideSearchSuggestions();
-                }
-            }, 300);
-
-            searchInput.addEventListener('input', (e) => {
-                debouncedSearch(e.target.value);
-            });
-
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.performSearch(e.target.value);
-                }
-            });
-
-            // Handle search button click
-            if (searchBtn) {
-                searchBtn.addEventListener('click', () => {
-                    this.performSearch(searchInput.value);
-                });
-            }
-        }
-    },
-
-    /**
-     * Show search suggestions
-     */
-    async showSearchSuggestions(query) {
-        try {
-            const results = await State.search(query, 1, 'all');
-
-            // Create or update suggestions dropdown
-            let dropdown = Utils.dom.$('#search-suggestions');
-
-            if (!dropdown) {
-                dropdown = Utils.dom.createElement('div', {
-                    id: 'search-suggestions',
-                    className: 'search-suggestions dropdown-menu show'
-                });
-
-                const searchInput = Utils.dom.$('#global-search');
-                searchInput.parentNode.appendChild(dropdown);
-            }
-
-            // Populate suggestions
-            const suggestions = [];
-
-            // Add resource suggestions
-            if (results.resources) {
-                results.resources.slice(0, 3).forEach(resource => {
-                    suggestions.push({
-                        type: 'resource',
-                        title: resource.title,
-                        icon: 'fas fa-book',
-                        url: resource.url
-                    });
-                });
-            }
-
-            // Add roadmap suggestions
-            if (results.roadmap) {
-                results.roadmap.slice(0, 2).forEach(week => {
-                    suggestions.push({
-                        type: 'roadmap',
-                        title: `Week ${week.week}: ${week.title}`,
-                        icon: 'fas fa-map',
-                        url: `/pages/roadmap?week=${week.week}`
-                    });
-                });
-            }
-
-            dropdown.innerHTML = suggestions.map(suggestion => `
-        <a class="dropdown-item" href="${suggestion.url}">
-          <i class="${suggestion.icon} me-2"></i>
-          ${suggestion.title}
-        </a>
-      `).join('') || '<div class="dropdown-item text-muted">No suggestions found</div>';
-
-        } catch (error) {
-            console.error('Search suggestions error:', error);
-        }
-    },
-
-    /**
-     * Hide search suggestions
-     */
-    hideSearchSuggestions() {
-        const dropdown = Utils.dom.$('#search-suggestions');
-        if (dropdown) {
-            dropdown.remove();
-        }
-    },
-
-    /**
-     * Perform search
-     */
-    performSearch(query) {
-        if (query.trim()) {
-            Router.navigate(`/pages/search?q=${encodeURIComponent(query.trim())}`);
-            this.hideSearchSuggestions();
-        }
-    },
-
-    /**
-     * Initialize notifications dropdown
-     */
-    initNotificationsDropdown() {
-        const notificationBtn = Utils.dom.$('[data-bs-toggle="dropdown"][aria-label="Notifications"]');
-
-        if (notificationBtn) {
-            notificationBtn.addEventListener('click', async () => {
-                await this.loadNotifications();
-            });
-        }
-    },
-
-    /**
-     * Load and display notifications
-     */
-    async loadNotifications() {
-        try {
-            const container = Utils.dom.$('#notification-list');
-            if (!container) return;
-
-            Components.loading.overlay(container, true);
-
-            const response = await ApiMethods.notifications.getAll(1, 10);
-            const notifications = response.notifications || [];
-
-            if (notifications.length === 0) {
-                container.innerHTML = `
-          <div class="text-center py-4 text-gray-500">
-            <i class="fas fa-bell-slash fs-3 mb-2"></i>
-            <p class="mb-0">No notifications</p>
-          </div>
-        `;
+            // Show user-friendly error
+            if (event.reason && event.reason.message) {
+                Notifications.error(`Error: ${event.reason.message}`);
             } else {
-                container.innerHTML = notifications.map(notification => `
-          <div class="dropdown-item ${notification.is_read ? '' : 'bg-light'}" 
-               onclick="Notifications.markAsRead('${notification.id}')">
-            <div class="d-flex">
-              <div class="flex-grow-1">
-                <h6 class="mb-1">${notification.title}</h6>
-                <p class="mb-1 text-muted small">${notification.message}</p>
-                <small class="text-muted">${Utils.date.relative(notification.created_at)}</small>
-              </div>
-              ${!notification.is_read ? '<div class="bg-primary rounded-circle" style="width: 8px; height: 8px;"></div>' : ''}
-            </div>
-          </div>
-        `).join('');
-            }
-
-        } catch (error) {
-            console.error('Failed to load notifications:', error);
-            const container = Utils.dom.$('#notification-list');
-            if (container) {
-                container.innerHTML = '<div class="dropdown-item text-danger">Failed to load notifications</div>';
-            }
-        } finally {
-            const container = Utils.dom.$('#notification-list');
-            if (container) {
-                Components.loading.overlay(container, false);
-            }
-        }
-    },
-
-    /**
-     * Initialize user menu
-     */
-    initUserMenu() {
-        const logoutBtn = Utils.dom.$('#logout-btn');
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                Auth.logout();
-            });
-        }
-    },
-
-    /**
-     * Setup global UI event listeners
-     */
-    setupGlobalUIEvents() {
-        // Handle click outside to close dropdowns
-        document.addEventListener('click', (e) => {
-            const searchSuggestions = Utils.dom.$('#search-suggestions');
-            const searchInput = Utils.dom.$('#global-search');
-
-            if (searchSuggestions && !searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
-                this.hideSearchSuggestions();
+                Notifications.error('An unexpected error occurred. Please try again.');
             }
         });
 
-        // Handle keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            this.handleKeyboardShortcuts(e);
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', Utils.time.throttle(() => {
-            this.handleWindowResize();
-        }, 250));
-
-        // Handle online/offline events
+        // Network error handling
         window.addEventListener('online', () => {
-            this.isOnline = true;
-            State.setState('app.isOnline', true);
+            Notifications.success('Connection restored!');
+            this.syncOfflineData();
         });
 
         window.addEventListener('offline', () => {
-            this.isOnline = false;
-            State.setState('app.isOnline', false);
+            Notifications.warning('You are now offline. Changes will be saved locally.');
         });
     },
 
-    /**
-     * Handle keyboard shortcuts
-     */
-    handleKeyboardShortcuts(e) {
-        // Ctrl/Cmd + K for search
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            const searchInput = Utils.dom.$('#global-search');
-            if (searchInput) {
-                searchInput.focus();
-            }
-        }
-
-        // Escape to close modals, dropdowns, etc.
-        if (e.key === 'Escape') {
-            this.handleEscapeKey();
-        }
-    },
-
-    /**
-     * Handle escape key press
-     */
-    handleEscapeKey() {
-        // Close search suggestions
-        this.hideSearchSuggestions();
-
-        // Close mobile sidebar
-        const sidebar = Utils.dom.$('#sidebar');
-        if (sidebar && sidebar.classList.contains('active')) {
-            sidebar.classList.remove('active');
-            const overlay = Utils.dom.$('#sidebar-overlay');
-            if (overlay) overlay.remove();
-        }
-
-        // Close mobile drawer
-        const drawer = Utils.dom.$('#mobile-drawer');
-        if (drawer && drawer.classList.contains('active')) {
-            drawer.classList.remove('active');
-        }
-    },
-
-    /**
-     * Handle window resize
-     */
-    handleWindowResize() {
-        const deviceType = Utils.browser.getDeviceType();
-        State.setState('app.deviceType', deviceType);
-
-        // Close mobile sidebar on resize to desktop
-        if (deviceType === 'desktop') {
-            const sidebar = Utils.dom.$('#sidebar');
-            if (sidebar) {
-                sidebar.classList.remove('active');
-            }
-
-            const overlay = Utils.dom.$('#sidebar-overlay');
-            if (overlay) overlay.remove();
-        }
-    },
-
-    /**
-     * Initialize Bootstrap components
-     */
-    initializeBootstrapComponents() {
-        // Initialize tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-        // Initialize popovers
-        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-        popoverTriggerList.map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
-    },
-
-    /**
-     * Setup main event listeners
-     */
-    setupEventListeners() {
-        // Authentication state changes
-        Auth.addEventListener('login', (user) => {
-            this.onUserLogin(user);
-        });
-
-        Auth.addEventListener('logout', () => {
-            this.onUserLogout();
-        });
-
-        // State changes
-        State.subscribe('app.isOnline', (isOnline) => {
-            this.handleNetworkChange(isOnline);
-        });
-    },
-
-    /**
-     * Handle user login
-     */
-    async onUserLogin(user) {
-        // Update UI
-        Auth.updateUI();
-
-        // Load user data
-        await State.loadUserData();
-
-        // Preload pages
-        await this.preloadPages();
-
-        // Navigate to dashboard if on auth page
-        if (Router.isCurrentRoute('/auth/login') || Router.isCurrentRoute('/auth/register')) {
-            Router.navigate('/pages/dashboard');
-        }
-    },
-
-    /**
-     * Handle user logout
-     */
-    onUserLogout() {
-        // Clear state
-        State.clear();
-
-        // Clear page cache
-        Loader.clearCache();
-
-        // Update UI
-        Auth.updateUI();
-
-        // Navigate to login
-        Router.navigate('/auth/login');
-    },
-
-    /**
-     * Handle network change
-     */
-    handleNetworkChange(isOnline) {
-        if (isOnline) {
-            Notifications.success('Connection restored');
-            // Retry failed requests if any
-        } else {
-            Notifications.warning('No internet connection');
-        }
-    },
-
-    /**
-     * Initialize routing
-     */
-    initRouting() {
-        Router.init();
-    },
-
-    /**
-     * Preload common pages
-     */
-    async preloadPages() {
-        const commonPages = [
-            '/pages/dashboard.html',
-            '/pages/roadmap.html',
-            '/pages/progress.html',
-            '/pages/notes.html'
+    // Check if error is harmless
+    isHarmlessError(error) {
+        const harmlessErrors = [
+            'ResizeObserver loop limit exceeded',
+            'Non-Error promise rejection captured',
+            'Script error',
+            'Network request failed'
         ];
 
-        await Loader.preloadPages(commonPages);
+        const message = error?.message || String(error);
+        return harmlessErrors.some(harmless => message.includes(harmless));
     },
 
-    /**
-     * Show loading screen
-     */
-    showLoadingScreen() {
-        const loadingScreen = Utils.dom.$('#loading-screen');
-        const app = Utils.dom.$('#app');
+    // Log error for monitoring
+    logError(type, error) {
+        const errorData = {
+            type,
+            message: error?.message || String(error),
+            stack: error?.stack,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            url: window.location.href,
+            userId: Auth.getUserId()
+        };
 
-        if (loadingScreen) {
-            loadingScreen.classList.remove('d-none');
+        // Store locally for now
+        const errors = Storage.get('error_logs', []);
+        errors.push(errorData);
+
+        // Keep only last 50 errors
+        if (errors.length > 50) {
+            errors.splice(0, errors.length - 50);
         }
 
-        if (app) {
-            app.classList.add('hidden');
+        Storage.set('error_logs', errors);
+
+        // In production, send to error tracking service
+        if (process.env.NODE_ENV === 'production') {
+            this.sendErrorToService(errorData);
         }
     },
 
-    /**
-     * Hide loading screen
-     */
-    hideLoadingScreen() {
-        const loadingScreen = Utils.dom.$('#loading-screen');
-        const app = Utils.dom.$('#app');
+    // Send error to external service (placeholder)
+    sendErrorToService(errorData) {
+        // TODO: Implement error tracking service integration
+        console.log('Would send error to service:', errorData);
+    },
+
+    // Setup authentication
+    setupAuthentication() {
+        // Listen for auth state changes
+        document.addEventListener(EVENT_TYPES.AUTH_STATE_CHANGED, (event) => {
+            const { isAuthenticated, user } = event.detail;
+
+            if (isAuthenticated) {
+                this.onUserLogin(user);
+            } else {
+                this.onUserLogout();
+            }
+        });
+
+        // Setup session monitoring
+        this.setupSessionMonitoring();
+    },
+
+    // Handle user login
+    onUserLogin(user) {
+        console.log('User logged in:', user.name);
+
+        // Load user preferences
+        this.loadUserPreferences();
+
+        // Setup user-specific features
+        this.setupUserFeatures();
+
+        // Track login event
+        this.trackEvent('user_login', { userId: user.id });
+    },
+
+    // Handle user logout
+    onUserLogout() {
+        console.log('User logged out');
+
+        // Clear user-specific data
+        this.clearUserData();
+
+        // Reset to default preferences
+        this.resetToDefaults();
+
+        // Track logout event
+        this.trackEvent('user_logout');
+    },
+
+    // Load user preferences
+    async loadUserPreferences() {
+        try {
+            const profile = await API.user.getProfile();
+            const preferences = profile.preferences;
+
+            // Apply preferences
+            if (preferences.theme) {
+                ThemeManager.setTheme(preferences.theme);
+            }
+
+            // Store preferences in state
+            State.setPreferences(preferences);
+
+        } catch (error) {
+            console.error('Error loading user preferences:', error);
+        }
+    },
+
+    // Setup user-specific features
+    setupUserFeatures() {
+        // Setup notifications preferences
+        this.setupNotificationPreferences();
+
+        // Setup auto-save for notes
+        this.setupAutoSave();
+
+        // Setup periodic data sync
+        this.setupDataSync();
+    },
+
+    // Clear user-specific data
+    clearUserData() {
+        // Clear caches
+        State.clearAllCache();
+        Loader.clearCache();
+
+        // Clear session storage
+        Storage.session.clear();
+
+        // Reset timer state
+        State.resetTimer();
+    },
+
+    // Reset to default preferences
+    resetToDefaults() {
+        const defaults = {
+            theme: APP_CONFIG.DEFAULT_THEME,
+            notifications: true,
+            sounds: true,
+            autoSave: true
+        };
+
+        State.setPreferences(defaults);
+        ThemeManager.setTheme(defaults.theme);
+    },
+
+    // Setup session monitoring
+    setupSessionMonitoring() {
+        // Check session validity every 5 minutes
+        setInterval(async () => {
+            if (Auth.isAuthenticated) {
+                try {
+                    await Auth.checkAuthStatus();
+                } catch (error) {
+                    console.warn('Session check failed:', error);
+                }
+            }
+        }, 5 * 60 * 1000);
+
+        // Monitor user activity
+        let lastActivity = Date.now();
+        const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+
+        activityEvents.forEach(event => {
+            document.addEventListener(event, () => {
+                lastActivity = Date.now();
+            }, { passive: true });
+        });
+
+        // Warn about inactivity
+        setInterval(() => {
+            if (Auth.isAuthenticated) {
+                const inactiveTime = Date.now() - lastActivity;
+                const warningTime = 25 * 60 * 1000; // 25 minutes
+
+                if (inactiveTime > warningTime) {
+                    Notifications.warning('Your session will expire soon due to inactivity.');
+                }
+            }
+        }, 60 * 1000); // Check every minute
+    },
+
+    // Initialize router
+    initializeRouter() {
+        Router.init();
+        Router.setupLazyLoading();
+    },
+
+    // Setup theme
+    setupTheme() {
+        // Apply saved theme or system preference
+        const savedTheme = Storage.get(STORAGE_KEYS.THEME);
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const theme = savedTheme || systemTheme;
+
+        ThemeManager.applyTheme(theme);
+
+        // Setup theme change listener
+        document.addEventListener(EVENT_TYPES.THEME_CHANGED, (event) => {
+            this.onThemeChange(event.detail.theme);
+        });
+    },
+
+    // Handle theme change
+    onThemeChange(theme) {
+        console.log('Theme changed to:', theme);
+
+        // Update chart themes if any exist
+        if (window.Chart) {
+            Object.values(Chart.instances).forEach(chart => {
+                Lib.charts.updateChartTheme(chart, theme);
+            });
+        }
+
+        // Track theme change
+        this.trackEvent('theme_changed', { theme });
+    },
+
+    // Initialize notifications
+    initializeNotifications() {
+        // Request notification permission if supported
+        if ('Notification' in window && Notification.permission === 'default') {
+            setTimeout(() => {
+                Notifications.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        Notifications.success('Desktop notifications enabled!');
+                    }
+                });
+            }, 10000); // Ask after 10 seconds
+        }
+
+        // Setup notification preferences
+        this.setupNotificationPreferences();
+    },
+
+    // Setup notification preferences
+    setupNotificationPreferences() {
+        const preferences = State.get('preferences') || {};
+
+        // Configure notification settings based on preferences
+        if (preferences.notifications === false) {
+            Notifications.defaultDuration = 0; // Disable auto-hide
+        }
+
+        if (preferences.sounds === false) {
+            // Disable sound in notifications
+            Object.keys(Notifications.sounds).forEach(key => {
+                Notifications.sounds[key].volume = 0;
+            });
+        }
+    },
+
+    // Setup offline handling
+    setupOfflineHandling() {
+        // Setup service worker for offline support
+        if ('serviceWorker' in navigator) {
+            this.registerServiceWorker();
+        }
+
+        // Setup offline data sync
+        this.setupOfflineSync();
+    },
+
+    // Register service worker
+    async registerServiceWorker() {
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('Service Worker registered:', registration);
+
+            // Listen for updates
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // New version available
+                        Notifications.info('A new version is available!', {
+                            actions: [
+                                {
+                                    id: 'update',
+                                    label: 'Update',
+                                    handler: () => window.location.reload()
+                                }
+                            ],
+                            duration: 0
+                        });
+                    }
+                });
+            });
+
+        } catch (error) {
+            console.warn('Service Worker registration failed:', error);
+        }
+    },
+
+    // Setup offline sync
+    setupOfflineSync() {
+        // Sync offline data when online
+        window.addEventListener('online', () => {
+            this.syncOfflineData();
+        });
+
+        // Setup periodic sync
+        setInterval(() => {
+            if (navigator.onLine) {
+                this.syncOfflineData();
+            }
+        }, 5 * 60 * 1000); // Every 5 minutes
+    },
+
+    // Sync offline data
+    async syncOfflineData() {
+        try {
+            const offlineData = Storage.offline.getUnsyncedData();
+
+            if (Object.keys(offlineData).length > 0) {
+                console.log('Syncing offline data...');
+
+                // Process each offline item
+                for (const [key, item] of Object.entries(offlineData)) {
+                    try {
+                        await this.syncOfflineItem(key, item);
+                        Storage.offline.markSynced(key);
+                    } catch (error) {
+                        console.error(`Failed to sync item ${key}:`, error);
+                    }
+                }
+
+                // Clean up synced data
+                Storage.offline.clearSyncedData();
+
+                Notifications.success('Offline changes synced successfully!');
+            }
+
+        } catch (error) {
+            console.error('Offline sync error:', error);
+        }
+    },
+
+    // Sync individual offline item
+    async syncOfflineItem(key, item) {
+        const [type, action] = key.split('_');
+
+        switch (type) {
+            case 'note':
+                if (action === 'create') {
+                    await API.notes.create(item.data);
+                } else if (action === 'update') {
+                    await API.notes.update(item.data.id, item.data);
+                }
+                break;
+
+            case 'progress':
+                await API.progress.update(item.data.week, item.data.day, item.data);
+                break;
+
+            default:
+                console.warn('Unknown offline item type:', type);
+        }
+    },
+
+    // Setup auto-save
+    setupAutoSave() {
+        const preferences = State.get('preferences') || {};
+
+        if (preferences.autoSave !== false) {
+            // Setup auto-save for notes
+            this.setupNotesAutoSave();
+
+            // Setup auto-save for progress
+            this.setupProgressAutoSave();
+        }
+    },
+
+    // Setup notes auto-save
+    setupNotesAutoSave() {
+        let autoSaveTimeout;
+
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('[data-auto-save="note"]')) {
+                clearTimeout(autoSaveTimeout);
+
+                autoSaveTimeout = setTimeout(() => {
+                    this.autoSaveNote(e.target);
+                }, 2000); // Save after 2 seconds of inactivity
+            }
+        });
+    },
+
+    // Auto-save note
+    async autoSaveNote(textarea) {
+        const noteId = textarea.dataset.noteId || 'draft';
+        const content = textarea.value;
+
+        try {
+            if (noteId === 'draft') {
+                // Save as draft
+                Storage.notes.saveDraft(noteId, content);
+            } else {
+                // Update existing note
+                await API.notes.update(noteId, { content });
+
+                // Show subtle success indicator
+                this.showAutoSaveIndicator(textarea, 'saved');
+            }
+        } catch (error) {
+            console.error('Auto-save failed:', error);
+            this.showAutoSaveIndicator(textarea, 'error');
+        }
+    },
+
+    // Show auto-save indicator
+    showAutoSaveIndicator(element, status) {
+        let indicator = element.parentNode.querySelector('.auto-save-indicator');
+
+        if (!indicator) {
+            indicator = document.createElement('small');
+            indicator.className = 'auto-save-indicator position-absolute';
+            indicator.style.top = '5px';
+            indicator.style.right = '5px';
+            element.parentNode.style.position = 'relative';
+            element.parentNode.appendChild(indicator);
+        }
+
+        if (status === 'saved') {
+            indicator.textContent = '✓ Saved';
+            indicator.className = 'auto-save-indicator position-absolute text-success';
+        } else if (status === 'error') {
+            indicator.textContent = '✗ Error';
+            indicator.className = 'auto-save-indicator position-absolute text-danger';
+        }
 
         setTimeout(() => {
-            if (loadingScreen) {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.classList.add('d-none');
-                }, 300);
-            }
-
-            if (app) {
-                app.classList.remove('hidden');
-                app.classList.add('fade-in');
-            }
-        }, 100);
+            indicator.textContent = '';
+        }, 2000);
     },
 
-    /**
-     * Show initialization error
-     */
-    showInitializationError(error) {
-        const loadingScreen = Utils.dom.$('#loading-screen');
+    // Setup progress auto-save
+    setupProgressAutoSave() {
+        document.addEventListener('change', (e) => {
+            if (e.target.matches('[data-auto-save="progress"]')) {
+                this.autoSaveProgress(e.target);
+            }
+        });
+    },
 
-        if (loadingScreen) {
-            loadingScreen.innerHTML = `
-        <div class="text-center">
-          <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
-          <h3 class="text-danger">Application Error</h3>
-          <p class="text-muted mb-3">Failed to initialize the application</p>
-          <button class="btn btn-primary" onclick="window.location.reload()">
-            <i class="fas fa-refresh me-2"></i>Reload Application
-          </button>
-        </div>
-      `;
+    // Auto-save progress
+    async autoSaveProgress(checkbox) {
+        const week = parseInt(checkbox.dataset.week);
+        const day = checkbox.dataset.day;
+        const completed = checkbox.checked;
+
+        try {
+            await API.progress.update(week, day, { completed });
+            State.updateProgress(week, day, { completed });
+
+            if (completed) {
+                Notifications.success(`Great job! You completed ${day} of Week ${week}`);
+            }
+        } catch (error) {
+            console.error('Progress auto-save failed:', error);
+
+            // Revert checkbox state
+            checkbox.checked = !completed;
+
+            Notifications.error('Failed to save progress. Please try again.');
         }
     },
 
-    /**
-     * Show welcome message for new users
-     */
-    showWelcomeMessage() {
-        const isNewUser = !Storage.getItem('app_welcomed');
+    // Setup data sync
+    setupDataSync() {
+        // Sync data every 10 minutes
+        setInterval(() => {
+            if (Auth.isAuthenticated && navigator.onLine) {
+                this.syncUserData();
+            }
+        }, 10 * 60 * 1000);
+    },
 
-        if (isNewUser && Auth.isLoggedIn()) {
-            setTimeout(() => {
-                Notifications.info('Welcome to DSA Path! Start your learning journey with our structured roadmap.', {
-                    duration: 8000
+    // Sync user data
+    async syncUserData() {
+        try {
+            // Sync progress data
+            const progress = await API.progress.get();
+            State.setProgress(progress.progress);
+
+            // Sync recent notes
+            const notes = await API.notes.getAll({ limit: 10 });
+            State.setNotes(notes.notes);
+
+        } catch (error) {
+            console.warn('Data sync failed:', error);
+        }
+    },
+
+    // Setup performance monitoring
+    setupPerformanceMonitoring() {
+        // Monitor page load time
+        window.addEventListener('load', () => {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            this.trackEvent('page_load_time', { loadTime });
+        });
+
+        // Monitor memory usage (if available)
+        if ('memory' in performance) {
+            setInterval(() => {
+                const memory = performance.memory;
+                console.log('Memory usage:', {
+                    used: Math.round(memory.usedJSHeapSize / 1024 / 1024) + ' MB',
+                    total: Math.round(memory.totalJSHeapSize / 1024 / 1024) + ' MB',
+                    limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024) + ' MB'
                 });
-
-                Storage.setItem('app_welcomed', true);
-            }, 2000);
+            }, 60000); // Log every minute
         }
+    },
+
+    // Preload critical resources
+    async preloadCriticalResources() {
+        // Preload critical CSS and images
+        const criticalResources = [
+            '/assets/icons/apple-touch-icon.png',
+            '/assets/sounds/notification.mp3'
+        ];
+
+        criticalResources.forEach(resource => {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.href = resource;
+            link.as = resource.endsWith('.mp3') ? 'audio' : 'image';
+            document.head.appendChild(link);
+        });
+    },
+
+    // Track events (analytics placeholder)
+    trackEvent(eventName, properties = {}) {
+        const eventData = {
+            event: eventName,
+            properties: {
+                ...properties,
+                timestamp: new Date().toISOString(),
+                userId: Auth.getUserId(),
+                sessionId: this.getSessionId()
+            }
+        };
+
+        console.log('Track event:', eventData);
+
+        // Store locally for now
+        const events = Storage.get('analytics_events', []);
+        events.push(eventData);
+
+        // Keep only last 100 events
+        if (events.length > 100) {
+            events.splice(0, events.length - 100);
+        }
+
+        Storage.set('analytics_events', events);
+
+        // In production, send to analytics service
+        if (process.env.NODE_ENV === 'production') {
+            this.sendAnalyticsEvent(eventData);
+        }
+    },
+
+    // Send analytics event (placeholder)
+    sendAnalyticsEvent(eventData) {
+        // TODO: Implement analytics service integration
+        console.log('Would send analytics event:', eventData);
+    },
+
+    // Get session ID
+    getSessionId() {
+        let sessionId = Storage.session.get('session_id');
+
+        if (!sessionId) {
+            sessionId = Utils.generateId('session');
+            Storage.session.set('session_id', sessionId);
+        }
+
+        return sessionId;
+    },
+
+    // Handle initialization error
+    handleInitializationError(error) {
+        document.getElementById('loading-screen').innerHTML = `
+            <div class="text-center text-white">
+                <i class="bi bi-exclamation-triangle fs-1 mb-3"></i>
+                <h4>Initialization Failed</h4>
+                <p>There was an error starting the application.</p>
+                <button class="btn btn-light" onclick="location.reload()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    Retry
+                </button>
+            </div>
+        `;
+
+        console.error('Initialization error details:', error);
+    },
+
+    // Cleanup on page unload
+    cleanup() {
+        // Save any pending data
+        this.syncOfflineData();
+
+        // Clear intervals and timeouts
+        // (This would be handled by the browser, but good practice)
+
+        console.log('App cleanup completed');
     }
 };
 
-// Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        App.init();
-    });
-} else {
-    App.init();
-}
+// Setup cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    App.cleanup();
+});
 
-// Export App for use in other modules
+// Export for potential module usage
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = App;
 }
+
+// Make available globally
+window.App = App;

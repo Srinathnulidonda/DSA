@@ -1,512 +1,591 @@
-// Dynamic Page Loader for DSA Path Application
-
+// Component Loader
 const Loader = {
-    // Cache for loaded pages
-    pageCache: new Map(),
+    cache: new Map(),
+    loadedComponents: new Set(),
 
-    // Currently loaded page
-    currentPage: null,
+    // Load HTML component
+    async loadComponent(path) {
+        // Check cache first
+        if (this.cache.has(path)) {
+            return this.cache.get(path);
+        }
 
-    // Loading state
-    isLoading: false,
-
-    /**
-     * Load page content
-     */
-    async loadPage(pagePath, useCache = true) {
         try {
-            // Show loading
-            this.showLoading();
-            this.isLoading = true;
-
-            // Check cache first
-            if (useCache && this.pageCache.has(pagePath)) {
-                const cachedContent = this.pageCache.get(pagePath);
-                await this.renderPage(cachedContent);
-                return;
-            }
-
-            // Load page content
-            const response = await fetch(pagePath);
-
+            const response = await fetch(path);
             if (!response.ok) {
-                throw new Error(`Failed to load page: ${response.status}`);
+                throw new Error(`Failed to load component: ${response.status}`);
             }
 
-            const content = await response.text();
-
-            // Cache the content
-            if (useCache) {
-                this.pageCache.set(pagePath, content);
-            }
-
-            // Render the page
-            await this.renderPage(content);
-
+            const html = await response.text();
+            this.cache.set(path, html);
+            return html;
         } catch (error) {
-            console.error('Page loading error:', error);
-            this.showError(error.message);
-        } finally {
-            this.hideLoading();
-            this.isLoading = false;
+            console.error(`Error loading component from ${path}:`, error);
+            return null;
         }
     },
 
-    /**
-     * Render page content
-     */
-    async renderPage(content) {
-        const container = Utils.dom.$('#page-container');
-        if (!container) return;
+    // Load and insert component
+    async insertComponent(containerId, componentPath, data = {}) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error(`Container ${containerId} not found`);
+            return false;
+        }
 
-        // Mark performance start
-        Lib.performance.mark('page-render-start');
+        const html = await this.loadComponent(componentPath);
+        if (!html) {
+            container.innerHTML = '<div class="alert alert-danger">Failed to load component</div>';
+            return false;
+        }
 
-        // Extract and execute scripts
-        const { html, scripts } = this.extractScripts(content);
+        // Replace placeholders with data
+        const processedHtml = this.processTemplate(html, data);
+        container.innerHTML = processedHtml;
 
-        // Update content with fade effect
-        container.style.opacity = '0';
+        // Initialize any new components
+        this.initializeComponents(container);
 
-        setTimeout(() => {
-            container.innerHTML = html;
-            container.style.opacity = '1';
-
-            // Execute inline scripts
-            this.executeScripts(scripts);
-
-            // Initialize page-specific functionality
-            this.initializePage();
-
-            // Mark performance end
-            Lib.performance.mark('page-render-end');
-            const duration = Lib.performance.measure('page-render', 'page-render-start', 'page-render-end');
-            console.log(`Page rendered in ${duration.toFixed(2)}ms`);
-        }, 150);
+        return true;
     },
 
-    /**
-     * Extract scripts from HTML content
-     */
-    extractScripts(html) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-
-        const scripts = [];
-        const scriptElements = tempDiv.querySelectorAll('script');
-
-        scriptElements.forEach(script => {
-            scripts.push(script.textContent);
-            script.remove();
-        });
-
-        return {
-            html: tempDiv.innerHTML,
-            scripts
-        };
-    },
-
-    /**
-     * Execute extracted scripts
-     */
-    executeScripts(scripts) {
-        scripts.forEach(scriptContent => {
-            try {
-                // Create a new script element
-                const script = document.createElement('script');
-                script.textContent = scriptContent;
-                document.head.appendChild(script);
-                document.head.removeChild(script);
-            } catch (error) {
-                console.error('Script execution error:', error);
-            }
+    // Process template with data
+    processTemplate(html, data) {
+        return html.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+            return data[key] || match;
         });
     },
 
-    /**
-     * Initialize page-specific functionality
-     */
-    initializePage() {
-        // Re-initialize Bootstrap components
-        this.initBootstrapComponents();
-
-        // Setup forms
-        this.setupForms();
-
-        // Setup tooltips and popovers
-        this.setupTooltips();
-
-        // Setup custom components
-        this.setupCustomComponents();
-
-        // Load page data
-        this.loadPageData();
-
-        // Update navigation
-        this.updateNavigation();
-    },
-
-    /**
-     * Initialize Bootstrap components
-     */
-    initBootstrapComponents() {
-        // Initialize tooltips
-        const tooltips = Utils.dom.$$('[data-bs-toggle="tooltip"]');
-        tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip));
-
-        // Initialize popovers
-        const popovers = Utils.dom.$$('[data-bs-toggle="popover"]');
-        popovers.forEach(popover => new bootstrap.Popover(popover));
-
-        // Initialize dropdowns
-        const dropdowns = Utils.dom.$$('[data-bs-toggle="dropdown"]');
-        dropdowns.forEach(dropdown => new bootstrap.Dropdown(dropdown));
-    },
-
-    /**
-     * Setup forms with validation
-     */
-    setupForms() {
-        const forms = Utils.dom.$$('form[data-validate]');
-        forms.forEach(form => {
-            // Add validation classes
-            form.classList.add('needs-validation');
-            form.noValidate = true;
-
-            form.addEventListener('submit', (e) => {
-                if (!form.checkValidity()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            });
-        });
-    },
-
-    /**
-     * Setup tooltips and popovers
-     */
-    setupTooltips() {
-        // Auto-setup tooltips for elements with title attribute
-        const elementsWithTitle = Utils.dom.$$('[title]:not([data-bs-toggle])');
-        elementsWithTitle.forEach(element => {
-            element.setAttribute('data-bs-toggle', 'tooltip');
+    // Initialize components in container
+    initializeComponents(container) {
+        // Initialize Bootstrap components
+        const tooltips = container.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(element => {
             new bootstrap.Tooltip(element);
         });
+
+        const popovers = container.querySelectorAll('[data-bs-toggle="popover"]');
+        popovers.forEach(element => {
+            new bootstrap.Popover(element);
+        });
+
+        // Initialize dropdowns
+        const dropdowns = container.querySelectorAll('[data-bs-toggle="dropdown"]');
+        dropdowns.forEach(element => {
+            new bootstrap.Dropdown(element);
+        });
+
+        // Highlight code blocks
+        Lib.syntax.highlightAll();
+
+        // Initialize lazy loading
+        Lib.ui.lazyLoadImages();
     },
 
-    /**
-     * Setup custom components
-     */
-    setupCustomComponents() {
-        // Setup ripple effect for buttons
-        const rippleButtons = Utils.dom.$$('.btn-ripple');
-        rippleButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                Lib.utils.createRipple(button, e);
+    // Load layout components
+    async loadLayout() {
+        const promises = [
+            this.loadHeader(),
+            this.loadSidebar(),
+            this.loadMobileNav()
+        ];
+
+        await Promise.all(promises);
+    },
+
+    // Load header
+    async loadHeader() {
+        const success = await this.insertComponent('header-container', '/components/layout/header.html', {
+            userName: Auth.getUserName() || 'User',
+            userAvatar: Auth.getUserAvatar() || ''
+        });
+
+        if (success) {
+            this.setupHeaderEvents();
+        }
+    },
+
+    // Load sidebar
+    async loadSidebar() {
+        const success = await this.insertComponent('sidebar-container', '/components/layout/sidebar.html');
+
+        if (success) {
+            this.setupSidebarEvents();
+        }
+    },
+
+    // Load mobile navigation
+    async loadMobileNav() {
+        const success = await this.insertComponent('mobile-nav-container', '/components/layout/mobile-nav.html');
+
+        if (success) {
+            this.setupMobileNavEvents();
+        }
+    },
+
+    // Setup header events
+    setupHeaderEvents() {
+        // Search functionality
+        const searchInput = document.getElementById('global-search');
+        if (searchInput) {
+            const debouncedSearch = Utils.debounce(async (query) => {
+                if (query.length > 2) {
+                    try {
+                        const results = await API.search.query(query, { limit: 5 });
+                        this.showSearchResults(results);
+                    } catch (error) {
+                        console.error('Search error:', error);
+                    }
+                } else {
+                    this.hideSearchResults();
+                }
+            }, 300);
+
+            searchInput.addEventListener('input', (e) => {
+                debouncedSearch(e.target.value);
+            });
+        }
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                ThemeManager.toggleTheme();
+            });
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                Auth.logout();
+            });
+        }
+
+        // Profile dropdown
+        const profileDropdown = document.getElementById('profile-dropdown');
+        if (profileDropdown) {
+            // Load user data
+            this.updateProfileDropdown();
+        }
+    },
+
+    // Setup sidebar events
+    setupSidebarEvents() {
+        // Navigation items
+        const navItems = document.querySelectorAll('.sidebar-nav .nav-link');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                // Update active state
+                navItems.forEach(nav => nav.classList.remove('active'));
+                e.target.classList.add('active');
             });
         });
 
-        // Setup copy buttons
-        const copyButtons = Utils.dom.$$('[data-copy]');
-        copyButtons.forEach(button => {
-            button.addEventListener('click', async () => {
-                const target = button.getAttribute('data-copy');
-                const element = Utils.dom.$(target);
-                if (element) {
-                    const success = await Utils.browser.copyToClipboard(element.textContent);
-                    if (success) {
-                        Notifications.success('Copied to clipboard');
-                    }
+        // Collapse/expand sections
+        const collapsibleItems = document.querySelectorAll('[data-bs-toggle="collapse"]');
+        collapsibleItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('bi-chevron-right');
+                    icon.classList.toggle('bi-chevron-down');
                 }
             });
         });
+    },
 
-        // Setup auto-resize textareas
-        const autoResizeTextareas = Utils.dom.$$('textarea[data-auto-resize]');
-        autoResizeTextareas.forEach(textarea => {
-            textarea.addEventListener('input', () => {
-                textarea.style.height = 'auto';
-                textarea.style.height = textarea.scrollHeight + 'px';
+    // Setup mobile navigation events
+    setupMobileNavEvents() {
+        const navItems = document.querySelectorAll('.mobile-nav .nav-link');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                // Update active state
+                navItems.forEach(nav => nav.classList.remove('active'));
+                e.target.closest('.nav-link').classList.add('active');
             });
         });
-    },
 
-    /**
-     * Load page-specific data
-     */
-    async loadPageData() {
-        const container = Utils.dom.$('#page-container');
-        if (!container) return;
-
-        // Check for data loading attributes
-        const dataLoaders = Utils.dom.$$('[data-load]', container);
-
-        for (const element of dataLoaders) {
-            const loadType = element.getAttribute('data-load');
-            await this.loadElementData(element, loadType);
+        // Hamburger menu
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        if (hamburgerMenu) {
+            hamburgerMenu.addEventListener('click', () => {
+                this.toggleMobileMenu();
+            });
         }
     },
 
-    /**
-     * Load data for specific element
-     */
-    async loadElementData(element, loadType) {
+    // Show search results
+    showSearchResults(results) {
+        let resultsContainer = document.getElementById('search-results');
+
+        if (!resultsContainer) {
+            resultsContainer = document.createElement('div');
+            resultsContainer.id = 'search-results';
+            resultsContainer.className = 'position-absolute top-100 start-0 w-100 bg-white border border-top-0 rounded-bottom shadow-lg z-3';
+            resultsContainer.style.maxHeight = '300px';
+            resultsContainer.style.overflowY = 'auto';
+
+            const searchContainer = document.querySelector('.search-container');
+            if (searchContainer) {
+                searchContainer.style.position = 'relative';
+                searchContainer.appendChild(resultsContainer);
+            }
+        }
+
+        if (results.resources && results.resources.length > 0) {
+            resultsContainer.innerHTML = results.resources.map(resource => `
+                <a href="${resource.url}" target="_blank" class="d-block px-3 py-2 text-decoration-none border-bottom">
+                    <div class="fw-medium text-dark">${resource.title}</div>
+                    <small class="text-muted">${resource.type}</small>
+                </a>
+            `).join('');
+        } else {
+            resultsContainer.innerHTML = '<div class="p-3 text-muted">No results found</div>';
+        }
+
+        resultsContainer.style.display = 'block';
+    },
+
+    // Hide search results
+    hideSearchResults() {
+        const resultsContainer = document.getElementById('search-results');
+        if (resultsContainer) {
+            resultsContainer.style.display = 'none';
+        }
+    },
+
+    // Update profile dropdown
+    async updateProfileDropdown() {
         try {
-            Components.loading.overlay(element, true);
+            const profile = await API.user.getProfile();
+            const user = profile.user;
 
-            let data;
-            switch (loadType) {
-                case 'dashboard':
-                    data = await ApiMethods.dashboard.get();
-                    this.renderDashboardData(element, data);
-                    break;
+            // Update user name
+            const userName = document.getElementById('header-user-name');
+            if (userName) userName.textContent = user.name;
 
-                case 'progress':
-                    data = await ApiMethods.progress.get();
-                    this.renderProgressData(element, data);
-                    break;
+            // Update avatar
+            const userAvatar = document.getElementById('header-user-avatar');
+            if (userAvatar && user.avatar_url) {
+                userAvatar.src = user.avatar_url;
+                userAvatar.style.display = 'block';
+            }
 
-                case 'notes':
-                    data = await ApiMethods.notes.getAll();
-                    this.renderNotesData(element, data);
-                    break;
-
-                case 'resources':
-                    data = await ApiMethods.resources.get();
-                    this.renderResourcesData(element, data);
-                    break;
-
-                default:
-                    console.warn(`Unknown data load type: ${loadType}`);
+            // Update streak display
+            const streakDisplay = document.getElementById('header-streak');
+            if (streakDisplay) {
+                streakDisplay.textContent = `${user.current_streak} day streak`;
             }
         } catch (error) {
-            console.error(`Failed to load ${loadType} data:`, error);
-            element.innerHTML = `<div class="alert alert-danger">Failed to load data</div>`;
-        } finally {
-            Components.loading.overlay(element, false);
+            console.error('Error updating profile dropdown:', error);
         }
     },
 
-    /**
-     * Render dashboard data
-     */
-    renderDashboardData(element, data) {
-        const { stats, weekly_progress, recent_sessions, recent_notes } = data;
+    // Toggle mobile menu
+    toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu-overlay');
+        if (menu) {
+            menu.classList.toggle('show');
+        } else {
+            this.createMobileMenuOverlay();
+        }
+    },
 
-        // Update stats cards
-        const statsCards = element.querySelectorAll('[data-stat]');
-        statsCards.forEach(card => {
-            const statType = card.getAttribute('data-stat');
-            const value = stats[statType];
-            const valueElement = card.querySelector('.stat-value');
-            if (valueElement && value !== undefined) {
-                valueElement.textContent = this.formatStatValue(statType, value);
+    // Create mobile menu overlay
+    createMobileMenuOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'mobile-menu-overlay';
+        overlay.className = 'mobile-menu-overlay position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-lg-none';
+        overlay.style.zIndex = '1055';
+
+        const menu = document.createElement('div');
+        menu.className = 'mobile-menu position-absolute top-0 end-0 h-100 bg-white shadow-lg animate-slide-in-right';
+        menu.style.width = '280px';
+
+        // Load mobile menu content
+        this.loadComponent('/components/layout/mobile-menu.html').then(html => {
+            if (html) {
+                menu.innerHTML = html;
+                this.initializeComponents(menu);
             }
         });
 
-        // Update weekly progress chart
-        const progressChart = element.querySelector('#weekly-progress-chart');
-        if (progressChart && weekly_progress) {
-            const weeklyData = Object.entries(weekly_progress).map(([week, data]) => ({
-                week: parseInt(week),
-                percentage: data.percentage
-            }));
+        overlay.appendChild(menu);
+        document.body.appendChild(overlay);
 
-            Lib.charts.createWeeklyProgressChart(progressChart, weeklyData);
-        }
-
-        // Update recent activities
-        this.updateRecentActivities(element, { recent_sessions, recent_notes });
-    },
-
-    /**
-     * Format stat values for display
-     */
-    formatStatValue(statType, value) {
-        switch (statType) {
-            case 'total_study_time':
-            case 'study_time_last_7_days':
-                return Utils.time.formatDuration(value * 60); // Convert minutes to seconds
-
-            case 'completion_percentage':
-                return `${Math.round(value)}%`;
-
-            default:
-                return value.toString();
-        }
-    },
-
-    /**
-     * Update recent activities section
-     */
-    updateRecentActivities(element, { recent_sessions, recent_notes }) {
-        const sessionsContainer = element.querySelector('#recent-sessions');
-        const notesContainer = element.querySelector('#recent-notes');
-
-        if (sessionsContainer && recent_sessions) {
-            if (recent_sessions.length === 0) {
-                sessionsContainer.innerHTML = '<p class="text-muted">No recent study sessions</p>';
-            } else {
-                sessionsContainer.innerHTML = recent_sessions.map(session => `
-          <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-            <div>
-              <strong>${session.topic || 'Study Session'}</strong>
-              <small class="text-muted d-block">${Utils.date.relative(session.start_time)}</small>
-            </div>
-            <span class="badge bg-${session.completed ? 'success' : 'warning'}">
-              ${session.duration} min
-            </span>
-          </div>
-        `).join('');
+        // Close on overlay click
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                this.closeMobileMenu();
             }
-        }
+        });
 
-        if (notesContainer && recent_notes) {
-            if (recent_notes.length === 0) {
-                notesContainer.innerHTML = '<p class="text-muted">No recent notes</p>';
-            } else {
-                notesContainer.innerHTML = recent_notes.map(note => `
-          <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-            <div>
-              <strong>${note.title}</strong>
-              <small class="text-muted d-block">${Utils.date.relative(note.updated_at)}</small>
-            </div>
-            <a href="/pages/notes?id=${note.id}" class="btn btn-sm btn-outline-primary">View</a>
-          </div>
-        `).join('');
-            }
+        // Show menu
+        setTimeout(() => overlay.classList.add('show'), 10);
+    },
+
+    // Close mobile menu
+    closeMobileMenu() {
+        const overlay = document.getElementById('mobile-menu-overlay');
+        if (overlay) {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.remove(), 300);
         }
     },
 
-    /**
-     * Update navigation active state
-     */
-    updateNavigation() {
-        const currentPath = window.location.pathname;
+    // Load page content
+    async loadPage(pagePath, containerId = 'page-content') {
+        State.setLoading(true);
+
+        try {
+            const success = await this.insertComponent(containerId, pagePath);
+
+            if (success) {
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Update active navigation
+                this.updateActiveNavigation(pagePath);
+
+                // Initialize page-specific functionality
+                this.initializePage(pagePath);
+            }
+
+            return success;
+        } catch (error) {
+            console.error('Error loading page:', error);
+            return false;
+        } finally {
+            State.setLoading(false);
+        }
+    },
+
+    // Update active navigation
+    updateActiveNavigation(pagePath) {
+        // Extract page name from path
+        const pageName = pagePath.split('/').pop().replace('.html', '');
 
         // Update sidebar navigation
-        const sidebarLinks = Utils.dom.$$('#sidebar .nav-link');
+        const sidebarLinks = document.querySelectorAll('.sidebar-nav .nav-link');
         sidebarLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href === currentPath) {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `/${pageName}` ||
+                link.dataset.page === pageName) {
                 link.classList.add('active');
-            } else {
-                link.classList.remove('active');
             }
         });
 
         // Update mobile navigation
-        const mobileLinks = Utils.dom.$$('#mobile-nav .mobile-nav-item');
+        const mobileLinks = document.querySelectorAll('.mobile-nav .nav-link');
         mobileLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href === currentPath) {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `/${pageName}` ||
+                link.dataset.page === pageName) {
                 link.classList.add('active');
-            } else {
-                link.classList.remove('active');
             }
         });
-
-        // Update page title
-        this.updatePageTitle();
     },
 
-    /**
-     * Update page title
-     */
-    updatePageTitle() {
-        const currentPath = window.location.pathname;
-        const pageTitles = {
-            '/': 'DSA Path - Home',
-            '/pages/dashboard': 'Dashboard - DSA Path',
-            '/pages/roadmap': 'Roadmap - DSA Path',
-            '/pages/calendar': 'Calendar - DSA Path',
-            '/pages/progress': 'Progress - DSA Path',
-            '/pages/notes': 'Notes - DSA Path',
-            '/pages/pomodoro': 'Pomodoro Timer - DSA Path',
-            '/pages/resources': 'Resources - DSA Path',
-            '/pages/ai-assistant': 'AI Assistant - DSA Path',
-            '/pages/analytics': 'Analytics - DSA Path',
-            '/pages/search': 'Search - DSA Path',
-            '/pages/profile': 'Profile - DSA Path',
-            '/pages/settings': 'Settings - DSA Path'
+    // Initialize page-specific functionality
+    initializePage(pagePath) {
+        const pageName = pagePath.split('/').pop().replace('.html', '');
+
+        // Page-specific initialization
+        switch (pageName) {
+            case 'dashboard':
+                this.initializeDashboard();
+                break;
+            case 'roadmap':
+                this.initializeRoadmap();
+                break;
+            case 'notes':
+                this.initializeNotes();
+                break;
+            case 'pomodoro':
+                this.initializePomodoro();
+                break;
+            case 'ai-assistant':
+                this.initializeAIAssistant();
+                break;
+            default:
+                // Generic page initialization
+                this.initializeGenericPage();
+        }
+    },
+
+    // Initialize dashboard
+    initializeDashboard() {
+        // Load dashboard data
+        this.loadDashboardData();
+    },
+
+    // Initialize roadmap
+    initializeRoadmap() {
+        // Load roadmap data
+        this.loadRoadmapData();
+    },
+
+    // Initialize notes
+    initializeNotes() {
+        // Setup markdown editor
+        const noteEditor = document.getElementById('note-editor');
+        if (noteEditor) {
+            Lib.markdown.createEditor('note-editor', {
+                preview: true,
+                minHeight: '300px'
+            });
+        }
+    },
+
+    // Initialize pomodoro
+    initializePomodoro() {
+        // Setup timer functionality
+        this.setupPomodoroTimer();
+    },
+
+    // Initialize AI assistant
+    initializeAIAssistant() {
+        // Setup chat functionality
+        this.setupAIChat();
+    },
+
+    // Initialize generic page
+    initializeGenericPage() {
+        // Common initialization for all pages
+        Lib.syntax.addCopyButtons();
+        Components.tooltip.init();
+    },
+
+    // Load dashboard data
+    async loadDashboardData() {
+        try {
+            const dashboard = await API.dashboard.get();
+            State.setDashboard(dashboard);
+
+            // Update dashboard components with real data
+            this.updateDashboardComponents(dashboard);
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+            Notifications.handleApiError(error, 'Loading dashboard');
+        }
+    },
+
+    // Load roadmap data
+    async loadRoadmapData() {
+        try {
+            const [roadmap, progress] = await Promise.all([
+                API.resources.getRoadmap(),
+                API.progress.get()
+            ]);
+
+            State.setRoadmap(roadmap.roadmap);
+            State.setProgress(progress.progress);
+
+            // Update roadmap components with real data
+            this.updateRoadmapComponents(roadmap.roadmap, progress.progress);
+        } catch (error) {
+            console.error('Error loading roadmap data:', error);
+            Notifications.handleApiError(error, 'Loading roadmap');
+        }
+    },
+
+    // Update dashboard components
+    updateDashboardComponents(dashboard) {
+        // Update stats cards
+        this.updateStatsCards(dashboard.stats);
+
+        // Update charts
+        this.updateDashboardCharts(dashboard);
+
+        // Update recent activity
+        this.updateRecentActivity(dashboard);
+    },
+
+    // Update roadmap components
+    updateRoadmapComponents(roadmap, progress) {
+        // Update week cards
+        this.updateWeekCards(roadmap, progress);
+
+        // Update progress indicators
+        this.updateProgressIndicators(progress);
+    },
+
+    // Update stats cards
+    updateStatsCards(stats) {
+        const elements = {
+            'current-streak': stats.current_streak,
+            'total-time': Utils.formatDuration(stats.total_study_time),
+            'completion-rate': `${stats.completion_percentage.toFixed(1)}%`,
+            'weekly-time': Utils.formatDuration(stats.study_time_last_7_days)
         };
 
-        const title = pageTitles[currentPath] || 'DSA Path';
-        document.title = title;
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
     },
 
-    /**
-     * Show loading state
-     */
-    showLoading() {
-        const container = Utils.dom.$('#page-container');
-        if (container) {
-            container.style.opacity = '0.6';
-            container.style.pointerEvents = 'none';
-        }
-    },
-
-    /**
-     * Hide loading state
-     */
-    hideLoading() {
-        const container = Utils.dom.$('#page-container');
-        if (container) {
-            container.style.opacity = '1';
-            container.style.pointerEvents = 'auto';
-        }
-    },
-
-    /**
-     * Show error state
-     */
-    showError(message) {
-        const container = Utils.dom.$('#page-container');
-        if (container) {
-            container.innerHTML = `
-        <div class="container-narrow">
-          <div class="text-center py-5">
-            <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
-            <h3>Error Loading Page</h3>
-            <p class="text-muted">${message}</p>
-            <button class="btn btn-primary" onclick="window.location.reload()">
-              <i class="fas fa-refresh me-2"></i>Reload Page
-            </button>
-          </div>
-        </div>
-      `;
-        }
-    },
-
-    /**
-     * Clear page cache
-     */
-    clearCache() {
-        this.pageCache.clear();
-    },
-
-    /**
-     * Preload pages for better performance
-     */
-    async preloadPages(paths) {
-        const promises = paths.map(path => {
-            return fetch(path).then(response => {
-                if (response.ok) {
-                    return response.text().then(content => {
-                        this.pageCache.set(path, content);
-                    });
-                }
-            }).catch(error => {
-                console.warn(`Failed to preload ${path}:`, error);
+    // Update dashboard charts
+    updateDashboardCharts(dashboard) {
+        // Progress chart
+        if (document.getElementById('progress-chart')) {
+            Lib.charts.createProgressChart('progress-chart', {
+                completed: dashboard.stats.completed_days,
+                total: dashboard.stats.total_days
             });
+        }
+
+        // Streak chart
+        if (document.getElementById('streak-chart')) {
+            const streakData = this.generateStreakData(dashboard.weekly_progress);
+            Lib.charts.createStreakChart('streak-chart', streakData);
+        }
+    },
+
+    // Generate streak data for chart
+    generateStreakData(weeklyProgress) {
+        const labels = [];
+        const values = [];
+
+        Object.entries(weeklyProgress).forEach(([week, data]) => {
+            labels.push(`Week ${week}`);
+            values.push(data.completed);
         });
 
-        await Promise.allSettled(promises);
+        return { labels, values };
+    },
+
+    // Setup pomodoro timer
+    setupPomodoroTimer() {
+        // Timer will be initialized by the page-specific script
+        console.log('Pomodoro timer setup ready');
+    },
+
+    // Setup AI chat
+    setupAIChat() {
+        // AI chat will be initialized by the page-specific script
+        console.log('AI chat setup ready');
+    },
+
+    // Clear cache
+    clearCache() {
+        this.cache.clear();
+        this.loadedComponents.clear();
+    },
+
+    // Preload critical components
+    async preloadComponents() {
+        const criticalComponents = [
+            '/components/layout/header.html',
+            '/components/layout/sidebar.html',
+            '/components/layout/mobile-nav.html'
+        ];
+
+        const promises = criticalComponents.map(path => this.loadComponent(path));
+        await Promise.all(promises);
     }
 };
 
-// Export Loader for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Loader;
-}
+// Make available globally
+window.Loader = Loader;
