@@ -1,89 +1,25 @@
 {
   "rewrites": [
     {
-      "source": "/",
+      "source": "/auth/(.*)",
+      "destination": "/auth/$1.html"
+    },
+    {
+      "source": "/pages/(.*)",
+      "destination": "/pages/$1.html"
+    },
+    {
+      "source": "/((?!api|assets|css|js|components|templates).*)",
       "destination": "/index.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/pages/dashboard.html"
-    },
-    {
-      "source": "/roadmap",
-      "destination": "/pages/roadmap.html"
-    },
-    {
-      "source": "/calendar",
-      "destination": "/pages/calendar.html"
-    },
-    {
-      "source": "/progress",
-      "destination": "/pages/progress.html"
-    },
-    {
-      "source": "/notes",
-      "destination": "/pages/notes.html"
-    },
-    {
-      "source": "/pomodoro",
-      "destination": "/pages/pomodoro.html"
-    },
-    {
-      "source": "/profile",
-      "destination": "/pages/profile.html"
-    },
-    {
-      "source": "/settings",
-      "destination": "/pages/settings.html"
-    },
-    {
-      "source": "/analytics",
-      "destination": "/pages/analytics.html"
-    },
-    {
-      "source": "/resources",
-      "destination": "/pages/resources.html"
-    },
-    {
-      "source": "/ai-assistant",
-      "destination": "/pages/ai-assistant.html"
-    },
-    {
-      "source": "/search",
-      "destination": "/pages/search.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/auth/login.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/auth/register.html"
-    },
-    {
-      "source": "/forgot-password",
-      "destination": "/auth/forgot-password.html"
-    },
-    {
-      "source": "/reset-password",
-      "destination": "/auth/reset-password.html"
     }
   ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
