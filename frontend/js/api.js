@@ -1,64 +1,163 @@
-// API Client
+// API Client for DSA Path Application
 
-class ApiClient {
+class APIClient {
     constructor() {
-        this.baseURL = APP_CONFIG.API_BASE_URL;
+        this.baseURL = API_BASE;
         this.defaultHeaders = {
             'Content-Type': 'application/json'
         };
     }
 
-    // Get auth headers
+    /**
+     * Get authorization headers
+     */
     getAuthHeaders() {
-        const token = storage.getAccessToken();
+        const token = Storage.token.getAccessToken();
         return token ? { 'Authorization': `Bearer ${token}` } : {};
     }
 
-    // Handle response
-    async handleResponse(response) {
-        const contentType = response.headers.get('content-type');
-        const isJson = contentType && contentType.includes('application/json');
+    /**
+     * Make HTTP request with error handling
+     */
+    async request(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        const config = {
+            headers: {
+                ...this.defaultHeaders,
+                ...this.getAuthHeaders(),
+                ...options.headers
+            },
+            ...options
+        };
 
-        const data = isJson ? await response.json() : await response.text();
+        try {
+            const response = await fetch(url, config);
 
-        if (!response.ok) {
-            // Handle token expiration
-            if (response.status === 401) {
-                const refreshed = await this.refreshToken();
-                if (!refreshed) {
-                    storage.clearAuth();
-                    window.location.href = APP_CONFIG.ROUTES.LOGIN;
-                    return;
-                }
+            // Handle different response types
+            const contentType = response.headers.get('content-type');
+            let data;
+
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                data = await response.text();
             }
 
-            throw {
-                status: response.status,
-                message: data.error || data.message || 'Request failed',
-                data
-            };
-        }
+            if (!response.ok) {
+                // Try to refresh token if 401
+                if (response.status === 401 && !endpoint.includes('/auth/refresh')) {
+                    const refreshed = await this.refreshToken();
+                    if (refreshed) {
+                        // Retry original request with new token
+                        return this.request(endpoint, options);
+                    } else {
+                        // Refresh failed, redirect to login
+                        Auth.logout();
+                        throw new APIError('Session expired', 401, data);
+                    }
+                }
 
-        return data;
+                throw new APIError(
+                    data?.error || data?.message || `HTTP ${response.status}`,
+                    response.status,
+                    data
+                );
+            }
+
+            return data;
+        } catch (error) {
+            if (error instanceof APIError) {
+                throw error;
+            }
+
+            // Network or other errors
+            console.error('API Request failed:', error);
+            throw new APIError(
+                'Network error. Please check your connection.',
+                0,
+                { originalError: error }
+            );
+        }
     }
 
-    // Refresh token
+    /**
+     * GET request
+     */
+    async get(endpoint, params = {}) {
+        const queryString = Utils.url.buildQuery(params);
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+        return this.request(url, { method: 'GET' });
+    }
+
+    /**
+     * POST request
+     */
+    async post(endpoint, data = {}) {
+        return this.request(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    /**
+     * PUT request
+     */
+    async put(endpoint, data = {}) {
+        return this.request(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+
+    /**
+     * DELETE request
+     */
+    async delete(endpoint) {
+        return this.request(endpoint, { method: 'DELETE' });
+    }
+
+    /**
+     * Upload file
+     */
+    async upload(endpoint, file, additionalData = {}) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        Object.entries(additionalData).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        return this.request(endpoint, {
+            method: 'POST',
+            headers: {
+                // Don't set Content-Type for FormData, let browser set it
+                ...this.getAuthHeaders()
+            },
+            body: formData
+        });
+    }
+
+    /**
+     * Refresh access token
+     */
     async refreshToken() {
         try {
-            const refreshToken = storage.getRefreshToken();
-            if (!refreshToken) return false;
+            const refreshToken = Storage.token.getRefreshToken();
+            if (!refreshToken) {
+                return false;
+            }
 
-            const response = await fetch(`${this.baseURL}/auth/refresh`, {
+            const response = await fetch(`${this.baseURL}${API_ENDPOINTS.AUTH_REFRESH}`, {
                 method: 'POST',
                 headers: {
-                    ...this.defaultHeaders,
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${refreshToken}`
                 }
             });
 
             if (response.ok) {
                 const data = await response.json();
-                storage.setAccessToken(data.access_token);
+                Storage.token.setAccessToken(data.access_token);
                 return true;
             }
 
@@ -68,215 +167,248 @@ class ApiClient {
             return false;
         }
     }
+}
 
-    // Generic request method
-    async request(endpoint, options = {}) {
-        const url = `${this.baseURL}${endpoint}`;
-        const config = {
-            ...options,
-            headers: {
-                ...this.defaultHeaders,
-                ...this.getAuthHeaders(),
-                ...options.headers
-            }
-        };
-
-        try {
-            const response = await fetch(url, config);
-            return await this.handleResponse(response);
-        } catch (error) {
-            console.error('API request failed:', error);
-            throw error;
-        }
-    }
-
-    // GET request
-    async get(endpoint, params = {}) {
-        const queryString = utils.buildQueryString(params);
-        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
-        return this.request(url, { method: 'GET' });
-    }
-
-    // POST request
-    async post(endpoint, data = {}) {
-        return this.request(endpoint, {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
-    }
-
-    // PUT request
-    async put(endpoint, data = {}) {
-        return this.request(endpoint, {
-            method: 'PUT',
-            body: JSON.stringify(data)
-        });
-    }
-
-    // DELETE request
-    async delete(endpoint) {
-        return this.request(endpoint, { method: 'DELETE' });
-    }
-
-    // File upload
-    async upload(endpoint, file, additionalData = {}) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        Object.keys(additionalData).forEach(key => {
-            formData.append(key, additionalData[key]);
-        });
-
-        return this.request(endpoint, {
-            method: 'POST',
-            body: formData,
-            headers: this.getAuthHeaders() // Remove Content-Type for FormData
-        });
-    }
-
-    // API Methods
-
-    // Auth
-    async login(email, password) {
-        return this.post('/auth/login', { email, password });
-    }
-
-    async register(email, password, name) {
-        return this.post('/auth/register', { email, password, name });
-    }
-
-    async forgotPassword(email) {
-        return this.post('/auth/forgot-password', { email });
-    }
-
-    async resetPassword(token, password) {
-        return this.post('/auth/reset-password', { token, password });
-    }
-
-    // Profile
-    async getProfile() {
-        return this.get('/profile');
-    }
-
-    async updateProfile(data) {
-        return this.put('/profile', data);
-    }
-
-    async uploadAvatar(file) {
-        const formData = new FormData();
-        formData.append('avatar', file);
-
-        return this.request('/profile/avatar', {
-            method: 'POST',
-            body: formData,
-            headers: this.getAuthHeaders()
-        });
-    }
-
-    // Preferences
-    async updatePreferences(preferences) {
-        return this.put('/preferences', preferences);
-    }
-
-    // Progress
-    async getProgress() {
-        return this.get('/progress');
-    }
-
-    async updateProgress(week, day, data) {
-        return this.post('/progress', { week, day, ...data });
-    }
-
-    // Calendar
-    async getCalendar(week = null) {
-        return week ? this.get('/calendar', { week }) : this.get('/calendar');
-    }
-
-    // Notes
-    async getNotes(params = {}) {
-        return this.get('/notes', params);
-    }
-
-    async createNote(data) {
-        return this.post('/notes', data);
-    }
-
-    async updateNote(noteId, data) {
-        return this.put(`/notes/${noteId}`, data);
-    }
-
-    async deleteNote(noteId) {
-        return this.delete(`/notes/${noteId}`);
-    }
-
-    // Pomodoro
-    async startPomodoro(data) {
-        return this.post('/pomodoro', data);
-    }
-
-    async completePomodoro(sessionId) {
-        return this.post(`/pomodoro/${sessionId}/complete`);
-    }
-
-    async getPomodoroHistory(params = {}) {
-        return this.get('/pomodoro/history', params);
-    }
-
-    // Resources
-    async getResources(params = {}) {
-        return this.get('/resources', params);
-    }
-
-    // Roadmap
-    async getRoadmap(week = null) {
-        return week ? this.get('/roadmap', { week }) : this.get('/roadmap');
-    }
-
-    // Search
-    async search(query, type = 'all', page = 1) {
-        return this.get('/search', { q: query, type, page });
-    }
-
-    // AI Assistant
-    async askAI(question) {
-        return this.post('/ai/ask', { question });
-    }
-
-    async generateStudyPlan(data) {
-        return this.post('/ai/study-plan', data);
-    }
-
-    async generateQuiz(data) {
-        return this.post('/ai/quiz', data);
-    }
-
-    async summarizeContent(type, contentId) {
-        return this.post('/ai/summarize', { type, content_id: contentId });
-    }
-
-    // Dashboard
-    async getDashboard() {
-        return this.get('/dashboard');
-    }
-
-    // Notifications
-    async getNotifications(params = {}) {
-        return this.get('/notifications', params);
-    }
-
-    async markNotificationRead(notificationId) {
-        return this.post(`/notifications/${notificationId}/read`);
-    }
-
-    // Sessions
-    async getSessions() {
-        return this.get('/sessions');
-    }
-
-    async revokeSession(sessionId) {
-        return this.delete(`/sessions/${sessionId}`);
+/**
+ * Custom API Error class
+ */
+class APIError extends Error {
+    constructor(message, status, data) {
+        super(message);
+        this.name = 'APIError';
+        this.status = status;
+        this.data = data;
     }
 }
 
-// Create global instance
-window.api = new ApiClient();
+// Create global API instance
+const API = new APIClient();
+
+// API Methods organized by feature
+const ApiMethods = {
+    // Authentication
+    auth: {
+        async login(email, password) {
+            const response = await API.post(API_ENDPOINTS.AUTH_LOGIN, { email, password });
+
+            // Store tokens
+            Storage.token.setAccessToken(response.access_token);
+            Storage.token.setRefreshToken(response.refresh_token);
+            Storage.user.setUserData(response.user);
+
+            return response;
+        },
+
+        async register(userData) {
+            const response = await API.post(API_ENDPOINTS.AUTH_REGISTER, userData);
+
+            // Store tokens
+            Storage.token.setAccessToken(response.access_token);
+            Storage.token.setRefreshToken(response.refresh_token);
+            Storage.user.setUserData(response.user);
+
+            return response;
+        },
+
+        async forgotPassword(email) {
+            return API.post(API_ENDPOINTS.AUTH_FORGOT_PASSWORD, { email });
+        },
+
+        async resetPassword(token, password) {
+            return API.post(API_ENDPOINTS.AUTH_RESET_PASSWORD, { token, password });
+        }
+    },
+
+    // User Profile
+    profile: {
+        async get() {
+            return API.get(API_ENDPOINTS.PROFILE);
+        },
+
+        async update(data) {
+            const response = await API.put(API_ENDPOINTS.PROFILE, data);
+
+            // Update stored user data
+            Storage.user.updateUserData(response.user);
+
+            return response;
+        },
+
+        async uploadAvatar(file) {
+            return API.upload('/profile/avatar', file, { avatar: file });
+        }
+    },
+
+    // Preferences
+    preferences: {
+        async update(preferences) {
+            const response = await API.put(API_ENDPOINTS.PREFERENCES, preferences);
+
+            // Update stored preferences
+            Storage.preferences.updatePreferences(preferences);
+
+            return response;
+        }
+    },
+
+    // Dashboard
+    dashboard: {
+        async get() {
+            // Try cache first
+            const cached = Storage.cache.get('dashboard');
+            if (cached) {
+                return cached;
+            }
+
+            const data = await API.get(API_ENDPOINTS.DASHBOARD);
+
+            // Cache for 5 minutes
+            Storage.cache.set('dashboard', data, 5);
+
+            return data;
+        }
+    },
+
+    // Progress
+    progress: {
+        async get() {
+            return API.get(API_ENDPOINTS.PROGRESS);
+        },
+
+        async update(week, day, progressData) {
+            const data = {
+                week,
+                day,
+                ...progressData
+            };
+
+            const response = await API.post(API_ENDPOINTS.PROGRESS, data);
+
+            // Invalidate dashboard cache
+            Storage.cache.remove('dashboard');
+
+            return response;
+        }
+    },
+
+    // Calendar
+    calendar: {
+        async get(week = null) {
+            const params = week ? { week } : {};
+            return API.get(API_ENDPOINTS.CALENDAR, params);
+        }
+    },
+
+    // Roadmap
+    roadmap: {
+        async get(week = null) {
+            const params = week ? { week } : {};
+            return API.get(API_ENDPOINTS.ROADMAP, params);
+        }
+    },
+
+    // Resources
+    resources: {
+        async get(type = null, page = 1, perPage = 50) {
+            const params = { page, per_page: perPage };
+            if (type) params.type = type;
+
+            // Cache key based on parameters
+            const cacheKey = `resources_${type || 'all'}_${page}_${perPage}`;
+            const cached = Storage.cache.get(cacheKey);
+            if (cached) {
+                return cached;
+            }
+
+            const data = await API.get(API_ENDPOINTS.RESOURCES, params);
+
+            // Cache for 30 minutes
+            Storage.cache.set(cacheKey, data, 30);
+
+            return data;
+        }
+    },
+
+    // Notes
+    notes: {
+        async getAll(page = 1, perPage = 20, filters = {}) {
+            const params = { page, per_page: perPage, ...filters };
+            return API.get(API_ENDPOINTS.NOTES, params);
+        },
+
+        async create(noteData) {
+            return API.post(API_ENDPOINTS.NOTES, noteData);
+        },
+
+        async update(noteId, noteData) {
+            return API.put(`${API_ENDPOINTS.NOTES}/${noteId}`, noteData);
+        },
+
+        async delete(noteId) {
+            return API.delete(`${API_ENDPOINTS.NOTES}/${noteId}`);
+        }
+    },
+
+    // Pomodoro
+    pomodoro: {
+        async start(sessionData) {
+            return API.post(API_ENDPOINTS.POMODORO, sessionData);
+        },
+
+        async complete(sessionId) {
+            return API.post(`${API_ENDPOINTS.POMODORO}/${sessionId}/complete`);
+        },
+
+        async getHistory(page = 1, perPage = 20) {
+            const params = { page, per_page: perPage };
+            return API.get(`${API_ENDPOINTS.POMODORO}/history`, params);
+        }
+    },
+
+    // Search
+    search: {
+        async query(searchQuery, page = 1, type = 'all') {
+            const params = { q: searchQuery, page, type };
+            return API.get(API_ENDPOINTS.SEARCH, params);
+        }
+    },
+
+    // AI Assistant
+    ai: {
+        async ask(question) {
+            return API.post(API_ENDPOINTS.AI_ASK, { question });
+        },
+
+        async generateStudyPlan(preferences) {
+            return API.post(API_ENDPOINTS.AI_STUDY_PLAN, preferences);
+        },
+
+        async generateQuiz(quizConfig) {
+            return API.post(API_ENDPOINTS.AI_QUIZ, quizConfig);
+        },
+
+        async summarize(contentType, contentId) {
+            return API.post(API_ENDPOINTS.AI_SUMMARIZE, {
+                type: contentType,
+                content_id: contentId
+            });
+        }
+    },
+
+    // Notifications
+    notifications: {
+        async getAll(page = 1, perPage = 20) {
+            const params = { page, per_page: perPage };
+            return API.get(API_ENDPOINTS.NOTIFICATIONS, params);
+        },
+
+        async markAsRead(notificationId) {
+            return API.post(`${API_ENDPOINTS.NOTIFICATIONS}/${notificationId}/read`);
+        }
+    }
+};
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { API, ApiMethods, APIError };
+}

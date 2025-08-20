@@ -1,834 +1,201 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 fw-bold mb-3">
+                <i class="fas fa-search text-primary me-2"></i>
+                Search Results
+            </h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search - DSA Path</title>
-
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/layouts.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-
-    <style>
-        .search-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 3rem 0 2rem;
-            color: white;
-            margin-bottom: 2rem;
-        }
-
-        .search-hero-input {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .search-hero-input input {
-            padding: 1rem 3rem 1rem 4rem;
-            font-size: 1.125rem;
-            border: none;
-            border-radius: 50px;
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-hero-input .search-icon {
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            color: var(--gray-400);
-        }
-
-        .search-hero-input .search-button {
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 0.75rem 2rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 500;
-            transition: all var(--transition-fast);
-        }
-
-        .search-hero-input .search-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .search-stats {
-            text-align: center;
-            margin-top: 1rem;
-            opacity: 0.9;
-        }
-
-        .search-filters {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 2rem;
-        }
-
-        .filter-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .filter-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .filter-title {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--gray-900);
-        }
-
-        .filter-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .filter-chip {
-            padding: 0.375rem 1rem;
-            background: var(--gray-100);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            color: var(--gray-700);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            border: 2px solid transparent;
-        }
-
-        .filter-chip:hover {
-            background: var(--gray-200);
-        }
-
-        .filter-chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .search-result {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1rem;
-            transition: all var(--transition-base);
-            border: 1px solid var(--gray-200);
-        }
-
-        .search-result:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary);
-        }
-
-        .result-type {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            background: var(--gray-100);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            color: var(--gray-700);
-            margin-bottom: 0.75rem;
-        }
-
-        .result-type.resource {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-        }
-
-        .result-type.roadmap {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .result-type.note {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .result-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
-            text-decoration: none;
-            display: block;
-        }
-
-        .result-title:hover {
-            color: var(--primary);
-        }
-
-        .result-excerpt {
-            color: var(--gray-600);
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-        }
-
-        .result-highlight {
-            background: rgba(99, 102, 241, 0.2);
-            padding: 0.125rem 0.25rem;
-            border-radius: 0.25rem;
-            font-weight: 500;
-        }
-
-        .result-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: var(--gray-500);
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .no-results-icon {
-            font-size: 4rem;
-            color: var(--gray-300);
-            margin-bottom: 1rem;
-        }
-
-        .related-searches {
-            background: var(--gray-50);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .related-search-item {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: white;
-            border-radius: var(--radius-md);
-            margin: 0.25rem;
-            color: var(--gray-700);
-            text-decoration: none;
-            transition: all var(--transition-fast);
-            border: 1px solid var(--gray-200);
-        }
-
-        .related-search-item:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-
-<body>
-    <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="fas fa-code-branch"></i>
-                    <span>DSA Path</span>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <div class="nav-item">
-                    <a href="/dashboard" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/roadmap" class="nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/calendar" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Calendar</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/progress" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/resources" class="nav-link">
-                        <i class="fas fa-book"></i>
-                        <span>Resources</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/notes" class="nav-link">
-                        <i class="fas fa-sticky-note"></i>
-                        <span>Notes</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/pomodoro" class="nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Pomodoro</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/ai-assistant" class="nav-link">
-                        <i class="fas fa-robot"></i>
-                        <span>AI Assistant</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="/analytics" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Analytics</span>
-                    </a>
-                </div>
-
-                <div class="mt-auto pt-4 border-top">
-                    <div class="nav-item">
-                        <a href="/profile" class="nav-link">
-                            <i class="fas fa-user"></i>
-                            <span>Profile</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="/settings" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Search Hero -->
-            <div class="search-hero">
-                <div class="container-fluid">
-                    <div class="search-hero-input">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="searchInput" placeholder="Search for topics, resources, or notes..."
-                            class="form-control" value="">
-                        <button class="search-button" onclick="performSearch()">Search</button>
-                    </div>
-                    <div class="search-stats" id="searchStats">
-                        <!-- Stats will be shown here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page Content -->
-            <div class="page-content">
-                <div class="row">
-                    <!-- Filters Sidebar -->
-                    <div class="col-lg-3">
-                        <div class="search-filters">
-                            <div class="filter-group">
-                                <div class="filter-title">Type</div>
-                                <div class="filter-options">
-                                    <div class="filter-chip active" onclick="toggleFilter('type', 'all')">
-                                        All
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('type', 'resources')">
-                                        Resources
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('type', 'roadmap')">
-                                        Roadmap
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('type', 'notes')">
-                                        Notes
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="filter-group">
-                                <div class="filter-title">Category</div>
-                                <div class="filter-options">
-                                    <div class="filter-chip" onclick="toggleFilter('category', 'arrays')">
-                                        Arrays
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('category', 'trees')">
-                                        Trees
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('category', 'graphs')">
-                                        Graphs
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('category', 'dp')">
-                                        Dynamic Programming
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="filter-group">
-                                <div class="filter-title">Difficulty</div>
-                                <div class="filter-options">
-                                    <div class="filter-chip" onclick="toggleFilter('difficulty', 'beginner')">
-                                        Beginner
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('difficulty', 'intermediate')">
-                                        Intermediate
-                                    </div>
-                                    <div class="filter-chip" onclick="toggleFilter('difficulty', 'advanced')">
-                                        Advanced
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button class="btn btn-sm btn-outline-secondary w-100 mt-3" onclick="clearFilters()">
-                                Clear Filters
-                            </button>
+            <!-- Search Bar -->
+            <div class="card">
+                <div class="card-body">
+                    <form id="search-form">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="search-input"
+                                placeholder="Search for topics, notes, resources..." autocomplete="off">
+                            <button class="btn btn-primary" type="submit">Search</button>
                         </div>
-                    </div>
+                    </form>
 
-                    <!-- Search Results -->
-                    <div class="col-lg-9">
-                        <div id="searchResults">
-                            <!-- Results will be rendered here -->
-                            <div class="text-center py-5">
-                                <i class="fas fa-search fa-4x text-gray-300 mb-3"></i>
-                                <h4>Start searching</h4>
-                                <p class="text-muted">Enter a search term to find resources, roadmap items, or your
-                                    notes</p>
-                            </div>
-                        </div>
+                    <!-- Search Filters -->
+                    <div class="mt-3">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="text-muted small">Filter by:</span>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <input type="checkbox" class="btn-check" id="filter-all" checked>
+                                <label class="btn btn-outline-secondary" for="filter-all">All</label>
 
-                        <!-- Related Searches -->
-                        <div class="related-searches d-none" id="relatedSearches">
-                            <h5 class="fw-bold mb-3">Related Searches</h5>
-                            <div id="relatedSearchItems">
-                                <!-- Related items will be rendered here -->
+                                <input type="checkbox" class="btn-check" id="filter-roadmap">
+                                <label class="btn btn-outline-secondary" for="filter-roadmap">Roadmap</label>
+
+                                <input type="checkbox" class="btn-check" id="filter-resources">
+                                <label class="btn btn-outline-secondary" for="filter-resources">Resources</label>
+
+                                <input type="checkbox" class="btn-check" id="filter-notes">
+                                <label class="btn btn-outline-secondary" for="filter-notes">Notes</label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-items">
-            <a href="/dashboard" class="mobile-nav-item">
-                <i class="fas fa-home mobile-nav-icon"></i>
-                <span>Home</span>
-            </a>
-            <a href="/roadmap" class="mobile-nav-item">
-                <i class="fas fa-route mobile-nav-icon"></i>
-                <span>Roadmap</span>
-            </a>
-            <a href="/resources" class="mobile-nav-item">
-                <i class="fas fa-book mobile-nav-icon"></i>
-                <span>Resources</span>
-            </a>
-            <a href="/notes" class="mobile-nav-item">
-                <i class="fas fa-sticky-note mobile-nav-icon"></i>
-                <span>Notes</span>
-            </a>
-            <a href="/profile" class="mobile-nav-item">
-                <i class="fas fa-user mobile-nav-icon"></i>
-                <span>Profile</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- Toast Container -->
-    <div class="toast-container"></div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // API Configuration
-        const API_BASE = 'https://dsa-backend-gj8n.onrender.com';
-        let accessToken = localStorage.getItem('access_token');
-        let searchResults = {
-            resources: [],
-            roadmap: [],
-            notes: []
-        };
-        let activeFilters = {
-            type: 'all',
-            category: [],
-            difficulty: []
-        };
-
-        // Authentication check
-        if (!accessToken) {
-            window.location.href = '/login';
-        }
-
-        // Utility Functions
-        function showToast(message, type = 'info') {
-            const toastContainer = document.querySelector('.toast-container');
-            const toastId = 'toast-' + Date.now();
-
-            const toastHTML = `
-                <div id="${toastId}" class="custom-toast ${type}" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                    <span>${message}</span>
+    <!-- Search Results Summary -->
+    <div class="row mb-4" id="search-summary" style="display: none;">
+        <div class="col-12">
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-info-circle me-2"></i>
+                    Found <strong id="result-count">0</strong> results for "<strong id="search-query"></strong>"
                 </div>
-            `;
+                <button type="button" class="btn-close" onclick="clearSearch()"></button>
+            </div>
+        </div>
+    </div>
 
-            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    <!-- Results Container -->
+    <div class="row" id="results-container">
+        <!-- Initial State -->
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-search text-muted fa-4x mb-3"></i>
+                <h4 class="text-muted">Start Searching</h4>
+                <p class="text-muted mb-4">Enter a search term to find roadmap topics, resources, and notes.</p>
 
-            setTimeout(() => {
-                const toast = document.getElementById(toastId);
-                if (toast) {
-                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 5000);
+                <!-- Popular Searches -->
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">Popular Searches:</h6>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('arrays')">Arrays</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('linked lists')">Linked
+                            Lists</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('binary search')">Binary
+                            Search</button>
+                        <button class="btn btn-sm btn-outline-primary"
+                            onclick="performSearch('dynamic programming')">Dynamic Programming</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="performSearch('graphs')">Graphs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav id="search-pagination" style="display: none;">
+                <!-- Populated by JavaScript -->
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentQuery = '';
+        let currentPage = 1;
+        let searchResults = {};
+        let activeFilters = new Set(['all']);
+
+        // Check for query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialQuery = urlParams.get('q');
+        if (initialQuery) {
+            document.getElementById('search-input').value = initialQuery;
+            performSearch(initialQuery);
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
+        setupEventListeners();
+        loadSearchHistory();
 
-        async function logout() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
-
-        // API Functions
-        async function fetchWithAuth(url, options = {}) {
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
+        function setupEventListeners() {
+            // Search form
+            document.getElementById('search-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const query = document.getElementById('search-input').value.trim();
+                if (query) {
+                    performSearch(query);
                 }
             });
 
-            if (response.status === 401) {
-                logout();
-            }
+            // Filter checkboxes
+            document.querySelectorAll('.btn-check').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.id === 'filter-all') {
+                        if (this.checked) {
+                            activeFilters.clear();
+                            activeFilters.add('all');
+                            document.querySelectorAll('.btn-check:not(#filter-all)').forEach(cb => cb.checked = false);
+                        } else {
+                            this.checked = true; // Keep at least one filter active
+                        }
+                    } else {
+                        document.getElementById('filter-all').checked = false;
+                        activeFilters.delete('all');
 
-            return response;
+                        if (this.checked) {
+                            activeFilters.add(this.id.replace('filter-', ''));
+                        } else {
+                            activeFilters.delete(this.id.replace('filter-', ''));
+                        }
+
+                        // If no filters selected, select all
+                        if (activeFilters.size === 0) {
+                            document.getElementById('filter-all').checked = true;
+                            activeFilters.add('all');
+                        }
+                    }
+
+                    // Re-render results with new filters
+                    if (currentQuery) {
+                        renderResults();
+                    }
+                });
+            });
+
+            // Real-time search suggestions
+            const searchInput = document.getElementById('search-input');
+            const debouncedSuggest = Utils.time.debounce(showSuggestions, 300);
+
+            searchInput.addEventListener('input', function () {
+                const query = this.value.trim();
+                if (query.length >= 2) {
+                    debouncedSuggest(query);
+                } else {
+                    hideSuggestions();
+                }
+            });
+
+            // Handle click outside to close suggestions
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('#search-form')) {
+                    hideSuggestions();
+                }
+            });
         }
 
-        // Get search query from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('q') || '';
-        if (searchQuery) {
-            document.getElementById('searchInput').value = searchQuery;
-            performSearch();
-        }
-
-        // Search functionality
-        async function performSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-
-            if (!query) {
-                showToast('Please enter a search term', 'warning');
-                return;
-            }
+        async function performSearch(query, page = 1) {
+            currentQuery = query;
+            currentPage = page;
 
             // Update URL
             const newUrl = `${window.location.pathname}?q=${encodeURIComponent(query)}`;
-            window.history.pushState({}, '', newUrl);
+            history.pushState({ query }, '', newUrl);
 
             // Show loading
-            document.getElementById('searchResults').innerHTML = `
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Searching...</span>
-                    </div>
-                </div>
-            `;
+            showLoading();
 
             try {
-                const response = await fetchWithAuth(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=${activeFilters.type}`);
+                // Fetch search results from backend
+                const response = await ApiMethods.search.query(query, page, 'all');
+                searchResults = response;
 
-                if (response.ok) {
-                    const data = await response.json();
-                    searchResults = data;
-                    renderSearchResults();
-                    updateSearchStats();
-                    showRelatedSearches(query);
-                }
-            } catch (error) {
-                console.error('Search error:', error);
-                showToast('Search failed. Please try again.', 'error');
-            }
-        }
+                // Add to search history
+                Storage.search.addSearchQuery(query);
 
-        // Handle enter key in search input
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-
-        // Render search results
-        function renderSearchResults() {
-            const container = document.getElementById('searchResults');
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            let allResults = [];
-
-            // Combine all results
-            if (activeFilters.type === 'all' || activeFilters.type === 'resources') {
-                allResults = allResults.concat(
-                    (searchResults.resources || []).map(r => ({ ...r, type: 'resource' }))
-                );
-            }
-
-            if (activeFilters.type === 'all' || activeFilters.type === 'roadmap') {
-                allResults = allResults.concat(
-                    (searchResults.roadmap || []).map(r => ({ ...r, type: 'roadmap' }))
-                );
-            }
-
-            if (activeFilters.type === 'all' || activeFilters.type === 'notes') {
-                allResults = allResults.concat(
-                    (searchResults.notes || []).map(r => ({ ...r, type: 'note' }))
-                );
-            }
-
-            // Apply filters
-            if (activeFilters.category.length > 0) {
-                allResults = allResults.filter(result => {
-                    // Check if result matches any active category filter
-                    return activeFilters.category.some(cat =>
-                        result.title?.toLowerCase().includes(cat) ||
-                        result.content?.toLowerCase().includes(cat) ||
-                        result.tags?.some(tag => tag.toLowerCase().includes(cat))
-                    );
-                });
-            }
-
-            if (allResults.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <i class="fas fa-search no-results-icon"></i>
-                        <h4>No results found</h4>
-                        <p class="text-muted">Try adjusting your search terms or filters</p>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '';
-            allResults.forEach((result, index) => {
-                html += renderSearchResult(result, query, index);
-            });
-
-            container.innerHTML = html;
-        }
-
-        // Render individual search result
-        function renderSearchResult(result, query, index) {
-            const typeConfig = {
-                resource: { icon: 'fa-book', color: 'primary', label: 'Resource' },
-                roadmap: { icon: 'fa-route', color: 'success', label: 'Roadmap' },
-                note: { icon: 'fa-sticky-note', color: 'warning', label: 'Note' }
-            };
-
-            const config = typeConfig[result.type];
-            const title = highlightText(result.title || 'Untitled', query);
-            const excerpt = getExcerpt(result, query);
-
-            let link = '#';
-            if (result.type === 'resource') {
-                link = result.url;
-            } else if (result.type === 'roadmap') {
-                link = `/roadmap#week-${result.week}`;
-            } else if (result.type === 'note') {
-                link = `/notes#${result.id}`;
-            }
-
-            return `
-                <div class="search-result fade-in" style="animation-delay: ${index * 0.1}s">
-                    <div class="result-type ${result.type}">
-                        <i class="fas ${config.icon}"></i>
-                        ${config.label}
-                    </div>
-                    
-                    <a href="${link}" class="result-title" ${result.type === 'resource' ? 'target="_blank"' : ''}>
-                        ${title}
-                    </a>
-                    
-                    <div class="result-excerpt">
-                        ${excerpt}
-                    </div>
-                    
-                    <div class="result-meta">
-                        ${result.type === 'roadmap' ? `
-                            <span><i class="fas fa-calendar me-1"></i>Week ${result.week}</span>
-                            <span><i class="fas fa-bullseye me-1"></i>${result.goal || ''}</span>
-                        ` : ''}
-                        ${result.type === 'note' ? `
-                            <span><i class="fas fa-clock me-1"></i>${new Date(result.updated_at).toLocaleDateString()}</span>
-                            ${result.tags?.length > 0 ? `<span><i class="fas fa-tags me-1"></i>${result.tags.join(', ')}</span>` : ''}
-                        ` : ''}
-                        ${result.type === 'resource' ? `
-                            <span><i class="fas fa-external-link-alt me-1"></i>External Resource</span>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Get excerpt with highlighted text
-        function getExcerpt(result, query) {
-            let text = result.content || result.description || result.goal || '';
-
-            // Remove HTML tags for notes
-            text = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-
-            // Find position of query in text
-            const queryIndex = text.toLowerCase().indexOf(query.toLowerCase());
-
-            let excerpt;
-            if (queryIndex !== -1) {
-                // Show text around the query
-                const start = Math.max(0, queryIndex - 50);
-                const end = Math.min(text.length, queryIndex + query.length + 100);
-                excerpt = (start > 0 ? '...' : '') + text.substring(start, end) + (end < text.length ? '...' : '');
-            } else {
-                // Show beginning of text
-                excerpt = text.substring(0, 150) + (text.length > 150 ? '...' : '');
-            }
-
-            return highlightText(excerpt, query);
-        }
-
-        // Highlight search terms
-        function highlightText(text, query) {
-            if (!query) return text;
-
-            const regex = new RegExp(`(${query})`, 'gi');
-            return text.replace(regex, '<span class="result-highlight">$1</span>');
-        }
-
-        // Update search stats
-        function updateSearchStats() {
-            const totalResults =
-                (searchResults.resources?.length || 0) +
-                (searchResults.roadmap?.length || 0) +
-                (searchResults.notes?.length || 0);
-
-            const stats = document.getElementById('searchStats');
-            stats.textContent = `Found ${totalResults} result${totalResults !== 1 ? 's' : ''}`;
-        }
-
-        // Toggle filter
-        function toggleFilter(filterType, value) {
-            if (filterType === 'type') {
-                activeFilters.type = value;
-
-                // Update UI
-                document.querySelectorAll('.filter-group:first-child .filter-chip').forEach(chip => {
-                    chip.classList.toggle('active', chip.textContent.trim().toLowerCase() === value);
-                });
-            } else {
-                // Toggle array filters
-                const index = activeFilters[filterType].indexOf(value);
-                if (index > -1) {
-                    activeFilters[filterType].splice(index, 1);
-                } else {
-                    activeFilters[filterType].push(value);
-                }
-
-                // Update UI
-                event.target.classList.toggle('active');
-            }
-
-            // Re-render results
-            renderSearchResults();
-        }
-
-        // Clear all filters
-        function clearFilters() {
-            activeFilters = {
-                type: 'all',
-                category: [],
-                difficulty: []
-            };
-
-            // Reset UI
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.classList.remove('active');
-            });
-            document.querySelector('.filter-chip').classList.add('active'); // First chip (All)
-
-            // Re-render results
-            renderSearchResults();
-        }
-
-        // Show related searches
-        function showRelatedSearches(query) {
-            const relatedContainer = document.getElementById('relatedSearches');
-            const relatedItems = document.getElementById('relatedSearchItems');
-
-            // Generate related searches based on current query
-            const related = [
-                `${query} tutorial`,
-                `${query} examples`,
-                `${query} practice problems`,
-                `${query} implementation`,
-                `${query} time complexity`,
-                `${query} interview questions`
-            ];
-
-            let html = '';
-            related.forEach(item => {
-                html += `
-                    <a href="#" class="related-search-item" onclick="searchRelated('${item}'); return false;">
-                        <i class="fas fa-search me-1"></i>${item}
-                    </a>
-                `;
-            });
-
-            relatedItems.innerHTML = html;
-            relatedContainer.classList.remove('d-none');
-        }
-
-        // Search related term
-        function searchRelated(term) {
-            document.getElementById('searchInput').value = term;
-            performSearch();
-        }
-    </script>
-</body>
-
-</html>
+    // Show results

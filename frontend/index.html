@@ -1,498 +1,375 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>DSAPath - Master Data Structures & Algorithms</title>
+    <title>DSA Path - Master Data Structures & Algorithms</title>
+    <meta name="description"
+        content="Complete your DSA journey with our structured 14-week program, interactive tools, and AI assistance.">
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/css/variables.css" as="style">
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="preload" href="/js/app.js" as="script">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/variables.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/components.css" rel="stylesheet">
+    <link href="/css/layouts.css" rel="stylesheet">
+    <link href="/css/animations.css" rel="stylesheet">
+    <link href="/css/responsive.css" rel="stylesheet">
 
-    <style>
-        .hero-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
 
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            touch-action: manipulation;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .testimonial-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .floating-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-    </style>
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3b82f6">
 </head>
 
-<body class="bg-light">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="/">
-                <i class="fas fa-code-branch me-2"></i>DSAPath
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#roadmap">Roadmap</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#testimonials">Success Stories</a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <a class="btn btn-outline-primary" href="/auth/login.html">Login</a>
-                    </li>
-                    <li class="nav-item ms-2">
-                        <a class="btn btn-primary" href="/auth/register.html">Get Started</a>
-                    </li>
-                </ul>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-4" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
+            <h3 class="text-gray-800 dark:text-white">DSA Path</h3>
+            <p class="text-gray-600 dark:text-gray-400">Loading your learning dashboard...</p>
         </div>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient text-white py-5"
-        style="margin-top: 76px; min-height: 80vh; display: flex; align-items: center;">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0">
-                    <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInUp">
-                        Master DSA in <span class="text-warning">14 Weeks</span>
-                    </h1>
-                    <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
-                        Join thousands of students who've transformed their coding skills with our structured,
-                        gamified approach to Data Structures and Algorithms.
-                    </p>
-                    <div class="d-flex gap-3 animate__animated animate__fadeInUp animate__delay-2s">
-                        <a href="/auth/register.html" class="btn btn-warning btn-lg px-4">
-                            <i class="fas fa-rocket me-2"></i>Start Learning Free
-                        </a>
-                        <a href="#demo" class="btn btn-outline-light btn-lg px-4">
-                            <i class="fas fa-play-circle me-2"></i>Watch Demo
+    <!-- App Container -->
+    <div id="app" class="hidden">
+        <!-- Header -->
+        <header id="topbar"
+            class="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+            <div class="container-fluid px-4">
+                <div class="d-flex align-items-center justify-content-between h-16">
+                    <!-- Logo & Menu Toggle -->
+                    <div class="d-flex align-items-center">
+                        <button id="sidebar-toggle" class="btn btn-ghost d-lg-none me-2" aria-label="Toggle Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="/" class="d-flex align-items-center text-decoration-none">
+                            <i class="fas fa-code text-primary fs-4 me-2"></i>
+                            <span class="fw-bold fs-5 text-gray-800 dark:text-white">DSA Path</span>
                         </a>
                     </div>
-                    <div class="mt-4 animate__animated animate__fadeInUp animate__delay-3s">
-                        <small class="d-block mb-2">
-                            <i class="fas fa-check-circle me-1"></i> No credit card required
-                        </small>
-                        <small class="d-block">
-                            <i class="fas fa-users me-1"></i> Join 10,000+ learners
-                        </small>
+
+                    <!-- Search Bar -->
+                    <div class="flex-grow-1 max-w-md mx-3 d-none d-md-block">
+                        <div class="input-group">
+                            <input type="text" id="global-search"
+                                class="form-control border-0 bg-gray-100 dark:bg-gray-700"
+                                placeholder="Search topics, notes, resources..." aria-label="Search">
+                            <button class="btn btn-outline-secondary border-0" type="button" id="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="floating-animation">
-                        <img src="/assets/images/hero-illustration.svg" alt="DSA Learning" class="img-fluid"
-                            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\' viewBox=\'0 0 400 300\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%234a5568\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'white\' font-size=\'20\'%3EDSA Illustration%3C/text%3E%3C/svg%3E'">
+
+                    <!-- User Actions -->
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Theme Toggle -->
+                        <button id="theme-toggle" class="btn btn-ghost" aria-label="Toggle Theme">
+                            <i class="fas fa-moon dark-hidden"></i>
+                            <i class="fas fa-sun light-hidden"></i>
+                        </button>
+
+                        <!-- Notifications -->
+                        <div class="dropdown">
+                            <button class="btn btn-ghost position-relative" data-bs-toggle="dropdown"
+                                aria-label="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span id="notification-badge"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                                    0
+                                </span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end p-0" style="width: 300px;">
+                                <div class="dropdown-header">
+                                    <h6 class="mb-0">Notifications</h6>
+                                </div>
+                                <div id="notification-list" class="max-h-64 overflow-auto">
+                                    <div class="text-center py-4 text-gray-500">
+                                        <i class="fas fa-bell-slash fs-3 mb-2"></i>
+                                        <p class="mb-0">No notifications</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Menu -->
+                        <div class="dropdown">
+                            <button class="btn btn-ghost d-flex align-items-center" data-bs-toggle="dropdown">
+                                <img id="user-avatar" src="/assets/icons/default-avatar.svg" class="rounded-circle me-2"
+                                    width="32" height="32" alt="Profile">
+                                <span id="user-name" class="d-none d-md-inline">User</span>
+                                <i class="fas fa-chevron-down ms-1"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/pages/profile"><i
+                                            class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="/pages/settings"><i
+                                            class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><button class="dropdown-item" id="logout-btn"><i
+                                            class="fas fa-sign-out-alt me-2"></i>Logout</button></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <aside id="sidebar"
+                class="sidebar-fixed bg-white dark:bg-gray-800 border-end border-gray-200 dark:border-gray-700">
+                <div class="sidebar-content p-3">
+                    <nav class="nav-main">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a href="/pages/dashboard" class="nav-link" data-page="dashboard">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/roadmap" class="nav-link" data-page="roadmap">
+                                    <i class="fas fa-map"></i>
+                                    <span>Roadmap</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/calendar" class="nav-link" data-page="calendar">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Calendar</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/progress" class="nav-link" data-page="progress">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Progress</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/notes" class="nav-link" data-page="notes">
+                                    <i class="fas fa-sticky-note"></i>
+                                    <span>Notes</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/pomodoro" class="nav-link" data-page="pomodoro">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Pomodoro</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/resources" class="nav-link" data-page="resources">
+                                    <i class="fas fa-book"></i>
+                                    <span>Resources</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/ai-assistant" class="nav-link" data-page="ai-assistant">
+                                    <i class="fas fa-robot"></i>
+                                    <span>AI Assistant</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/pages/analytics" class="nav-link" data-page="analytics">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Analytics</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main id="main-content" class="main-content">
+                <div id="page-container" class="container-fluid p-4">
+                    <!-- Content will be loaded here -->
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3 text-gray-600 dark:text-gray-400">Loading page content...</p>
+                    </div>
+                </div>
+            </main>
         </div>
-    </section>
 
-    <!-- Features Section -->
-    <section id="features" class="py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Why Choose DSAPath?</h2>
-                <p class="lead text-muted">Everything you need to master algorithms and ace technical interviews</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card card h-100 border-0 shadow-sm p-4">
-                        <div class="text-primary mb-3">
-                            <i class="fas fa-route fa-3x"></i>
-                        </div>
-                        <h4>Structured Roadmap</h4>
-                        <p class="text-muted">Follow our proven 14-week curriculum designed by FAANG engineers</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card card h-100 border-0 shadow-sm p-4">
-                        <div class="text-success mb-3">
-                            <i class="fas fa-brain fa-3x"></i>
-                        </div>
-                        <h4>AI-Powered Learning</h4>
-                        <p class="text-muted">Get instant help from our AI tutor for personalized guidance</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card card h-100 border-0 shadow-sm p-4">
-                        <div class="text-warning mb-3">
-                            <i class="fas fa-trophy fa-3x"></i>
-                        </div>
-                        <h4>Gamified Progress</h4>
-                        <p class="text-muted">Earn streaks, unlock achievements, and stay motivated</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card card h-100 border-0 shadow-sm p-4">
-                        <div class="text-info mb-3">
-                            <i class="fas fa-clock fa-3x"></i>
-                        </div>
-                        <h4>Pomodoro Timer</h4>
-                        <p class="text-muted">Built-in timer to boost productivity and track study sessions</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card card h-100 border-0 shadow-sm p-4">
-                        <div class="text-danger mb-3">
-                            <i class="fas fa-chart-line fa-3x"></i>
-                        </div>
-                        <h4>Progress Analytics</h4>
-                        <p class="text-muted">Visualize your learning journey with detailed insights</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card card h-100 border-0 shadow-sm p-4">
-                        <div class="text-purple mb-3" style="color: #8b5cf6">
-                            <i class="fas fa-users fa-3x"></i>
-                        </div>
-                        <h4>Community Support</h4>
-                        <p class="text-muted">Learn alongside peers and get help when you need it</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="bg-primary text-white py-5">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-3 mb-4 mb-md-0">
-                    <h2 class="display-4 fw-bold">10K+</h2>
-                    <p class="mb-0">Active Learners</p>
-                </div>
-                <div class="col-md-3 mb-4 mb-md-0">
-                    <h2 class="display-4 fw-bold">500+</h2>
-                    <p class="mb-0">Practice Problems</p>
-                </div>
-                <div class="col-md-3 mb-4 mb-md-0">
-                    <h2 class="display-4 fw-bold">95%</h2>
-                    <p class="mb-0">Success Rate</p>
-                </div>
-                <div class="col-md-3">
-                    <h2 class="display-4 fw-bold">4.8★</h2>
-                    <p class="mb-0">Student Rating</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Roadmap Preview -->
-    <section id="roadmap" class="py-5 bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Your Learning Journey</h2>
-                <p class="lead text-muted">From basics to advanced algorithms in 14 weeks</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                                style="width: 60px; height: 60px;">
-                                <span class="fw-bold">1-3</span>
-                            </div>
-                            <h5>Foundation</h5>
-                            <p class="text-muted small">Arrays, Strings, Linked Lists</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                                style="width: 60px; height: 60px;">
-                                <span class="fw-bold">4-7</span>
-                            </div>
-                            <h5>Core DS</h5>
-                            <p class="text-muted small">Stacks, Queues, Trees, Heaps</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                                style="width: 60px; height: 60px;">
-                                <span class="fw-bold">8-11</span>
-                            </div>
-                            <h5>Algorithms</h5>
-                            <p class="text-muted small">Graphs, Sorting, Searching</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                                style="width: 60px; height: 60px;">
-                                <span class="fw-bold">12-14</span>
-                            </div>
-                            <h5>Advanced</h5>
-                            <p class="text-muted small">DP, System Design, Interview Prep</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-5">
-                <a href="/auth/register.html" class="btn btn-primary btn-lg">
-                    <i class="fas fa-calendar-alt me-2"></i>View Full Roadmap
+        <!-- Mobile Bottom Navigation -->
+        <nav id="mobile-nav" class="mobile-nav d-lg-none">
+            <div class="d-flex justify-content-around align-items-center h-100">
+                <a href="/pages/dashboard" class="mobile-nav-item" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Home</span>
                 </a>
+                <a href="/pages/roadmap" class="mobile-nav-item" data-page="roadmap">
+                    <i class="fas fa-map"></i>
+                    <span>Roadmap</span>
+                </a>
+                <a href="/pages/progress" class="mobile-nav-item" data-page="progress">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress</span>
+                </a>
+                <a href="/pages/notes" class="mobile-nav-item" data-page="notes">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                </a>
+                <button class="mobile-nav-item" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                    <span>More</span>
+                </button>
             </div>
-        </div>
-    </section>
+        </nav>
 
-    <!-- Testimonials -->
-    <section id="testimonials" class="py-5 hero-gradient text-white">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Success Stories</h2>
-                <p class="lead">Hear from students who transformed their careers</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="testimonial-card card h-100 bg-transparent text-white border-0 p-4">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                            </div>
-                            <p class="mb-3">"DSAPath helped me land my dream job at Google! The structured approach and
-                                AI assistance made complex topics easy to understand."</p>
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-light me-3" style="width: 50px; height: 50px;"></div>
-                                <div>
-                                    <h6 class="mb-0">Sarah Chen</h6>
-                                    <small>Software Engineer at Google</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-drawer" class="mobile-drawer">
+            <div class="mobile-drawer-overlay"></div>
+            <div class="mobile-drawer-content">
+                <div class="mobile-drawer-header">
+                    <h5 class="mb-0">Menu</h5>
+                    <button class="btn btn-ghost" id="mobile-drawer-close">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-
-                <div class="col-lg-4">
-                    <div class="testimonial-card card h-100 bg-transparent text-white border-0 p-4">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                            </div>
-                            <p class="mb-3">"The gamified approach kept me motivated throughout. I went from struggling
-                                with basic arrays to solving hard LeetCode problems!"</p>
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-light me-3" style="width: 50px; height: 50px;"></div>
-                                <div>
-                                    <h6 class="mb-0">Raj Patel</h6>
-                                    <small>SDE-2 at Amazon</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="testimonial-card card h-100 bg-transparent text-white border-0 p-4">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                            </div>
-                            <p class="mb-3">"Best investment in my career! The progress tracking and pomodoro timer
-                                helped me stay consistent. Cleared 5 interviews!"</p>
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-light me-3" style="width: 50px; height: 50px;"></div>
-                                <div>
-                                    <h6 class="mb-0">Maria Garcia</h6>
-                                    <small>Senior Developer at Meta</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mobile-drawer-body">
+                    <nav>
+                        <a href="/pages/calendar" class="mobile-drawer-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Calendar</span>
+                        </a>
+                        <a href="/pages/pomodoro" class="mobile-drawer-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Pomodoro</span>
+                        </a>
+                        <a href="/pages/resources" class="mobile-drawer-item">
+                            <i class="fas fa-book"></i>
+                            <span>Resources</span>
+                        </a>
+                        <a href="/pages/ai-assistant" class="mobile-drawer-item">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Assistant</span>
+                        </a>
+                        <a href="/pages/analytics" class="mobile-drawer-item">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                        <a href="/pages/search" class="mobile-drawer-item">
+                            <i class="fas fa-search"></i>
+                            <span>Search</span>
+                        </a>
+                        <a href="/pages/profile" class="mobile-drawer-item">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                        <a href="/pages/settings" class="mobile-drawer-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </nav>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- CTA Section -->
-    <section class="py-5 bg-light">
-        <div class="container text-center">
-            <h2 class="display-5 fw-bold mb-4">Ready to Start Your Journey?</h2>
-            <p class="lead text-muted mb-4">Join thousands of successful developers who mastered DSA with us</p>
-            <a href="/auth/register.html" class="btn btn-primary btn-lg px-5">
-                <i class="fas fa-rocket me-2"></i>Get Started for Free
-            </a>
-            <p class="mt-3 text-muted">
-                <i class="fas fa-check-circle text-success me-1"></i>
-                14-day money-back guarantee
-            </p>
-        </div>
-    </section>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h5 class="mb-3">
-                        <i class="fas fa-code-branch me-2"></i>DSAPath
-                    </h5>
-                    <p class="text-muted">Empowering developers to master algorithms and land their dream jobs.</p>
-                    <div class="mt-3">
-                        <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-muted me-3"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="#" class="text-muted me-3"><i class="fab fa-github fa-lg"></i></a>
-                        <a href="#" class="text-muted"><i class="fab fa-youtube fa-lg"></i></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
-                    <h6 class="mb-3">Product</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#features" class="text-muted text-decoration-none">Features</a></li>
-                        <li class="mb-2"><a href="#roadmap" class="text-muted text-decoration-none">Roadmap</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Pricing</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Resources</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
-                    <h6 class="mb-3">Company</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">About</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Blog</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Careers</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4">
-                    <h6 class="mb-3">Newsletter</h6>
-                    <p class="text-muted mb-3">Get weekly DSA tips and interview prep advice</p>
-                    <form class="d-flex">
-                        <input type="email" class="form-control me-2" placeholder="Your email">
-                        <button class="btn btn-primary" type="submit">Subscribe</button>
-                    </form>
-                </div>
-            </div>
-
-            <hr class="my-4 border-secondary">
-
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0 text-muted">&copy; 2024 DSAPath. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted text-decoration-none">Terms of Service</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/js/constants.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/validators.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/state.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+    <script src="/js/router.js"></script>
+    <script src="/js/app.js"></script>
 
     <script>
-        // Check if user is logged in and redirect
-        const token = localStorage.getItem('access_token');
-        if (token) {
-            window.location.href = '/pages/dashboard.html';
-        }
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+        // Initialize app on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            App.init();
         });
 
-        // Add animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver(function (entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+        // Handle page navigation
+        document.addEventListener('click', function (e) {
+            if (e.target.matches('a[href^="/"]') || e.target.closest('a[href^="/"]')) {
+                const link = e.target.matches('a') ? e.target : e.target.closest('a');
+                if (link.href && link.href.startsWith(window.location.origin)) {
+                    e.preventDefault();
+                    Router.navigate(link.getAttribute('href'));
                 }
-            });
-        }, observerOptions);
+            }
+        });
 
-        document.querySelectorAll('.feature-card').forEach(el => {
-            observer.observe(el);
+        // Handle back/forward navigation
+        window.addEventListener('popstate', function (e) {
+            Router.navigate(window.location.pathname, false);
+        });
+
+        // Global search functionality
+        document.getElementById('global-search').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    Router.navigate(`/pages/search?q=${encodeURIComponent(query)}`);
+                }
+            }
+        });
+
+        document.getElementById('search-btn').addEventListener('click', function () {
+            const query = document.getElementById('global-search').value.trim();
+            if (query) {
+                Router.navigate(`/pages/search?q=${encodeURIComponent(query)}`);
+            }
+        });
+
+        // Mobile menu functionality
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function () {
+            document.getElementById('mobile-drawer').classList.add('active');
+        });
+
+        document.getElementById('mobile-drawer-close').addEventListener('click', function () {
+            document.getElementById('mobile-drawer').classList.remove('active');
+        });
+
+        document.querySelector('.mobile-drawer-overlay').addEventListener('click', function () {
+            document.getElementById('mobile-drawer').classList.remove('active');
+        });
+
+        // Sidebar toggle for mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function () {
+            Auth.logout();
         });
     </script>
 </body>

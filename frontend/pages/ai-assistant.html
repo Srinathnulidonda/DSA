@@ -1,915 +1,753 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>AI Assistant - DSAPath</title>
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Prism.js for code highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/layouts.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-</head>
-
-<body class="bg-light">
-    <div class="app-wrapper">
-        <!-- Topbar -->
-        <nav class="topbar">
-            <div class="container-fluid d-flex align-items-center">
-                <button class="btn btn-link text-dark d-lg-none p-0 me-3" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars fa-lg"></i>
-                </button>
-
-                <a href="/pages/dashboard.html" class="topbar-brand">
-                    <i class="fas fa-code-branch"></i>
-                    DSAPath
-                </a>
-
-                <div class="topbar-nav">
-                    <button class="btn btn-link text-dark position-relative" onclick="showNotifications()">
-                        <i class="fas fa-bell"></i>
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center">
+                <div>
+                    <h1 class="h3 fw-bold mb-1">
+                        <i class="fas fa-robot text-info me-2"></i>
+                        AI Learning Assistant
+                    </h1>
+                    <p class="text-muted mb-0">Get instant help with DSA concepts, problems, and study guidance</p>
+                </div>
+                <div class="d-flex gap-2 mt-3 mt-lg-0">
+                    <button class="btn btn-outline-primary" id="study-plan-btn">
+                        <i class="fas fa-calendar me-2"></i>Generate Study Plan
                     </button>
-
-                    <div class="dropdown">
-                        <button class="btn btn-link text-dark dropdown-toggle d-flex align-items-center"
-                            data-bs-toggle="dropdown">
-                            <img src="/assets/images/default-avatar.png" alt="Avatar" class="rounded-circle me-2"
-                                width="32" height="32" id="userAvatar">
-                            <span class="d-none d-md-inline" id="userName">Loading...</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/pages/profile.html">
-                                    <i class="fas fa-user me-2"></i>Profile
-                                </a></li>
-                            <li><a class="dropdown-item" href="/pages/settings.html">
-                                    <i class="fas fa-cog me-2"></i>Settings
-                                </a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#" onclick="logout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
-                        </ul>
-                    </div>
+                    <button class="btn btn-outline-secondary" id="quiz-btn">
+                        <i class="fas fa-question-circle me-2"></i>Create Quiz
+                    </button>
                 </div>
             </div>
-        </nav>
-
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <nav class="sidebar-nav">
-                <a href="/pages/dashboard.html" class="sidebar-link">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/pages/roadmap.html" class="sidebar-link">
-                    <i class="fas fa-route"></i>
-                    <span>Roadmap</span>
-                </a>
-                <a href="/pages/calendar.html" class="sidebar-link">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Calendar</span>
-                </a>
-                <a href="/pages/progress.html" class="sidebar-link">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Progress</span>
-                </a>
-                <a href="/pages/notes.html" class="sidebar-link">
-                    <i class="fas fa-sticky-note"></i>
-                    <span>Notes</span>
-                </a>
-                <a href="/pages/pomodoro.html" class="sidebar-link">
-                    <i class="fas fa-clock"></i>
-                    <span>Pomodoro</span>
-                </a>
-                <a href="/pages/resources.html" class="sidebar-link">
-                    <i class="fas fa-book"></i>
-                    <span>Resources</span>
-                </a>
-                <a href="/pages/ai-assistant.html" class="sidebar-link active">
-                    <i class="fas fa-robot"></i>
-                    <span>AI Assistant</span>
-                </a>
-                <a href="/pages/analytics.html" class="sidebar-link">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Analytics</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container-fluid">
-                <!-- Page Header -->
-                <div class="page-header mb-4">
-                    <h1 class="page-title">AI Study Assistant</h1>
-                    <p class="page-subtitle">Get instant help with DSA concepts and problem-solving</p>
-                </div>
-
-                <div class="row">
-                    <!-- Chat Interface -->
-                    <div class="col-lg-8">
-                        <div class="card border-0 shadow-sm chat-container">
-                            <div class="card-body p-0 d-flex flex-column">
-                                <!-- Chat Messages -->
-                                <div id="chatMessages" class="chat-messages p-4">
-                                    <!-- Welcome message -->
-                                    <div class="message assistant-message">
-                                        <div class="message-avatar">
-                                            <i class="fas fa-robot"></i>
-                                        </div>
-                                        <div class="message-content">
-                                            <div class="message-bubble">
-                                                <p>👋 Hello! I'm your AI study assistant. I can help you with:</p>
-                                                <ul>
-                                                    <li>Explaining DSA concepts</li>
-                                                    <li>Solving coding problems</li>
-                                                    <li>Debugging your code</li>
-                                                    <li>Suggesting learning resources</li>
-                                                    <li>Creating study plans</li>
-                                                </ul>
-                                                <p>How can I assist you today?</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Chat Input -->
-                                <div class="chat-input-container p-3 border-top">
-                                    <form id="chatForm" class="d-flex gap-2">
-                                        <textarea class="form-control" id="messageInput" rows="1"
-                                            placeholder="Ask me anything about DSA..."
-                                            onkeydown="handleKeyPress(event)"></textarea>
-                                        <button type="submit" class="btn btn-primary" id="sendBtn">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
-                                    </form>
-                                    <div class="text-muted small mt-2">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Press Shift+Enter for new line
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions & Suggestions -->
-                    <div class="col-lg-4">
-                        <!-- Quick Actions -->
-                        <div class="card border-0 shadow-sm mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">Quick Actions</h5>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-outline-primary text-start"
-                                        onclick="askQuestion('Explain time complexity with examples')">
-                                        <i class="fas fa-clock me-2"></i>Explain Time Complexity
-                                    </button>
-                                    <button class="btn btn-outline-primary text-start" onclick="generateStudyPlan()">
-                                        <i class="fas fa-calendar-check me-2"></i>Generate Study Plan
-                                    </button>
-                                    <button class="btn btn-outline-primary text-start" onclick="generateQuiz()">
-                                        <i class="fas fa-question-circle me-2"></i>Create Practice Quiz
-                                    </button>
-                                    <button class="btn btn-outline-primary text-start"
-                                        onclick="askQuestion('What should I study next based on my progress?')">
-                                        <i class="fas fa-compass me-2"></i>What to Study Next
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Suggested Topics -->
-                        <div class="card border-0 shadow-sm mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">Suggested Topics</h5>
-                                <div class="suggested-topics">
-                                    <button class="badge bg-secondary me-2 mb-2 border-0"
-                                        onclick="askQuestion('How do I implement a binary search tree?')">
-                                        Binary Search Trees
-                                    </button>
-                                    <button class="badge bg-secondary me-2 mb-2 border-0"
-                                        onclick="askQuestion('Explain dynamic programming approach')">
-                                        Dynamic Programming
-                                    </button>
-                                    <button class="badge bg-secondary me-2 mb-2 border-0"
-                                        onclick="askQuestion('Graph traversal algorithms comparison')">
-                                        Graph Algorithms
-                                    </button>
-                                    <button class="badge bg-secondary me-2 mb-2 border-0"
-                                        onclick="askQuestion('Common sorting algorithms and their complexities')">
-                                        Sorting Algorithms
-                                    </button>
-                                    <button class="badge bg-secondary me-2 mb-2 border-0"
-                                        onclick="askQuestion('When to use different data structures?')">
-                                        Data Structure Selection
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- AI Capabilities -->
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">AI Capabilities</h5>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="mb-2">
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        Code explanation & debugging
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        Complexity analysis
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        Algorithm optimization
-                                    </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        Practice problem hints
-                                    </li>
-                                    <li class="mb-0">
-                                        <i class="fas fa-check-circle text-success me-2"></i>
-                                        Personalized recommendations
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Mobile Navigation -->
-        <nav class="mobile-nav">
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="/pages/dashboard.html" class="mobile-nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/roadmap.html" class="mobile-nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/progress.html" class="mobile-nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/pomodoro.html" class="mobile-nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Timer</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <button class="mobile-nav-link" onclick="toggleMobileDrawer()">
-                        <i class="fas fa-ellipsis-h"></i>
-                        <span>More</span>
-                    </button>
-                </li>
-            </ul>
-        </nav>
+        </div>
     </div>
 
-    <!-- Study Plan Modal -->
-    <div class="modal fade" id="studyPlanModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Generate Personalized Study Plan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Chat Interface -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card chat-container h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-comments me-2"></i>Chat with AI Assistant
+                    </h5>
+                    <button class="btn btn-sm btn-outline-secondary" id="clear-chat-btn">
+                        <i class="fas fa-trash me-1"></i>Clear Chat
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <form id="studyPlanForm">
-                        <div class="mb-3">
-                            <label class="form-label">Available Study Time (minutes/day)</label>
-                            <input type="number" class="form-control" id="availableTime" value="60" min="15" max="480">
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Focus Areas</label>
-                            <select class="form-select" id="focusAreas" multiple size="5">
-                                <option value="arrays">Arrays & Strings</option>
-                                <option value="linkedlists">Linked Lists</option>
-                                <option value="stacks">Stacks & Queues</option>
-                                <option value="trees">Trees & Graphs</option>
-                                <option value="sorting">Sorting & Searching</option>
-                                <option value="dp">Dynamic Programming</option>
-                                <option value="algorithms">Advanced Algorithms</option>
+                <div class="card-body p-0 d-flex flex-column" style="height: 600px;">
+                    <!-- Chat Messages -->
+                    <div class="chat-messages flex-grow-1 p-3" id="chat-messages" style="overflow-y: auto;">
+                        <!-- Welcome message -->
+                        <div class="message assistant-message mb-3">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot text-info"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-bubble bg-light p-3 rounded">
+                                    <p class="mb-2">👋 Hello! I'm your AI learning assistant. I can help you with:</p>
+                                    <ul class="mb-2">
+                                        <li>Explaining DSA concepts and algorithms</li>
+                                        <li>Solving coding problems step by step</li>
+                                        <li>Creating personalized study plans</li>
+                                        <li>Generating practice quizzes</li>
+                                        <li>Reviewing your progress and giving tips</li>
+                                    </ul>
+                                    <p class="mb-0">What would you like to learn about today?</p>
+                                </div>
+                                <small class="text-muted">Just now</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input border-top p-3">
+                        <form id="chat-form">
+                            <div class="input-group">
+                                <textarea class="form-control" id="message-input"
+                                    placeholder="Ask me anything about DSA..." rows="1"
+                                    style="resize: none; max-height: 120px;" data-auto-resize></textarea>
+                                <button class="btn btn-primary" type="submit" id="send-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="mt-2">
+                            <small class="text-muted">Press Enter to send • Shift+Enter for new line</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightning-bolt me-2 text-warning"></i>Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary text-start"
+                            onclick="sendQuickMessage('Explain binary search algorithm')">
+                            <i class="fas fa-search me-2"></i>Explain Binary Search
+                        </button>
+                        <button class="btn btn-outline-primary text-start"
+                            onclick="sendQuickMessage('How do I solve two pointer problems?')">
+                            <i class="fas fa-hand-pointer me-2"></i>Two Pointer Technique
+                        </button>
+                        <button class="btn btn-outline-primary text-start"
+                            onclick="sendQuickMessage('What is time complexity?')">
+                            <i class="fas fa-clock me-2"></i>Time Complexity
+                        </button>
+                        <button class="btn btn-outline-primary text-start"
+                            onclick="sendQuickMessage('Help me with dynamic programming')">
+                            <i class="fas fa-chart-line me-2"></i>Dynamic Programming
+                        </button>
+                        <button class="btn btn-outline-primary text-start"
+                            onclick="sendQuickMessage('Explain graph traversal algorithms')">
+                            <i class="fas fa-project-diagram me-2"></i>Graph Algorithms
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Questions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="recent-questions">
+                        <p class="text-muted text-center">No recent questions</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>Pro Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="tip-item mb-3">
+                        <div class="small fw-bold mb-1">💡 Be Specific</div>
+                        <div class="small text-muted">Ask detailed questions for better explanations</div>
+                    </div>
+                    <div class="tip-item mb-3">
+                        <div class="small fw-bold mb-1">🔍 Ask for Examples</div>
+                        <div class="small text-muted">Request code examples and visualizations</div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="small fw-bold mb-1">📚 Follow Up</div>
+                        <div class="small text-muted">Ask follow-up questions to deepen understanding</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Study Plan Modal -->
+<div class="modal fade" id="studyPlanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Generate Personalized Study Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="study-plan-form">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="available-time" class="form-label">Daily Study Time (minutes)</label>
+                            <select class="form-select" id="available-time">
+                                <option value="30">30 minutes</option>
+                                <option value="60" selected>1 hour</option>
+                                <option value="90">1.5 hours</option>
+                                <option value="120">2 hours</option>
+                                <option value="180">3+ hours</option>
                             </select>
-                            <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Difficulty Level</label>
-                            <select class="form-select" id="difficulty">
+                        <div class="col-md-6">
+                            <label for="difficulty-level" class="form-label">Preferred Difficulty</label>
+                            <select class="form-select" id="difficulty-level">
                                 <option value="beginner">Beginner</option>
                                 <option value="intermediate" selected>Intermediate</option>
                                 <option value="advanced">Advanced</option>
                             </select>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="submitStudyPlan()">
-                        Generate Plan
-                    </button>
-                </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Focus Areas (Select up to 3)</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="arrays"
+                                        id="focus-arrays">
+                                    <label class="form-check-label" for="focus-arrays">Arrays & Strings</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="linkedlists"
+                                        id="focus-linkedlists">
+                                    <label class="form-check-label" for="focus-linkedlists">Linked Lists</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="trees"
+                                        id="focus-trees">
+                                    <label class="form-check-label" for="focus-trees">Trees & BST</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="graphs"
+                                        id="focus-graphs">
+                                    <label class="form-check-label" for="focus-graphs">Graphs</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="dp" id="focus-dp">
+                                    <label class="form-check-label" for="focus-dp">Dynamic Programming</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="sorting"
+                                        id="focus-sorting">
+                                    <label class="form-check-label" for="focus-sorting">Sorting & Searching</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="recursion"
+                                        id="focus-recursion">
+                                    <label class="form-check-label" for="focus-recursion">Recursion &
+                                        Backtracking</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-area" type="checkbox" value="heap"
+                                        id="focus-heap">
+                                    <label class="form-check-label" for="focus-heap">Heaps & Priority Queues</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="generate-plan-btn">
+                    <i class="fas fa-magic me-2"></i>Generate Plan
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Quiz Modal -->
-    <div class="modal fade" id="quizModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Generate Practice Quiz</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="quizForm">
-                        <div class="mb-3">
-                            <label class="form-label">Topic</label>
-                            <select class="form-select" id="quizTopic">
+<!-- Quiz Modal -->
+<div class="modal fade" id="quizModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Generate Practice Quiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="quiz-form">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="quiz-topic" class="form-label">Topic</label>
+                            <select class="form-select" id="quiz-topic">
                                 <option value="arrays">Arrays</option>
-                                <option value="strings">Strings</option>
                                 <option value="linkedlists">Linked Lists</option>
-                                <option value="stacks">Stacks</option>
-                                <option value="queues">Queues</option>
+                                <option value="stacks">Stacks & Queues</option>
                                 <option value="trees">Trees</option>
                                 <option value="graphs">Graphs</option>
                                 <option value="sorting">Sorting</option>
-                                <option value="searching">Searching</option>
                                 <option value="dp">Dynamic Programming</option>
+                                <option value="general">General DSA</option>
                             </select>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Difficulty</label>
-                            <select class="form-select" id="quizDifficulty">
+                        <div class="col-md-4">
+                            <label for="quiz-difficulty" class="form-label">Difficulty</label>
+                            <select class="form-select" id="quiz-difficulty">
                                 <option value="easy">Easy</option>
                                 <option value="medium" selected>Medium</option>
                                 <option value="hard">Hard</option>
                             </select>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Number of Questions</label>
-                            <input type="number" class="form-control" id="questionCount" value="5" min="1" max="10">
+                        <div class="col-md-4">
+                            <label for="quiz-count" class="form-label">Number of Questions</label>
+                            <select class="form-select" id="quiz-count">
+                                <option value="3">3 Questions</option>
+                                <option value="5" selected>5 Questions</option>
+                                <option value="10">10 Questions</option>
+                            </select>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="submitQuiz()">
-                        Generate Quiz
-                    </button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="generate-quiz-btn">
+                    <i class="fas fa-question-circle me-2"></i>Generate Quiz
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Mobile Drawer -->
-    <div class="mobile-drawer" id="mobileDrawer">
-        <div class="drawer-header p-3 border-bottom">
-            <h5 class="mb-0">Menu</h5>
-            <button class="btn-close" onclick="toggleMobileDrawer()"></button>
-        </div>
-        <div class="drawer-body">
-            <nav class="nav flex-column p-3">
-                <a href="/pages/calendar.html" class="nav-link">
-                    <i class="fas fa-calendar-alt me-2"></i>Calendar
-                </a>
-                <a href="/pages/notes.html" class="nav-link">
-                    <i class="fas fa-sticky-note me-2"></i>Notes
-                </a>
-                <a href="/pages/resources.html" class="nav-link">
-                    <i class="fas fa-book me-2"></i>Resources
-                </a>
-                <a href="/pages/ai-assistant.html" class="nav-link active">
-                    <i class="fas fa-robot me-2"></i>AI Assistant
-                </a>
-                <a href="/pages/analytics.html" class="nav-link">
-                    <i class="fas fa-chart-bar me-2"></i>Analytics
-                </a>
-                <hr>
-                <a href="/pages/profile.html" class="nav-link">
-                    <i class="fas fa-user me-2"></i>Profile
-                </a>
-                <a href="/pages/settings.html" class="nav-link">
-                    <i class="fas fa-cog me-2"></i>Settings
-                </a>
-                <a href="#" class="nav-link text-danger" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                </a>
-            </nav>
-        </div>
-    </div>
-    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        let conversationHistory = [];
+        let isWaitingForResponse = false;
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/constants.js"></script>
-    <script src="/js/utils.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
+        setupEventListeners();
+        loadRecentQuestions();
 
-    <script>
-        // Initialize marked options
-        marked.setOptions({
-            highlight: function (code, lang) {
-                if (Prism.languages[lang]) {
-                    return Prism.highlight(code, Prism.languages[lang], lang);
+        function setupEventListeners() {
+            // Chat form submission
+            document.getElementById('chat-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                await sendMessage();
+            });
+
+            // Message input enhancements
+            const messageInput = document.getElementById('message-input');
+            messageInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById('chat-form').dispatchEvent(new Event('submit'));
                 }
-                return code;
-            },
-            breaks: true,
-            gfm: true
-        });
+            });
 
-        // Chat state
-        let isTyping = false;
+            // Auto-resize textarea
+            messageInput.addEventListener('input', autoResizeTextarea);
 
-        // Initialize AI Assistant
-        async function initAIAssistant() {
-            try {
-                // Load user data
-                const user = auth.getUser();
-                if (user) {
-                    document.getElementById('userName').textContent = user.name;
-                    if (user.avatar_url) {
-                        document.getElementById('userAvatar').src = user.avatar_url;
+            // Clear chat
+            document.getElementById('clear-chat-btn').addEventListener('click', clearChat);
+
+            // Study plan modal
+            document.getElementById('study-plan-btn').addEventListener('click', openStudyPlanModal);
+            document.getElementById('generate-plan-btn').addEventListener('click', generateStudyPlan);
+
+            // Quiz modal
+            document.getElementById('quiz-btn').addEventListener('click', openQuizModal);
+            document.getElementById('generate-quiz-btn').addEventListener('click', generateQuiz);
+
+            // Focus area limit
+            document.querySelectorAll('.focus-area').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const checked = document.querySelectorAll('.focus-area:checked');
+                    if (checked.length > 3) {
+                        this.checked = false;
+                        Notifications.warning('Please select up to 3 focus areas');
                     }
-                }
-
-                // Setup form handler
-                document.getElementById('chatForm').addEventListener('submit', handleSubmit);
-
-                // Auto-resize textarea
-                const messageInput = document.getElementById('messageInput');
-                messageInput.addEventListener('input', function () {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
                 });
-
-            } catch (error) {
-                console.error('AI Assistant initialization error:', error);
-                notifications.error('Failed to initialize AI Assistant');
-            }
+            });
         }
 
-        // Handle form submission
-        async function handleSubmit(e) {
-            e.preventDefault();
-
-            const messageInput = document.getElementById('messageInput');
+        async function sendMessage() {
+            const messageInput = document.getElementById('message-input');
             const message = messageInput.value.trim();
 
-            if (!message || isTyping) return;
+            if (!message || isWaitingForResponse) return;
 
-            // Add user message
-            addMessage(message, 'user');
+            // Add user message to chat
+            addMessageToChat(message, 'user');
 
             // Clear input
             messageInput.value = '';
-            messageInput.style.height = 'auto';
+            autoResizeTextarea.call(messageInput);
 
-            // Send to AI
-            await sendToAI(message);
-        }
-
-        // Handle key press
-        function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                document.getElementById('chatForm').dispatchEvent(new Event('submit'));
-            }
-        }
-
-        // Add message to chat
-        function addMessage(content, type, citations = null) {
-            const chatMessages = document.getElementById('chatMessages');
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}-message animate-slideInUp`;
-
-            const avatar = type === 'user' ?
-                `<img src="${document.getElementById('userAvatar').src}" alt="You" class="rounded-circle" width="32" height="32">` :
-                '<i class="fas fa-robot"></i>';
-
-            let messageContent = `
-                <div class="message-avatar">
-                    ${avatar}
-                </div>
-                <div class="message-content">
-                    <div class="message-bubble">
-                        ${type === 'assistant' ? marked.parse(content) : utils.escapeHtml(content)}
-                    </div>
-            `;
-
-            // Add citations if available
-            if (citations && citations.length > 0) {
-                messageContent += `
-                    <div class="message-citations mt-2">
-                        <small class="text-muted">References:</small>
-                        <div class="d-flex flex-wrap gap-2 mt-1">
-                            ${citations.map(cite => `
-                                <a href="${cite.url}" target="_blank" 
-                                   class="badge bg-secondary text-decoration-none">
-                                    <i class="fas fa-external-link-alt me-1"></i>${cite.title}
-                                </a>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-
-            messageContent += '</div>';
-            messageDiv.innerHTML = messageContent;
-
-            chatMessages.appendChild(messageDiv);
-
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // Highlight code blocks
-            if (type === 'assistant') {
-                Prism.highlightAllUnder(messageDiv);
-            }
-        }
-
-        // Add typing indicator
-        function addTypingIndicator() {
-            const chatMessages = document.getElementById('chatMessages');
-
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message assistant-message typing-indicator';
-            typingDiv.innerHTML = `
-                <div class="message-avatar">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div class="message-content">
-                    <div class="message-bubble">
-                        <div class="typing-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            return typingDiv;
-        }
-
-        // Send message to AI
-        async function sendToAI(question) {
-            isTyping = true;
-            document.getElementById('sendBtn').disabled = true;
-
-            const typingIndicator = addTypingIndicator();
+            // Show typing indicator
+            showTypingIndicator();
+            isWaitingForResponse = true;
 
             try {
-                const response = await api.askAI(question);
+                // Send to AI
+                const response = await ApiMethods.ai.ask(message);
 
                 // Remove typing indicator
-                typingIndicator.remove();
+                removeTypingIndicator();
 
-                // Add AI response
-                addMessage(response.answer, 'assistant', response.citations);
-
-                // Check for service status
-                if (response.service_status === 'quota_exceeded') {
-                    notifications.warning('AI service is experiencing high demand. Some features may be limited.');
+                if (response.error) {
+                    // Handle service unavailable gracefully
+                    addMessageToChat(
+                        response.fallback_answer || 'I apologize, but I\'m temporarily unavailable. Please try again later.',
+                        'assistant',
+                        response.citations
+                    );
+                } else {
+                    // Add AI response to chat
+                    addMessageToChat(response.answer, 'assistant', response.citations);
                 }
+
+                // Add to conversation history
+                conversationHistory.push(
+                    { role: 'user', content: message },
+                    { role: 'assistant', content: response.answer || response.fallback_answer }
+                );
+
+                // Update recent questions
+                updateRecentQuestions(message);
 
             } catch (error) {
                 console.error('AI request failed:', error);
+                removeTypingIndicator();
 
-                // Remove typing indicator
-                typingIndicator.remove();
+                let errorMessage = 'I\'m experiencing some technical difficulties. ';
 
-                // Show error message
-                addMessage(
-                    "I'm sorry, I'm having trouble processing your request right now. Please try again later or check the Resources section for study materials.",
-                    'assistant'
-                );
+                if (!navigator.onLine) {
+                    errorMessage += 'Please check your internet connection and try again.';
+                } else {
+                    errorMessage += 'Please try rephrasing your question or try again in a moment.';
+                }
 
-                notifications.error('Failed to get AI response');
+                addMessageToChat(errorMessage, 'assistant');
             } finally {
-                isTyping = false;
-                document.getElementById('sendBtn').disabled = false;
+                isWaitingForResponse = false;
             }
         }
 
-        // Ask predefined question
-        function askQuestion(question) {
-            document.getElementById('messageInput').value = question;
-            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        function addMessageToChat(content, sender, citations = null) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message mb-3`;
+
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                <div class="message-content text-end">
+                    <div class="message-bubble bg-primary text-white p-3 rounded d-inline-block">
+                        ${content.replace(/\n/g, '<br>')}
+                    </div>
+                    <div><small class="text-muted">${Utils.date.format(new Date(), 'HH:mm')}</small></div>
+                </div>
+                <div class="message-avatar ms-2">
+                    <img src="${Storage.user.getUserData()?.avatar_url || '/assets/icons/default-avatar.svg'}" 
+                         class="rounded-circle" width="32" height="32" alt="You">
+                </div>
+            `;
+            } else {
+                const formattedContent = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
+
+                messageDiv.innerHTML = `
+                <div class="message-avatar me-2">
+                    <i class="fas fa-robot text-info"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble bg-light p-3 rounded">
+                        ${formattedContent}
+                        ${citations && citations.length > 0 ? `
+                            <div class="mt-3 pt-2 border-top">
+                                <small class="text-muted d-block mb-2">📚 Related Resources:</small>
+                                ${citations.map(cite => `
+                                    <a href="${cite.url}" target="_blank" rel="noopener" 
+                                       class="badge bg-info text-decoration-none me-1 mb-1">
+                                        ${cite.title}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        <small class="text-muted">${Utils.date.format(new Date(), 'HH:mm')}</small>
+                        <div>
+                            <button class="btn btn-sm btn-ghost" onclick="copyMessage(this)" title="Copy message">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn btn-sm btn-ghost" onclick="askFollowUp(this)" title="Ask follow-up">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Add entrance animation
+            messageDiv.classList.add('animate-fade-in-up');
         }
 
-        // Generate study plan
-        function generateStudyPlan() {
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'message assistant-message mb-3';
+            typingDiv.innerHTML = `
+            <div class="message-avatar me-2">
+                <i class="fas fa-robot text-info"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble bg-light p-3 rounded">
+                    <div class="typing-animation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <small class="text-muted">AI is thinking...</small>
+                </div>
+            </div>
+        `;
+
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function autoResizeTextarea() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        }
+
+        function clearChat() {
+            const messagesContainer = document.getElementById('chat-messages');
+            // Keep only the welcome message
+            const welcomeMessage = messagesContainer.firstElementChild;
+            messagesContainer.innerHTML = '';
+            messagesContainer.appendChild(welcomeMessage);
+
+            conversationHistory = [];
+            Notifications.info('Chat cleared');
+        }
+
+        function openStudyPlanModal() {
             const modal = new bootstrap.Modal(document.getElementById('studyPlanModal'));
             modal.show();
         }
 
-        // Submit study plan
-        async function submitStudyPlan() {
-            const availableTime = document.getElementById('availableTime').value;
-            const focusAreas = Array.from(document.getElementById('focusAreas').selectedOptions)
-                .map(opt => opt.value);
-            const difficulty = document.getElementById('difficulty').value;
+        async function generateStudyPlan() {
+            const availableTime = document.getElementById('available-time').value;
+            const difficulty = document.getElementById('difficulty-level').value;
+            const focusAreas = Array.from(document.querySelectorAll('.focus-area:checked')).map(cb => cb.value);
 
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('studyPlanModal')).hide();
-
-            // Add user message
-            const message = `Generate a personalized study plan with ${availableTime} minutes per day, ` +
-                `focusing on ${focusAreas.join(', ') || 'general topics'}, ` +
-                `at ${difficulty} difficulty level.`;
-            addMessage(message, 'user');
-
-            // Show typing
-            isTyping = true;
-            const typingIndicator = addTypingIndicator();
+            const generateBtn = document.getElementById('generate-plan-btn');
+            const originalText = generateBtn.innerHTML;
 
             try {
-                const response = await api.generateStudyPlan({
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+
+                const response = await ApiMethods.ai.generateStudyPlan({
                     available_time: parseInt(availableTime),
-                    focus_areas: focusAreas,
-                    difficulty: difficulty
+                    difficulty: difficulty,
+                    focus_areas: focusAreas
                 });
 
-                // Remove typing indicator
-                typingIndicator.remove();
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('studyPlanModal')).hide();
 
-                // Format and display study plan
-                let formattedPlan = response.study_plan;
-                if (response.progress_summary) {
-                    formattedPlan += `\n\n**Progress Summary:** ${response.progress_summary}`;
-                }
+                // Add study plan to chat
+                addMessageToChat(response.study_plan, 'assistant');
 
-                addMessage(formattedPlan, 'assistant');
+                Notifications.success('Study plan generated successfully!');
 
             } catch (error) {
-                console.error('Study plan generation failed:', error);
-                typingIndicator.remove();
-                addMessage(
-                    "I couldn't generate a study plan right now. Please try again later.",
-                    'assistant'
-                );
+                console.error('Failed to generate study plan:', error);
+
+                // Fallback study plan
+                const fallbackPlan = `
+## Personalized Study Plan
+
+**Daily Time:** ${availableTime} minutes
+**Difficulty:** ${difficulty}
+**Focus Areas:** ${focusAreas.join(', ') || 'General DSA'}
+
+### Week Schedule:
+- **Monday-Wednesday:** Core concept learning (${Math.round(availableTime * 0.6)} min)
+- **Thursday-Friday:** Problem practice (${Math.round(availableTime * 0.8)} min)
+- **Weekend:** Review and projects (${availableTime} min each day)
+
+### Daily Structure:
+1. **Theory Review** (${Math.round(availableTime * 0.3)} min)
+2. **Hands-on Practice** (${Math.round(availableTime * 0.5)} min)
+3. **Reflection & Notes** (${Math.round(availableTime * 0.2)} min)
+
+📚 **Resources:** Check the Resources tab for study materials
+📝 **Tip:** Take notes and track your progress in the app!
+            `;
+
+                addMessageToChat(fallbackPlan, 'assistant');
+                Notifications.warning('Generated a basic study plan. AI service is temporarily limited.');
             } finally {
-                isTyping = false;
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = originalText;
             }
         }
 
-        // Generate quiz
-        function generateQuiz() {
+        function openQuizModal() {
             const modal = new bootstrap.Modal(document.getElementById('quizModal'));
             modal.show();
         }
 
-        // Submit quiz
-        async function submitQuiz() {
-            const topic = document.getElementById('quizTopic').value;
-            const difficulty = document.getElementById('quizDifficulty').value;
-            const questionCount = document.getElementById('questionCount').value;
+        async function generateQuiz() {
+            const topic = document.getElementById('quiz-topic').value;
+            const difficulty = document.getElementById('quiz-difficulty').value;
+            const questionCount = parseInt(document.getElementById('quiz-count').value);
 
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('quizModal')).hide();
-
-            // Add user message
-            const message = `Create a ${difficulty} level quiz on ${topic} with ${questionCount} questions.`;
-            addMessage(message, 'user');
-
-            // Show typing
-            isTyping = true;
-            const typingIndicator = addTypingIndicator();
+            const generateBtn = document.getElementById('generate-quiz-btn');
+            const originalText = generateBtn.innerHTML;
 
             try {
-                const response = await api.generateQuiz({
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Quiz...';
+
+                const response = await ApiMethods.ai.generateQuiz({
                     topic: topic,
                     difficulty: difficulty,
-                    question_count: parseInt(questionCount)
+                    question_count: questionCount
                 });
 
-                // Remove typing indicator
-                typingIndicator.remove();
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('quizModal')).hide();
 
-                // Display quiz
-                addMessage(response.quiz, 'assistant');
+                // Add quiz to chat
+                addMessageToChat(response.quiz, 'assistant');
+
+                Notifications.success('Quiz generated successfully!');
 
             } catch (error) {
-                console.error('Quiz generation failed:', error);
-                typingIndicator.remove();
-                addMessage(
-                    "I couldn't generate a quiz right now. Please try again later.",
-                    'assistant'
-                );
+                console.error('Failed to generate quiz:', error);
+
+                // Fallback quiz
+                const fallbackQuiz = `
+## ${difficulty.toUpperCase()} Level Quiz on ${topic.toUpperCase()}
+
+Due to high demand, here's a practice structure for ${topic}:
+
+### Study Focus Areas:
+1. **Time & Space Complexity** - Analyze algorithmic efficiency
+2. **Implementation** - Code the core algorithms
+3. **Problem Solving** - Apply concepts to real problems
+4. **Optimization** - Improve your solutions
+
+### Recommended Practice:
+- LeetCode problems tagged with "${topic}"
+- Visualizations from the Resources tab
+- Code implementation in your preferred language
+
+### Next Steps:
+1. Review the theory first
+2. Practice with simple examples  
+3. Solve progressively harder problems
+4. Time yourself and optimize
+
+📚 Check the Resources section for topic-specific materials!
+            `;
+
+                addMessageToChat(fallbackQuiz, 'assistant');
+                Notifications.warning('Generated practice guidance. AI quiz service is temporarily limited.');
             } finally {
-                isTyping = false;
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = originalText;
             }
         }
 
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
+        function updateRecentQuestions(question) {
+            const container = document.getElementById('recent-questions');
+            const questions = JSON.parse(Storage.getItem('recent_ai_questions') || '[]');
 
-        // Toggle mobile drawer
-        function toggleMobileDrawer() {
-            const drawer = document.getElementById('mobileDrawer');
-            const backdrop = document.getElementById('drawerBackdrop');
+            // Add new question to the beginning
+            questions.unshift({
+                question: question,
+                timestamp: Date.now()
+            });
 
-            drawer.classList.toggle('open');
-            backdrop.classList.toggle('show');
-        }
+            // Keep only last 5 questions
+            const recentQuestions = questions.slice(0, 5);
+            Storage.setItem('recent_ai_questions', JSON.stringify(recentQuestions));
 
-        // Show notifications
-        function showNotifications() {
-            notifications.info('Notifications panel coming soon!');
-        }
-
-        // Logout
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                auth.logout();
+            // Update UI
+            if (recentQuestions.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No recent questions</p>';
+            } else {
+                container.innerHTML = recentQuestions.map(q => `
+                <div class="border-bottom pb-2 mb-2 recent-question" onclick="sendQuickMessage('${q.question.replace(/'/g, "\\'")}')">
+                    <div class="small fw-medium text-truncate">${Utils.string.truncate(q.question, 50)}</div>
+                    <div class="small text-muted">${Utils.date.relative(new Date(q.timestamp))}</div>
+                </div>
+            `).join('');
             }
         }
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', () => {
-            initAIAssistant();
-        });
+        function loadRecentQuestions() {
+            const questions = JSON.parse(Storage.getItem('recent_ai_questions') || '[]');
+            updateRecentQuestions(''); // This will render existing questions
+        }
 
-        // Add custom styles
+        // Global functions for onclick handlers
+        window.sendQuickMessage = function (message) {
+            document.getElementById('message-input').value = message;
+            document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+        };
+
+        window.copyMessage = async function (button) {
+            const messageContent = button.closest('.message-content').querySelector('.message-bubble');
+            const text = messageContent.textContent.trim();
+
+            const success = await Utils.browser.copyToClipboard(text);
+            if (success) {
+                button.innerHTML = '<i class="fas fa-check text-success"></i>';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            }
+        };
+
+        window.askFollowUp = function (button) {
+            const messageContent = button.closest('.message-content').querySelector('.message-bubble').textContent.trim();
+            const followUp = `Can you explain more about: "${Utils.string.truncate(messageContent, 50)}"`;
+            sendQuickMessage(followUp);
+        };
+
+        // Add typing animation styles
         const style = document.createElement('style');
         style.textContent = `
-            .chat-container {
-                height: calc(100vh - 200px);
-                min-height: 500px;
+        .typing-animation {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            margin-right: 8px;
+        }
+        
+        .typing-animation span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-animation span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-animation span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
             }
-            
-            .chat-messages {
-                flex: 1;
-                overflow-y: auto;
-                background: #f8f9fa;
+            40% {
+                transform: scale(1);
+                opacity: 1;
             }
-            
-            .message {
-                display: flex;
-                gap: 1rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            .user-message {
-                flex-direction: row-reverse;
-            }
-            
-            .message-avatar {
-                width: 40px;
-                height: 40px;
-                background: white;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-            
-            .message-avatar i {
-                font-size: 1.25rem;
-                color: var(--primary);
-            }
-            
-            .message-content {
-                max-width: 70%;
-            }
-            
-            .message-bubble {
-                background: white;
-                padding: 1rem;
-                border-radius: 1rem;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            }
-            
-            .user-message .message-bubble {
-                background: var(--primary);
-                color: white;
-            }
-            
-            .message-bubble pre {
-                background: #f6f8fa;
-                border: 1px solid #e1e4e8;
-                border-radius: 6px;
-                padding: 16px;
-                overflow-x: auto;
-                margin: 1rem 0;
-            }
-            
-            .user-message .message-bubble pre {
-                background: rgba(255, 255, 255, 0.1);
-                border-color: rgba(255, 255, 255, 0.2);
-            }
-            
-            .message-bubble code {
-                background: rgba(27, 31, 35, 0.05);
-                padding: 0.2em 0.4em;
-                border-radius: 3px;
-                font-size: 85%;
-            }
-            
-            .user-message .message-bubble code {
-                background: rgba(255, 255, 255, 0.2);
-            }
-            
-            .typing-dots {
-                display: flex;
-                gap: 0.3rem;
-            }
-            
-            .typing-dots span {
-                width: 8px;
-                height: 8px;
-                background: #6b7280;
-                border-radius: 50%;
-                animation: typing 1.4s infinite ease-in-out;
-            }
-            
-            .typing-dots span:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-            
-            .typing-dots span:nth-child(3) {
-                animation-delay: 0.4s;
-            }
-            
-            @keyframes typing {
-                0%, 60%, 100% {
-                    transform: translateY(0);
-                }
-                30% {
-                    transform: translateY(-10px);
-                }
-            }
-            
-            .suggested-topics button {
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-            
-            .suggested-topics button:hover {
-                transform: scale(1.05);
-            }
-            
-            @media (max-width: 767px) {
-                .chat-container {
-                    height: calc(100vh - 180px);
-                }
-                
-                .message-content {
-                    max-width: 85%;
-                }
-            }
-        `;
+        }
+        
+        .recent-question:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 4px;
+        }
+    `;
         document.head.appendChild(style);
-    </script>
-</body>
-
-</html>
+    });
+</script>

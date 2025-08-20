@@ -1,983 +1,654 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Progress - DSAPath</title>
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/layouts.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-</head>
-
-<body class="bg-light">
-    <div class="app-wrapper">
-        <!-- Topbar -->
-        <nav class="topbar">
-            <div class="container-fluid d-flex align-items-center">
-                <button class="btn btn-link text-dark d-lg-none p-0 me-3" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars fa-lg"></i>
-                </button>
-
-                <a href="/pages/dashboard.html" class="topbar-brand">
-                    <i class="fas fa-code-branch"></i>
-                    DSAPath
-                </a>
-
-                <div class="topbar-nav">
-                    <button class="btn btn-link text-dark position-relative" onclick="showNotifications()">
-                        <i class="fas fa-bell"></i>
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center">
+                <div>
+                    <h1 class="h3 fw-bold mb-1">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Progress Tracking
+                    </h1>
+                    <p class="text-muted mb-0">Monitor your learning journey and achievements</p>
+                </div>
+                <div class="d-flex gap-2 mt-3 mt-lg-0">
+                    <button class="btn btn-outline-primary" id="export-progress-btn">
+                        <i class="fas fa-download me-2"></i>Export Report
                     </button>
+                    <button class="btn btn-primary" id="set-goals-btn">
+                        <i class="fas fa-bullseye me-2"></i>Set Goals
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <div class="dropdown">
-                        <button class="btn btn-link text-dark dropdown-toggle d-flex align-items-center"
-                            data-bs-toggle="dropdown">
-                            <img src="/assets/images/default-avatar.png" alt="Avatar" class="rounded-circle me-2"
-                                width="32" height="32" id="userAvatar">
-                            <span class="d-none d-md-inline" id="userName">Loading...</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/pages/profile.html">
-                                    <i class="fas fa-user me-2"></i>Profile
-                                </a></li>
-                            <li><a class="dropdown-item" href="/pages/settings.html">
-                                    <i class="fas fa-cog me-2"></i>Settings
-                                </a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#" onclick="logout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
-                        </ul>
+    <!-- Progress Overview Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3">
+                            <i class="fas fa-percentage fa-lg"></i>
+                        </div>
+                        <span class="badge bg-primary" id="progress-change">+0%</span>
+                    </div>
+                    <h3 class="h4 fw-bold mb-1" id="overall-progress">0%</h3>
+                    <p class="text-muted mb-0">Overall Progress</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="icon-box bg-success bg-opacity-10 text-success rounded-circle p-3">
+                            <i class="fas fa-check-double fa-lg"></i>
+                        </div>
+                        <span class="badge bg-success" id="completed-change">+0</span>
+                    </div>
+                    <h3 class="h4 fw-bold mb-1" id="completed-days">0</h3>
+                    <p class="text-muted mb-0">Days Completed</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="icon-box bg-warning bg-opacity-10 text-warning rounded-circle p-3">
+                            <i class="fas fa-clock fa-lg"></i>
+                        </div>
+                        <span class="badge bg-warning text-dark" id="hours-change">+0h</span>
+                    </div>
+                    <h3 class="h4 fw-bold mb-1" id="total-hours">0h</h3>
+                    <p class="text-muted mb-0">Study Time</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle p-3">
+                            <i class="fas fa-fire fa-lg"></i>
+                        </div>
+                        <span class="badge bg-info" id="streak-status">Active</span>
+                    </div>
+                    <h3 class="h4 fw-bold mb-1" id="current-streak">0</h3>
+                    <p class="text-muted mb-0">Day Streak</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-area me-2"></i>Weekly Activity
+                    </h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <input type="radio" class="btn-check" name="chart-period" id="week-view" checked>
+                        <label class="btn btn-outline-primary" for="week-view">Week</label>
+                        <input type="radio" class="btn-check" name="chart-period" id="month-view">
+                        <label class="btn btn-outline-primary" for="month-view">Month</label>
+                        <input type="radio" class="btn-check" name="chart-period" id="year-view">
+                        <label class="btn btn-outline-primary" for="year-view">Year</label>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="activity-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Topic Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="topic-chart" height="300"></canvas>
+                    <div id="topic-legend" class="mt-3">
+                        <!-- Populated by JavaScript -->
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
+    </div>
 
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <nav class="sidebar-nav">
-                <a href="/pages/dashboard.html" class="sidebar-link">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/pages/roadmap.html" class="sidebar-link">
-                    <i class="fas fa-route"></i>
-                    <span>Roadmap</span>
-                </a>
-                <a href="/pages/calendar.html" class="sidebar-link">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Calendar</span>
-                </a>
-                <a href="/pages/progress.html" class="sidebar-link active">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Progress</span>
-                </a>
-                <a href="/pages/notes.html" class="sidebar-link">
-                    <i class="fas fa-sticky-note"></i>
-                    <span>Notes</span>
-                </a>
-                <a href="/pages/pomodoro.html" class="sidebar-link">
-                    <i class="fas fa-clock"></i>
-                    <span>Pomodoro</span>
-                </a>
-                <a href="/pages/resources.html" class="sidebar-link">
-                    <i class="fas fa-book"></i>
-                    <span>Resources</span>
-                </a>
-                <a href="/pages/ai-assistant.html" class="sidebar-link">
-                    <i class="fas fa-robot"></i>
-                    <span>AI Assistant</span>
-                </a>
-                <a href="/pages/analytics.html" class="sidebar-link">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Analytics</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container-fluid">
-                <!-- Page Header -->
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
-                        <div>
-                            <h1 class="page-title">Progress Tracking</h1>
-                            <p class="page-subtitle">Monitor your learning journey and achievements</p>
-                        </div>
-                        <div class="d-flex gap-2 mt-3 mt-md-0">
-                            <button class="btn btn-outline-primary" onclick="exportProgress()">
-                                <i class="fas fa-download me-2"></i>Export Report
-                            </button>
-                            <button class="btn btn-primary" onclick="shareProgress()">
-                                <i class="fas fa-share-alt me-2"></i>Share
-                            </button>
-                        </div>
-                    </div>
+    <!-- Week-by-Week Progress -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar-week me-2"></i>Week-by-Week Progress
+                    </h5>
                 </div>
-
-                <!-- Key Metrics -->
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <div class="progress-ring mx-auto mb-3">
-                                    <svg width="120" height="120">
-                                        <circle class="progress-ring-circle-bg" cx="60" cy="60" r="50"></circle>
-                                        <circle class="progress-ring-circle-progress" cx="60" cy="60" r="50"
-                                            id="overallProgressRing" stroke-dasharray="314.16"
-                                            stroke-dashoffset="314.16"></circle>
-                                    </svg>
-                                    <div class="progress-ring-percent">
-                                        <span id="overallPercent">0</span>%
-                                    </div>
-                                </div>
-                                <h5>Overall Progress</h5>
-                                <p class="text-muted mb-0">Course Completion</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="icon-box bg-primary bg-opacity-10 text-primary">
-                                        <i class="fas fa-fire fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h3 class="fw-bold mb-1" id="currentStreak">0</h3>
-                                <h5>Current Streak</h5>
-                                <p class="text-muted mb-0">Keep it going! 🔥</p>
-                                <div class="mt-3">
-                                    <small class="text-muted">Best: <span id="bestStreak">0</span> days</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="icon-box bg-success bg-opacity-10 text-success">
-                                        <i class="fas fa-clock fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h3 class="fw-bold mb-1" id="totalHours">0</h3>
-                                <h5>Total Hours</h5>
-                                <p class="text-muted mb-0">Study Time</p>
-                                <div class="mt-3">
-                                    <small class="text-muted">Avg: <span id="avgDaily">0</span>h/day</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="icon-box bg-warning bg-opacity-10 text-warning">
-                                        <i class="fas fa-trophy fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h3 class="fw-bold mb-1" id="achievements">0</h3>
-                                <h5>Achievements</h5>
-                                <p class="text-muted mb-0">Milestones Reached</p>
-                                <div class="mt-3">
-                                    <small class="text-muted">Next: <span id="nextAchievement">Week 1</span></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Progress Charts -->
-                <div class="row g-4 mb-4">
-                    <!-- Daily Activity Heatmap -->
-                    <div class="col-lg-8">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-header bg-white border-0">
-                                <h5 class="card-title mb-0">Activity Heatmap</h5>
-                                <p class="text-muted small mb-0">Your consistency over the last 12 weeks</p>
-                            </div>
-                            <div class="card-body">
-                                <div id="activityHeatmap" class="heatmap-container">
-                                    <!-- Heatmap will be rendered here -->
-                                </div>
-                                <div class="heatmap-legend mt-3">
-                                    <span class="text-muted small">Less</span>
-                                    <div class="heatmap-scale">
-                                        <div class="heatmap-cell" style="background: #ebedf0"></div>
-                                        <div class="heatmap-cell" style="background: #9be9a8"></div>
-                                        <div class="heatmap-cell" style="background: #40c463"></div>
-                                        <div class="heatmap-cell" style="background: #30a14e"></div>
-                                        <div class="heatmap-cell" style="background: #216e39"></div>
-                                    </div>
-                                    <span class="text-muted small">More</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Topic Progress -->
-                    <div class="col-lg-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-header bg-white border-0">
-                                <h5 class="card-title mb-0">Topic Mastery</h5>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="topicChart" height="300"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Week-by-Week Progress -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="card-title mb-0">Week-by-Week Progress</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Week</th>
-                                        <th>Topic</th>
-                                        <th>Progress</th>
-                                        <th>Time Spent</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="weekProgressTable">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-4">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Achievements -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="card-title mb-0">Achievements & Milestones</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="achievementsList" class="row g-3">
-                            <!-- Achievements will be rendered here -->
-                        </div>
+                <div class="card-body">
+                    <div id="weekly-progress-container">
+                        <!-- Populated by JavaScript -->
                     </div>
                 </div>
             </div>
-        </main>
-
-        <!-- Mobile Navigation -->
-        <nav class="mobile-nav">
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="/pages/dashboard.html" class="mobile-nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/roadmap.html" class="mobile-nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/progress.html" class="mobile-nav-link active">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/pomodoro.html" class="mobile-nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Timer</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <button class="mobile-nav-link" onclick="toggleMobileDrawer()">
-                        <i class="fas fa-ellipsis-h"></i>
-                        <span>More</span>
-                    </button>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <!-- Mobile Drawer -->
-    <div class="mobile-drawer" id="mobileDrawer">
-        <div class="drawer-header p-3 border-bottom">
-            <h5 class="mb-0">Menu</h5>
-            <button class="btn-close" onclick="toggleMobileDrawer()"></button>
-        </div>
-        <div class="drawer-body">
-            <nav class="nav flex-column p-3">
-                <a href="/pages/calendar.html" class="nav-link">
-                    <i class="fas fa-calendar-alt me-2"></i>Calendar
-                </a>
-                <a href="/pages/notes.html" class="nav-link">
-                    <i class="fas fa-sticky-note me-2"></i>Notes
-                </a>
-                <a href="/pages/resources.html" class="nav-link">
-                    <i class="fas fa-book me-2"></i>Resources
-                </a>
-                <a href="/pages/ai-assistant.html" class="nav-link">
-                    <i class="fas fa-robot me-2"></i>AI Assistant
-                </a>
-                <a href="/pages/analytics.html" class="nav-link">
-                    <i class="fas fa-chart-bar me-2"></i>Analytics
-                </a>
-                <hr>
-                <a href="/pages/profile.html" class="nav-link">
-                    <i class="fas fa-user me-2"></i>Profile
-                </a>
-                <a href="/pages/settings.html" class="nav-link">
-                    <i class="fas fa-cog me-2"></i>Settings
-                </a>
-                <a href="#" class="nav-link text-danger" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                </a>
-            </nav>
         </div>
     </div>
-    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="/js/constants.js"></script>
-    <script src="/js/utils.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
+    <!-- Achievements Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-trophy me-2 text-warning"></i>Achievements
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3" id="achievements-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        // Global variables
-        let progressData = null;
-        let roadmapData = null;
+<!-- Goals Modal -->
+<div class="modal fade" id="goalsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set Learning Goals</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="goals-form">
+                    <div class="mb-3">
+                        <label for="daily-goal" class="form-label">Daily Study Goal (minutes)</label>
+                        <input type="number" class="form-control" id="daily-goal" min="15" max="480" value="60">
+                        <div class="form-text">How many minutes do you want to study each day?</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="weekly-goal" class="form-label">Weekly Completion Goal</label>
+                        <select class="form-select" id="weekly-goal">
+                            <option value="5">5 days per week</option>
+                            <option value="6" selected>6 days per week</option>
+                            <option value="7">7 days per week</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="target-date" class="form-label">Target Completion Date</label>
+                        <input type="date" class="form-control" id="target-date">
+                        <div class="form-text">When do you want to complete the 14-week program?</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-goals-btn">Save Goals</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        let progressData = {};
+        let stats = {};
+        let activityChart = null;
         let topicChart = null;
 
-        // Achievements list
-        const achievements = [
-            { id: 'first_day', name: 'First Step', icon: 'shoe-prints', description: 'Complete your first day', requirement: 1 },
-            { id: 'week_1', name: 'Week 1 Champion', icon: 'medal', description: 'Complete Week 1', requirement: 7 },
-            { id: 'streak_7', name: 'Week Warrior', icon: 'fire', description: '7-day streak', requirement: 7, type: 'streak' },
-            { id: 'streak_14', name: 'Fortnight Fighter', icon: 'fire-flame-curved', description: '14-day streak', requirement: 14, type: 'streak' },
-            { id: 'half_way', name: 'Halfway Hero', icon: 'star-half-alt', description: 'Complete 50% of the course', requirement: 49 },
-            { id: 'streak_30', name: 'Monthly Master', icon: 'crown', description: '30-day streak', requirement: 30, type: 'streak' },
-            { id: 'complete', name: 'DSA Master', icon: 'graduation-cap', description: 'Complete the entire course', requirement: 98 }
-        ];
+        // Initialize
+        await loadProgressData();
+        setupEventListeners();
+        renderCharts();
+        renderWeeklyProgress();
+        renderAchievements();
 
-        // Initialize progress
-        async function initProgress() {
+        async function loadProgressData() {
             try {
-                // Load user data
-                const user = auth.getUser();
-                if (user) {
-                    document.getElementById('userName').textContent = user.name;
-                    if (user.avatar_url) {
-                        document.getElementById('userAvatar').src = user.avatar_url;
-                    }
-                }
+                Components.loading.overlay(document.querySelector('.container-fluid'), true);
 
-                // Load progress and roadmap data
-                const [progressResponse, roadmapResponse] = await Promise.all([
-                    api.getProgress(),
-                    api.getRoadmap()
-                ]);
+                const response = await ApiMethods.progress.get();
+                progressData = response.progress || {};
+                stats = response.stats || {};
 
-                progressData = progressResponse;
-                roadmapData = roadmapResponse.roadmap;
+                updateProgressCards();
 
-                // Update all components
-                updateKeyMetrics();
-                createActivityHeatmap();
-                createTopicChart();
-                loadWeekProgress();
-                loadAchievements();
+                console.log('Progress data loaded:', progressData);
 
             } catch (error) {
-                console.error('Progress initialization error:', error);
-                notifications.error('Failed to load progress data');
+                console.error('Failed to load progress:', error);
+                Notifications.error('Failed to load progress data');
+            } finally {
+                Components.loading.overlay(document.querySelector('.container-fluid'), false);
             }
         }
 
-        // Update key metrics
-        function updateKeyMetrics() {
-            const { stats, progress } = progressData;
+        function updateProgressCards() {
+            // Calculate overall progress
+            const totalDays = 14 * 7; // 14 weeks * 7 days
+            let completedDays = 0;
+            let totalStudyTime = 0;
 
-            // Calculate total completed days
-            let totalCompleted = 0;
-            let totalMinutes = 0;
-            let weekCompleted = 0;
-
-            Object.entries(progress).forEach(([week, days]) => {
-                const weekDays = Object.values(days);
-                const completedInWeek = weekDays.filter(d => d.completed).length;
-                totalCompleted += completedInWeek;
-
-                weekDays.forEach(day => {
-                    if (day.time_spent) {
-                        totalMinutes += day.time_spent;
-                    }
+            Object.values(progressData).forEach(week => {
+                Object.values(week).forEach(day => {
+                    if (day.completed) completedDays++;
+                    totalStudyTime += day.time_spent || 0;
                 });
-
-                if (completedInWeek === 7) {
-                    weekCompleted++;
-                }
             });
 
-            const overallPercent = Math.round((totalCompleted / 98) * 100);
-            const totalHours = Math.round(totalMinutes / 60);
-            const avgDaily = totalHours > 0 ? (totalHours / totalCompleted).toFixed(1) : 0;
+            const overallProgress = Math.round((completedDays / totalDays) * 100);
 
-            // Update overall progress ring
-            const progressRing = document.getElementById('overallProgressRing');
-            const circumference = 2 * Math.PI * 50;
-            const offset = circumference - (overallPercent / 100) * circumference;
-            progressRing.style.strokeDashoffset = offset;
+            // Update cards
+            document.getElementById('overall-progress').textContent = overallProgress + '%';
+            document.getElementById('completed-days').textContent = completedDays;
+            document.getElementById('total-hours').textContent = Utils.time.formatDuration(totalStudyTime * 60);
+            document.getElementById('current-streak').textContent = stats.current_streak || 0;
 
-            // Update metrics
-            document.getElementById('overallPercent').textContent = overallPercent;
-            document.getElementById('currentStreak').textContent = stats.current_streak;
-            document.getElementById('bestStreak').textContent = stats.longest_streak;
-            document.getElementById('totalHours').textContent = totalHours;
-            document.getElementById('avgDaily').textContent = avgDaily;
+            // Calculate changes (simulated for demo)
+            document.getElementById('progress-change').textContent = '+2%';
+            document.getElementById('completed-change').textContent = '+3';
+            document.getElementById('hours-change').textContent = '+2h';
 
-            // Calculate achievements earned
-            const achievementsEarned = calculateAchievements();
-            document.getElementById('achievements').textContent = achievementsEarned.length;
-
-            // Next achievement
-            const nextAch = achievements.find(a => !achievementsEarned.includes(a.id));
-            if (nextAch) {
-                document.getElementById('nextAchievement').textContent = nextAch.name;
+            // Streak status
+            if (stats.current_streak > 0) {
+                document.getElementById('streak-status').textContent = 'Active';
+                document.getElementById('streak-status').className = 'badge bg-success';
             } else {
-                document.getElementById('nextAchievement').textContent = 'All earned!';
+                document.getElementById('streak-status').textContent = 'Inactive';
+                document.getElementById('streak-status').className = 'badge bg-secondary';
             }
         }
 
-        // Create activity heatmap
-        function createActivityHeatmap() {
-            const container = document.getElementById('activityHeatmap');
-            container.innerHTML = '';
-
-            // Get last 12 weeks of data
-            const today = new Date();
-            const startDate = new Date(today);
-            startDate.setDate(today.getDate() - (12 * 7)); // 12 weeks ago
-
-            // Create week labels
-            const weekLabels = document.createElement('div');
-            weekLabels.className = 'heatmap-week-labels';
-            for (let i = 0; i < 12; i++) {
-                const label = document.createElement('div');
-                label.className = 'heatmap-week-label';
-                label.textContent = `W${i + 1}`;
-                weekLabels.appendChild(label);
-            }
-            container.appendChild(weekLabels);
-
-            // Create day labels
-            const dayLabels = document.createElement('div');
-            dayLabels.className = 'heatmap-day-labels';
-            ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
-                const label = document.createElement('div');
-                label.className = 'heatmap-day-label';
-                label.textContent = day;
-                dayLabels.appendChild(label);
-            });
-            container.appendChild(dayLabels);
-
-            // Create heatmap grid
-            const grid = document.createElement('div');
-            grid.className = 'heatmap-grid';
-
-            // Generate cells for each day
-            for (let week = 0; week < 12; week++) {
-                for (let day = 0; day < 7; day++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'heatmap-cell';
-
-                    // Calculate activity level (mock data for now)
-                    const activityLevel = Math.floor(Math.random() * 5);
-                    cell.dataset.level = activityLevel;
-
-                    // Add tooltip
-                    const date = new Date(startDate);
-                    date.setDate(startDate.getDate() + (week * 7) + day);
-                    cell.title = `${date.toLocaleDateString()}: ${activityLevel > 0 ? activityLevel + ' hours' : 'No activity'}`;
-
-                    grid.appendChild(cell);
-                }
-            }
-
-            container.appendChild(grid);
+        function renderCharts() {
+            renderActivityChart();
+            renderTopicChart();
         }
 
-        // Create topic chart
-        function createTopicChart() {
-            const ctx = document.getElementById('topicChart').getContext('2d');
+        function renderActivityChart() {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
 
-            // Calculate topic completion
-            const topics = {
-                'Foundation': { completed: 0, total: 0 },
-                'Arrays & Strings': { completed: 0, total: 0 },
-                'Linked Lists': { completed: 0, total: 0 },
-                'Stacks & Queues': { completed: 0, total: 0 },
-                'Trees': { completed: 0, total: 0 },
-                'Graphs': { completed: 0, total: 0 },
-                'Algorithms': { completed: 0, total: 0 },
-                'Advanced': { completed: 0, total: 0 }
-            };
+            // Prepare data for last 7 days
+            const last7Days = [];
+            const studyHours = [];
 
-            // Map weeks to topics
-            const weekTopics = {
-                1: 'Foundation',
-                2: 'Arrays & Strings',
-                3: 'Linked Lists',
-                4: 'Stacks & Queues',
-                5: 'Trees',
-                6: 'Trees',
-                7: 'Trees',
-                8: 'Arrays & Strings',
-                9: 'Graphs',
-                10: 'Graphs',
-                11: 'Algorithms',
-                12: 'Advanced',
-                13: 'Advanced',
-                14: 'Advanced'
-            };
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
 
-            // Count progress by topic
-            Object.entries(progressData.progress).forEach(([week, days]) => {
-                const topic = weekTopics[parseInt(week)];
-                if (topic) {
-                    topics[topic].total += 7;
-                    topics[topic].completed += Object.values(days).filter(d => d.completed).length;
-                }
-            });
+                // Calculate study hours for that day (simulated data)
+                studyHours.push(Math.random() * 3 + 0.5);
+            }
 
-            // Prepare chart data
-            const labels = Object.keys(topics);
-            const data = labels.map(topic =>
-                topics[topic].total > 0 ? Math.round((topics[topic].completed / topics[topic].total) * 100) : 0
-            );
-
-            topicChart = new Chart(ctx, {
-                type: 'radar',
+            activityChart = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: labels,
+                    labels: last7Days,
                     datasets: [{
-                        label: 'Mastery %',
-                        data: data,
-                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(102, 126, 234, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
+                        label: 'Study Hours',
+                        data: studyHours,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function (value) {
-                                    return value + '%';
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.parsed.y.toFixed(1)} hours`;
                                 }
                             }
                         }
                     },
-                    plugins: {
-                        legend: {
-                            display: false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + 'h';
+                                }
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Load week progress table
-        function loadWeekProgress() {
-            const tbody = document.getElementById('weekProgressTable');
-            let html = '';
+        function renderTopicChart() {
+            const ctx = document.getElementById('topic-chart').getContext('2d');
 
-            roadmapData.forEach(week => {
-                const weekProgress = progressData.progress[week.week] || {};
-                const days = Object.values(weekProgress);
-                const completedDays = days.filter(d => d.completed).length;
-                const totalMinutes = days.reduce((sum, d) => sum + (d.time_spent || 0), 0);
-                const percentage = Math.round((completedDays / 7) * 100);
+            // Calculate topic distribution from progress data
+            const topicCounts = {};
+            const weekTopics = [
+                'Arrays & Strings', 'Linked Lists', 'Stacks & Queues',
+                'Trees', 'BST', 'Heaps', 'Hashing', 'Graphs',
+                'Advanced Graphs', 'Sorting', 'Recursion', 'DP', 'Advanced'
+            ];
 
-                const status = percentage === 100 ? 'Completed' :
-                    percentage > 0 ? 'In Progress' : 'Not Started';
-                const statusClass = percentage === 100 ? 'success' :
-                    percentage > 0 ? 'warning' : 'secondary';
-
-                html += `
-                    <tr>
-                        <td>
-                            <strong>Week ${week.week}</strong>
-                        </td>
-                        <td>${week.title}</td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="progress" style="width: 100px; height: 8px;">
-                                    <div class="progress-bar bg-${statusClass}" style="width: ${percentage}%"></div>
-                                </div>
-                                <small>${completedDays}/7</small>
-                            </div>
-                        </td>
-                        <td>${Math.round(totalMinutes / 60)}h</td>
-                        <td>
-                            <span class="badge bg-${statusClass}">${status}</span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" 
-                                    onclick="window.location.href='/pages/roadmap.html?week=${week.week}'">
-                                View
-                            </button>
-                        </td>
-                    </tr>
-                `;
+            Object.entries(progressData).forEach(([weekNum, weekData]) => {
+                const weekIndex = parseInt(weekNum) - 1;
+                if (weekIndex < weekTopics.length) {
+                    const topic = weekTopics[weekIndex];
+                    const completed = Object.values(weekData).filter(day => day.completed).length;
+                    topicCounts[topic] = completed;
+                }
             });
 
-            tbody.innerHTML = html;
-        }
+            // Get top 5 topics
+            const sortedTopics = Object.entries(topicCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5);
 
-        // Calculate achievements
-        function calculateAchievements() {
-            const earned = [];
-            const { stats, progress } = progressData;
+            const labels = sortedTopics.map(([topic]) => topic);
+            const data = sortedTopics.map(([, count]) => count);
+            const colors = [
+                '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'
+            ];
 
-            // Count total completed days
-            let totalCompleted = 0;
-            Object.values(progress).forEach(week => {
-                totalCompleted += Object.values(week).filter(d => d.completed).length;
-            });
-
-            achievements.forEach(achievement => {
-                if (achievement.type === 'streak') {
-                    if (stats.longest_streak >= achievement.requirement) {
-                        earned.push(achievement.id);
-                    }
-                } else {
-                    if (totalCompleted >= achievement.requirement) {
-                        earned.push(achievement.id);
+            topicChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.label}: ${context.parsed} days`;
+                                }
+                            }
+                        }
                     }
                 }
             });
 
-            return earned;
+            // Custom legend
+            const legendContainer = document.getElementById('topic-legend');
+            legendContainer.innerHTML = labels.map((label, index) => `
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle me-2" style="width: 12px; height: 12px; background-color: ${colors[index]}"></div>
+                    <small>${label}</small>
+                </div>
+                <small class="text-muted">${data[index]} days</small>
+            </div>
+        `).join('');
         }
 
-        // Load achievements
-        function loadAchievements() {
-            const container = document.getElementById('achievementsList');
-            const earned = calculateAchievements();
+        function renderWeeklyProgress() {
+            const container = document.getElementById('weekly-progress-container');
+            const weeklyData = [];
 
-            let html = '';
+            // Get roadmap data from backend
+            fetch(`${API_BASE}/roadmap`)
+                .then(res => res.json())
+                .then(({ roadmap }) => {
+                    roadmap.forEach(week => {
+                        const weekProgress = progressData[week.week] || {};
+                        const completedDays = Object.values(weekProgress).filter(day => day.completed).length;
+                        const totalDays = week.days.length;
+                        const percentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
-            achievements.forEach(achievement => {
-                const isEarned = earned.includes(achievement.id);
+                        weeklyData.push({
+                            week: week.week,
+                            title: week.title,
+                            completed: completedDays,
+                            total: totalDays,
+                            percentage: percentage
+                        });
+                    });
 
-                html += `
-                    <div class="col-md-6 col-lg-4">
-                        <div class="achievement-card ${isEarned ? 'earned' : 'locked'}">
-                            <div class="achievement-icon">
-                                <i class="fas fa-${achievement.icon}"></i>
+                    container.innerHTML = weeklyData.map(week => `
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div>
+                                <strong>Week ${week.week}: ${week.title}</strong>
+                                <span class="ms-2 badge ${week.percentage === 100 ? 'bg-success' : week.percentage > 0 ? 'bg-warning' : 'bg-secondary'}">
+                                    ${week.completed}/${week.total} days
+                                </span>
                             </div>
-                            <div class="achievement-content">
-                                <h6>${achievement.name}</h6>
-                                <p class="text-muted small mb-0">${achievement.description}</p>
-                            </div>
-                            ${isEarned ? '<i class="fas fa-check-circle text-success"></i>' : ''}
+                            <span class="text-muted">${Math.round(week.percentage)}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-gradient" 
+                                 style="width: ${week.percentage}%"
+                                 role="progressbar"></div>
                         </div>
                     </div>
-                `;
+                `).join('');
+                })
+                .catch(error => {
+                    console.error('Failed to load roadmap:', error);
+                    container.innerHTML = '<p class="text-muted">Failed to load weekly progress</p>';
+                });
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievements-container');
+
+            // Define achievements based on progress
+            const achievements = [
+                {
+                    id: 'first_day',
+                    title: 'First Step',
+                    description: 'Complete your first day',
+                    icon: 'fas fa-shoe-prints',
+                    color: 'success',
+                    unlocked: Object.values(progressData).some(week =>
+                        Object.values(week).some(day => day.completed)
+                    )
+                },
+                {
+                    id: 'week_complete',
+                    title: 'Week Warrior',
+                    description: 'Complete an entire week',
+                    icon: 'fas fa-calendar-check',
+                    color: 'primary',
+                    unlocked: Object.values(progressData).some(week =>
+                        Object.values(week).filter(day => day.completed).length === 7
+                    )
+                },
+                {
+                    id: 'streak_7',
+                    title: 'Week Streak',
+                    description: 'Maintain a 7-day streak',
+                    icon: 'fas fa-fire',
+                    color: 'warning',
+                    unlocked: (stats.longest_streak || 0) >= 7
+                },
+                {
+                    id: 'half_way',
+                    title: 'Halfway There',
+                    description: 'Complete 50% of the program',
+                    icon: 'fas fa-star-half-alt',
+                    color: 'info',
+                    unlocked: calculateOverallProgress() >= 50
+                },
+                {
+                    id: 'early_bird',
+                    title: 'Early Bird',
+                    description: 'Study before 7 AM',
+                    icon: 'fas fa-sun',
+                    color: 'warning',
+                    unlocked: false // Would need session time data
+                },
+                {
+                    id: 'night_owl',
+                    title: 'Night Owl',
+                    description: 'Study after 10 PM',
+                    icon: 'fas fa-moon',
+                    color: 'dark',
+                    unlocked: false // Would need session time data
+                }
+            ];
+
+            container.innerHTML = achievements.map(achievement => `
+            <div class="col-lg-4 col-md-6">
+                <div class="achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'} p-3 rounded border">
+                    <div class="d-flex align-items-center">
+                        <div class="achievement-icon bg-${achievement.color} bg-opacity-10 text-${achievement.color} rounded-circle p-3 me-3">
+                            <i class="${achievement.icon} fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 ${!achievement.unlocked ? 'text-muted' : ''}">${achievement.title}</h6>
+                            <small class="text-muted">${achievement.description}</small>
+                        </div>
+                        ${achievement.unlocked ? '<i class="fas fa-check-circle text-success fa-lg"></i>' : '<i class="fas fa-lock text-muted"></i>'}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        function calculateOverallProgress() {
+            const totalDays = 14 * 7;
+            let completedDays = 0;
+
+            Object.values(progressData).forEach(week => {
+                completedDays += Object.values(week).filter(day => day.completed).length;
             });
 
-            container.innerHTML = html;
+            return Math.round((completedDays / totalDays) * 100);
         }
 
-        // Export progress
-        function exportProgress() {
-            notifications.info('Export feature coming soon!');
+        function setupEventListeners() {
+            // Chart period toggle
+            document.querySelectorAll('input[name="chart-period"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    updateActivityChart(this.id);
+                });
+            });
+
+            // Export button
+            document.getElementById('export-progress-btn').addEventListener('click', exportProgressReport);
+
+            // Goals button
+            document.getElementById('set-goals-btn').addEventListener('click', openGoalsModal);
+            document.getElementById('save-goals-btn').addEventListener('click', saveGoals);
         }
 
-        // Share progress
-        function shareProgress() {
-            const { stats } = progressData;
-            const text = `I'm making great progress on DSAPath! 🚀\n\n` +
-                `📊 Current Streak: ${stats.current_streak} days\n` +
-                `🏆 Longest Streak: ${stats.longest_streak} days\n` +
-                `⏱️ Total Study Time: ${Math.round(stats.total_study_time / 60)} hours\n\n` +
-                `Join me on this learning journey!`;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: 'My DSAPath Progress',
-                    text: text,
-                    url: window.location.origin
-                }).catch(console.error);
-            } else {
-                utils.copyToClipboard(text);
-                notifications.success('Progress copied to clipboard!');
+        function updateActivityChart(period) {
+            // Update chart based on selected period
+            // This would fetch different data based on week/month/year view
+            if (activityChart) {
+                // Update chart data based on period
+                // For now, just showing placeholder behavior
+                Notifications.info(`Switching to ${period.replace('-view', '')} view`);
             }
         }
 
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
+        function exportProgressReport() {
+            // Generate progress report
+            const report = {
+                generatedAt: new Date().toISOString(),
+                overallProgress: calculateOverallProgress(),
+                stats: stats,
+                weeklyProgress: Object.entries(progressData).map(([week, data]) => ({
+                    week: parseInt(week),
+                    completedDays: Object.values(data).filter(d => d.completed).length,
+                    totalTime: Object.values(data).reduce((sum, d) => sum + (d.time_spent || 0), 0)
+                }))
+            };
+
+            // Download as JSON
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            Notifications.success('Progress report exported successfully');
         }
 
-        // Toggle mobile drawer
-        function toggleMobileDrawer() {
-            const drawer = document.getElementById('mobileDrawer');
-            const backdrop = document.getElementById('drawerBackdrop');
+        function openGoalsModal() {
+            // Set default target date to 14 weeks from now
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 98); // 14 weeks
+            document.getElementById('target-date').value = targetDate.toISOString().split('T')[0];
 
-            drawer.classList.toggle('open');
-            backdrop.classList.toggle('show');
+            const modal = new bootstrap.Modal(document.getElementById('goalsModal'));
+            modal.show();
         }
 
-        // Show notifications
-        function showNotifications() {
-            notifications.info('Notifications panel coming soon!');
-        }
+        function saveGoals() {
+            const goals = {
+                dailyMinutes: parseInt(document.getElementById('daily-goal').value),
+                weeklyDays: parseInt(document.getElementById('weekly-goal').value),
+                targetDate: document.getElementById('target-date').value
+            };
 
-        // Logout
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                auth.logout();
-            }
-        }
+            // Save to local storage (in production, this would go to backend)
+            Storage.setItem('learning_goals', goals);
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', () => {
-            initProgress();
-        });
+            bootstrap.Modal.getInstance(document.getElementById('goalsModal')).hide();
+            Notifications.success('Learning goals saved successfully');
+        }
 
         // Add custom styles
         const style = document.createElement('style');
         style.textContent = `
-            .progress-ring {
-                position: relative;
-                width: 120px;
-                height: 120px;
-            }
-            
-            .progress-ring-circle-bg {
-                fill: none;
-                stroke: #e5e7eb;
-                stroke-width: 10;
-            }
-            
-            .progress-ring-circle-progress {
-                fill: none;
-                stroke: var(--primary);
-                stroke-width: 10;
-                stroke-linecap: round;
-                transform: rotate(-90deg);
-                transform-origin: 50% 50%;
-                transition: stroke-dashoffset 0.5s ease;
-            }
-            
-            .progress-ring-percent {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 1.5rem;
-                font-weight: bold;
-            }
-            
-            .icon-box {
-                width: 60px;
-                height: 60px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .heatmap-container {
-                display: flex;
-                gap: 1rem;
-                overflow-x: auto;
-                padding: 1rem;
-            }
-            
-            .heatmap-week-labels {
-                display: flex;
-                gap: 2px;
-                margin-bottom: 0.5rem;
-            }
-            
-            .heatmap-week-label {
-                width: 40px;
-                text-align: center;
-                font-size: 0.75rem;
-                color: #6b7280;
-            }
-            
-            .heatmap-day-labels {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-                margin-right: 0.5rem;
-            }
-            
-            .heatmap-day-label {
-                height: 12px;
-                display: flex;
-                align-items: center;
-                font-size: 0.75rem;
-                color: #6b7280;
-            }
-            
-            .heatmap-grid {
-                display: grid;
-                grid-template-columns: repeat(12, 1fr);
-                grid-template-rows: repeat(7, 1fr);
-                gap: 2px;
-            }
-            
-            .heatmap-cell {
-                width: 12px;
-                height: 12px;
-                background: #ebedf0;
-                border-radius: 2px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-            
-            .heatmap-cell:hover {
-                outline: 1px solid #1f2937;
-                outline-offset: 1px;
-            }
-            
-            .heatmap-cell[data-level="1"] { background: #9be9a8; }
-            .heatmap-cell[data-level="2"] { background: #40c463; }
-            .heatmap-cell[data-level="3"] { background: #30a14e; }
-            .heatmap-cell[data-level="4"] { background: #216e39; }
-            
-            .heatmap-legend {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-            }
-            
-            .heatmap-scale {
-                display: flex;
-                gap: 2px;
-            }
-            
-            .achievement-card {
-                background: white;
-                border: 2px solid #e5e7eb;
-                border-radius: 0.5rem;
-                padding: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                transition: all 0.3s ease;
-                position: relative;
-            }
-            
-            .achievement-card.earned {
-                border-color: var(--success);
-                background: #f0fdf4;
-            }
-            
-            .achievement-card.locked {
-                opacity: 0.6;
-                filter: grayscale(100%);
-            }
-            
-            .achievement-icon {
-                width: 48px;
-                height: 48px;
-                background: rgba(102, 126, 234, 0.1);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.25rem;
-                color: var(--primary);
-            }
-            
-            .achievement-card.earned .achievement-icon {
-                background: rgba(16, 185, 129, 0.1);
-                color: var(--success);
-            }
-            
-            .achievement-content {
-                flex: 1;
-            }
-            
-            .achievement-card i.fa-check-circle {
-                position: absolute;
-                top: 0.5rem;
-                right: 0.5rem;
-            }
-            
-            @media (max-width: 767px) {
-                .heatmap-cell {
-                    width: 10px;
-                    height: 10px;
-                }
-                
-                .achievement-card {
-                    padding: 0.75rem;
-                }
-                
-                .achievement-icon {
-                    width: 40px;
-                    height: 40px;
-                }
-            }
-        `;
+        .achievement-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .achievement-card.unlocked {
+            background-color: rgba(16, 185, 129, 0.05);
+            border-color: #10b981 !important;
+        }
+        
+        .achievement-card.locked {
+            opacity: 0.6;
+            background-color: rgba(107, 114, 128, 0.05);
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    `;
         document.head.appendChild(style);
-    </script>
-</body>
-
-</html>
+    });
+</script>

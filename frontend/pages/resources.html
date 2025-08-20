@@ -1,833 +1,778 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Resources - DSAPath</title>
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/layouts.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/animations.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-</head>
-
-<body class="bg-light">
-    <div class="app-wrapper">
-        <!-- Topbar -->
-        <nav class="topbar">
-            <div class="container-fluid d-flex align-items-center">
-                <button class="btn btn-link text-dark d-lg-none p-0 me-3" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars fa-lg"></i>
-                </button>
-
-                <a href="/pages/dashboard.html" class="topbar-brand">
-                    <i class="fas fa-code-branch"></i>
-                    DSAPath
-                </a>
-
-                <div class="topbar-nav">
-                    <button class="btn btn-link text-dark position-relative" onclick="showNotifications()">
-                        <i class="fas fa-bell"></i>
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center">
+                <div>
+                    <h1 class="h3 fw-bold mb-1">
+                        <i class="fas fa-book text-warning me-2"></i>
+                        Learning Resources
+                    </h1>
+                    <p class="text-muted mb-0">Curated collection of tutorials, videos, and practice materials</p>
+                </div>
+                <div class="d-flex gap-2 mt-3 mt-lg-0">
+                    <button class="btn btn-outline-primary" id="bookmark-view-btn">
+                        <i class="fas fa-bookmark me-2"></i>Bookmarked
                     </button>
-
-                    <div class="dropdown">
-                        <button class="btn btn-link text-dark dropdown-toggle d-flex align-items-center"
-                            data-bs-toggle="dropdown">
-                            <img src="/assets/images/default-avatar.png" alt="Avatar" class="rounded-circle me-2"
-                                width="32" height="32" id="userAvatar">
-                            <span class="d-none d-md-inline" id="userName">Loading...</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/pages/profile.html">
-                                    <i class="fas fa-user me-2"></i>Profile
-                                </a></li>
-                            <li><a class="dropdown-item" href="/pages/settings.html">
-                                    <i class="fas fa-cog me-2"></i>Settings
-                                </a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#" onclick="logout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
-                        </ul>
-                    </div>
+                    <button class="btn btn-primary" id="suggest-resource-btn">
+                        <i class="fas fa-plus me-2"></i>Suggest Resource
+                    </button>
                 </div>
             </div>
-        </nav>
+        </div>
+    </div>
 
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <nav class="sidebar-nav">
-                <a href="/pages/dashboard.html" class="sidebar-link">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/pages/roadmap.html" class="sidebar-link">
-                    <i class="fas fa-route"></i>
-                    <span>Roadmap</span>
-                </a>
-                <a href="/pages/calendar.html" class="sidebar-link">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Calendar</span>
-                </a>
-                <a href="/pages/progress.html" class="sidebar-link">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Progress</span>
-                </a>
-                <a href="/pages/notes.html" class="sidebar-link">
-                    <i class="fas fa-sticky-note"></i>
-                    <span>Notes</span>
-                </a>
-                <a href="/pages/pomodoro.html" class="sidebar-link">
-                    <i class="fas fa-clock"></i>
-                    <span>Pomodoro</span>
-                </a>
-                <a href="/pages/resources.html" class="sidebar-link active">
-                    <i class="fas fa-book"></i>
-                    <span>Resources</span>
-                </a>
-                <a href="/pages/ai-assistant.html" class="sidebar-link">
-                    <i class="fas fa-robot"></i>
-                    <span>AI Assistant</span>
-                </a>
-                <a href="/pages/analytics.html" class="sidebar-link">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Analytics</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container-fluid">
-                <!-- Page Header -->
-                <div class="page-header mb-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
-                        <div>
-                            <h1 class="page-title">Learning Resources</h1>
-                            <p class="page-subtitle">Curated collection of DSA learning materials</p>
-                        </div>
-                        <div class="d-flex gap-2 mt-3 mt-md-0">
-                            <div class="input-group" style="width: 250px;">
-                                <input type="text" class="form-control" placeholder="Search resources..."
-                                    id="searchInput" onkeyup="searchResources()">
-                                <button class="btn btn-outline-secondary" type="button">
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <span class="input-group-text">
                                     <i class="fas fa-search"></i>
-                                </button>
+                                </span>
+                                <input type="text" class="form-control" id="resource-search"
+                                    placeholder="Search resources..." autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <select class="form-select" id="type-filter">
+                                <option value="">All Types</option>
+                                <option value="text">Text/Tutorials</option>
+                                <option value="video">Videos</option>
+                                <option value="interactive">Interactive</option>
+                                <option value="practice">Practice</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <div id="tag-filters" class="d-flex flex-wrap gap-1">
+                                <!-- Topic tags will be populated here -->
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="d-flex align-items-center justify-content-end gap-2">
+                                <label class="form-label mb-0 small">View:</label>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="radio" class="btn-check" name="view-mode" id="grid-view" checked>
+                                    <label class="btn btn-outline-primary" for="grid-view">
+                                        <i class="fas fa-th"></i>
+                                    </label>
+                                    <input type="radio" class="btn-check" name="view-mode" id="list-view">
+                                    <label class="btn btn-outline-primary" for="list-view">
+                                        <i class="fas fa-list"></i>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Filter Tabs -->
-                <ul class="nav nav-pills mb-4" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" data-bs-toggle="pill" data-filter="all"
-                            onclick="filterResources('all')">
-                            <i class="fas fa-th me-2"></i>All Resources
-                            <span class="badge bg-secondary ms-1" id="allCount">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="pill" data-filter="text"
-                            onclick="filterResources('text')">
-                            <i class="fas fa-file-alt me-2"></i>Articles
-                            <span class="badge bg-secondary ms-1" id="textCount">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="pill" data-filter="video"
-                            onclick="filterResources('video')">
-                            <i class="fas fa-play-circle me-2"></i>Videos
-                            <span class="badge bg-secondary ms-1" id="videoCount">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="pill" data-filter="interactive"
-                            onclick="filterResources('interactive')">
-                            <i class="fas fa-hand-pointer me-2"></i>Interactive
-                            <span class="badge bg-secondary ms-1" id="interactiveCount">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="pill" data-filter="practice"
-                            onclick="filterResources('practice')">
-                            <i class="fas fa-code me-2"></i>Practice
-                            <span class="badge bg-secondary ms-1" id="practiceCount">0</span>
-                        </button>
-                    </li>
-                </ul>
-
-                <!-- Resources Grid -->
-                <div id="resourcesContainer">
-                    <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading resources...</span>
+    <!-- Resource Stats -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <div class="h4 fw-bold text-primary mb-0" id="total-resources">0</div>
+                            <small class="text-muted">Total Resources</small>
                         </div>
                     </div>
                 </div>
-
-                <!-- Pagination -->
-                <nav id="paginationContainer" class="mt-4" style="display: none;">
-                    <ul class="pagination justify-content-center">
-                        <!-- Pagination will be rendered here -->
-                    </ul>
-                </nav>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <div class="h4 fw-bold text-success mb-0" id="video-count">0</div>
+                            <small class="text-muted">Video Tutorials</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <div class="h4 fw-bold text-info mb-0" id="interactive-count">0</div>
+                            <small class="text-muted">Interactive Tools</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <div class="h4 fw-bold text-warning mb-0" id="practice-count">0</div>
+                            <small class="text-muted">Practice Problems</small>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
-
-        <!-- Mobile Navigation -->
-        <nav class="mobile-nav">
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="/pages/dashboard.html" class="mobile-nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/roadmap.html" class="mobile-nav-link">
-                        <i class="fas fa-route"></i>
-                        <span>Roadmap</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/progress.html" class="mobile-nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="/pages/pomodoro.html" class="mobile-nav-link">
-                        <i class="fas fa-clock"></i>
-                        <span>Timer</span>
-                    </a>
-                </li>
-                <li class="mobile-nav-item">
-                    <button class="mobile-nav-link" onclick="toggleMobileDrawer()">
-                        <i class="fas fa-ellipsis-h"></i>
-                        <span>More</span>
-                    </button>
-                </li>
-            </ul>
-        </nav>
+        </div>
     </div>
 
-    <!-- Mobile Drawer -->
-    <div class="mobile-drawer" id="mobileDrawer">
-        <div class="drawer-header p-3 border-bottom">
-            <h5 class="mb-0">Menu</h5>
-            <button class="btn-close" onclick="toggleMobileDrawer()"></button>
-        </div>
-        <div class="drawer-body">
-            <nav class="nav flex-column p-3">
-                <a href="/pages/calendar.html" class="nav-link">
-                    <i class="fas fa-calendar-alt me-2"></i>Calendar
-                </a>
-                <a href="/pages/notes.html" class="nav-link">
-                    <i class="fas fa-sticky-note me-2"></i>Notes
-                </a>
-                <a href="/pages/resources.html" class="nav-link active">
-                    <i class="fas fa-book me-2"></i>Resources
-                </a>
-                <a href="/pages/ai-assistant.html" class="nav-link">
-                    <i class="fas fa-robot me-2"></i>AI Assistant
-                </a>
-                <a href="/pages/analytics.html" class="nav-link">
-                    <i class="fas fa-chart-bar me-2"></i>Analytics
-                </a>
-                <hr>
-                <a href="/pages/profile.html" class="nav-link">
-                    <i class="fas fa-user me-2"></i>Profile
-                </a>
-                <a href="/pages/settings.html" class="nav-link">
-                    <i class="fas fa-cog me-2"></i>Settings
-                </a>
-                <a href="#" class="nav-link text-danger" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                </a>
+    <!-- Resources Grid/List -->
+    <div class="row" id="resources-container">
+        <!-- Populated by JavaScript -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Resources pagination" id="resources-pagination">
+                <!-- Populated by JavaScript -->
             </nav>
         </div>
     </div>
-    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleMobileDrawer()"></div>
+</div>
 
-    <!-- Resource Preview Modal -->
-    <div class="modal fade" id="resourceModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="resourceModalTitle">Resource Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="resourceModalContent">
-                    <!-- Content will be loaded dynamically -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a href="#" target="_blank" class="btn btn-primary" id="resourceModalLink">
-                        <i class="fas fa-external-link-alt me-2"></i>Open Resource
-                    </a>
-                </div>
+<!-- Resource Details Modal -->
+<div class="modal fade" id="resourceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resourceModalTitle">Resource Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="resourceModalBody">
+                <!-- Populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-primary" id="bookmark-resource-btn">
+                    <i class="fas fa-bookmark me-2"></i>Bookmark
+                </button>
+                <a href="#" class="btn btn-primary" id="visit-resource-btn" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt me-2"></i>Visit Resource
+                </a>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/constants.js"></script>
-    <script src="/js/utils.js"></script>
-    <script src="/js/storage.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/theme.js"></script>
-    <script src="/js/notifications.js"></script>
+<!-- Suggest Resource Modal -->
+<div class="modal fade" id="suggestModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Suggest a Resource</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="suggest-form">
+                    <div class="mb-3">
+                        <label for="suggest-title" class="form-label">Resource Title</label>
+                        <input type="text" class="form-control" id="suggest-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="suggest-url" class="form-label">URL</label>
+                        <input type="url" class="form-control" id="suggest-url" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="suggest-type" class="form-label">Type</label>
+                        <select class="form-select" id="suggest-type" required>
+                            <option value="">Select type...</option>
+                            <option value="text">Text/Tutorial</option>
+                            <option value="video">Video</option>
+                            <option value="interactive">Interactive Tool</option>
+                            <option value="practice">Practice Problems</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="suggest-description" class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" id="suggest-description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submit-suggestion-btn">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Suggestion
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        // Global variables
-        let allResources = [];
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        let resources = [];
         let filteredResources = [];
-        let currentFilter = 'all';
-        let currentPage = 1;
-        const perPage = 12;
-
-        // Resource type metadata
-        const resourceMeta = {
-            text: {
-                icon: 'file-alt',
-                color: 'primary',
-                label: 'Article'
-            },
-            video: {
-                icon: 'play-circle',
-                color: 'danger',
-                label: 'Video'
-            },
-            interactive: {
-                icon: 'hand-pointer',
-                color: 'success',
-                label: 'Interactive'
-            },
-            practice: {
-                icon: 'code',
-                color: 'warning',
-                label: 'Practice'
-            }
+        let bookmarkedResources = new Set();
+        let currentFilters = {
+            search: '',
+            type: '',
+            tags: new Set()
         };
+        let currentPage = 1;
+        let totalPages = 1;
+        let viewMode = 'grid';
 
-        // Initialize resources
-        async function initResources() {
+        // Initialize
+        await loadResources();
+        await loadBookmarks();
+        setupEventListeners();
+        renderTopicTags();
+        updateStats();
+
+        async function loadResources() {
             try {
-                // Load user data
-                const user = auth.getUser();
-                if (user) {
-                    document.getElementById('userName').textContent = user.name;
-                    if (user.avatar_url) {
-                        document.getElementById('userAvatar').src = user.avatar_url;
+                showLoading();
+
+                const response = await ApiMethods.resources.get(
+                    currentFilters.type || null,
+                    currentPage,
+                    24
+                );
+
+                resources = response.resources || [];
+                totalPages = response.pagination?.pages || 1;
+
+                applyFilters();
+                renderResources();
+                renderPagination();
+
+                console.log('Resources loaded:', resources.length);
+
+            } catch (error) {
+                console.error('Failed to load resources:', error);
+                showError('Failed to load resources. Please try again.');
+            }
+        }
+
+        function applyFilters() {
+            filteredResources = resources.filter(resource => {
+                // Search filter
+                if (currentFilters.search) {
+                    const searchTerm = currentFilters.search.toLowerCase();
+                    if (!resource.title.toLowerCase().includes(searchTerm)) {
+                        return false;
                     }
                 }
 
-                // Load resources
-                await loadResources();
+                // Type filter (handled by API)
 
-            } catch (error) {
-                console.error('Resources initialization error:', error);
-                notifications.error('Failed to load resources');
-            }
-        }
-
-        // Load resources from backend
-        async function loadResources() {
-            try {
-                const response = await api.getResources({ per_page: 100 });
-                allResources = response.resources;
-
-                // Update counts
-                updateResourceCounts();
-
-                // Apply current filter
-                filterResources(currentFilter);
-
-            } catch (error) {
-                console.error('Error loading resources:', error);
-                document.getElementById('resourcesContainer').innerHTML = `
-                    <div class="text-center text-danger py-5">
-                        <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
-                        <h4>Failed to load resources</h4>
-                        <p>Please try again later</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Update resource counts
-        function updateResourceCounts() {
-            const counts = {
-                all: allResources.length,
-                text: 0,
-                video: 0,
-                interactive: 0,
-                practice: 0
-            };
-
-            allResources.forEach(resource => {
-                if (counts[resource.type] !== undefined) {
-                    counts[resource.type]++;
+                // Tag filter (basic implementation)
+                if (currentFilters.tags.size > 0) {
+                    const resourceTags = extractTagsFromResource(resource);
+                    const hasMatchingTag = Array.from(currentFilters.tags).some(tag =>
+                        resourceTags.includes(tag)
+                    );
+                    if (!hasMatchingTag) {
+                        return false;
+                    }
                 }
-            });
 
-            // Update UI
-            Object.keys(counts).forEach(type => {
-                const element = document.getElementById(`${type}Count`);
-                if (element) {
-                    element.textContent = counts[type];
-                }
+                return true;
             });
         }
 
-        // Filter resources
-        function filterResources(type) {
-            currentFilter = type;
-            currentPage = 1;
+        function extractTagsFromResource(resource) {
+            // Extract topics from resource title and ID
+            const tags = [];
+            const title = resource.title.toLowerCase();
+            const id = resource.id.toLowerCase();
 
-            // Update active tab
-            document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.dataset.filter === type) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
+            // Common DSA topics
+            const topics = [
+                'array', 'string', 'linked', 'stack', 'queue', 'tree', 'graph',
+                'sort', 'search', 'heap', 'hash', 'dp', 'dynamic', 'recursion',
+                'backtrack', 'greedy', 'binary', 'dfs', 'bfs', 'dijkstra'
+            ];
+
+            topics.forEach(topic => {
+                if (title.includes(topic) || id.includes(topic)) {
+                    tags.push(topic);
                 }
             });
 
-            // Filter resources
-            if (type === 'all') {
-                filteredResources = [...allResources];
-            } else {
-                filteredResources = allResources.filter(r => r.type === type);
-            }
-
-            // Apply search if active
-            const searchQuery = document.getElementById('searchInput').value.trim();
-            if (searchQuery) {
-                applySearch(searchQuery);
-            } else {
-                renderResources();
-            }
+            return tags;
         }
 
-        // Search resources
-        const searchResources = utils.debounce(() => {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            applySearch(query);
-        }, 300);
-
-        // Apply search filter
-        function applySearch(query) {
-            if (!query) {
-                filterResources(currentFilter);
-                return;
-            }
-
-            filteredResources = filteredResources.filter(resource =>
-                resource.title.toLowerCase().includes(query) ||
-                resource.url.toLowerCase().includes(query)
-            );
-
-            currentPage = 1;
-            renderResources();
-        }
-
-        // Render resources
         function renderResources() {
-            const container = document.getElementById('resourcesContainer');
+            const container = document.getElementById('resources-container');
 
             if (filteredResources.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center text-muted py-5">
-                        <i class="fas fa-search fa-4x mb-3"></i>
-                        <h4>No resources found</h4>
-                        <p>Try adjusting your filters or search query</p>
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-search text-muted fa-4x mb-3"></i>
+                        <h4 class="text-muted">No resources found</h4>
+                        <p class="text-muted mb-4">
+                            ${currentFilters.search || currentFilters.type || currentFilters.tags.size > 0
+                        ? 'No resources match your current filters.'
+                        : 'No resources available at the moment.'}
+                        </p>
+                        <button class="btn btn-primary" onclick="clearFilters()">
+                            <i class="fas fa-undo me-2"></i>Clear Filters
+                        </button>
                     </div>
-                `;
-                document.getElementById('paginationContainer').style.display = 'none';
+                </div>
+            `;
                 return;
             }
 
-            // Calculate pagination
-            const totalPages = Math.ceil(filteredResources.length / perPage);
-            const startIndex = (currentPage - 1) * perPage;
-            const endIndex = startIndex + perPage;
-            const pageResources = filteredResources.slice(startIndex, endIndex);
+            if (viewMode === 'grid') {
+                renderGridView(container);
+            } else {
+                renderListView(container);
+            }
+        }
 
-            // Render resource cards
-            let html = '<div class="row g-4">';
-
-            pageResources.forEach(resource => {
-                const meta = resourceMeta[resource.type] || resourceMeta.text;
-                const domain = new URL(resource.url).hostname.replace('www.', '');
-
-                html += `
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 resource-card hover-lift" onclick="previewResource('${resource.id}')">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="resource-icon bg-${meta.color} bg-opacity-10 text-${meta.color}">
-                                        <i class="fas fa-${meta.icon}"></i>
-                                    </div>
-                                    <span class="badge bg-${meta.color} bg-opacity-10 text-${meta.color}">
-                                        ${meta.label}
-                                    </span>
-                                </div>
-                                
-                                <h5 class="card-title mb-2">${utils.escapeHtml(resource.title)}</h5>
-                                
-                                <p class="text-muted small mb-3">
-                                    <i class="fas fa-globe me-1"></i>${domain}
-                                </p>
-                                
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="resource-stats">
-                                        <span class="me-3" title="Views">
-                                            <i class="fas fa-eye text-muted me-1"></i>
-                                            ${Math.floor(Math.random() * 1000) + 100}
-                                        </span>
-                                        <span title="Bookmarks">
-                                            <i class="fas fa-bookmark text-muted me-1"></i>
-                                            ${Math.floor(Math.random() * 50) + 10}
-                                        </span>
-                                    </div>
-                                    <a href="${resource.url}" target="_blank" 
-                                       class="btn btn-sm btn-outline-primary"
-                                       onclick="event.stopPropagation()">
+        function renderGridView(container) {
+            container.innerHTML = filteredResources.map(resource => `
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 resource-card" onclick="openResourceModal('${resource.id}')">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="resource-type">
+                                ${getResourceTypeIcon(resource.type)}
+                                <span class="badge bg-${getResourceTypeColor(resource.type)} ms-2">
+                                    ${resource.type}
+                                </span>
+                            </div>
+                            <button class="btn btn-sm btn-ghost bookmark-btn ${bookmarkedResources.has(resource.id) ? 'bookmarked' : ''}" 
+                                    onclick="event.stopPropagation(); toggleBookmark('${resource.id}')"
+                                    title="${bookmarkedResources.has(resource.id) ? 'Remove bookmark' : 'Add bookmark'}">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                        
+                        <h6 class="card-title fw-bold mb-2 flex-grow-1">
+                            ${Utils.string.truncate(resource.title, 60)}
+                        </h6>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    ${getDomainFromUrl(resource.url)}
+                                </small>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary btn-sm" 
+                                            onclick="event.stopPropagation(); openResourceModal('${resource.id}')"
+                                            title="View details">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                    <a href="${resource.url}" 
+                                       class="btn btn-primary btn-sm" 
+                                       target="_blank" 
+                                       rel="noopener"
+                                       onclick="event.stopPropagation()"
+                                       title="Open resource">
                                         <i class="fas fa-external-link-alt"></i>
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                `;
+                </div>
+            </div>
+        `).join('');
+        }
+
+        function renderListView(container) {
+            container.innerHTML = `
+            <div class="col-12">
+                <div class="list-group">
+                    ${filteredResources.map(resource => `
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1" onclick="openResourceModal('${resource.id}')">
+                                    <div class="d-flex align-items-center mb-1">
+                                        ${getResourceTypeIcon(resource.type)}
+                                        <h6 class="mb-0 ms-2 me-2">${resource.title}</h6>
+                                        <span class="badge bg-${getResourceTypeColor(resource.type)}">
+                                            ${resource.type}
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">${getDomainFromUrl(resource.url)}</small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-sm btn-ghost bookmark-btn ${bookmarkedResources.has(resource.id) ? 'bookmarked' : ''}" 
+                                            onclick="toggleBookmark('${resource.id}')"
+                                            title="${bookmarkedResources.has(resource.id) ? 'Remove bookmark' : 'Add bookmark'}">
+                                        <i class="fas fa-bookmark"></i>
+                                    </button>
+                                    <a href="${resource.url}" 
+                                       class="btn btn-sm btn-primary" 
+                                       target="_blank" 
+                                       rel="noopener">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        }
+
+        function renderTopicTags() {
+            const container = document.getElementById('tag-filters');
+
+            // Extract common topics from all resources
+            const topicCounts = {};
+            resources.forEach(resource => {
+                const tags = extractTagsFromResource(resource);
+                tags.forEach(tag => {
+                    topicCounts[tag] = (topicCounts[tag] || 0) + 1;
+                });
             });
 
-            html += '</div>';
-            container.innerHTML = html;
+            // Sort by frequency and take top 8
+            const popularTopics = Object.entries(topicCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 8)
+                .map(([topic]) => topic);
 
-            // Render pagination
-            if (totalPages > 1) {
-                renderPagination(totalPages);
-                document.getElementById('paginationContainer').style.display = 'block';
-            } else {
-                document.getElementById('paginationContainer').style.display = 'none';
-            }
+            container.innerHTML = popularTopics.map(topic => `
+            <button class="btn btn-sm btn-outline-secondary tag-filter ${currentFilters.tags.has(topic) ? 'active' : ''}" 
+                    onclick="toggleTagFilter('${topic}')">
+                ${topic}
+            </button>
+        `).join('');
         }
 
-        // Render pagination
-        function renderPagination(totalPages) {
-            const pagination = document.querySelector('#paginationContainer .pagination');
-            let html = '';
-
-            // Previous button
-            html += `
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
-            `;
-
-            // Page numbers
-            const maxVisible = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-            if (endPage - startPage < maxVisible - 1) {
-                startPage = Math.max(1, endPage - maxVisible + 1);
+        function renderPagination() {
+            const container = document.getElementById('resources-pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
             }
 
-            if (startPage > 1) {
-                html += `
-                    <li class="page-item">
-                        <a class="page-link" href="#" onclick="changePage(1)">1</a>
-                    </li>
-                `;
-                if (startPage > 2) {
-                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            const pagination = Components.pagination.create({
+                currentPage,
+                totalPages,
+                maxVisible: 5,
+                onPageChange: (page) => {
+                    currentPage = page;
+                    loadResources();
                 }
-            }
+            });
 
-            for (let i = startPage; i <= endPage; i++) {
-                html += `
-                    <li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
-                    </li>
-                `;
-            }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                }
-                html += `
-                    <li class="page-item">
-                        <a class="page-link" href="#" onclick="changePage(${totalPages})">${totalPages}</a>
-                    </li>
-                `;
-            }
-
-            // Next button
-            html += `
-                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-            `;
-
-            pagination.innerHTML = html;
+            container.innerHTML = '';
+            container.appendChild(pagination);
         }
 
-        // Change page
-        function changePage(page) {
-            event.preventDefault();
+        function updateStats() {
+            // Count by type
+            const typeCounts = resources.reduce((counts, resource) => {
+                counts[resource.type] = (counts[resource.type] || 0) + 1;
+                return counts;
+            }, {});
 
-            const totalPages = Math.ceil(filteredResources.length / perPage);
-            if (page < 1 || page > totalPages) return;
-
-            currentPage = page;
-            renderResources();
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('total-resources').textContent = resources.length;
+            document.getElementById('video-count').textContent = typeCounts.video || 0;
+            document.getElementById('interactive-count').textContent = typeCounts.interactive || 0;
+            document.getElementById('practice-count').textContent = typeCounts.practice || 0;
         }
 
-        // Preview resource
-        function previewResource(resourceId) {
-            const resource = allResources.find(r => r.id === resourceId);
+        function setupEventListeners() {
+            // Search
+            const searchInput = document.getElementById('resource-search');
+            const debouncedSearch = Utils.time.debounce((value) => {
+                currentFilters.search = value;
+                currentPage = 1;
+                applyFilters();
+                renderResources();
+            }, 300);
+
+            searchInput.addEventListener('input', (e) => {
+                debouncedSearch(e.target.value);
+            });
+
+            // Type filter
+            document.getElementById('type-filter').addEventListener('change', (e) => {
+                currentFilters.type = e.target.value;
+                currentPage = 1;
+                loadResources();
+            });
+
+            // View mode
+            document.querySelectorAll('input[name="view-mode"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    viewMode = this.id === 'grid-view' ? 'grid' : 'list';
+                    renderResources();
+                });
+            });
+
+            // Modal buttons
+            document.getElementById('suggest-resource-btn').addEventListener('click', openSuggestModal);
+            document.getElementById('submit-suggestion-btn').addEventListener('click', submitSuggestion);
+            document.getElementById('bookmark-view-btn').addEventListener('click', toggleBookmarkView);
+        }
+
+        function showLoading() {
+            document.getElementById('resources-container').innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading resources...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading resources...</p>
+            </div>
+        `;
+        }
+
+        function showError(message) {
+            document.getElementById('resources-container').innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${message}
+                </div>
+            </div>
+        `;
+        }
+
+        function getResourceTypeIcon(type) {
+            const icons = {
+                text: '<i class="fas fa-file-text text-primary"></i>',
+                video: '<i class="fas fa-video text-danger"></i>',
+                interactive: '<i class="fas fa-play-circle text-success"></i>',
+                practice: '<i class="fas fa-code text-warning"></i>'
+            };
+            return icons[type] || '<i class="fas fa-link text-secondary"></i>';
+        }
+
+        function getResourceTypeColor(type) {
+            const colors = {
+                text: 'primary',
+                video: 'danger',
+                interactive: 'success',
+                practice: 'warning'
+            };
+            return colors[type] || 'secondary';
+        }
+
+        function getDomainFromUrl(url) {
+            try {
+                return new URL(url).hostname.replace('www.', '');
+            } catch {
+                return 'External Link';
+            }
+        }
+
+        function openResourceModal(resourceId) {
+            const resource = resources.find(r => r.id === resourceId);
             if (!resource) return;
 
-            const meta = resourceMeta[resource.type] || resourceMeta.text;
-            const domain = new URL(resource.url).hostname;
-
-            // Update modal
-            document.getElementById('resourceModalTitle').textContent = resource.title;
-            document.getElementById('resourceModalLink').href = resource.url;
-
-            // Generate preview content based on type
-            let content = `
-                <div class="mb-4">
-                    <span class="badge bg-${meta.color} me-2">
-                        <i class="fas fa-${meta.icon} me-1"></i>${meta.label}
-                    </span>
-                    <span class="text-muted">
-                        <i class="fas fa-globe me-1"></i>${domain}
-                    </span>
-                </div>
-            `;
-
-            if (resource.type === 'video') {
-                // Extract video ID for YouTube
-                const videoId = extractYouTubeId(resource.url);
-                if (videoId) {
-                    content += `
-                        <div class="ratio ratio-16x9 mb-4">
-                            <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                    allowfullscreen></iframe>
-                        </div>
-                    `;
-                }
-            } else if (resource.type === 'interactive') {
-                content += `
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        This is an interactive resource. Click "Open Resource" to access the full experience.
-                    </div>
-                    <img src="/assets/images/interactive-preview.png" alt="Interactive Preview" 
-                         class="img-fluid rounded"
-                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'%3E%3Crect width=\'600\' height=\'400\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'%23999\' font-size=\'24\'%3EInteractive Preview%3C/text%3E%3C/svg%3E'">
-                `;
-            } else {
-                content += `
-                    <div class="resource-description">
-                        <h6>About this resource:</h6>
-                        <p>${getResourceDescription(resource)}</p>
-                    </div>
-                `;
-            }
-
-            // Add related topics
-            content += `
-                <div class="mt-4">
-                    <h6>Related Topics:</h6>
-                    <div class="d-flex flex-wrap gap-2">
-                        ${getRelatedTopics(resource).map(topic =>
-                `<span class="badge bg-secondary">${topic}</span>`
-            ).join('')}
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('resourceModalContent').innerHTML = content;
-
-            // Show modal
             const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
+            document.getElementById('resourceModalTitle').textContent = resource.title;
+
+            document.getElementById('resourceModalBody').innerHTML = `
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Type</h6>
+                        <div class="d-flex align-items-center">
+                            ${getResourceTypeIcon(resource.type)}
+                            <span class="badge bg-${getResourceTypeColor(resource.type)} ms-2">
+                                ${resource.type.toUpperCase()}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-bold">URL</h6>
+                        <p class="text-break small">${resource.url}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Source</h6>
+                        <p>${getDomainFromUrl(resource.url)}</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Quick Actions</h6>
+                            <div class="d-grid gap-2">
+                                <a href="${resource.url}" 
+                                   class="btn btn-primary btn-sm" 
+                                   target="_blank" 
+                                   rel="noopener">
+                                    <i class="fas fa-external-link-alt me-2"></i>Open Resource
+                                </a>
+                                <button class="btn btn-outline-primary btn-sm" 
+                                        onclick="copyResourceLink('${resource.url}')">
+                                    <i class="fas fa-copy me-2"></i>Copy Link
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" 
+                                        onclick="shareResource('${resource.id}')">
+                                    <i class="fas fa-share me-2"></i>Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+            // Update bookmark button
+            const bookmarkBtn = document.getElementById('bookmark-resource-btn');
+            const isBookmarked = bookmarkedResources.has(resourceId);
+            bookmarkBtn.innerHTML = `<i class="fas fa-bookmark me-2"></i>${isBookmarked ? 'Remove Bookmark' : 'Bookmark'}`;
+            bookmarkBtn.className = `btn ${isBookmarked ? 'btn-warning' : 'btn-outline-primary'}`;
+            bookmarkBtn.onclick = () => toggleBookmark(resourceId);
+
+            // Update visit button
+            document.getElementById('visit-resource-btn').href = resource.url;
+
             modal.show();
         }
 
-        // Extract YouTube video ID
-        function extractYouTubeId(url) {
-            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
-            return match ? match[1] : null;
+        async function loadBookmarks() {
+            // Load from local storage for now
+            const saved = Storage.getItem('bookmarked_resources') || [];
+            bookmarkedResources = new Set(saved);
         }
 
-        // Get resource description
-        function getResourceDescription(resource) {
-            const descriptions = {
-                'w3schools': 'W3Schools offers easy-to-understand tutorials with examples and exercises.',
-                'geeksforgeeks': 'GeeksforGeeks provides detailed explanations with code examples in multiple languages.',
-                'leetcode': 'Practice coding problems with real interview questions from top companies.',
-                'visualgo': 'Visualize data structures and algorithms through interactive animations.',
-                'programiz': 'Learn programming concepts with clear explanations and practical examples.',
-                'youtube': 'Video tutorials explaining concepts visually with step-by-step guidance.'
+        function saveBookmarks() {
+            Storage.setItem('bookmarked_resources', Array.from(bookmarkedResources));
+        }
+
+        function toggleBookmark(resourceId) {
+            if (bookmarkedResources.has(resourceId)) {
+                bookmarkedResources.delete(resourceId);
+                Notifications.success('Bookmark removed');
+            } else {
+                bookmarkedResources.add(resourceId);
+                Notifications.success('Resource bookmarked');
+            }
+
+            saveBookmarks();
+            renderResources(); // Update UI
+
+            // Update modal button if open
+            const modal = bootstrap.Modal.getInstance(document.getElementById('resourceModal'));
+            if (modal) {
+                const bookmarkBtn = document.getElementById('bookmark-resource-btn');
+                const isBookmarked = bookmarkedResources.has(resourceId);
+                bookmarkBtn.innerHTML = `<i class="fas fa-bookmark me-2"></i>${isBookmarked ? 'Remove Bookmark' : 'Bookmark'}`;
+                bookmarkBtn.className = `btn ${isBookmarked ? 'btn-warning' : 'btn-outline-primary'}`;
+            }
+        }
+
+        function toggleBookmarkView() {
+            const btn = document.getElementById('bookmark-view-btn');
+            const isShowingBookmarks = btn.classList.contains('active');
+
+            if (isShowingBookmarks) {
+                // Show all resources
+                filteredResources = resources;
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-bookmark me-2"></i>Bookmarked';
+            } else {
+                // Show only bookmarked resources
+                filteredResources = resources.filter(r => bookmarkedResources.has(r.id));
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-times me-2"></i>Show All';
+            }
+
+            renderResources();
+        }
+
+        function openSuggestModal() {
+            const modal = new bootstrap.Modal(document.getElementById('suggestModal'));
+            modal.show();
+        }
+
+        function submitSuggestion() {
+            const form = document.getElementById('suggest-form');
+            const formData = new FormData(form);
+
+            const suggestion = {
+                title: formData.get('title'),
+                url: formData.get('url'),
+                type: formData.get('type'),
+                description: formData.get('description')
             };
 
-            const domain = new URL(resource.url).hostname.replace('www.', '');
-            for (const [key, desc] of Object.entries(descriptions)) {
-                if (domain.includes(key)) {
-                    return desc;
-                }
+            // Basic validation
+            if (!suggestion.title || !suggestion.url || !suggestion.type) {
+                Notifications.error('Please fill in all required fields');
+                return;
             }
 
-            return 'A valuable resource for learning data structures and algorithms.';
+            // For now, just show a success message
+            // In a real app, this would send to the backend
+            Notifications.success('Thank you for your suggestion! We\'ll review it and add it to our collection.');
+
+            bootstrap.Modal.getInstance(document.getElementById('suggestModal')).hide();
+            form.reset();
         }
 
-        // Get related topics
-        function getRelatedTopics(resource) {
-            const titleLower = resource.title.toLowerCase();
-            const topics = [];
-
-            // Extract topics from title
-            const topicKeywords = {
-                'array': ['Arrays', 'Linear Data Structure'],
-                'linked list': ['Linked Lists', 'Pointers', 'Dynamic Memory'],
-                'stack': ['Stacks', 'LIFO', 'Recursion'],
-                'queue': ['Queues', 'FIFO', 'BFS'],
-                'tree': ['Trees', 'Hierarchical Data', 'Recursion'],
-                'graph': ['Graphs', 'Networks', 'Traversal'],
-                'sort': ['Sorting', 'Algorithms', 'Time Complexity'],
-                'search': ['Searching', 'Binary Search', 'Optimization'],
-                'dynamic': ['Dynamic Programming', 'Optimization', 'Memoization'],
-                'hash': ['Hashing', 'Hash Tables', 'O(1) Access']
-            };
-
-            for (const [keyword, relatedTopics] of Object.entries(topicKeywords)) {
-                if (titleLower.includes(keyword)) {
-                    topics.push(...relatedTopics);
-                }
+        // Global functions for onclick handlers
+        window.toggleTagFilter = function (tag) {
+            if (currentFilters.tags.has(tag)) {
+                currentFilters.tags.delete(tag);
+            } else {
+                currentFilters.tags.add(tag);
             }
 
-            // Return unique topics
-            return [...new Set(topics)].slice(0, 5);
-        }
+            applyFilters();
+            renderResources();
+            renderTopicTags();
+        };
 
-        // Toggle mobile menu
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
+        window.clearFilters = function () {
+            currentFilters = { search: '', type: '', tags: new Set() };
+            document.getElementById('resource-search').value = '';
+            document.getElementById('type-filter').value = '';
 
-        // Toggle mobile drawer
-        function toggleMobileDrawer() {
-            const drawer = document.getElementById('mobileDrawer');
-            const backdrop = document.getElementById('drawerBackdrop');
+            applyFilters();
+            renderResources();
+            renderTopicTags();
+        };
 
-            drawer.classList.toggle('open');
-            backdrop.classList.toggle('show');
-        }
+        window.openResourceModal = openResourceModal;
+        window.toggleBookmark = toggleBookmark;
 
-        // Show notifications
-        function showNotifications() {
-            notifications.info('Notifications panel coming soon!');
-        }
-
-        // Logout
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                auth.logout();
+        window.copyResourceLink = async function (url) {
+            const success = await Utils.browser.copyToClipboard(url);
+            if (success) {
+                Notifications.success('Link copied to clipboard');
             }
-        }
+        };
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', () => {
-            initResources();
-        });
+        window.shareResource = function (resourceId) {
+            const resource = resources.find(r => r.id === resourceId);
+            if (resource && navigator.share) {
+                navigator.share({
+                    title: resource.title,
+                    url: resource.url
+                }).catch(console.error);
+            } else {
+                copyResourceLink(resource.url);
+            }
+        };
 
         // Add custom styles
         const style = document.createElement('style');
         style.textContent = `
-            .resource-card {
-                cursor: pointer;
-                transition: all 0.3s ease;
-                border: 1px solid #e5e7eb;
-            }
-            
-            .resource-card:hover {
-                border-color: var(--primary);
-            }
-            
-            .resource-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.25rem;
-            }
-            
-            .resource-stats {
-                font-size: 0.875rem;
-            }
-            
-            .hover-lift {
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-            
-            .hover-lift:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            }
-            
-            .resource-description {
-                background: #f8f9fa;
-                padding: 1rem;
-                border-radius: 0.5rem;
-                margin-bottom: 1rem;
-            }
-            
-            @media (max-width: 767px) {
-                .resource-card .card-title {
-                    font-size: 1rem;
-                }
-                
-                .resource-icon {
-                    width: 40px;
-                    height: 40px;
-                    font-size: 1rem;
-                }
-            }
-        `;
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+        
+        .bookmark-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .bookmark-btn.bookmarked {
+            color: #f59e0b !important;
+        }
+        
+        .tag-filter.active {
+            background-color: var(--bs-primary);
+            color: white;
+            border-color: var(--bs-primary);
+        }
+    `;
         document.head.appendChild(style);
-    </script>
-</body>
-
-</html>
+    });
+</script>
