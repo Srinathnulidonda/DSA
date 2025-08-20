@@ -1,1 +1,19 @@
-<!-- progress-card.html template -->
+<div class="progress-card">
+    <div class="progress-card-header">
+        <h6 class="progress-card-title">{{title}}</h6>
+        <span class="progress-card-percentage">{{percentage}}%</span>
+    </div>
+    <div class="progress-card-bar">
+        <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-{{color}}" style="width: {{percentage}}%" role="progressbar"
+                aria-valuenow="{{current}}" aria-valuemin="0" aria-valuemax="{{total}}">
+            </div>
+        </div>
+    </div>
+    <div class="progress-card-details">
+        <small class="text-muted">{{current}} of {{total}} completed</small>
+        {{#if timeRemaining}}
+        <small class="text-muted ms-auto">{{timeRemaining}} remaining</small>
+        {{/if}}
+    </div>
+</div>

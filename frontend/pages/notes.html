@@ -1,1 +1,583 @@
-<!-- notes.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Notes - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+</head>
+
+<body data-requires-auth="true">
+    <div class="app-layout">
+        <div id="topbar"></div>
+        <div id="sidebar"></div>
+
+        <div class="app-content">
+            <main class="app-main">
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="page-title">Notes</h1>
+                            <p class="page-subtitle">Organize your learning with smart notes</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="createNewNote()">
+                            <i class="bi bi-plus-lg me-2"></i>New Note
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notes Layout -->
+                <div class="notes-grid">
+                    <!-- Sidebar -->
+                    <div class="notes-sidebar">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="search" class="form-control" placeholder="Search notes..."
+                                    id="notes-search" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2">Filter by Week</h6>
+                            <select class="form-select form-select-sm" id="week-filter">
+                                <option value="">All Weeks</option>
+                            </select>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2">Popular Tags</h6>
+                            <div id="popular-tags">
+                                <div class="text-muted small">Loading tags...</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Notes -->
+                        <div>
+                            <h6 class="text-muted mb-2">Recent Notes</h6>
+                            <div id="recent-notes-list">
+                                <div class="skeleton skeleton-text mb-2"></div>
+                                <div class="skeleton skeleton-text mb-2"></div>
+                                <div class="skeleton skeleton-text"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Content -->
+                    <div class="notes-content" id="notes-content">
+                        <!-- Notes List View -->
+                        <div id="notes-list-view">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">All Notes</h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active"
+                                        onclick="setNotesView('grid')">
+                                        <i class="bi bi-grid"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="setNotesView('list')">
+                                        <i class="bi bi-list"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="notes-container" class="notes-grid-view">
+                                <!-- Loading skeleton -->
+                                <div class="note-card skeleton-box">
+                                    <div class="skeleton skeleton-title mb-3"></div>
+                                    <div class="skeleton skeleton-text mb-2"></div>
+                                    <div class="skeleton skeleton-text"></div>
+                                </div>
+                                <div class="note-card skeleton-box">
+                                    <div class="skeleton skeleton-title mb-3"></div>
+                                    <div class="skeleton skeleton-text mb-2"></div>
+                                    <div class="skeleton skeleton-text"></div>
+                                </div>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div id="notes-pagination" class="mt-4"></div>
+                        </div>
+
+                        <!-- Note Editor View (hidden by default) -->
+                        <div id="note-editor-view" class="d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="backToNotesList()">
+                                    <i class="bi bi-arrow-left me-2"></i>Back
+                                </button>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-2" id="save-note-btn">
+                                        <i class="bi bi-save me-1"></i>Save
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" id="delete-note-btn">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+
+                            <form id="note-form">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-lg" id="note-title"
+                                        placeholder="Note Title" required>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <select class="form-select" id="note-week">
+                                            <option value="">Select Week (Optional)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="note-tags"
+                                            placeholder="Tags (comma separated)">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div id="note-editor"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="mobile-nav"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        let notesData = [];
+        let currentPage = 1;
+        let currentNote = null;
+        let markdownEditor = null;
+        let notesView = 'grid';
+        let searchQuery = '';
+        let weekFilter = '';
+        let tagFilter = '';
+
+        async function loadNotes(page = 1) {
+            try {
+                const params = {
+                    page: page,
+                    per_page: 12,
+                    search: searchQuery
+                };
+
+                if (weekFilter) params.week = weekFilter;
+
+                const response = await api.get('/notes', params);
+                notesData = response.notes;
+
+                renderNotes();
+                renderPagination(response.pagination);
+
+                // Load additional data on first load
+                if (page === 1) {
+                    loadWeekFilter();
+                    loadPopularTags();
+                    loadRecentNotes();
+                }
+
+            } catch (error) {
+                notifications.error('Failed to load notes');
+                console.error('Notes error:', error);
+            }
+        }
+
+        function renderNotes() {
+            const container = document.getElementById('notes-container');
+
+            if (notesData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state text-center py-5">
+                        <i class="bi bi-journal-x display-1 text-muted"></i>
+                        <h5 class="mt-3">No notes found</h5>
+                        <p class="text-muted">Create your first note to get started</p>
+                        <button class="btn btn-primary mt-3" onclick="createNewNote()">
+                            <i class="bi bi-plus-lg me-2"></i>Create Note
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.className = notesView === 'grid' ? 'notes-grid-view' : 'notes-list-view';
+            container.innerHTML = notesData.map(note => {
+                const preview = note.content.substring(0, 150) + '...';
+                const date = new Date(note.updated_at);
+                const dateStr = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                });
+
+                return `
+                    <div class="note-card animate-fade-in" onclick="openNote('${note.id}')">
+                        <h6 class="note-card-title">${note.title}</h6>
+                        <p class="note-card-content">${preview}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="note-card-tags">
+                                ${note.tags.map(tag => `
+                                    <span class="note-card-tag" onclick="filterByTag('${tag}', event)">
+                                        ${tag}
+                                    </span>
+                                `).join('')}
+                            </div>
+                            <small class="text-muted">${dateStr}</small>
+                        </div>
+                        ${note.week ? `
+                            <div class="mt-2">
+                                <small class="text-primary">
+                                    <i class="bi bi-calendar-week me-1"></i>Week ${note.week}
+                                </small>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('notes-pagination');
+
+            if (pagination.pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const paginationComponent = new Pagination(container, {
+                totalPages: pagination.pages,
+                currentPage: pagination.page,
+                onChange: (page) => {
+                    currentPage = page;
+                    loadNotes(page);
+                }
+            });
+        }
+
+        async function loadWeekFilter() {
+            try {
+                const response = await api.get('/roadmap');
+                const weekSelect = document.getElementById('week-filter');
+
+                weekSelect.innerHTML = '<option value="">All Weeks</option>' +
+                    response.roadmap.map(week => `
+                        <option value="${week.week}">Week ${week.week}: ${week.title}</option>
+                    `).join('');
+
+                // Also populate the note editor week select
+                const noteWeekSelect = document.getElementById('note-week');
+                noteWeekSelect.innerHTML = weekSelect.innerHTML;
+
+            } catch (error) {
+                console.error('Failed to load weeks:', error);
+            }
+        }
+
+        async function loadPopularTags() {
+            // In a real app, this would be an API endpoint
+            // For now, extract from loaded notes
+            const allTags = {};
+            notesData.forEach(note => {
+                note.tags.forEach(tag => {
+                    allTags[tag] = (allTags[tag] || 0) + 1;
+                });
+            });
+
+            const sortedTags = Object.entries(allTags)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            const container = document.getElementById('popular-tags');
+            if (sortedTags.length === 0) {
+                container.innerHTML = '<div class="text-muted small">No tags yet</div>';
+                return;
+            }
+
+            container.innerHTML = sortedTags.map(([tag, count]) => `
+                <span class="badge bg-secondary me-1 mb-1 cursor-pointer" 
+                      onclick="filterByTag('${tag}')">
+                    ${tag} (${count})
+                </span>
+            `).join('');
+        }
+
+        async function loadRecentNotes() {
+            const recent = activity.getRecentNotes();
+            const container = document.getElementById('recent-notes-list');
+
+            if (recent.length === 0) {
+                container.innerHTML = '<div class="text-muted small">No recent notes</div>';
+                return;
+            }
+
+            container.innerHTML = recent.map(note => `
+                <div class="recent-note-item mb-2 cursor-pointer" onclick="openNote('${note.id}')">
+                    <div class="text-truncate">${note.title}</div>
+                    <small class="text-muted">${new Date(note.updated_at).toLocaleDateString()}</small>
+                </div>
+            `).join('');
+        }
+
+        function createNewNote() {
+            currentNote = null;
+            showNoteEditor();
+
+            // Clear form
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-week').value = '';
+            document.getElementById('note-tags').value = '';
+
+            if (markdownEditor) {
+                markdownEditor.setValue('');
+            }
+
+            // Update buttons
+            document.getElementById('delete-note-btn').style.display = 'none';
+        }
+
+        async function openNote(noteId) {
+            try {
+                const note = notesData.find(n => n.id === noteId);
+                if (!note) {
+                    // Fetch full note content
+                    const response = await api.get(`/notes/${noteId}`);
+                    currentNote = response;
+                } else {
+                    currentNote = note;
+                }
+
+                showNoteEditor();
+
+                // Populate form
+                document.getElementById('note-title').value = currentNote.title;
+                document.getElementById('note-week').value = currentNote.week || '';
+                document.getElementById('note-tags').value = currentNote.tags.join(', ');
+
+                if (markdownEditor) {
+                    markdownEditor.setValue(currentNote.content);
+                }
+
+                // Update buttons
+                document.getElementById('delete-note-btn').style.display = 'inline-block';
+
+                // Add to recent notes
+                activity.addRecentNote(currentNote);
+
+            } catch (error) {
+                notifications.error('Failed to load note');
+            }
+        }
+
+        function showNoteEditor() {
+            document.getElementById('notes-list-view').classList.add('d-none');
+            document.getElementById('note-editor-view').classList.remove('d-none');
+
+            // Initialize markdown editor if not already done
+            if (!markdownEditor) {
+                const editorElement = document.getElementById('note-editor');
+                markdownEditor = new MarkdownEditor(document.createElement('textarea'), {
+                    toolbar: true,
+                    preview: true,
+                    autosave: true,
+                    draftKey: 'current-note'
+                });
+                editorElement.appendChild(markdownEditor.container);
+            }
+        }
+
+        function backToNotesList() {
+            document.getElementById('note-editor-view').classList.add('d-none');
+            document.getElementById('notes-list-view').classList.remove('d-none');
+
+            // Save draft
+            if (markdownEditor) {
+                drafts.saveNote({
+                    id: currentNote?.id || 'new',
+                    title: document.getElementById('note-title').value,
+                    content: markdownEditor.getValue()
+                });
+            }
+        }
+
+        function setNotesView(view) {
+            notesView = view;
+            document.querySelectorAll('.btn-group-sm button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('button').classList.add('active');
+            renderNotes();
+        }
+
+        function filterByTag(tag, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            tagFilter = tag;
+            searchQuery = tag;
+            document.getElementById('notes-search').value = tag;
+            loadNotes(1);
+        }
+
+        // Save note
+        document.getElementById('save-note-btn').addEventListener('click', async () => {
+            const title = document.getElementById('note-title').value.trim();
+            const content = markdownEditor.getValue().trim();
+            const week = document.getElementById('note-week').value;
+            const tags = document.getElementById('note-tags').value
+                .split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag);
+
+            if (!title || !content) {
+                notifications.warning('Please provide a title and content');
+                return;
+            }
+
+            try {
+                const noteData = {
+                    title,
+                    content,
+                    tags,
+                    week: week ? parseInt(week) : null
+                };
+
+                if (currentNote) {
+                    // Update existing note
+                    await api.put(`/notes/${currentNote.id}`, noteData);
+                    notifications.success('Note updated successfully');
+                } else {
+                    // Create new note
+                    const response = await api.post('/notes', noteData);
+                    currentNote = { id: response.id, ...noteData };
+                    notifications.success('Note created successfully');
+                }
+
+                // Clear draft
+                drafts.deleteNote(currentNote.id);
+
+                // Reload notes
+                backToNotesList();
+                loadNotes(currentPage);
+
+            } catch (error) {
+                notifications.error('Failed to save note');
+            }
+        });
+
+        // Delete note
+        document.getElementById('delete-note-btn').addEventListener('click', async () => {
+            if (!currentNote) return;
+
+            const confirmed = confirm('Are you sure you want to delete this note?');
+            if (!confirmed) return;
+
+            try {
+                await api.delete(`/notes/${currentNote.id}`);
+                notifications.success('Note deleted successfully');
+
+                backToNotesList();
+                loadNotes(currentPage);
+
+            } catch (error) {
+                notifications.error('Failed to delete note');
+            }
+        });
+
+        // Search functionality
+        let searchTimeout;
+        document.getElementById('notes-search').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchQuery = e.target.value;
+
+            searchTimeout = setTimeout(() => {
+                loadNotes(1);
+            }, 300);
+        });
+
+        // Week filter
+        document.getElementById('week-filter').addEventListener('change', (e) => {
+            weekFilter = e.target.value;
+            loadNotes(1);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotes();
+
+            // Auto-save draft
+            setInterval(() => {
+                if (markdownEditor && document.getElementById('note-editor-view').classList.contains('d-none') === false) {
+                    drafts.saveNote({
+                        id: currentNote?.id || 'new',
+                        title: document.getElementById('note-title').value,
+                        content: markdownEditor.getValue()
+                    });
+                }
+            }, 30000); // Every 30 seconds
+        });
+    </script>
+
+    <style>
+        .notes-grid-view {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .notes-list-view .note-card {
+            margin-bottom: 1rem;
+        }
+
+        .recent-note-item {
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .recent-note-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        #note-editor .markdown-editor {
+            min-height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .notes-sidebar {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

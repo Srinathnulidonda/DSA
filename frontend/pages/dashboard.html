@@ -1,1 +1,393 @@
-<!-- dashboard.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Dashboard - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+</head>
+
+<body data-requires-auth="true">
+    <div class="app-layout">
+        <div id="topbar"></div>
+        <div id="sidebar"></div>
+
+        <div class="app-content">
+            <main class="app-main">
+                <div class="page-header">
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Welcome back! Here's your learning overview.</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid mb-4" id="stats-container">
+                    <div class="skeleton-box stat-card">
+                        <div class="skeleton skeleton-text mb-2"></div>
+                        <div class="skeleton skeleton-title"></div>
+                    </div>
+                    <div class="skeleton-box stat-card">
+                        <div class="skeleton skeleton-text mb-2"></div>
+                        <div class="skeleton skeleton-title"></div>
+                    </div>
+                    <div class="skeleton-box stat-card">
+                        <div class="skeleton skeleton-text mb-2"></div>
+                        <div class="skeleton skeleton-title"></div>
+                    </div>
+                    <div class="skeleton-box stat-card">
+                        <div class="skeleton skeleton-text mb-2"></div>
+                        <div class="skeleton skeleton-title"></div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="grid-dashboard">
+                    <!-- Weekly Progress -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-graph-up me-2 text-primary"></i>
+                                Weekly Progress
+                            </h5>
+                            <div id="weekly-progress-container">
+                                <div class="skeleton skeleton-box" style="height: 200px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Week -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-calendar-week me-2 text-primary"></i>
+                                Current Week
+                            </h5>
+                            <div id="current-week-container">
+                                <div class="skeleton skeleton-box" style="height: 200px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Sessions -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-clock-history me-2 text-primary"></i>
+                                Recent Study Sessions
+                            </h5>
+                            <div id="recent-sessions-container">
+                                ${Skeleton.list(3)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-lightning me-2 text-primary"></i>
+                                Quick Actions
+                            </h5>
+                            <div class="d-grid gap-2">
+                                <a href="/pages/roadmap" class="btn btn-primary">
+                                    <i class="bi bi-play-circle me-2"></i>Continue Learning
+                                </a>
+                                <a href="/pages/pomodoro" class="btn btn-outline-primary">
+                                    <i class="bi bi-clock me-2"></i>Start Timer
+                                </a>
+                                <a href="/pages/notes" class="btn btn-outline-primary">
+                                    <i class="bi bi-journal-plus me-2"></i>Add Note
+                                </a>
+                                <a href="/pages/ai-assistant" class="btn btn-outline-primary">
+                                    <i class="bi bi-robot me-2"></i>Ask AI
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motivational Widget -->
+                <div class="card mt-4">
+                    <div class="card-body text-center py-4" id="motivation-widget">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <p class="text-muted">Loading motivation...</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="mobile-nav"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const data = await api.get('/dashboard');
+
+                // Update stats
+                updateStats(data.stats);
+
+                // Update weekly progress
+                updateWeeklyProgress(data.weekly_progress);
+
+                // Update recent sessions
+                updateRecentSessions(data.recent_sessions);
+
+                // Load motivational quote
+                loadMotivation();
+
+                // Check for achievements
+                checkAchievements(data.stats);
+
+            } catch (error) {
+                notifications.error('Failed to load dashboard data');
+                console.error('Dashboard error:', error);
+            }
+        }
+
+        function updateStats(stats) {
+            const container = document.getElementById('stats-container');
+            container.innerHTML = `
+                <div class="stat-card animate-fade-in-up">
+                    <div class="stat-value">${stats.current_streak}</div>
+                    <div class="stat-label">
+                        <i class="bi bi-fire text-warning"></i> Day Streak
+                    </div>
+                </div>
+                <div class="stat-card animate-fade-in-up" style="animation-delay: 0.1s">
+                    <div class="stat-value">${Math.round(stats.completion_percentage)}%</div>
+                    <div class="stat-label">
+                        <i class="bi bi-check-circle text-success"></i> Complete
+                    </div>
+                </div>
+                <div class="stat-card animate-fade-in-up" style="animation-delay: 0.2s">
+                    <div class="stat-value">${Math.round(stats.total_study_time / 60)}h</div>
+                    <div class="stat-label">
+                        <i class="bi bi-clock text-info"></i> Study Time
+                    </div>
+                </div>
+                <div class="stat-card animate-fade-in-up" style="animation-delay: 0.3s">
+                    <div class="stat-value">${stats.completed_days}/98</div>
+                    <div class="stat-label">
+                        <i class="bi bi-calendar-check text-primary"></i> Days
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateWeeklyProgress(weeklyProgress) {
+            const container = document.getElementById('weekly-progress-container');
+
+            // Prepare data for chart
+            const weeks = Object.keys(weeklyProgress).slice(0, 7);
+            const data = {
+                labels: weeks.map(w => `Week ${w}`),
+                values: weeks.map(w => weeklyProgress[w].percentage)
+            };
+
+            // Create chart
+            container.innerHTML = '<canvas id="progress-chart" height="200"></canvas>';
+            const canvas = document.getElementById('progress-chart');
+            ChartHelper.createProgressChart(canvas, data);
+
+            // Add current week details below
+            const currentWeek = Math.max(...weeks.map(Number));
+            if (weeklyProgress[currentWeek]) {
+                container.innerHTML += `
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">
+                            Week ${currentWeek}: ${weeklyProgress[currentWeek].completed}/${weeklyProgress[currentWeek].total} days
+                        </small>
+                    </div>
+                `;
+            }
+        }
+
+        function updateRecentSessions(sessions) {
+            const container = document.getElementById('recent-sessions-container');
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state py-3">
+                        <p class="text-muted text-center mb-0">No recent sessions</p>
+                        <div class="text-center mt-2">
+                            <a href="/pages/pomodoro" class="btn btn-sm btn-primary">Start Session</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => {
+                const date = new Date(session.start_time);
+                const timeAgo = getTimeAgo(date);
+
+                return `
+                    <div class="d-flex align-items-center mb-3 animate-fade-in">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2">
+                                <i class="bi bi-clock text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="fw-medium">${session.topic || 'Study Session'}</div>
+                            <small class="text-muted">${session.duration} min • ${timeAgo}</small>
+                        </div>
+                        ${session.completed ?
+                        '<i class="bi bi-check-circle text-success"></i>' :
+                        '<i class="bi bi-x-circle text-danger"></i>'
+                    }
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadMotivation() {
+            const quotes = [
+                "The expert in anything was once a beginner.",
+                "Success is the sum of small efforts repeated day in and day out.",
+                "Don't watch the clock; do what it does. Keep going.",
+                "The only way to do great work is to love what you do.",
+                "Every master was once a disaster.",
+                "Progress, not perfection.",
+                "The journey of a thousand miles begins with one step."
+            ];
+
+            // Deterministic quote based on day
+            const today = new Date().toDateString();
+            const index = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % quotes.length;
+            const quote = quotes[index];
+
+            const container = document.getElementById('motivation-widget');
+            container.innerHTML = `
+                <i class="bi bi-quote display-6 text-primary mb-3"></i>
+                <h5 class="fw-light fst-italic">"${quote}"</h5>
+                <button class="btn btn-sm btn-outline-primary mt-3" onclick="shareQuote('${quote}')">
+                    <i class="bi bi-share me-1"></i>Share
+                </button>
+            `;
+        }
+
+        function checkAchievements(stats) {
+            // Check for streak milestones
+            const streakMilestones = [3, 7, 14, 30, 60, 100];
+            const currentStreak = stats.current_streak;
+
+            streakMilestones.forEach(milestone => {
+                if (currentStreak === milestone) {
+                    notifications.achievement(
+                        `${milestone} Day Streak!`,
+                        `Amazing dedication! Keep up the great work!`
+                    );
+                }
+            });
+
+            // Check for completion milestones
+            const completionMilestones = [25, 50, 75, 100];
+            const completion = Math.round(stats.completion_percentage);
+
+            completionMilestones.forEach(milestone => {
+                if (completion === milestone) {
+                    notifications.achievement(
+                        `${milestone}% Complete!`,
+                        `You're making incredible progress!`
+                    );
+                }
+            });
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
+
+            return "Just now";
+        }
+
+        function shareQuote(quote) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'DSAPath Motivation',
+                    text: quote,
+                    url: window.location.href
+                });
+            } else {
+                // Copy to clipboard
+                navigator.clipboard.writeText(quote);
+                notifications.success('Quote copied to clipboard!');
+            }
+        }
+
+        // Update current week section
+        async function updateCurrentWeek() {
+            try {
+                // Get current week based on progress
+                const progress = await api.get('/progress');
+                const completedWeeks = Object.keys(progress.progress).filter(week => {
+                    const days = progress.progress[week];
+                    return Object.values(days).filter(d => d.completed).length === 7;
+                });
+
+                const currentWeek = completedWeeks.length + 1;
+                const roadmap = await api.get(`/roadmap?week=${currentWeek}`);
+
+                const container = document.getElementById('current-week-container');
+                container.innerHTML = `
+                    <div class="week-overview">
+                        <h6 class="text-primary mb-2">Week ${currentWeek}: ${roadmap.title}</h6>
+                        <p class="text-muted small mb-3">${roadmap.goal}</p>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" style="width: ${roadmap.progress * 100}%"></div>
+                        </div>
+                        <a href="/pages/roadmap#week-${currentWeek}" class="btn btn-sm btn-primary w-100">
+                            Continue Learning <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Failed to load current week:', error);
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            updateCurrentWeek();
+
+            // Refresh data every 5 minutes
+            setInterval(loadDashboard, 5 * 60 * 1000);
+        });
+    </script>
+</body>
+
+</html>

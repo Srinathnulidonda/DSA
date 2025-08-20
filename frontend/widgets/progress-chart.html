@@ -1,1 +1,90 @@
-<!-- progress-chart.html template -->
+<div class="progress-chart-widget">
+    <div class="progress-chart-header">
+        <h6 class="widget-title">{{title}}</h6>
+        <div class="progress-chart-controls">
+            <button class="btn btn-sm btn-outline-secondary" data-period="week">Week</button>
+            <button class="btn btn-sm btn-outline-secondary active" data-period="month">Month</button>
+            <button class="btn btn-sm btn-outline-secondary" data-period="year">Year</button>
+        </div>
+    </div>
+
+    <div class="progress-chart-container">
+        <canvas id="progress-chart-{{id}}" width="400" height="200"></canvas>
+    </div>
+
+    <div class="progress-chart-stats">
+        <div class="stat-item">
+            <div class="stat-value">{{totalHours}}</div>
+            <div class="stat-label">Total Hours</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{avgDaily}}</div>
+            <div class="stat-label">Daily Avg</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{completionRate}}%</div>
+            <div class="stat-label">Completion</div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .progress-chart-widget {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+    }
+
+    .progress-chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .progress-chart-controls {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .progress-chart-controls .btn {
+        padding: 0.25rem 0.75rem;
+    }
+
+    .progress-chart-controls .btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .progress-chart-container {
+        margin: 1rem 0;
+        height: 200px;
+        position: relative;
+    }
+
+    .progress-chart-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+</style>

@@ -1,1 +1,724 @@
-<!-- ai-assistant.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>AI Assistant - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+</head>
+
+<body data-requires-auth="true">
+    <div class="app-layout">
+        <div id="topbar"></div>
+        <div id="sidebar"></div>
+
+        <div class="app-content">
+            <main class="app-main p-0">
+                <div class="ai-layout">
+                    <div class="ai-main">
+                        <div class="card h-100 d-flex flex-column">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="mb-0">AI Study Assistant</h5>
+                                        <small class="text-muted">Ask questions about DSA concepts</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="clearChat()">
+                                        <i class="bi bi-trash"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ai-chat-container flex-grow-1">
+                                <div class="ai-chat-messages" id="chat-messages">
+                                    <!-- Welcome message -->
+                                    <div class="ai-message animate-fade-in">
+                                        <div class="ai-message-avatar">
+                                            <i class="bi bi-robot"></i>
+                                        </div>
+                                        <div class="ai-message-content">
+                                            <p>👋 Hello! I'm your AI study assistant. I can help you with:</p>
+                                            <ul class="mt-2">
+                                                <li>Explaining DSA concepts</li>
+                                                <li>Solving algorithm problems</li>
+                                                <li>Providing code examples</li>
+                                                <li>Creating study plans</li>
+                                                <li>Generating practice questions</li>
+                                            </ul>
+                                            <p class="mt-3 mb-0">What would you like to learn about today?</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ai-chat-input">
+                                    <form id="chat-form" class="d-flex gap-2">
+                                        <input type="text" class="form-control" id="chat-input"
+                                            placeholder="Ask a question..." autocomplete="off" maxlength="500">
+                                        <button type="submit" class="btn btn-primary" id="send-btn">
+                                            <i class="bi bi-send"></i>
+                                        </button>
+                                    </form>
+                                    <div class="mt-2 d-flex flex-wrap gap-1">
+                                        <small class="text-muted">Suggestions:</small>
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                            onclick="askSuggestion('Explain binary search')">
+                                            Binary Search
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                            onclick="askSuggestion('How do I implement a linked list?')">
+                                            Linked Lists
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                            onclick="askSuggestion('What is dynamic programming?')">
+                                            Dynamic Programming
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                            onclick="askSuggestion('Create a study plan for graphs')">
+                                            Study Plan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-sidebar d-none d-lg-block">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="generateStudyPlan()">
+                                        <i class="bi bi-calendar-plus me-2"></i>Generate Study Plan
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="generateQuiz()">
+                                        <i class="bi bi-question-circle me-2"></i>Create Quiz
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="summarizeProgress()">
+                                        <i class="bi bi-graph-up me-2"></i>Summarize Progress
+                                    </button>
+                                </div>
+
+                                <hr class="my-3">
+
+                                <h6 class="mb-2">Recent Topics</h6>
+                                <div id="recent-topics">
+                                    <div class="text-muted small">No recent topics</div>
+                                </div>
+
+                                <hr class="my-3">
+
+                                <h6 class="mb-2">Tips</h6>
+                                <div class="small text-muted">
+                                    <p>💡 Be specific in your questions for better answers</p>
+                                    <p>📝 Ask for code examples in your preferred language</p>
+                                    <p>🎯 Request step-by-step explanations for complex topics</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="mobile-nav"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        let isProcessing = false;
+        let recentTopics = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecentTopics();
+
+            // Auto-focus input
+            document.getElementById('chat-input').focus();
+        });
+
+        // Handle form submission
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const input = document.getElementById('chat-input');
+            const question = input.value.trim();
+
+            if (!question || isProcessing) return;
+
+            // Add user message
+            addMessage(question, 'user');
+
+            // Clear input
+            input.value = '';
+
+            // Send to AI
+            await sendToAI(question);
+        });
+
+        async function sendToAI(question) {
+            isProcessing = true;
+            updateSendButton(true);
+
+            // Add typing indicator
+            const typingId = addTypingIndicator();
+
+            try {
+                const response = await api.post('/ai/ask', { question });
+
+                // Remove typing indicator
+                removeTypingIndicator(typingId);
+
+                // Add AI response
+                addMessage(response.answer, 'ai', response.citations);
+
+                // Update recent topics
+                addToRecentTopics(question);
+
+                // Handle service status
+                if (response.service_status) {
+                    handleServiceStatus(response.service_status);
+                }
+
+            } catch (error) {
+                removeTypingIndicator(typingId);
+
+                let errorMessage = 'Sorry, I encountered an error. Please try again.';
+                if (error.message.includes('quota')) {
+                    errorMessage = 'The AI service is currently at capacity. Please try again later or check the Resources section for study materials.';
+                }
+
+                addMessage(errorMessage, 'ai', null, 'error');
+                notifications.error('Failed to get AI response');
+            } finally {
+                isProcessing = false;
+                updateSendButton(false);
+            }
+        }
+
+        function addMessage(content, type, citations = null, status = null) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageId = `msg-${Date.now()}`;
+
+            const messageHtml = `
+                <div class="ai-message ${type} animate-fade-in ${status || ''}" id="${messageId}">
+                    <div class="ai-message-avatar">
+                        <i class="bi ${type === 'user' ? 'bi-person' : 'bi-robot'}"></i>
+                    </div>
+                    <div class="ai-message-content">
+                        ${formatMessageContent(content)}
+                        ${citations && citations.length > 0 ? renderCitations(citations) : ''}
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Apply syntax highlighting if needed
+            const message = document.getElementById(messageId);
+            message.querySelectorAll('pre code').forEach(block => {
+                highlightCodeBlock(block);
+            });
+        }
+
+        function formatMessageContent(content) {
+            // Convert markdown-style formatting
+            let formatted = content
+                .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+
+            return formatted;
+        }
+
+        function renderCitations(citations) {
+            return `
+                <div class="mt-3 pt-3 border-top">
+                    <small class="text-muted d-block mb-2">📚 Related Resources:</small>
+                    <div class="d-flex flex-wrap gap-1">
+                        ${citations.map(cite => `
+                            <a href="${cite.url}" 
+                               target="_blank" 
+                               class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-link-45deg"></i> ${cite.title}
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function addTypingIndicator() {
+            const id = `typing-${Date.now()}`;
+            const messagesContainer = document.getElementById('chat-messages');
+
+            const typingHtml = `
+                <div class="ai-message ai typing-indicator" id="${id}">
+                    <div class="ai-message-avatar">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="ai-message-content">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.insertAdjacentHTML('beforeend', typingHtml);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            return id;
+        }
+
+        function removeTypingIndicator(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+            }
+        }
+
+        function updateSendButton(loading) {
+            const btn = document.getElementById('send-btn');
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send"></i>';
+            }
+        }
+
+        function askSuggestion(question) {
+            document.getElementById('chat-input').value = question;
+            document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+        }
+
+        async function generateStudyPlan() {
+            const modal = new Modal({
+                title: 'Generate Study Plan',
+                content: `
+                    <form id="study-plan-form">
+                        <div class="mb-3">
+                            <label class="form-label">Available Time (minutes/day)</label>
+                            <input type="number" class="form-control" id="available-time" 
+                                   value="60" min="15" max="480" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Focus Areas</label>
+                            <select class="form-select" id="focus-areas" multiple>
+                                <option value="arrays">Arrays & Strings</option>
+                                <option value="linkedlists">Linked Lists</option>
+                                <option value="trees">Trees & Graphs</option>
+                                <option value="dp">Dynamic Programming</option>
+                                <option value="algorithms">Algorithms</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Difficulty Level</label>
+                            <select class="form-select" id="difficulty">
+                                <option value="beginner">Beginner</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </form>
+                `,
+                footer: `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="generate-plan-btn">Generate</button>
+                `,
+                size: 'md'
+            });
+
+            modal.show();
+
+            document.getElementById('generate-plan-btn').addEventListener('click', async () => {
+                const formData = {
+                    available_time: parseInt(document.getElementById('available-time').value),
+                    focus_areas: Array.from(document.getElementById('focus-areas').selectedOptions)
+                        .map(opt => opt.value),
+                    difficulty: document.getElementById('difficulty').value
+                };
+
+                modal.hide();
+
+                const question = `Generate a personalized study plan for ${formData.available_time} minutes per day, focusing on ${formData.focus_areas.join(', ')} at ${formData.difficulty} level`;
+
+                try {
+                    // First ask the AI
+                    addMessage(question, 'user');
+
+                    const response = await api.post('/ai/study-plan', formData);
+                    addMessage(response.study_plan, 'ai');
+
+                    if (response.service_status) {
+                        handleServiceStatus(response.service_status);
+                    }
+
+                } catch (error) {
+                    notifications.error('Failed to generate study plan');
+                }
+            });
+        }
+
+        async function generateQuiz() {
+            const modal = new Modal({
+                title: 'Generate Quiz',
+                content: `
+                    <form id="quiz-form">
+                        <div class="mb-3">
+                            <label class="form-label">Topic</label>
+                            <select class="form-select" id="quiz-topic" required>
+                                <option value="arrays">Arrays</option>
+                                <option value="strings">Strings</option>
+                                <option value="linkedlists">Linked Lists</option>
+                                <option value="stacks">Stacks & Queues</option>
+                                <option value="trees">Trees</option>
+                                <option value="graphs">Graphs</option>
+                                <option value="sorting">Sorting</option>
+                                <option value="searching">Searching</option>
+                                <option value="dp">Dynamic Programming</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Difficulty</label>
+                            <select class="form-select" id="quiz-difficulty">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Number of Questions</label>
+                            <input type="number" class="form-control" id="quiz-count" 
+                                   value="5" min="1" max="10" required>
+                        </div>
+                    </form>
+                `,
+                footer: `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="generate-quiz-btn">Generate</button>
+                `,
+                size: 'md'
+            });
+
+            modal.show();
+
+            document.getElementById('generate-quiz-btn').addEventListener('click', async () => {
+                const formData = {
+                    topic: document.getElementById('quiz-topic').value,
+                    difficulty: document.getElementById('quiz-difficulty').value,
+                    question_count: parseInt(document.getElementById('quiz-count').value)
+                };
+
+                modal.hide();
+
+                const question = `Generate a ${formData.difficulty} quiz on ${formData.topic} with ${formData.question_count} questions`;
+                addMessage(question, 'user');
+
+                try {
+                    const response = await api.post('/ai/quiz', formData);
+                    addMessage(response.quiz, 'ai');
+
+                    if (response.service_status) {
+                        handleServiceStatus(response.service_status);
+                    }
+
+                } catch (error) {
+                    notifications.error('Failed to generate quiz');
+                }
+            });
+        }
+
+        async function summarizeProgress() {
+            const question = 'Summarize my learning progress and suggest next steps';
+            addMessage(question, 'user');
+
+            try {
+                // Get user progress first
+                const progress = await api.get('/progress');
+                const dashboard = await api.get('/dashboard');
+
+                // Create a detailed question with context
+                const detailedQuestion = `Based on my progress (${dashboard.stats.completion_percentage}% complete, ${dashboard.stats.current_streak} day streak), summarize my achievements and suggest what I should focus on next.`;
+
+                const response = await api.post('/ai/ask', {
+                    question: detailedQuestion
+                });
+
+                addMessage(response.answer, 'ai', response.citations);
+
+            } catch (error) {
+                notifications.error('Failed to get progress summary');
+            }
+        }
+
+        function clearChat() {
+            const confirmed = confirm('Clear all chat history?');
+            if (!confirmed) return;
+
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `
+                <div class="ai-message animate-fade-in">
+                    <div class="ai-message-avatar">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="ai-message-content">
+                        <p>Chat cleared. How can I help you today?</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addToRecentTopics(question) {
+            // Extract main topic from question
+            const topic = question.substring(0, 50) + (question.length > 50 ? '...' : '');
+
+            // Add to recent topics (keep last 5)
+            recentTopics = [topic, ...recentTopics.filter(t => t !== topic)].slice(0, 5);
+            storage.set('ai_recent_topics', recentTopics);
+
+            renderRecentTopics();
+        }
+
+        function loadRecentTopics() {
+            recentTopics = storage.get('ai_recent_topics', []);
+            renderRecentTopics();
+        }
+
+        function renderRecentTopics() {
+            const container = document.getElementById('recent-topics');
+
+            if (recentTopics.length === 0) {
+                container.innerHTML = '<div class="text-muted small">No recent topics</div>';
+                return;
+            }
+
+            container.innerHTML = recentTopics.map(topic => `
+                <div class="recent-topic mb-1">
+                    <a href="#" class="text-decoration-none small" 
+                       onclick="askSuggestion('${topic.replace(/'/g, "\\'")}'); return false;">
+                        ${topic}
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function highlightCodeBlock(block) {
+            // Basic syntax highlighting
+            const language = block.className.replace('language-', '');
+            const code = block.textContent;
+
+            // Apply basic highlighting
+            const keywords = ['function', 'const', 'let', 'var', 'if', 'else', 'for', 'while', 'return',
+                'class', 'def', 'import', 'from', 'int', 'void', 'public', 'private'];
+
+            let highlighted = code;
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                highlighted = highlighted.replace(regex, `<span class="keyword">${keyword}</span>`);
+            });
+
+            // Strings
+            highlighted = highlighted.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, '<span class="string">$&</span>');
+
+            // Comments
+            highlighted = highlighted.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
+            highlighted = highlighted.replace(/(#.*$)/gm, '<span class="comment">$1</span>');
+
+            block.innerHTML = highlighted;
+        }
+
+        function handleServiceStatus(status) {
+            if (status === 'quota_exceeded' || status === 'ai_unavailable') {
+                const banner = document.createElement('div');
+                banner.className = 'alert alert-warning alert-dismissible fade show mb-3';
+                banner.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    AI service is limited right now. Responses may use fallback content.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+
+                const container = document.querySelector('.ai-chat-container');
+                container.insertBefore(banner, container.firstChild);
+            }
+        }
+    </script>
+
+    <style>
+        .ai-layout {
+            height: calc(100vh - var(--topbar-height));
+        }
+
+        .ai-chat-messages {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            background: var(--bg-secondary);
+        }
+
+        .ai-message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .ai-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .ai-message-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+        }
+
+        .ai-message.user .ai-message-avatar {
+            background: var(--primary);
+            color: white;
+        }
+
+        .ai-message-content {
+            max-width: 70%;
+            background: var(--bg-primary);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ai-message.user .ai-message-content {
+            background: var(--primary);
+            color: white;
+        }
+
+        .ai-message.error .ai-message-content {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+        }
+
+        .ai-message-content pre {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+
+        .ai-message.user .ai-message-content pre {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-message-content code {
+            background: var(--bg-tertiary);
+            padding: 0.125rem 0.375rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875em;
+        }
+
+        .ai-message.user .ai-message-content code {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-tertiary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .ai-chat-input {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-primary);
+        }
+
+        .recent-topic:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Code highlighting */
+        .keyword {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .string {
+            color: var(--success);
+        }
+
+        .comment {
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .ai-sidebar {
+                display: none !important;
+            }
+
+            .ai-message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</body>
+
+</html>

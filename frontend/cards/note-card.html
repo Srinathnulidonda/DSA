@@ -1,1 +1,52 @@
-<!-- note-card.html template -->
+<div class="note-card" data-note-id="{{id}}">
+    <div class="note-card-header">
+        <h6 class="note-card-title">{{title}}</h6>
+        <div class="note-card-actions dropdown">
+            <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" onclick="editNote('{{id}}')">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                    </a></li>
+                <li><a class="dropdown-item" href="#" onclick="shareNote('{{id}}')">
+                        <i class="bi bi-share me-2"></i>Share
+                    </a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item text-danger" href="#" onclick="deleteNote('{{id}}')">
+                        <i class="bi bi-trash me-2"></i>Delete
+                    </a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="note-card-content">
+        {{#if content}}
+        <p class="note-card-preview">{{content}}</p>
+        {{else}}
+        <p class="note-card-preview text-muted">No content</p>
+        {{/if}}
+    </div>
+
+    {{#if tags}}
+    <div class="note-card-tags">
+        {{#each tags}}
+        <span class="note-card-tag">{{this}}</span>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    <div class="note-card-footer">
+        <div class="note-card-meta">
+            {{#if week}}
+            <span class="badge bg-primary me-2">Week {{week}}</span>
+            {{/if}}
+            <small class="text-muted">{{updatedAt}}</small>
+        </div>
+        {{#if wordCount}}
+        <small class="text-muted">{{wordCount}} words</small>
+        {{/if}}
+    </div>
+</div>

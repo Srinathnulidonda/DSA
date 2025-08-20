@@ -1,1 +1,477 @@
-/* responsive.css stylesheet */
+/* Mobile First Responsive Design */
+
+/* Extra Small Devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+
+    /* Typography */
+    .display-1 {
+        font-size: 3rem;
+    }
+
+    .display-2 {
+        font-size: 2.5rem;
+    }
+
+    .display-3 {
+        font-size: 2rem;
+    }
+
+    .display-4 {
+        font-size: 1.75rem;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Layout */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Navigation */
+    .sidebar {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /* Grid Adjustments */
+    .grid-dashboard,
+    .grid-cards,
+    .grid-resources {
+        grid-template-columns: 1fr;
+    }
+
+    /* Roadmap */
+    .roadmap-timeline {
+        padding-left: 1rem;
+    }
+
+    .roadmap-timeline::before {
+        left: 0;
+    }
+
+    .roadmap-item::before {
+        left: -0.5rem;
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+
+    /* Timer Display */
+    .timer-display {
+        font-size: 2rem;
+    }
+
+    /* Stats */
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    /* Modal */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    /* Calendar */
+    .calendar-cell {
+        min-height: 60px;
+        font-size: 0.875rem;
+    }
+
+    /* AI Chat */
+    .ai-message-content {
+        font-size: 0.875rem;
+    }
+
+    /* Forms */
+    .form-control {
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+    }
+
+    /* Buttons */
+    .btn-group-vertical {
+        width: 100%;
+    }
+
+    .btn-group>.btn {
+        width: 100%;
+    }
+}
+
+/* Small Devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+
+    /* Container */
+    .container {
+        max-width: 540px;
+    }
+
+    /* Grid Adjustments */
+    .grid-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Calendar */
+    .calendar-cell {
+        min-height: 70px;
+    }
+}
+
+/* Medium Devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    /* Container */
+    .container {
+        max-width: 720px;
+    }
+
+    /* Layout */
+    .app-content {
+        margin-left: var(--sidebar-width);
+    }
+
+    .mobile-nav {
+        display: none;
+    }
+
+    .sidebar {
+        transform: translateX(0);
+    }
+
+    /* Grid Adjustments */
+    .grid-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-resources {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Large Devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+    /* Container */
+    .container {
+        max-width: 960px;
+    }
+
+    /* Grid Adjustments */
+    .grid-dashboard {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Extra Large Devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+
+    /* Container */
+    .container {
+        max-width: 1140px;
+    }
+
+    /* Grid Adjustments */
+    .grid-dashboard {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Touch Device Adjustments */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Increase touch targets */
+    .btn,
+    .form-control,
+    .sidebar-item,
+    .mobile-nav-item {
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .hover-lift:hover,
+    .hover-scale:hover,
+    .hover-shadow:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Adjust tooltips for touch */
+    .tooltip {
+        display: none;
+    }
+}
+
+/* High Resolution Displays */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+    /* Use higher resolution images */
+    .logo {
+        background-image: url('/assets/images/logo@2x.png');
+        background-size: contain;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    /* Hide navigation elements */
+    .topbar,
+    .sidebar,
+    .mobile-nav,
+    .btn,
+    .form-control {
+        display: none !important;
+    }
+
+    /* Adjust layout for print */
+    .app-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-main {
+        padding: 0;
+    }
+
+    /* Force background colors */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-after: always;
+    }
+
+    .no-break {
+        page-break-inside: avoid;
+    }
+}
+
+/* Landscape Orientation */
+@media (orientation: landscape) and (max-width: 767.98px) {
+
+    /* Adjust mobile nav for landscape */
+    .mobile-nav {
+        height: 56px;
+    }
+
+    .mobile-nav-item {
+        font-size: 0.7rem;
+    }
+
+    /* Reduce vertical spacing */
+    .app-main {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Accessibility - High Contrast */
+@media (prefers-contrast: high) {
+    :root {
+        --primary: #0051f5;
+        --border-color: #000000;
+        --text-primary: #000000;
+        --bg-primary: #ffffff;
+    }
+
+    [data-theme="dark"] {
+        --primary: #5c9eff;
+        --border-color: #ffffff;
+        --text-primary: #ffffff;
+        --bg-primary: #000000;
+    }
+
+    .btn-primary {
+        border: 2px solid currentColor;
+    }
+
+    .form-control {
+        border-width: 2px;
+    }
+}
+
+/* Dark Mode Preferences */
+@media (prefers-color-scheme: dark) {
+
+    /* Auto dark mode for users who haven't set a preference */
+    body:not([data-theme]) {
+        --bg-primary: #111827;
+        --bg-secondary: #1f2937;
+        --bg-tertiary: #374151;
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+        --text-tertiary: #9ca3af;
+        --border-color: #374151;
+    }
+}
+
+/* Safe Area Insets (for devices with notches) */
+@supports (padding: max(0px)) {
+    .topbar {
+        padding-top: max(0px, env(safe-area-inset-top));
+        height: calc(var(--topbar-height) + env(safe-area-inset-top));
+    }
+
+    .sidebar {
+        padding-left: env(safe-area-inset-left);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .mobile-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+        height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+    }
+
+    .app-main {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
+
+/* Foldable Devices */
+@media (screen-spanning: single-fold-vertical) {
+    .app-layout {
+        display: grid;
+        grid-template-columns: env(fold-left) 1fr;
+    }
+
+    .sidebar {
+        width: env(fold-left);
+    }
+}
+
+/* Custom Scrollbar for Different Screen Sizes */
+@media (max-width: 767.98px) {
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+}
+
+/* Responsive Table */
+@media (max-width: 767.98px) {
+    .table-responsive table {
+        font-size: 0.875rem;
+    }
+
+    .table-responsive th,
+    .table-responsive td {
+        padding: 0.5rem;
+    }
+}
+
+/* Responsive Utilities */
+.d-none {
+    display: none !important;
+}
+
+.d-block {
+    display: block !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.d-grid {
+    display: grid !important;
+}
+
+@media (min-width: 576px) {
+    .d-sm-none {
+        display: none !important;
+    }
+
+    .d-sm-block {
+        display: block !important;
+    }
+
+    .d-sm-flex {
+        display: flex !important;
+    }
+
+    .d-sm-grid {
+        display: grid !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .d-md-none {
+        display: none !important;
+    }
+
+    .d-md-block {
+        display: block !important;
+    }
+
+    .d-md-flex {
+        display: flex !important;
+    }
+
+    .d-md-grid {
+        display: grid !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .d-lg-none {
+        display: none !important;
+    }
+
+    .d-lg-block {
+        display: block !important;
+    }
+
+    .d-lg-flex {
+        display: flex !important;
+    }
+
+    .d-lg-grid {
+        display: grid !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .d-xl-none {
+        display: none !important;
+    }
+
+    .d-xl-block {
+        display: block !important;
+    }
+
+    .d-xl-flex {
+        display: flex !important;
+    }
+
+    .d-xl-grid {
+        display: grid !important;
+    }
+}

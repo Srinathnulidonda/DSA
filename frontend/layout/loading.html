@@ -1,1 +1,38 @@
-<!-- loading.html template -->
+<div class="loading-page">
+    <div class="loading-content">
+        <div class="loading-logo animate-pulse">
+            <i class="bi bi-code-square"></i>
+        </div>
+        <h4 class="mt-3">DSAPath</h4>
+        <div class="spinner mt-3"></div>
+        <p class="text-muted mt-3">Loading your learning journey...</p>
+    </div>
+</div>
+
+<style>
+    .loading-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bg-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .loading-content {
+        text-align: center;
+    }
+
+    .loading-logo {
+        font-size: 4rem;
+        color: var(--primary);
+    }
+
+    .loading-page .spinner {
+        margin: 0 auto;
+    }
+</style>

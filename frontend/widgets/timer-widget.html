@@ -1,1 +1,88 @@
-<!-- timer-widget.html template -->
+<div class="timer-widget" data-timer-id="{{id}}">
+    <div class="timer-widget-header">
+        <h6 class="widget-title">{{title}}</h6>
+        <div class="timer-status">
+            {{#if isRunning}}
+            <span class="badge bg-success">Running</span>
+            {{else if isPaused}}
+            <span class="badge bg-warning">Paused</span>
+            {{else}}
+            <span class="badge bg-secondary">Stopped</span>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="timer-display">
+        <div class="timer-time">{{displayTime}}</div>
+        <div class="timer-progress">
+            <div class="progress" style="height: 4px;">
+                <div class="progress-bar bg-primary" style="width: {{progressPercentage}}%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="timer-controls">
+        {{#if isRunning}}
+        <button class="btn btn-sm btn-warning" onclick="pauseTimer('{{id}}')">
+            <i class="bi bi-pause"></i>
+        </button>
+        {{else}}
+        <button class="btn btn-sm btn-success" onclick="startTimer('{{id}}')">
+            <i class="bi bi-play"></i>
+        </button>
+        {{/if}}
+        <button class="btn btn-sm btn-danger" onclick="stopTimer('{{id}}')">
+            <i class="bi bi-stop"></i>
+        </button>
+        <button class="btn btn-sm btn-secondary" onclick="resetTimer('{{id}}')">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+    </div>
+
+    {{#if topic}}
+    <div class="timer-topic">
+        <small class="text-muted">{{topic}}</small>
+    </div>
+    {{/if}}
+</div>
+
+<style>
+    .timer-widget {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .timer-widget-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .timer-display {
+        margin: 1.5rem 0;
+    }
+
+    .timer-time {
+        font-size: 2.5rem;
+        font-weight: 300;
+        font-family: var(--font-mono);
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .timer-controls {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .timer-topic {
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+</style>

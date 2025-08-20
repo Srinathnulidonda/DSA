@@ -1,1 +1,519 @@
-<!-- progress.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Progress - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+</head>
+
+<body data-requires-auth="true">
+    <div class="app-layout">
+        <div id="topbar"></div>
+        <div id="sidebar"></div>
+
+        <div class="app-content">
+            <main class="app-main">
+                <div class="page-header mb-4">
+                    <h1 class="page-title">Progress Tracking</h1>
+                    <p class="page-subtitle">Monitor your learning journey and achievements</p>
+                </div>
+
+                <!-- Progress Overview -->
+                <div class="progress-overview mb-4">
+                    <div class="progress-summary">
+                        <div class="text-center mb-4">
+                            <div class="progress-ring mx-auto mb-3" id="overall-progress-ring">
+                                <svg width="120" height="120">
+                                    <circle class="progress-ring-circle" cx="60" cy="60" r="54"></circle>
+                                    <circle class="progress-ring-progress" cx="60" cy="60" r="54"
+                                        stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle>
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <div class="h3 mb-0" id="progress-percentage">0%</div>
+                                    <small class="text-muted">Complete</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-list">
+                            <div class="stat-item d-flex justify-content-between mb-2">
+                                <span class="text-muted">Current Streak</span>
+                                <span class="fw-bold" id="current-streak">0 days</span>
+                            </div>
+                            <div class="stat-item d-flex justify-content-between mb-2">
+                                <span class="text-muted">Longest Streak</span>
+                                <span class="fw-bold" id="longest-streak">0 days</span>
+                            </div>
+                            <div class="stat-item d-flex justify-content-between mb-2">
+                                <span class="text-muted">Total Study Time</span>
+                                <span class="fw-bold" id="total-time">0 hours</span>
+                            </div>
+                            <div class="stat-item d-flex justify-content-between">
+                                <span class="text-muted">Days Completed</span>
+                                <span class="fw-bold" id="days-completed">0/98</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-details">
+                        <h5 class="mb-3">Weekly Breakdown</h5>
+                        <div id="weekly-breakdown">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-graph-up me-2 text-primary"></i>
+                                    Progress Over Time
+                                </h5>
+                                <div class="chart-container">
+                                    <canvas id="progress-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-bar-chart me-2 text-primary"></i>
+                                    Study Time by Week
+                                </h5>
+                                <div class="chart-container">
+                                    <canvas id="time-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topics Mastery -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-award me-2 text-primary"></i>
+                            Topics Mastery
+                        </h5>
+                        <div id="topics-mastery">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Achievements -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-trophy me-2 text-primary"></i>
+                            Recent Achievements
+                        </h5>
+                        <div id="achievements-list">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="mobile-nav"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        let progressChart, timeChart;
+
+        async function loadProgressData() {
+            try {
+                const [dashboard, progress, roadmap, sessions] = await Promise.all([
+                    api.get('/dashboard'),
+                    api.get('/progress'),
+                    api.get('/roadmap'),
+                    api.get('/pomodoro/history?per_page=100')
+                ]);
+
+                // Update overview stats
+                updateOverviewStats(dashboard.stats);
+
+                // Update progress ring
+                updateProgressRing(dashboard.stats.completion_percentage);
+
+                // Update weekly breakdown
+                updateWeeklyBreakdown(dashboard.weekly_progress);
+
+                // Create charts
+                createProgressChart(progress.progress, roadmap.roadmap);
+                createTimeChart(sessions.sessions);
+
+                // Update topics mastery
+                updateTopicsMastery(roadmap.roadmap, progress.progress);
+
+                // Load achievements
+                loadAchievements(dashboard.stats);
+
+            } catch (error) {
+                notifications.error('Failed to load progress data');
+                console.error('Progress error:', error);
+            }
+        }
+
+        function updateOverviewStats(stats) {
+            document.getElementById('current-streak').textContent = `${stats.current_streak} days`;
+            document.getElementById('longest-streak').textContent = `${stats.longest_streak} days`;
+            document.getElementById('total-time').textContent = `${Math.round(stats.total_study_time / 60)} hours`;
+            document.getElementById('days-completed').textContent = `${stats.completed_days}/${stats.total_days}`;
+            document.getElementById('progress-percentage').textContent = `${Math.round(stats.completion_percentage)}%`;
+        }
+
+        function updateProgressRing(percentage) {
+            const progress = document.querySelector('.progress-ring-progress');
+            const circumference = 2 * Math.PI * 54; // radius = 54
+            const offset = circumference - (percentage / 100) * circumference;
+
+            progress.style.strokeDashoffset = offset;
+        }
+
+        function updateWeeklyBreakdown(weeklyProgress) {
+            const container = document.getElementById('weekly-breakdown');
+
+            container.innerHTML = Object.entries(weeklyProgress).map(([week, data]) => {
+                const progressBar = new ProgressBar(document.createElement('div'), {
+                    value: data.completed,
+                    max: data.total,
+                    showLabel: true,
+                    color: data.percentage === 100 ? 'success' : 'primary',
+                    animated: true
+                });
+
+                return `
+                    <div class="mb-3 animate-fade-in-up">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-medium">Week ${week}: ${data.title}</span>
+                            <span class="text-muted">${data.completed}/${data.total} days</span>
+                        </div>
+                        ${progressBar.container.outerHTML}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function createProgressChart(progressData, roadmapData) {
+            const ctx = document.getElementById('progress-chart').getContext('2d');
+
+            // Calculate cumulative progress over time
+            const labels = [];
+            const data = [];
+            let totalCompleted = 0;
+            const totalDays = roadmapData.length * 7;
+
+            roadmapData.forEach((week, weekIndex) => {
+                week.days.forEach((day, dayIndex) => {
+                    const progress = progressData[week.week]?.[day.day];
+                    if (progress?.completed) {
+                        totalCompleted++;
+                    }
+
+                    // Add data point every 7 days
+                    if ((weekIndex * 7 + dayIndex + 1) % 7 === 0) {
+                        labels.push(`Week ${weekIndex + 1}`);
+                        data.push(Math.round((totalCompleted / totalDays) * 100));
+                    }
+                });
+            });
+
+            if (progressChart) progressChart.destroy();
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Completion %',
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: value => value + '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTimeChart(sessions) {
+            const ctx = document.getElementById('time-chart').getContext('2d');
+
+            // Group sessions by week
+            const weeklyTime = {};
+            const now = new Date();
+
+            sessions.forEach(session => {
+                if (!session.completed) return;
+
+                const sessionDate = new Date(session.start_time);
+                const weeksDiff = Math.floor((now - sessionDate) / (7 * 24 * 60 * 60 * 1000));
+                const weekLabel = weeksDiff === 0 ? 'This Week' :
+                    weeksDiff === 1 ? 'Last Week' :
+                        `${weeksDiff} Weeks Ago`;
+
+                if (!weeklyTime[weekLabel]) weeklyTime[weekLabel] = 0;
+                weeklyTime[weekLabel] += session.duration;
+            });
+
+            const labels = Object.keys(weeklyTime).reverse();
+            const data = labels.map(label => Math.round(weeklyTime[label] / 60)); // Convert to hours
+
+            if (timeChart) timeChart.destroy();
+
+            timeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Study Hours',
+                        data: data,
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => value + 'h'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTopicsMastery(roadmap, progress) {
+            const container = document.getElementById('topics-mastery');
+
+            // Group topics by category
+            const topicsProgress = {
+                'Arrays & Strings': { completed: 0, total: 0 },
+                'Linked Lists': { completed: 0, total: 0 },
+                'Trees & Graphs': { completed: 0, total: 0 },
+                'Dynamic Programming': { completed: 0, total: 0 },
+                'Algorithms': { completed: 0, total: 0 }
+            };
+
+            roadmap.forEach(week => {
+                let category = 'Algorithms'; // default
+
+                if (week.week <= 2) category = 'Arrays & Strings';
+                else if (week.week <= 4) category = 'Linked Lists';
+                else if (week.week >= 5 && week.week <= 10) category = 'Trees & Graphs';
+                else if (week.week === 13) category = 'Dynamic Programming';
+
+                week.days.forEach(day => {
+                    topicsProgress[category].total++;
+                    if (progress[week.week]?.[day.day]?.completed) {
+                        topicsProgress[category].completed++;
+                    }
+                });
+            });
+
+            container.innerHTML = Object.entries(topicsProgress).map(([topic, data]) => {
+                const percentage = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
+                const color = percentage === 100 ? 'success' : percentage >= 50 ? 'warning' : 'primary';
+
+                return `
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>${topic}</span>
+                            <span class="badge bg-${color}">${percentage}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-${color}" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadAchievements(stats) {
+            const container = document.getElementById('achievements-list');
+
+            const achievements = [];
+
+            // Streak achievements
+            if (stats.current_streak >= 3) {
+                achievements.push({
+                    icon: 'bi-fire',
+                    color: 'warning',
+                    title: '3 Day Streak',
+                    description: 'Studied for 3 consecutive days',
+                    earned: true
+                });
+            }
+            if (stats.current_streak >= 7) {
+                achievements.push({
+                    icon: 'bi-calendar-week',
+                    color: 'info',
+                    title: 'Week Warrior',
+                    description: 'Maintained a 7-day streak',
+                    earned: true
+                });
+            }
+            if (stats.current_streak >= 30) {
+                achievements.push({
+                    icon: 'bi-trophy',
+                    color: 'warning',
+                    title: 'Monthly Master',
+                    description: '30-day streak achieved',
+                    earned: true
+                });
+            }
+
+            // Completion achievements
+            if (stats.completion_percentage >= 25) {
+                achievements.push({
+                    icon: 'bi-award',
+                    color: 'primary',
+                    title: 'Quarter Way There',
+                    description: '25% of curriculum completed',
+                    earned: true
+                });
+            }
+            if (stats.completion_percentage >= 50) {
+                achievements.push({
+                    icon: 'bi-star',
+                    color: 'success',
+                    title: 'Halfway Hero',
+                    description: '50% of curriculum completed',
+                    earned: true
+                });
+            }
+
+            // Add some locked achievements
+            achievements.push({
+                icon: 'bi-gem',
+                color: 'secondary',
+                title: 'DSA Master',
+                description: 'Complete 100% of the curriculum',
+                earned: false
+            });
+
+            container.innerHTML = achievements.map(achievement => `
+                <div class="achievement-item ${achievement.earned ? 'earned' : 'locked'} mb-3 animate-fade-in">
+                    <div class="d-flex align-items-center">
+                        <div class="achievement-icon me-3">
+                            <i class="bi ${achievement.icon} text-${achievement.color}" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">${achievement.title}</h6>
+                            <p class="text-muted mb-0 small">${achievement.description}</p>
+                        </div>
+                        ${achievement.earned ?
+                    '<i class="bi bi-check-circle-fill text-success ms-auto"></i>' :
+                    '<i class="bi bi-lock text-muted ms-auto"></i>'
+                }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgressData();
+        });
+    </script>
+
+    <style>
+        .progress-ring {
+            position: relative;
+            display: inline-block;
+        }
+
+        .stats-list {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+        }
+
+        .achievement-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+        }
+
+        .achievement-item.earned {
+            border: 1px solid var(--border-color);
+        }
+
+        .achievement-item.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-item:hover {
+            transform: translateX(4px);
+        }
+
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,1 +1,188 @@
-<!-- login.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Login - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+</head>
+
+<body>
+    <div class="auth-layout">
+        <div class="auth-card animate-fade-in-up">
+            <div class="auth-header">
+                <div class="auth-logo animate-bounce">
+                    <i class="bi bi-code-square"></i>
+                </div>
+                <h2 class="h4 mb-1">Welcome Back!</h2>
+                <p class="text-muted">Sign in to continue your DSA journey</p>
+            </div>
+
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" name="email" required
+                            placeholder="you@example.com" autocomplete="email">
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" required
+                            placeholder="••••••••" autocomplete="current-password">
+                        <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+                    <a href="/auth/forgot-password" class="text-decoration-none">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3" id="login-btn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                </button>
+
+                <div class="divider-text mb-3">OR</div>
+
+                <button type="button" class="btn btn-outline-secondary w-100 mb-3" id="demo-login">
+                    <i class="bi bi-lightning me-2"></i>Try Demo Account
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="mb-0">Don't have an account? <a href="/auth/register" class="text-decoration-none">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .divider-text {
+            position: relative;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .divider-text::before,
+        .divider-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .divider-text::before {
+            left: 0;
+        }
+
+        .divider-text::after {
+            right: 0;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        const form = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.innerHTML = `<i class="bi bi-eye${type === 'password' ? '' : '-slash'}"></i>`;
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Clear previous errors
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.querySelector('.btn-text').textContent = 'Signing in...';
+            loginBtn.querySelector('.spinner-border').classList.remove('d-none');
+
+            try {
+                const formData = new FormData(form);
+                const response = await api.post('/auth/login', {
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                });
+
+                // Save tokens and user data
+                auth.setToken(response.access_token);
+                auth.setRefreshToken(response.refresh_token);
+                auth.setUser(response.user);
+
+                // Show success notification
+                notifications.success('Welcome back! Redirecting to dashboard...');
+
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = '/pages/dashboard';
+                }, 1000);
+
+            } catch (error) {
+                // Show error
+                notifications.error(error.message || 'Invalid email or password');
+
+                // Mark fields as invalid
+                document.getElementById('email').classList.add('is-invalid');
+                document.getElementById('password').classList.add('is-invalid');
+
+                // Reset button
+                loginBtn.disabled = false;
+                loginBtn.querySelector('.btn-text').textContent = 'Sign In';
+                loginBtn.querySelector('.spinner-border').classList.add('d-none');
+            }
+        });
+
+        // Demo login
+        document.getElementById('demo-login').addEventListener('click', () => {
+            document.getElementById('email').value = 'demo@dsapath.com';
+            document.getElementById('password').value = 'demo123';
+            form.dispatchEvent(new Event('submit'));
+        });
+
+        // Check if already logged in
+        if (auth.isAuthenticated()) {
+            window.location.href = '/pages/dashboard';
+        }
+    </script>
+</body>
+
+</html>

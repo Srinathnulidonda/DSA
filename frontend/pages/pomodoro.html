@@ -1,1 +1,662 @@
-<!-- pomodoro.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Pomodoro Timer - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+</head>
+
+<body data-requires-auth="true">
+    <div class="app-layout">
+        <div id="topbar"></div>
+        <div id="sidebar"></div>
+
+        <div class="app-content">
+            <main class="app-main">
+                <div class="page-header mb-4">
+                    <h1 class="page-title">Pomodoro Timer</h1>
+                    <p class="page-subtitle">Stay focused with time-boxed study sessions</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Timer Card -->
+                        <div class="card mb-4">
+                            <div class="card-body text-center py-5">
+                                <div class="timer-widget mx-auto">
+                                    <div class="timer-type-selector mb-4">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary active"
+                                                data-type="study" data-duration="25">
+                                                Study (25m)
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" data-type="short"
+                                                data-duration="5">
+                                                Short Break (5m)
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary" data-type="long"
+                                                data-duration="15">
+                                                Long Break (15m)
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="timer-display" id="timer-display">25:00</div>
+
+                                    <div class="timer-progress mb-4">
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar progress-bar-animated" id="timer-progress"
+                                                style="width: 0%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="timer-controls">
+                                        <button class="btn btn-lg btn-primary" id="start-btn">
+                                            <i class="bi bi-play-fill me-2"></i>Start
+                                        </button>
+                                        <button class="btn btn-lg btn-secondary d-none" id="pause-btn">
+                                            <i class="bi bi-pause-fill me-2"></i>Pause
+                                        </button>
+                                        <button class="btn btn-lg btn-danger" id="reset-btn">
+                                            <i class="bi bi-stop-fill me-2"></i>Reset
+                                        </button>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <div class="form-group">
+                                            <label for="session-topic" class="form-label">What are you working
+                                                on?</label>
+                                            <input type="text" class="form-control text-center" id="session-topic"
+                                                placeholder="e.g., Binary Trees practice">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Stats -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Today's Sessions</h5>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="stat-value" id="sessions-today">0</div>
+                                        <div class="stat-label">Sessions</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="stat-value" id="time-today">0m</div>
+                                        <div class="stat-label">Total Time</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="stat-value" id="focus-score">0%</div>
+                                        <div class="stat-label">Focus Score</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <!-- Settings -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-gear me-2"></i>Settings
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Study Duration</label>
+                                    <input type="range" class="form-range" id="study-duration" min="15" max="60"
+                                        value="25" step="5">
+                                    <div class="d-flex justify-content-between">
+                                        <small>15m</small>
+                                        <small id="study-duration-label">25m</small>
+                                        <small>60m</small>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Short Break</label>
+                                    <input type="range" class="form-range" id="short-break-duration" min="3" max="10"
+                                        value="5" step="1">
+                                    <div class="d-flex justify-content-between">
+                                        <small>3m</small>
+                                        <small id="short-break-label">5m</small>
+                                        <small>10m</small>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Long Break</label>
+                                    <input type="range" class="form-range" id="long-break-duration" min="10" max="30"
+                                        value="15" step="5">
+                                    <div class="d-flex justify-content-between">
+                                        <small>10m</small>
+                                        <small id="long-break-label">15m</small>
+                                        <small>30m</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="auto-start-breaks" checked>
+                                    <label class="form-check-label" for="auto-start-breaks">
+                                        Auto-start breaks
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="sound-enabled" checked>
+                                    <label class="form-check-label" for="sound-enabled">
+                                        Sound notifications
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="desktop-notifications" checked>
+                                    <label class="form-check-label" for="desktop-notifications">
+                                        Desktop notifications
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Sessions -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-clock-history me-2"></i>Recent Sessions
+                                </h5>
+                                <div id="recent-sessions">
+                                    <div class="text-center py-3">
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="mobile-nav"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        // Timer state
+        let timerWorker = null;
+        let currentSession = null;
+        let sessionType = 'study';
+        let duration = 25;
+        let remaining = 25 * 60;
+        let isRunning = false;
+        let isPaused = false;
+        let completedSessions = 0;
+        let totalTimeToday = 0;
+
+        // Audio
+        const completionSound = new Audio('/assets/sounds/timer-complete.mp3');
+
+        // Initialize
+        async function init() {
+            loadSettings();
+            loadTodayStats();
+            loadRecentSessions();
+            setupEventListeners();
+
+            // Check for saved timer state
+            const savedState = timerState.load();
+            if (savedState) {
+                restoreTimerState(savedState);
+            }
+        }
+
+        function loadSettings() {
+            // Load durations
+            const studyDuration = storage.get('pomodoro_study_duration', 25);
+            const shortBreak = storage.get('pomodoro_short_break', 5);
+            const longBreak = storage.get('pomodoro_long_break', 15);
+
+            document.getElementById('study-duration').value = studyDuration;
+            document.getElementById('short-break-duration').value = shortBreak;
+            document.getElementById('long-break-duration').value = longBreak;
+
+            updateDurationLabels();
+
+            // Load preferences
+            document.getElementById('auto-start-breaks').checked = storage.get('pomodoro_auto_breaks', true);
+            document.getElementById('sound-enabled').checked = storage.get('pomodoro_sound', true);
+            document.getElementById('desktop-notifications').checked = storage.get('pomodoro_notifications', true);
+        }
+
+        async function loadTodayStats() {
+            try {
+                const response = await api.get('/pomodoro/history?per_page=50');
+                const today = new Date().toDateString();
+
+                const todaySessions = response.sessions.filter(session => {
+                    return new Date(session.start_time).toDateString() === today;
+                });
+
+                completedSessions = todaySessions.filter(s => s.completed).length;
+                totalTimeToday = todaySessions.reduce((sum, s) => sum + (s.completed ? s.duration : 0), 0);
+
+                const focusScore = todaySessions.length > 0
+                    ? Math.round((completedSessions / todaySessions.length) * 100)
+                    : 0;
+
+                document.getElementById('sessions-today').textContent = completedSessions;
+                document.getElementById('time-today').textContent = formatTime(totalTimeToday);
+                document.getElementById('focus-score').textContent = focusScore + '%';
+
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        async function loadRecentSessions() {
+            try {
+                const response = await api.get('/pomodoro/history?per_page=5');
+                const container = document.getElementById('recent-sessions');
+
+                if (response.sessions.length === 0) {
+                    container.innerHTML = '<p class="text-muted text-center">No sessions yet</p>';
+                    return;
+                }
+
+                container.innerHTML = response.sessions.map(session => {
+                    const date = new Date(session.start_time);
+                    const timeAgo = getTimeAgo(date);
+
+                    return `
+                        <div class="session-item mb-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-medium">${session.topic || 'Study Session'}</div>
+                                    <small class="text-muted">${session.duration}m • ${timeAgo}</small>
+                                </div>
+                                ${session.completed ?
+                            '<i class="bi bi-check-circle text-success"></i>' :
+                            '<i class="bi bi-x-circle text-muted"></i>'
+                        }
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Failed to load recent sessions:', error);
+            }
+        }
+
+        function setupEventListeners() {
+            // Timer type buttons
+            document.querySelectorAll('.timer-type-selector button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (isRunning) return;
+
+                    document.querySelectorAll('.timer-type-selector button').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    btn.classList.add('active');
+
+                    sessionType = btn.dataset.type;
+                    duration = parseInt(btn.dataset.duration);
+                    resetTimer();
+                });
+            });
+
+            // Control buttons
+            document.getElementById('start-btn').addEventListener('click', startTimer);
+            document.getElementById('pause-btn').addEventListener('click', pauseTimer);
+            document.getElementById('reset-btn').addEventListener('click', resetTimer);
+
+            // Settings
+            document.getElementById('study-duration').addEventListener('input', (e) => {
+                const value = e.target.value;
+                storage.set('pomodoro_study_duration', value);
+                document.querySelector('[data-type="study"]').dataset.duration = value;
+                document.querySelector('[data-type="study"]').textContent = `Study (${value}m)`;
+                updateDurationLabels();
+
+                if (sessionType === 'study' && !isRunning) {
+                    duration = parseInt(value);
+                    resetTimer();
+                }
+            });
+
+            document.getElementById('short-break-duration').addEventListener('input', (e) => {
+                const value = e.target.value;
+                storage.set('pomodoro_short_break', value);
+                document.querySelector('[data-type="short"]').dataset.duration = value;
+                document.querySelector('[data-type="short"]').textContent = `Short Break (${value}m)`;
+                updateDurationLabels();
+
+                if (sessionType === 'short' && !isRunning) {
+                    duration = parseInt(value);
+                    resetTimer();
+                }
+            });
+
+            document.getElementById('long-break-duration').addEventListener('input', (e) => {
+                const value = e.target.value;
+                storage.set('pomodoro_long_break', value);
+                document.querySelector('[data-type="long"]').dataset.duration = value;
+                document.querySelector('[data-type="long"]').textContent = `Long Break (${value}m)`;
+                updateDurationLabels();
+
+                if (sessionType === 'long' && !isRunning) {
+                    duration = parseInt(value);
+                    resetTimer();
+                }
+            });
+
+            // Preferences
+            document.getElementById('auto-start-breaks').addEventListener('change', (e) => {
+                storage.set('pomodoro_auto_breaks', e.target.checked);
+            });
+
+            document.getElementById('sound-enabled').addEventListener('change', (e) => {
+                storage.set('pomodoro_sound', e.target.checked);
+            });
+
+            document.getElementById('desktop-notifications').addEventListener('change', (e) => {
+                storage.set('pomodoro_notifications', e.target.checked);
+            });
+        }
+
+        function updateDurationLabels() {
+            document.getElementById('study-duration-label').textContent =
+                document.getElementById('study-duration').value + 'm';
+            document.getElementById('short-break-label').textContent =
+                document.getElementById('short-break-duration').value + 'm';
+            document.getElementById('long-break-label').textContent =
+                document.getElementById('long-break-duration').value + 'm';
+        }
+
+        async function startTimer() {
+            if (!timerWorker) {
+                timerWorker = new TimerWorker();
+            }
+
+            const topic = document.getElementById('session-topic').value ||
+                (sessionType === 'study' ? 'Study Session' : 'Break');
+
+            if (!currentSession) {
+                // Start new session
+                try {
+                    const response = await api.post('/pomodoro', {
+                        duration: duration,
+                        topic: topic,
+                        session_type: sessionType
+                    });
+
+                    currentSession = response.session_id;
+                } catch (error) {
+                    notifications.error('Failed to start session');
+                    return;
+                }
+            }
+
+            isRunning = true;
+            isPaused = false;
+
+            document.getElementById('start-btn').classList.add('d-none');
+            document.getElementById('pause-btn').classList.remove('d-none');
+
+            timerWorker.start(
+                duration,
+                (data) => {
+                    remaining = data.remaining;
+                    updateTimerDisplay(data.minutes, data.seconds);
+                    updateProgress();
+
+                    // Save state
+                    timerState.save({
+                        sessionId: currentSession,
+                        sessionType: sessionType,
+                        duration: duration,
+                        remaining: remaining,
+                        topic: topic
+                    });
+                },
+                () => {
+                    completeTimer();
+                }
+            );
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+
+            isPaused = !isPaused;
+
+            if (isPaused) {
+                timerWorker.pause();
+                document.getElementById('pause-btn').innerHTML =
+                    '<i class="bi bi-play-fill me-2"></i>Resume';
+            } else {
+                timerWorker.resume();
+                document.getElementById('pause-btn').innerHTML =
+                    '<i class="bi bi-pause-fill me-2"></i>Pause';
+            }
+        }
+
+        function resetTimer() {
+            if (timerWorker) {
+                timerWorker.stop();
+            }
+
+            isRunning = false;
+            isPaused = false;
+            currentSession = null;
+            remaining = duration * 60;
+
+            document.getElementById('start-btn').classList.remove('d-none');
+            document.getElementById('pause-btn').classList.add('d-none');
+            document.getElementById('pause-btn').innerHTML =
+                '<i class="bi bi-pause-fill me-2"></i>Pause';
+
+            updateTimerDisplay(duration, 0);
+            updateProgress();
+
+            timerState.clear();
+        }
+
+        async function completeTimer() {
+            // Mark session as complete
+            if (currentSession) {
+                try {
+                    await api.post(`/pomodoro/${currentSession}/complete`);
+                } catch (error) {
+                    console.error('Failed to complete session:', error);
+                }
+            }
+
+            // Play sound
+            if (document.getElementById('sound-enabled').checked) {
+                completionSound.play();
+            }
+
+            // Show notification
+            const message = sessionType === 'study'
+                ? 'Great work! Time for a break.'
+                : 'Break\'s over! Ready to focus?';
+
+            notifications.success(message);
+
+            if (document.getElementById('desktop-notifications').checked) {
+                notifications.showDesktop('Timer Complete', {
+                    body: message,
+                    requireInteraction: true
+                });
+            }
+
+            // Update stats
+            if (sessionType === 'study') {
+                completedSessions++;
+                totalTimeToday += duration;
+                document.getElementById('sessions-today').textContent = completedSessions;
+                document.getElementById('time-today').textContent = formatTime(totalTimeToday);
+            }
+
+            // Auto-start break if enabled
+            if (document.getElementById('auto-start-breaks').checked) {
+                if (sessionType === 'study') {
+                    // Start break
+                    const breakType = completedSessions % 4 === 0 ? 'long' : 'short';
+                    const breakBtn = document.querySelector(`[data-type="${breakType}"]`);
+                    breakBtn.click();
+                    setTimeout(() => startTimer(), 1000);
+                } else {
+                    // Back to study
+                    document.querySelector('[data-type="study"]').click();
+                }
+            } else {
+                resetTimer();
+            }
+
+            // Reload recent sessions
+            loadRecentSessions();
+            loadTodayStats();
+        }
+
+        function updateTimerDisplay(minutes, seconds) {
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').textContent = display;
+
+            // Update page title
+            if (isRunning) {
+                document.title = `${display} - DSAPath`;
+            } else {
+                document.title = 'Pomodoro Timer - DSAPath';
+            }
+        }
+
+        function updateProgress() {
+            const totalSeconds = duration * 60;
+            const elapsed = totalSeconds - remaining;
+            const percentage = (elapsed / totalSeconds) * 100;
+
+            document.getElementById('timer-progress').style.width = percentage + '%';
+        }
+
+        function restoreTimerState(state) {
+            sessionType = state.sessionType;
+            duration = state.duration;
+            remaining = state.remaining;
+            currentSession = state.sessionId;
+
+            document.getElementById('session-topic').value = state.topic || '';
+
+            // Select correct type button
+            document.querySelectorAll('.timer-type-selector button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.type === sessionType) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Update display
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+            updateTimerDisplay(minutes, seconds);
+            updateProgress();
+
+            // Show pause button
+            document.getElementById('start-btn').classList.add('d-none');
+            document.getElementById('pause-btn').classList.remove('d-none');
+
+            // Auto-resume
+            notifications.info('Resuming your previous session...');
+            setTimeout(() => startTimer(), 1000);
+        }
+
+        function formatTime(minutes) {
+            if (minutes < 60) {
+                return `${minutes}m`;
+            }
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (timerWorker) {
+                timerWorker.terminate();
+            }
+        });
+    </script>
+
+    <style>
+        .timer-widget {
+            max-width: 500px;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 300;
+            font-family: var(--font-mono);
+            color: var(--primary);
+            margin: 2rem 0;
+            line-height: 1;
+        }
+
+        .timer-type-selector .btn {
+            min-width: 120px;
+        }
+
+        .session-item {
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .session-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 3.5rem;
+            }
+
+            .timer-type-selector .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+    </style>
+</body>
+
+</html>

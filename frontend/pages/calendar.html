@@ -1,1 +1,515 @@
-<!-- calendar.html template -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Calendar - DSAPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+</head>
+
+<body data-requires-auth="true">
+    <div class="app-layout">
+        <div id="topbar"></div>
+        <div id="sidebar"></div>
+
+        <div class="app-content">
+            <main class="app-main">
+                <div class="page-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="page-title">Study Calendar</h1>
+                            <p class="page-subtitle">Track your daily learning progress</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="scrollToToday()">
+                                <i class="bi bi-calendar-check me-2"></i>Today
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Month Navigation -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button class="btn btn-sm btn-outline-primary" onclick="changeMonth(-1)">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <h4 class="mb-0" id="current-month">Loading...</h4>
+                            <button class="btn btn-sm btn-outline-primary" onclick="changeMonth(1)">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="calendar-grid" id="calendar-grid">
+                            <div class="calendar-header-cell">Sun</div>
+                            <div class="calendar-header-cell">Mon</div>
+                            <div class="calendar-header-cell">Tue</div>
+                            <div class="calendar-header-cell">Wed</div>
+                            <div class="calendar-header-cell">Thu</div>
+                            <div class="calendar-header-cell">Fri</div>
+                            <div class="calendar-header-cell">Sat</div>
+                            <!-- Calendar days will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Legend</h5>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="d-flex align-items-center">
+                                <div class="legend-box completed"></div>
+                                <span class="ms-2">Completed</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="legend-box partial"></div>
+                                <span class="ms-2">Partial Progress</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="legend-box today"></div>
+                                <span class="ms-2">Today</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="legend-box streak"></div>
+                                <span class="ms-2">Streak Day</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week Details -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Week Overview</h5>
+                        <div id="week-details">
+                            <p class="text-muted">Click on a day to see details</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="mobile-nav"></div>
+    </div>
+
+    <!-- Day Details Modal -->
+    <div class="modal fade" id="dayModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dayModalTitle">Day Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="dayModalBody">
+                    <!-- Day details will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .calendar-grid {
+            min-height: 500px;
+        }
+
+        .calendar-cell {
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-cell:hover {
+            background: var(--bg-secondary);
+        }
+
+        .calendar-cell.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-cell.today {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid var(--primary);
+        }
+
+        .calendar-cell.completed {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .calendar-cell.partial {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .calendar-cell.streak {
+            box-shadow: inset 0 0 0 2px var(--warning);
+        }
+
+        .calendar-date {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-content {
+            font-size: 0.75rem;
+            flex-grow: 1;
+        }
+
+        .calendar-indicator {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .legend-box.completed {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+        }
+
+        .legend-box.partial {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--warning);
+        }
+
+        .legend-box.today {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+        }
+
+        .legend-box.streak {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--warning);
+        }
+
+        @media (max-width: 768px) {
+            .calendar-header-cell {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+
+            .calendar-cell {
+                min-height: 60px;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/lib.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/loader.js"></script>
+
+    <script>
+        let currentDate = new Date();
+        let roadmapData = [];
+        let progressData = {};
+        let streakData = [];
+        let dayModal;
+
+        async function loadCalendarData() {
+            try {
+                // Load roadmap and progress
+                const [roadmap, progress, dashboard] = await Promise.all([
+                    api.get('/roadmap'),
+                    api.get('/progress'),
+                    api.get('/dashboard')
+                ]);
+
+                roadmapData = roadmap.roadmap;
+                progressData = progress.progress;
+
+                // Calculate streak days
+                calculateStreakDays(dashboard.stats);
+
+                // Render calendar
+                renderCalendar();
+
+            } catch (error) {
+                notifications.error('Failed to load calendar data');
+                console.error('Calendar error:', error);
+            }
+        }
+
+        function calculateStreakDays(stats) {
+            streakData = [];
+            const today = new Date();
+            const currentStreak = stats.current_streak;
+
+            // Add streak days going backwards from today/last streak date
+            for (let i = 0; i < currentStreak; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                streakData.push(date.toDateString());
+            }
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Update month display
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
+
+            // Calculate calendar days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            const grid = document.getElementById('calendar-grid');
+            // Keep headers, remove day cells
+            const headers = grid.querySelectorAll('.calendar-header-cell');
+            grid.innerHTML = '';
+            headers.forEach(header => grid.appendChild(header));
+
+            // Add previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const date = new Date(year, month - 1, day);
+                grid.appendChild(createCalendarCell(date, true));
+            }
+
+            // Add current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                grid.appendChild(createCalendarCell(date, false));
+            }
+
+            // Add next month days to fill grid
+            const cellsAdded = firstDay + daysInMonth;
+            const cellsNeeded = Math.ceil(cellsAdded / 7) * 7;
+            for (let day = 1; day <= cellsNeeded - cellsAdded; day++) {
+                const date = new Date(year, month + 1, day);
+                grid.appendChild(createCalendarCell(date, true));
+            }
+        }
+
+        function createCalendarCell(date, isOtherMonth) {
+            const cell = document.createElement('div');
+            cell.className = 'calendar-cell';
+            if (isOtherMonth) cell.classList.add('other-month');
+
+            const today = new Date();
+            const isToday = date.toDateString() === today.toDateString();
+            if (isToday) cell.classList.add('today');
+
+            // Check if this day is in streak
+            if (streakData.includes(date.toDateString())) {
+                cell.classList.add('streak');
+            }
+
+            // Find study data for this date
+            const studyData = findStudyDataForDate(date);
+            if (studyData) {
+                if (studyData.allCompleted) {
+                    cell.classList.add('completed');
+                } else if (studyData.someCompleted) {
+                    cell.classList.add('partial');
+                }
+            }
+
+            // Create cell content
+            cell.innerHTML = `
+                <div class="calendar-date">${date.getDate()}</div>
+                <div class="calendar-content">
+                    ${studyData ? `
+                        <div class="text-truncate small">
+                            ${studyData.topic}
+                        </div>
+                        ${studyData.completed ? '<div class="calendar-indicator"></div>' : ''}
+                    ` : ''}
+                </div>
+            `;
+
+            // Add click handler
+            cell.addEventListener('click', () => showDayDetails(date));
+
+            return cell;
+        }
+
+        function findStudyDataForDate(date) {
+            // This is a simplified mapping - in production, you'd calculate based on start date
+            const weekIndex = Math.floor((date.getDate() - 1) / 7);
+            const dayIndex = date.getDay();
+
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayName = dayNames[dayIndex];
+
+            // Find matching week and day in roadmap
+            for (const week of roadmapData) {
+                const day = week.days.find(d => d.day === dayName);
+                if (day) {
+                    const progress = progressData[week.week]?.[dayName];
+
+                    // Check if this week/day matches the date
+                    if (progress?.completion_date) {
+                        const completionDate = new Date(progress.completion_date);
+                        if (completionDate.toDateString() === date.toDateString()) {
+                            return {
+                                week: week.week,
+                                weekTitle: week.title,
+                                day: dayName,
+                                topic: day.topic,
+                                activities: day.activities,
+                                completed: progress.completed,
+                                timeSpent: progress.time_spent,
+                                allCompleted: true,
+                                someCompleted: false
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        function showDayDetails(date) {
+            const studyData = findStudyDataForDate(date);
+
+            const modalTitle = document.getElementById('dayModalTitle');
+            const modalBody = document.getElementById('dayModalBody');
+
+            modalTitle.textContent = date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            if (studyData) {
+                modalBody.innerHTML = `
+                    <div class="mb-3">
+                        <h6 class="text-primary">Week ${studyData.week}: ${studyData.weekTitle}</h6>
+                        <h5 class="mt-2">${studyData.topic}</h5>
+                        <p class="text-muted">${studyData.activities}</p>
+                    </div>
+                    
+                    ${studyData.completed ? `
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Completed in ${studyData.timeSpent || 'N/A'} minutes
+                        </div>
+                    ` : `
+                        <div class="alert alert-warning">
+                            <i class="bi bi-clock me-2"></i>
+                            Not completed yet
+                        </div>
+                    `}
+                    
+                    <div class="d-grid gap-2">
+                        <a href="/pages/roadmap#week-${studyData.week}" class="btn btn-primary">
+                            Go to Week ${studyData.week}
+                        </a>
+                        ${!studyData.completed ? `
+                            <button class="btn btn-outline-primary" onclick="markDayComplete(${studyData.week}, '${studyData.day}')">
+                                Mark as Complete
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                // Check if it's a future date
+                const today = new Date();
+                if (date > today) {
+                    modalBody.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No scheduled content for this date yet.</p>
+                        </div>
+                    `;
+                } else {
+                    modalBody.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="bi bi-calendar-plus text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No study activity on this day.</p>
+                            <a href="/pages/roadmap" class="btn btn-primary mt-3">
+                                View Roadmap
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+
+            if (!dayModal) {
+                dayModal = new bootstrap.Modal(document.getElementById('dayModal'));
+            }
+            dayModal.show();
+        }
+
+        async function markDayComplete(week, day) {
+            try {
+                await api.post('/progress', {
+                    week: week,
+                    day: day,
+                    completed: true,
+                    time_spent: 60
+                });
+
+                notifications.success('Day marked as complete!');
+                dayModal.hide();
+
+                // Reload calendar
+                await loadCalendarData();
+
+            } catch (error) {
+                notifications.error('Failed to update progress');
+            }
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        function scrollToToday() {
+            currentDate = new Date();
+            renderCalendar();
+
+            // Find and highlight today's cell
+            const todayCell = document.querySelector('.calendar-cell.today');
+            if (todayCell) {
+                todayCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                todayCell.classList.add('animate-pulse');
+                setTimeout(() => todayCell.classList.remove('animate-pulse'), 2000);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCalendarData();
+        });
+    </script>
+</body>
+
+</html>
